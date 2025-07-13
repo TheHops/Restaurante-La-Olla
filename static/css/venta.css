@@ -1,0 +1,1101 @@
+.contenidoVenta {
+    overflow: hidden;
+    height: 550px;
+    /* padding: 25px 50px; */
+    /* display: inline-block; */
+}
+
+#pag1 {
+    position: absolute;
+    width: 100%;
+    /* transition: 1s ease; */
+}
+
+#pag2 {
+    position: absolute;
+    left: 100%;
+    width: 100%;
+    /* transition: 1s ease; */
+}
+
+#encabezadoVenta_pag1{
+    display: flex;
+    margin-top: 12px;
+    padding: 25px 50px;
+}
+
+#btnver_ordenes {
+    width: 150px;
+    height: 40px;
+    background: rgb(255, 100, 100);
+    border-color: rgb(255, 130, 150);
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+#btnver_ordenes img {
+    vertical-align: middle;
+}
+
+#btnver_ordenes span {
+    color: white;
+    vertical-align: middle;
+    font-size: 18px;
+    padding-left: 5px;
+}
+
+#noti {
+    transform: translate(-16px, -10px);
+    background-color: rgb(255, 50, 50);
+    /* color: white;
+    border-radius: 50%;
+    font-size: 15px;
+    padding: 15px; */
+    border-radius: 0.8em;
+    -moz-border-radius: 0.8em;
+    -webkit-border-radius: 0.8em;
+    color: #ffffff;
+    display: inline-block;
+    font-weight: bold;
+    line-height: 1.6em;
+    text-align: center;
+    width: 26px;
+    height: 26px;
+    cursor:default;
+}
+
+#btnver_ordenes:hover {
+    background: rgb(255, 120, 110);
+    border-color: rgb(255, 170, 120);
+}
+
+/******************************* E X P O R T A R *************************************/
+
+.exportarV {
+    margin-left: 20px;
+}
+
+.exportarV .pdf,
+.excel {
+    width: 50px;
+    height: 40px;
+    background: rgb(255, 255, 255);
+    border-color: rgb(230, 150, 150);
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+}
+
+.exportarV .pdf:hover {
+    background: rgb(255, 240, 240);
+}
+
+.exportarV .excel:hover {
+    background: rgb(255, 240, 240);
+}
+
+/**********************************************************************************/
+/*************************** C U E R P O  D E  V E N T A *********************************/
+/**********************************************************************************/
+
+#cuerpoVenta_pag1 {
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#listaAreasDeMesa:hover {
+    background: rgb(255, 245, 245);
+    border-color: rgb(230, 100, 50) rgb(255, 150, 100) rgb(255, 150, 100) rgb(230, 100, 50);
+}
+
+#listaAreasDeMesa {
+    width: 80%;
+    margin: 5px 10%;
+    min-width: 155px;
+    height: 40px;
+    border-color: rgb(200, 50, 50) rgb(255, 100, 100) rgb(255, 100, 100) rgb(200, 50, 50);
+    border-radius: 10px;
+    padding-left: 15px;
+    font-size: 20px;
+    color: #821414;
+    outline-color: rgb(200, 100, 100);
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    cursor: pointer;
+}
+
+/*************************** C H E C K E D *********************************/
+
+fieldset {
+    border: 1px solid rgb(200, 150, 150);
+    border-radius: 10px;
+    padding: 0 0.5em 1em 0.5em;
+    width: 50%;
+    margin-top: 15px;
+
+    transition: ease 2s;
+}
+
+legend {
+    color: rgb(200, 150, 150);
+    font-size: 16px;
+    padding: 0 5px;
+}
+
+#mesas input[type="radio"]{
+    display: none;
+}
+
+#mesas input[type="radio"]:checked + label {
+    background-color: #FF4E4E;
+    color: white;
+}
+
+#mesas label {
+    width: 40px;
+    height: 40px;
+    background-color: #FFBEBE;
+    color: #821414;
+    border-radius: 10px;
+    text-align: center;
+    padding-top: 7px;
+    transition: .3s ease;
+    cursor: pointer;
+}
+
+#mesas {
+    display: grid;
+    grid-template-columns: auto auto auto auto auto;
+    justify-content: center;
+}
+
+#mesas .grid_item {
+    margin: 0 10px;
+}
+
+/*************************** B O T O N *********************************/
+
+#btn_siguiente {
+    margin-top: 15px;
+    margin-left: auto;
+    margin-right: 25%;
+    width: 150px;
+    height: 40px;
+    background: hsl(0, 100%, 70%);
+    border-color: hsl(350, 100%, 75%);
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+#btn_siguiente:disabled {
+    background: hsl(0, 50%, 70%);
+    border-color: hsl(350, 50%, 75%);
+    color: white;
+    border-radius: 10px;
+    cursor: auto;
+}
+
+#btn_siguiente:disabled:hover {
+    background: hsl(0, 50%, 71%);
+    border-color: hsl(350, 50%, 76%);
+    color: white;
+    border-radius: 10px;
+    cursor: auto;
+}
+
+#btn_siguiente img {
+    vertical-align: middle;
+}
+
+#btn_siguiente span {
+    color: white;
+    vertical-align: middle;
+    font-size: 18px;
+    padding-left: 5px;
+}
+
+#btn_siguiente:hover {
+    background: rgb(255, 120, 110);
+    border-color: rgb(255, 170, 120);
+}
+
+/*---------------------------*/
+
+#btn_volver {
+    margin-top: 15px;
+    margin-left: 15px;
+    margin-right: 20px;
+    width: 120px;
+    height: 40px;
+    background: #ff6464;
+    border-color: rgb(255, 130, 150);
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
+
+    transition: .2s ease;
+
+    font-size: 18px;
+}
+
+#btn_volver:hover {
+    background: rgb(255, 120, 110);
+    border-color: rgb(255, 170, 120);
+}
+
+#btn_volver i {
+    font-size: 26px;
+    vertical-align: middle;
+}
+
+#btn_volver span {
+    vertical-align: middle;
+}
+
+#acciones_pag2 input {
+    width: 50%;
+    margin-top: 15px;
+    border-radius: 10px;
+    border: #821414 solid 1px;
+    outline: none;
+
+    padding-left: 15px;
+    color: #821414;
+}
+
+
+/**********************************************************************************/
+/*********************************** P A G I N A 2 ************************************/
+/**********************************************************************************/
+
+#capaventas {
+    height: 100vh;
+    position: absolute;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, .3);
+    z-index: 3;
+    display: none;
+}
+
+#pag2 {
+    display: flex;
+}
+
+#acciones_pag2 {
+    position: absolute;
+    display: flex;
+    width: calc(100% - 300px);
+    z-index: 999;
+    background-color: white;
+    justify-content: flex-start;
+    padding-bottom: 15px;
+    border-bottom: #DF362D solid 1px;
+
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+#Ordenes {
+    margin-left: auto;
+    width: 300px;
+    height: 570px;
+    background: rgba(255, 255, 255, .8);
+
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+
+    z-index: 15;
+    /* border-left-style: solid;
+    border-left-width: 1px;
+    border-color: rgb(200, 200, 200); */
+}
+
+.encabezado_ordenes {
+    background-color: #DF362D;
+    width: 100%;
+    height: 60px;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.encabezado_ordenes span {
+    color: white;
+    font-size: 23px;
+}
+
+.encabezado_ordenes i {
+    color: white;
+    position: absolute;
+
+    display: none;
+
+    right: 260px;
+
+    cursor: pointer;
+
+    justify-self: flex-start;
+}
+
+.orden {
+    margin: 5%;
+    width: 90%;
+    background: rgba(255, 255, 255, .5);
+    min-height: 100px;
+    border-style: solid;
+    border-color: #821414;
+    border-radius: 15px;
+    border-width: 1px;
+    padding: 5px 15px;
+}
+
+.orden > span {
+    color: #821414;
+    font-size: 20px;
+}
+
+.separador {
+    width: 100%;
+    height: 1px;
+    background: white;
+    position: absolute;
+    transform: translateY(1px);
+}
+
+.detalleorden {
+    display: flex;
+}
+
+.detalleorden span{
+    color: rgb(110, 10, 10);
+    font-size: 16px;
+}
+
+.botonQuitar {
+    display: flex;
+}
+
+.btnQuitar {
+    margin-left: auto;
+    margin-top: 15px;
+    width: 90px;
+    height: 30px;
+    background: rgb(223, 54, 45);
+    border-color: rgb(255, 130, 150);
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
+
+    transition: .2s ease;
+}
+
+.btnQuitar:hover {
+    background: rgb(223, 70, 65);
+    border-color: rgb(255, 180, 120);
+}
+
+#cuerpo_ordenes {
+    max-height: 420px;
+    margin-bottom: 5px;
+    overflow: auto;
+    transition: .5s ease;
+}
+
+#cuerpo_ordenes::-webkit-scrollbar {
+    width: 10px;
+    background: #ffffff;
+}
+
+#cuerpo_ordenes::-webkit-scrollbar-thumb {
+    background: rgba(255, 200, 200, 1);
+    border-radius: 10px;
+}
+
+.pie_ordenes {
+    background-color: #DF362D;
+    width: 100%;
+    height: 80px;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.total {
+    color: white;
+    padding-right: 25px;
+}
+
+.botonesOrden {
+    display: flex;
+    flex-direction: column;
+}
+
+#btnAgregarOrden {
+    width: 140px;
+    height: 30px;
+    background: #ff964e;
+    border-color: rgb(255, 130, 80);
+    color: white;
+    font-size: 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
+    transition: ease .2s;
+}
+
+#btnAgregarOrden:hover {
+    background: rgb(255, 170, 90);
+    border-color: rgb(255, 170, 50);
+}
+
+#btnAgregarOrden:disabled {
+    background: hsl(24, 50%, 65%);
+    border-color: hsl(17, 50%, 66%);
+    cursor: auto;
+}
+
+#btnAgregarOrden:hover:disabled {
+    background: hsl(24, 50%, 69%);
+    border-color: hsl(17, 50%, 61%);
+}
+
+.btnLimpiar {
+    margin-top: 5px;
+    width: 140px;
+    height: 30px;
+    background: rgba(255, 180, 180, .8);
+    border-color: rgb(255, 190, 190);
+    color: white;
+    font-size: 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
+
+    transition: .2s ease;
+}
+
+.btnLimpiar:hover {
+    background: rgba(255, 200, 200, .8);
+    border-color: rgb(255, 230, 160);
+}
+
+#btnAgregarOrden img {
+    vertical-align: middle;
+}
+
+#btnAgregarOrden span {
+    color: white;
+    vertical-align: middle;
+    font-size: 14px;
+    padding-left: 5px;
+}
+
+#btnLimpiar img {
+    vertical-align: middle;
+}
+
+#btnLimpiar span {
+    color: white;
+    vertical-align: middle;
+    font-size: 18px;
+    padding-left: 5px;
+}
+
+/* ***************************** P L A T I L L O S ******************************** */
+
+#PlatillosVenta {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    width: 100%;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-top: 20px;
+    padding-bottom: 100px;
+
+    justify-items: center;
+}
+
+.VPlatillos {
+    width: calc(100% - 300px);
+    /* height: calc(100% - 10vh); */
+    height: 100vh;
+    overflow: auto;
+
+    /* display: grid;
+    grid-template-columns: auto auto auto; */
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 2px 10px;
+    transform: translateY(70px);
+    /* border-bottom-right-radius:  15px; */
+    /* justify-content: center; */
+}
+
+.VPlatillos::-webkit-scrollbar {
+    width: 10px;
+}
+
+.VPlatillos::-webkit-scrollbar-thumb {
+    background: rgba(200, 100, 100, .5);
+    border-radius: 10px;
+}
+
+.vplatillo {
+    margin: 10px;
+    width: 40vh;
+    height: auto;
+
+    padding-top: 7px;
+
+    background-color: rgb(220, 100, 90);
+    /* background-color: rgb(255, 230, 230); */
+    border-style: solid;
+    border-width: 2px;
+    border-color: hsl(0, 50%, 50%);
+    /* box-shadow: ; */
+    box-shadow: 7px 7px 8px 1px hsla(0, 100%, 20%, 0.2);
+    border-radius: 20px;
+}
+
+.datoPlatillo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.accionesPlatillo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.datoPlatillo img {
+    width: 200px;
+    height: 200px;
+    margin: 5%;
+    object-fit: cover;
+    border-radius: 10px;
+    border-style: solid;
+    border-width: 3px;
+    /* border-color: rgb(200, 100, 100); */
+    border-color: #FFEEEE;
+}
+
+.accionesPlatillo .nombrePlatillo {
+    color: rgb(255, 230, 230);
+    font-size: 18px;
+    text-align: center;
+    margin: 0 5%;
+}
+
+.accionesPlatillo .precioPlatillo {
+    color: rgb(255, 230, 230);;
+    font-size: 17px;
+    margin: 0 5%;
+    display: block;
+    text-decoration: underline;
+}
+
+.vplatillo .accionesPlatillo fieldset {
+    border-color: #FFBEBE;
+    width: 70%;
+
+    margin: 0 15%;
+    height: 85px;
+    padding-left: 15px;
+}
+
+.vplatillo fieldset legend {
+    color: #FFBEBE;
+}
+
+/* ********************************** C A N T I D A D *************************************** */
+
+.cantidad {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cantidad button {
+    width: 30px;
+    height: 30px;
+    /* background: rgba(255, 110, 110, 0.1); */
+    /* background-color: #FFBEBE; */
+    background-color: #FFFFFF;
+    border-color: rgba(255, 140, 160, 0.1);
+    border-radius: 5px;
+    cursor: pointer;
+    /* box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px; */
+    display: inline-block;
+    cursor: pointer;
+    color: #B44646;
+    /* color: white; */
+    /* color: #821414; */
+    transition: .2s ease;
+    text-align: center;
+}
+
+.cantidad input[type=number]::-webkit-outer-spin-button,
+.cantidad input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.cantidad button:hover {
+    
+    background-color: #FFDEDE;
+    /* color: #821414; */
+}
+
+.cantidad input {
+    width: 50px;
+    text-align: center;
+    margin: 0 10px;
+    border-radius: 5px;
+}
+
+.cantidad input:disabled {
+    /* background-color: #FFBEBE; */
+    background-color: #FFFFFF;
+}
+
+/***************************************************************************************/
+/***************************************************************************************/
+/***************************************************************************************/
+
+.btninfoPlatillo {
+    width: 40px;
+    height: 30px;
+    margin-right: 10px;
+    background: rgb(255, 150, 78);
+    border-color: rgb(255, 130, 80);
+    color: white;
+    font-size: 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.btninfoPlatillo:hover {
+    background: rgb(255, 170, 90);
+    border-color: rgb(255, 170, 50);
+}
+
+.btnaddCarrito {
+    width: 130px;
+    height: 30px;
+    margin-right: 5%;
+    background: hsl(0, 100%, 70%);
+    border-color: hsl(350, 100%, 75%);
+    border-radius: 10px;
+    cursor: pointer;
+    color: white;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    transition: .2s ease;
+}
+
+.btnaddCarrito:disabled {
+    background: hsl(0, 50%, 70%);
+    border-color: hsl(350, 50%, 75%);
+    border-radius: 10px;
+    cursor: auto;
+}
+
+.btnaddCarrito:disabled:hover {
+    background: hsl(0, 50%, 71%);
+    border-color: hsl(350, 50%, 76%);
+    border-radius: 10px;
+    cursor: auto;
+}
+
+.btnaddCarrito:hover {
+    background: hsl(4, 100%, 72%);
+    border-color: hsl(22, 100%, 74%);
+}
+
+.btnaddCarrito img {
+    vertical-align: middle;
+}
+
+.btnaddCarrito span {
+    color: white;
+    vertical-align: middle;
+    font-size: 18px;
+    padding-left: 5px;
+}
+
+.botonesPlatillo {
+    width: 100%;
+
+    margin-top: 13px;
+    display: flex;
+    justify-content: end;
+    margin-bottom: 15px;
+}
+
+#btn_abrirListaOrdenes{
+    margin-top: 15px;
+    margin-left: auto;
+    margin-right: 15px;
+    width: 40px;
+    height: 40px;
+    background: hsl(0, 100%, 70%);
+    border-color: hsl(350, 100%, 75%);
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
+    transition: .2s ease;
+
+    display: none;
+}
+
+#notiPlatillosOrden {
+    background-color: rgb(255, 50, 50);
+    /* color: white;
+    border-radius: 50%;
+    font-size: 15px;
+    padding: 15px; */
+    border-radius: 0.8em;
+    -moz-border-radius: 0.8em;
+    -webkit-border-radius: 0.8em;
+    color: #ffffff;
+    display: none;
+    font-weight: bold;
+    line-height: 1.6em;
+    text-align: center;
+    width: 26px;
+    height: 26px;
+    cursor: default;
+
+    position: absolute;
+    right: 0;
+
+    transform: translate(-10px, 4px);
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * R E S P N S I V I D A D * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * * */
+
+@media (max-width: 1200px) {
+    #PlatillosVenta {
+        grid-template-columns: auto auto;
+    }
+}
+
+@media (max-width: 900px)
+{
+    /* #Ordenes {
+        position: absolute;
+
+        right: 0;
+
+        display: none;
+    } */
+
+    /* .VPlatillos {
+        width: 100%;
+        border-radius: 0;
+    } */
+
+    #PlatillosVenta {
+        grid-template-columns: auto;
+    }
+
+    .vplatillo {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+
+        padding: 10px 0;
+    }
+
+    .datoPlatillo img {
+        width: 150px;
+        height: 150px;
+    }
+
+    .datoPlatillo {
+        display: flex;
+        flex-direction: column;
+
+        width: 40%;
+    }
+
+    .accionesPlatillo {
+        width: 60%;
+    }
+
+    .accionesPlatillo .nombrePlatillo {
+        font-size: 16px;
+    }
+
+    .accionesPlatillo .precioPlatillo {
+        font-size: 14px;
+    }
+
+    .accionesPlatillo fieldset legend {
+        font-size: 14px;
+    }
+
+    .accionesPlatillo .btninfoPlatillo,
+        .accionesPlatillo .btnaddCarrito {
+        height: 30px;
+    }
+
+    .accionesPlatillo .btnaddCarrito span {
+        font-size: 15px;   
+    }
+}
+
+@media (max-width: 730px) {
+    /* #notiPlatillosOrden {
+        display: inline-block;
+    } */
+
+    #acciones_pag2 {
+        width: 100%;
+        padding-right: 10px;
+    }
+
+    .separador {
+        background-color: #DF362D;
+    }
+
+    #iconoCerrarCarrito {
+        display: initial;
+    }
+
+    #btn_abrirListaOrdenes {
+        display: initial;
+    }
+
+    .VPlatillos {
+        width: 100%;
+        border-radius: 0;
+    }
+
+    #Ordenes {
+        position: absolute;
+
+        right: 0;
+
+        display: none;
+    }
+
+    .vplatillo {
+        display: flex;
+        flex-direction: column;
+
+        width: 40vh;
+        justify-content: start;
+        align-items: center;
+
+        padding: 10px 0;
+    }
+
+    #PlatillosVenta {
+            grid-template-columns: auto auto;
+    }
+
+    .accionesPlatillo .nombrePlatillo {
+        font-size: 18px;
+        text-align: center;
+        margin: 0 5%;
+    }
+
+    .accionesPlatillo .precioPlatillo {
+        font-size: 17px;
+        margin: 0 5%;
+        display: block;
+    }
+
+    .accionesPlatillo {
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .accionesPlatillo fieldset {
+        width: 70%;
+    }
+
+    .datoPlatillo {
+        display: flex;
+        flex-direction: column;
+
+        width: 100%;
+    }
+
+    .datoPlatillo img {
+        width: 200px;
+        height: 200px;
+    }
+
+    .botonesPlatillo {
+        margin-bottom: 5px;
+    }
+}
+
+@media (max-width: 700px) {
+    fieldset {
+        width: 66%;
+    }
+
+    #btn_siguiente {
+        margin-right: 17%;
+    }
+}
+
+@media (max-width: 600px)
+{
+    #PlatillosVenta {
+        grid-template-columns: auto;
+    }
+
+    .vplatillo {
+        display: flex;
+        flex-direction: row;
+
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+
+        padding: 10px 0;
+    }
+
+    .datoPlatillo {
+        display: flex;
+        flex-direction: column;
+
+        width: 50%;
+    }
+
+    .accionesPlatillo {
+        display: flex;
+        flex-direction: column;
+
+        width: 50%;
+    }
+
+    fieldset {
+        width: 75%;
+    }
+}
+
+@media (max-width: 500px) {
+    fieldset {
+        width: 80%;
+    }
+
+    #btn_siguiente {
+        margin-right: 10%;
+    }
+
+    .accionesPlatillo .nombrePlatillo {
+        font-size: 18px;
+        text-align: center;
+        margin: 0 5%;
+    }
+
+    .accionesPlatillo .precioPlatillo {
+        font-size: 17px;
+        margin: 0 5%;
+        display: block;
+    }
+
+    .accionesPlatillo fieldset legend {
+        font-size: 14px;
+    }
+
+    .accionesPlatillo .btninfoPlatillo,
+    .accionesPlatillo .btnaddCarrito {
+        height: 30px;
+    }
+
+    .accionesPlatillo .btnaddCarrito span {
+        font-size: 15px;
+    }
+
+    .datoPlatillo img {
+        width: 150px;
+        height: 150px;
+    }
+
+    .datoPlatillo {
+        display: flex;
+        flex-direction: column;
+
+        width: 40%;
+    }
+
+    .accionesPlatillo {
+        width: 60%;
+    }
+
+    .accionesPlatillo .nombrePlatillo {
+        font-size: 16px;
+    }
+
+    .accionesPlatillo .precioPlatillo {
+        font-size: 14px;
+    }
+
+    .accionesPlatillo fieldset legend {
+        font-size: 14px;
+    }
+
+    .accionesPlatillo .btninfoPlatillo,
+    .accionesPlatillo .btnaddCarrito {
+        height: 30px;
+    }
+
+    .accionesPlatillo .btnaddCarrito span {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 400px) {
+    #mesas {
+        grid-template-columns: auto auto auto auto;
+    }
+}
+
+@media (max-width: 370px) {
+    #mesas {
+        grid-template-columns: auto auto auto;
+    }
+}

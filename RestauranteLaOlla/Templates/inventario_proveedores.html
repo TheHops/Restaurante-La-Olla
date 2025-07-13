@@ -1,0 +1,343 @@
+{% extends 'index.html' %}
+
+{% block content %}
+{% load static %}
+
+<div id="encabezado_inventario">
+    <button id="agregar" data-toggle="modal"  data-target="#AgregarProveedor" onclick="aparecerCapa()">
+        <img src="{% static 'img/icon_add_2.png' %}" style="width: 30px; height: 30px;" title="Añadir proveedores"></img>
+    </button>
+
+    <!-- <input type="text" id="buscar" placeholder="Buscar"> -->
+
+    <select name="" id="listaInventario">
+        <!-- <option value="">Proveedores</option> -->
+        <!-- <option value="{% url 'inventario' %}">Insumos</option> -->
+        <option value="{% url 'inventario_platillos' %}">Platillos</option>
+        <option value="{% url 'inventario_tipoplatillo' %}">Tipo de platillo</option>
+    </select>
+
+    <div class="exportar">
+        <button class="excel">
+          <a href="{% url 'ExportarProveedor' %}">
+            <img src="{% static 'img/Export_excel_2.png' %}" alt="Exportar en excel" title="Exportar en excel">
+          </a>
+        </button>
+       <button class="pdf">
+        <a href="{% url 'CreacionProveedores_PDF' %}">
+            <img src="{% static 'img/Export_pdf_2.png' %}" alt="Exportar en pdf" title="Exportar en pdf">
+        </a>
+        </button> 
+    </div>
+</div>
+
+<div id="cuerpoInventario">
+
+    <!-- TABLA CON SU RESPECTIVO CONTENIDO -->
+    <table class="display tablaInventario" style="width:100%;">
+        <thead>
+            <!-- Columnas -->
+            <tr>
+                <th>Proveedor</th>
+                <th>Direccion</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <!-- Filas -->
+        <tbody>
+            {% for proveedor in Proveedores%}
+            <tr>
+                <td>{{proveedor.nombreprov}}</td>
+                <td>{{proveedor.direccionprov}}</td>
+                <td><a href="https://wa.me/+505{{proveedor.telefonoprov}}"  target="_blank">  {{proveedor.telefonoprov}} </a></td>
+                <td> <a href="mailto:{{proveedor.correoprov}}"  target="_blank"> {{proveedor.correoprov}}</a></td>
+                <td>{{proveedor.activo}}</td>
+
+                <td class="actions">
+                    <div class="" id="ButtonActions">
+                        <button class="actionButton btnEditar" data-toggle="modal" data-target="#exampleModal"  onclick="Impresion('{{proveedor.id}}', '{{proveedor.nombreprov}}', '{{proveedor.direccionprov}}', '{{proveedor.telefonoprov}}', '{{proveedor.correoprov}}' );">
+                            <a  class="editar_cta">
+                                <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
+                                <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar proveedor">
+                            </a>
+                        </button>
+    
+                        {% if proveedor.activo == "activo" %}
+                          <button class="actionButton btnEliminar" data-toggle="modal" data-target="#DarBajaProveedor" onclick="BajaImpresion('{{proveedor.id}}');" id=Eliminar{{proveedor.id}}>
+                              <a  class="eliminar_cta">
+                                  <!-- <i class="fa-solid fa-trash-can fa-lg" style="color: #ff6969; padding: 5px 5px;"></i> -->
+                                  <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar proveedor">
+                              </a>
+                          </button>
+                        {% endif %}
+                        <!--
+                        <button class="actionButton btnDetalles" id=Detalles{{proveedor.id}}>
+                            <a class="detalle_cta">
+                                 <i class="fa-solid fa-info fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> 
+                                <img src="{% static 'img/info1.png' %}" alt="Más información" title="Más información">
+                            </a>
+                        </button> -->
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <!-- <tfoot>
+                <tr>
+                    <th>Insumo</th>
+                    <th>Presentación</th>
+                    <th>Stock</th>
+                    <th>Unidad de medida</th>
+                </tr>
+            </tfoot> -->
+    </table>
+</div>
+
+<div class="modal-overlay" onclick="desaparecerCapa()"></div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title " id="exampleModalLabel" >Modificar Proveedor</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form method="POST">
+                {% csrf_token %}
+                <h4 style="font-size: 20px;">Proveedor</h4>
+                <input type="text" class="form-control" id="NameProveedor" required>
+                <h4 style="font-size: 20px;">Direccion</h4>
+                <input type="text" class="form-control" id="DireccProveedor" required>
+                <h4 style="font-size: 20px;">Telefono</h4>
+                <input type="Number" class="form-control" id="TelefProveedor" required>
+                <h4 style="font-size: 20px;">Correo</h4>
+                <input type="text" class="form-control" id="CorreoProveedor">
+                <h4 style="font-size: 20px;">Estado</h4>
+                <select class="form-control" id="EstadoProveedor">
+                    <option>Activo</option>
+                    <option>Inactivo</option>
+                  </select>
+                <input type="hidden" class="form-control" id="IdProveedor">
+            </form>
+               
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" onclick="ActualizarProveedor();">Actualizar</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade" id="AgregarProveedor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title " id="exampleModalLabel" >Agregar Proveedor</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form method="POST">
+                {% csrf_token %}
+                <h4 style="font-size: 20px;">Proveedor</h4>
+                <input type="text" class="form-control" id="AgregarProveedorName" required>
+                <h4 style="font-size: 20px;">Direccion</h4>
+                <input type="text" class="form-control" id="AgregarDireccProveedor" required>
+                <h4 style="font-size: 20px;">Telefono</h4>
+                <input type="Number" class="form-control" id="AgregarTelefProveedor" required>
+                <h4 style="font-size: 20px;">Correo</h4>
+                <input type="text" class="form-control" id="AgregarorreoProveedor">
+            </form>
+               
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" onclick="AgregarProveedor();">Agregar</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade" id="DarBajaProveedor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title " id="exampleModalLabel" >¿Esta Seguro de Dar de Baja al Proveedor?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+               
+               
+        <div class="modal-footer" style="display: flex; justify-content: center;">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" id="IdProveedorBaja">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" onclick="DajBajaProveedor();">Dar Baja</button>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+<script>
+    $('.modal').on('hidden.bs.modal', function (e) {
+        // Verificar si el usuario cerró el modal haciendo clic fuera de él
+        if (e.target === this) {
+          // El usuario hizo clic fuera del modal
+          desaparecerCapa()
+        }
+      });
+
+    function Impresion(id, nombre, direccion, telefono, correo){
+      aparecerCapa();
+
+       $("#NameProveedor").val(nombre);
+       $("#DireccProveedor").val(direccion);
+       $("#TelefProveedor").val(telefono);
+       $("#CorreoProveedor").val(correo);
+       $("#IdProveedor").val(id);
+    }  
+
+    function ActualizarProveedor(){
+        const nombre = $("#NameProveedor").val();
+        const direccion = $("#DireccProveedor").val();
+        const telef = $("#TelefProveedor").val();
+        const correo = $("#CorreoProveedor").val();
+        const Id = $("#IdProveedor").val();
+        const Estado = document.getElementById("EstadoProveedor").value;
+        $.ajax({
+           url:'/detalle/',
+           type:'POST',
+           data:{
+             Nombre: nombre,
+             Direction: direccion,
+             Telefono: telef,
+             Correo: correo,
+             id:Id,
+             estado:Estado,
+             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+           },
+           success: function(response){
+                 Swal.fire({
+                  confirmButtonColor: '#ff6464',
+                  title: '¡Proveedor actualizado correctamente!',
+                  icon: 'success'
+             }).then((resultado) => {
+                   if (resultado.isConfirmed) {
+                     location.reload();
+                   }
+                   else {
+                     location.reload();
+                   }
+                 })
+
+             /*Se espera un segundo, y luego ejecuta lo que tiene dentro (reload) */
+            //  setTimeout(() => {
+            //    window.location.reload();
+            //  }, 1000);
+           }, 
+           error: function(error){
+            let ror = error;
+                alert("error " + error);
+           }
+        });
+    }
+    
+    function AgregarProveedor(){
+        const nombre = $("#AgregarProveedorName").val();
+        const direccion = $("#AgregarDireccProveedor").val();
+        const telef = $("#AgregarTelefProveedor").val();
+        const correo = $("#AgregarorreoProveedor").val();
+        $.ajax({
+           url:'/AgregarProveedor/',
+           type:'POST',
+           data:{
+             Nombre: nombre,
+             Direction: direccion,
+             Telefono: telef,
+             Correo: correo,
+             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+           },
+           success: function(response){
+                Swal.fire({
+                  confirmButtonColor: '#ff6464',
+                  title: '¡Proveedor agregado correctamente!',
+                  icon: 'success'
+             }).then((resultado) => {
+                  if (resultado.isConfirmed) {
+                    location.reload();
+                  }
+                  else {
+                    location.reload();
+                  }
+                })
+
+             /*Se espera un segundo, y luego ejecuta lo que tiene dentro (reload) */
+            //  setTimeout(() => {
+            //    window.location.reload();
+            //  }, 1000);
+           }, 
+           error: function(error){
+            let ror = error;
+                alert("error " + error);
+           }
+        });
+    }
+
+    function BajaImpresion(id)
+    {
+      aparecerCapa();
+      $("#IdProveedorBaja").val(id);
+    }
+
+    function DajBajaProveedor(){
+
+        const Id = $("#IdProveedorBaja").val();
+
+        $.ajax({
+           url:'/DarBajaProveedor/',
+           type:'POST',
+           data:{
+             id:Id,
+             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+           },
+           success: function(response){
+                Swal.fire({
+                  confirmButtonColor: '#ff6464',
+                  title: '¡Proveedor dado de baja correctamente!',
+                  icon: 'success'
+             }).then((resultado) => {
+                  if (resultado.isConfirmed) {
+                    location.reload();
+                  }
+                  else {
+                    location.reload();
+                  }
+                })
+
+             /*Se espera un segundo, y luego ejecuta lo que tiene dentro (reload) */
+            //  setTimeout(() => {
+            //    window.location.reload();
+            //  }, 1000);
+           }, 
+           error: function(error){
+            let ror = error;
+                alert("error " + error);
+           }
+        });
+    }
+  </script>
+
+{% endblock %}
+

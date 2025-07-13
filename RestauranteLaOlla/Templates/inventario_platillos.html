@@ -1,0 +1,557 @@
+{% extends 'index.html' %}
+
+{% block content %}
+{% load static %}
+
+
+<div id="encabezado_inventario">
+    <button id="agregar" data-toggle="modal" data-target="#AgregarPlatillo" onclick="aparecerCapa()">
+            <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px; margin-right: 10px;" title="Añadir platillo"></img>Agregar platillo
+       
+    </button>
+
+    <!-- <input type="text" id="buscar" placeholder="Buscar"> -->
+
+    <select name="" id="listaInventario">
+        <option value="">Platillos</option>
+        <!-- <option value="{% url 'inventario' %}">Insumos</option> -->
+        <option value="{% url 'inventario_tipoplatillo' %}">Tipo de platillo</option>
+        <!-- <option value="{% url 'inventario_proveedores' %}">Proveedores</option> -->
+    </select>
+
+    <div class="exportar">
+        <button class="excel">
+            <a href="{% url 'ExportarPlatillo' %}">
+                <img src="{% static 'img/Export_excel_2.png' %}" alt="Exportar en excel" title="Exportar en excel">
+            </a>
+        </button>
+        <button class="pdf">
+            <a href="{% url 'CreacionPlatillos_PDF' %}">
+                <img src="{% static 'img/Export_pdf_2.png' %}" alt="Exportar en pdf" title="Exportar en pdf">
+            <a>
+        </button> 
+    </div>
+</div>
+
+<div id="cuerpoInventario">
+
+    <!-- TABLA CON SU RESPECTIVO CONTENIDO -->
+    <table class="display tablaInventario" style="width:100%;">
+        <thead>
+            <!-- Columnas -->
+            <tr>
+                <th>Platillo</th>
+                <th>Tipo de platillo</th>
+                <th>Precio</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <!-- Filas -->
+        <tbody>
+            {% for platillos in Platillos %}
+            <tr>
+                <td style="text-transform: capitalize; ">{{platillos.nombreplatillo|lower}}</td>
+                <td>{{platillos.idtipoplatillo.nombretp}}</td>
+                <td>C${{platillos.precioplatillo}}</td>
+                <td style="text-transform: capitalize; ">{{platillos.activo}}</td>
+                <td class="actions">
+
+                    <button class="actionButton btnEditar" data-toggle="modal" data-target="#exampleModal" 
+                    onclick='Impresion("{{platillos.id}}" , "{{platillos.nombreplatillo}}", "{{platillos.idtipoplatillo.nombretp}}","{{platillos.precioplatillo}}","{{platillos.activo}}", "{{platillos.descripcionplatillo}}" );'  id =Editar{{platillos.id}}>
+                        <a>
+                            <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
+                            <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar platillo">
+                        </a>
+                    </button>
+
+                    {% if platillos.activo|lower == "activo" %}
+                        <button class="actionButton btnEliminar" data-toggle="modal" data-target="#DarBajaPlatillo" onclick="BajaImpresion('{{platillos.id}}');" id=Eliminar{{platillos.id}}>
+                            <a>
+                                <!-- <i class="fa-solid fa-trash-can fa-lg" style="color: #ff6969; padding: 5px 5px;"></i> -->
+                                <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar platillo">
+                            </a>
+                        </button>
+                    {% endif %}
+                    <!--
+                    <button class="actionButton btnDetalles" id=Detalle{{platillos.id}}>
+                        <a href="">
+                            <i class="fa-solid fa-info fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> 
+                            <img src="{% static 'img/info1.png' %}" alt="Más información" title="Más información">
+                        </a>
+                    </button>-->
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <!-- <tfoot>
+                <tr>
+                    <th>Insumo</th>
+                    <th>Presentación</th>
+                    <th>Stock</th>
+                    <th>Unidad de medida</th>
+                </tr>
+            </tfoot> -->
+    </table>
+</div>
+
+<div class="modal-overlay" onclick="desaparecerCapa()"></div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title " id="exampleModalLabel" >Modificar Platillo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row">
+                    
+                    <div class="col-md-12 pb-3">
+                        <h4 style="font-size: 20px;">Platillo</h4>
+                        <input type="text" class="form-control" id="NombrePlatillo" required>
+                    </div>
+                    <div class="col-md-6 pb-3">
+                        <h4 style="font-size: 20px;">Tipo de Platillo</h4>
+                        <select class="form-control" id="TipoPlatillo">
+                            {% for tipoplatillo in TypePlatillo %}
+                            {% if tipoplatillo.activo|lower == "activo" %}
+                                <option value="{{ tipoplatillo.id }}">{{ tipoplatillo.nombretp }}</option>
+                            {% else %}
+                                <option value="{{ tipoplatillo.id }}" disabled>{{ tipoplatillo.nombretp }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 pb-3">
+                        <h4 style="font-size: 20px;">Precio del Platillo (C$)</h4>
+                        <input type="text" inputmode="numeric" class="form-control" id="PrecioPlatillo"  onkeypress="return soloNumeros(event)" required>
+                    </div>
+                    <div class="col-md-6 pb-3">
+                        <h4 style="font-size: 20px;">Estado del Platillo </h4>
+                        <select class="form-control" id="EstadoPlatillo">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 pb-3">
+                        <h4 style="font-size: 20px;">Imagen del Platillo</h4>
+                        <label for="archivoModal_dos"
+                        id="LabelArchivo_dos"
+                        style="font-size: medium; 
+                        text-align: center; 
+                        background-color: #6c757d; 
+                        padding-top: 6px;
+                        padding-left: 10px;
+                        padding-right: 10px;
+                        cursor: pointer;
+                        color: white;
+                        width: 100%;
+                        height: 35px;
+                        border-radius: 5px;
+                        text-align: center;
+                        margin-top: 2px;">
+                           <span id="SpanLabel_dos"> Cargar imagen</span>
+                            <!-- <i class='bx bx-check' id="iconoCargarImagen" style="color: #00ff1e; margin-left: 3px; display: none;"></i>  -->
+                            <i class="fa-solid fa-check" id="iconoCargarImagen_dos" style="color: #00ff1e; margin-left: 3px; display: none;"></i>                               
+                        </label>
+                        <input type="file" accept="image/png,image/jpeg,image/jpg" id="archivoModal_dos" onchange="VerificarArchivo_dos(this)"
+                        style="position: absolute;
+                            right: 0;
+                            width: 180px;
+                            display: none;
+                            cursor: pointer;">
+                    </div>
+
+                    <input type="hidden" class="form-control" id="IDPlatillo">
+                    
+                    <div class="col-md-12">
+                        <h4 style="font-size: 20px;">Descripción del Platillo</h4>
+                        <input type="text" class="form-control" id="DescripcionPlatillo" >
+                    </div>
+                </div>
+            </form>
+               
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" onclick="ActualizarPlatillo();">Actualizar</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="DarBajaPlatillo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title " id="exampleModalLabel" >¿Esta Seguro de Dar de Baja al Platillo?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+               
+               
+        <div class="modal-footer" style="display: flex; justify-content: center;">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" id="IdPlatilloBaja">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="DarBaja_Platillo();">Dar Baja</button>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade" id="AgregarPlatillo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title " id="exampleModalLabel" >Agregar Platillo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="desaparecerCapa();">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form method="POST">
+                {% csrf_token %}
+                <h4 style="font-size: 20px;">Platillo<span class="asterisco">*</span></h4>
+                <input type="text" class="form-control" id="NombrePlatilloAgregar" required>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 style="font-size: 20px;">Tipo de Platillo<span class="asterisco">*</span></h4>
+                        <select class="form-control" id="TipoPlatilloAgregar">
+                            {% for tipoplatillo in TypePlatillo %}
+                                {% if tipoplatillo.activo|lower == "activo" %}
+                                    <option value="{{ tipoplatillo.id }}">{{ tipoplatillo.nombretp }}</option>
+                                 {% else %}
+                                    <option value="{{ tipoplatillo.id }}" disabled>{{ tipoplatillo.nombretp }}</option>
+                                {% endif %}
+                            {% endfor %}
+                           
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 style="font-size: 20px;">Precio del Platillo (C$)<span class="asterisco">*</span></h4>
+                        <input type="number" class="form-control" id="PrecioPlatilloAgregar" required>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 style="font-size: 20px;">Estado Platillo</h4>
+                        
+                        <select class="form-control" id="EstadoPlatilloAgregar">
+                            <option value ="1">activo</option>
+                            <option value = "0">inactivo</option>
+                        </select> 
+                    </div>
+
+                    
+                    <div class="col-md-6 pb-4">
+                        <h4 style="font-size: 20px;">Imagen del Platillo</h4>
+                        <label for="archivoModal"
+                        id="LabelArchivo"
+                        style="font-size: medium; 
+                        text-align: center; 
+                        background-color: #6c757d; 
+                        padding-top: 6px;
+                        padding-left: 10px;
+                        padding-right: 10px;
+                        cursor: pointer;
+                        color: white;
+                        width: 100%;
+                        height: 35px;
+                        border-radius: 5px;
+                        text-align: center;
+                        margin-top: 2px;">
+                           <span id="SpanLabel"> Cargar imagen</span>
+                            <!-- <i class='bx bx-check' id="iconoCargarImagen" style="color: #00ff1e; margin-left: 3px; display: none;"></i>  -->
+                            <i class="fa-solid fa-check" id="iconoCargarImagen" style="color: #00ff1e; margin-left: 3px; display: none;"></i>                               
+                        </label>
+                        <input type="file" accept="image/png,image/jpeg,image/jpg" id="archivoModal" onchange="VerificarArchivo(this)"
+                        style="position: absolute;
+                            right: 0;
+                            width: 180px;
+                            display: none;
+                            cursor: pointer;">
+                    </div>
+
+                    <div class="col-md-12">
+                      <h4 style="font-size: 20px;">Descripcion del Platillo</h4>
+                      <input type="text" class="form-control" id="DescripcionPlatilloAgregar" >
+                      
+                    </div>
+                </div>
+
+                
+            </form>
+               
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="desaparecerCapa();">Cancelar</button>
+          <button type="button" class="btn btn-dark" onclick="AgregarPlatillo();">Agregar</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<script>
+
+    var btnAgregar = document.getElementById("agregar");
+
+    // Agrega el event listener al elemento
+    btnAgregar.addEventListener("click", function () {
+        let campoArchivo = document.getElementById("archivoModal");
+        let spanArchivo = document.getElementById("SpanLabel");
+
+        campoArchivo.value = "";
+        spanArchivo.textContent = "Cargar imagen";
+
+        VerificarArchivo(campoArchivo);
+    });
+
+    function soloNumeros(event) {
+        var charCode = event.which ? event.which : event.keyCode;
+  
+        // Permitir números del 0 al 9, el punto decimal y la tecla de retroceso
+        if (charCode >= 48 && charCode <= 57 || charCode === 46 || charCode === 8) {
+          // Verificar que no se ingresen múltiples puntos decimales
+          if (charCode === 46 && event.target.value.indexOf('.') !== -1) {
+            event.preventDefault();
+            return false;
+          }
+          return true;
+        }
+        
+        event.preventDefault();
+        return false;
+      }
+
+    $('.modal').on('hidden.bs.modal', function (e) {
+            // Verificar si el usuario cerró el modal haciendo clic fuera de él
+            if (e.target === this) {
+                // El usuario hizo clic fuera del modal
+                desaparecerCapa()
+            }
+        });
+
+
+    /**********************************************************/
+
+    function Impresion(id, nombre, TipoPlatillo, precio, estado, descripcion){
+        aparecerCapa();
+        $("#IDPlatillo").val(id);
+        $("#NombrePlatillo").val(nombre);
+        $("#TipoPlatillo").val(TipoPlatillo);
+        $("#PrecioPlatillo").val(precio);
+        $("#EstadoPlatillo").val(estado);
+        $("#DescripcionPlatillo").val(descripcion);
+        // alert(TipoPlatillo);
+        switch(TipoPlatillo){
+            case "Bebidas":
+                $("#TipoPlatillo").val(1);
+                break
+            case "Licores":
+                $("#TipoPlatillo").val(2);
+                break
+            case "Carnes":
+                $("#TipoPlatillo").val(3);
+                break
+            case "Entradas":
+                $("#TipoPlatillo").val(4);
+                break
+            case "Para los niños":
+                $("#TipoPlatillo").val(5);
+                break
+            case "Rones":
+                $("#TipoPlatillo").val(6);
+                break
+            case "Postres":
+                $("#TipoPlatillo").val(7);
+                break
+            case "EXTRAS":
+                $("#TipoPlatillo").val(8);
+                break
+        }
+
+        $("#EstadoPlatillo").val( (estado==="activo")?1:0);
+     }  
+
+    function ActualizarPlatillo(){
+        const nombre = $("#NombrePlatillo").val();
+        const tipoPlatillo = $("#TipoPlatillo").val();
+        const precio =  parseFloat($("#PrecioPlatillo").val());
+        const Id = $("#IDPlatillo").val();
+        const Estado =  ($("#EstadoPlatillo").val() === "1")? "Activo": "Inactivo";
+        const descripcion = $("#DescripcionPlatillo").val();
+        const archivo = $("#archivoModal_dos")[0].files[0]; // Obtenemos el archivo seleccionado
+
+        const formData = new FormData();
+        formData.append('Nombre', nombre);
+        formData.append('tipoplatillo', tipoPlatillo);
+        formData.append('Precio', precio);
+        formData.append('estado', Estado);
+        formData.append('Descripcion', descripcion);
+        formData.append('Imagen', archivo);
+        formData.append('id', Id);
+        formData.append('csrfmiddlewaretoken', $('input[name=csrfmiddlewaretoken]').val());
+
+
+        $.ajax({
+            url:'/ActualizarPlatillos/',
+            type:'POST',
+            data: formData,
+            processData: false, // Evita el procesamiento automático de los datos
+            contentType: false, // No establece el tipo de contenido automáticamente,
+            success: function(response){
+                // alert("MODIFICACION EXITOSA");
+                Swal.fire({
+                    confirmButtonColor: '#ff6464',
+                    title: '¡Platillo actualizado correctamente!',
+                    icon: 'success',
+                }).then((resultado) => {
+                    if (resultado.isConfirmed) {
+                        location.reload();
+                    }
+                    else {
+                        location.reload();
+                    }
+                })
+
+                /*Se espera un segundo, y luego ejecuta lo que tiene dentro (reload) */
+            //    setTimeout(() => {
+            //     window.location.reload();
+            //     }, 1000);
+           }, 
+           error: function(error){
+            let ror = error;
+                alert("error " + error);
+           }
+        });
+    }
+
+    function BajaImpresion(id)
+    {
+        aparecerCapa();
+       $("#IdPlatilloBaja").val(id);
+    }
+    function DarBaja_Platillo(){
+        const Id = $("#IdPlatilloBaja").val();
+
+        $.ajax({
+           url:'/DarBajaPlatillo/',
+           type:'POST',
+           data:{
+             id:Id,
+             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+           },
+           success: function(response){
+                // alert("MODIFICACION EXITOSA");
+                Swal.fire({
+                confirmButtonColor: '#ff6464',
+                   title: '¡Platillo dado de baja correctamente!',
+                   text: 'Platillo Excluido de Menu correctamente',
+                   icon: 'success',
+               })  
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+
+              
+           }, 
+           error: function(error){
+            let ror = error;
+                alert("error " + error);
+           }
+        });
+    }
+
+    function AgregarPlatillo(){
+        const nombre = $("#NombrePlatilloAgregar").val();
+        const tipoPlatillo = $("#TipoPlatilloAgregar").val();
+        const precio = parseFloat($("#PrecioPlatilloAgregar").val());
+        const estado = ($("#EstadoPlatilloAgregar").val() === "1") ? "Activo" : "Inactivo";
+        const descripcion = $("#DescripcionPlatilloAgregar").val();
+        const archivo = $("#archivoModal")[0].files[0]; // Obtenemos el archivo seleccionado
+
+        const formData = new FormData();
+        formData.append('Nombre', nombre);
+        formData.append('tipoplatillo', tipoPlatillo);
+        formData.append('Precio', precio);
+        formData.append('estado', estado);
+        formData.append('Descripcion', descripcion);
+        formData.append('Imagen', archivo);
+        formData.append('csrfmiddlewaretoken', $('input[name=csrfmiddlewaretoken]').val());
+
+        $.ajax({
+            url: '/AgregarPlatillo/',
+            type: 'POST',
+            data: formData,
+            processData: false, // Evita el procesamiento automático de los datos
+            contentType: false, // No establece el tipo de contenido automáticamente
+            success: function (response) {
+                Swal.fire({
+                    confirmButtonColor: '#ff6464',
+                    title: '¡Platillo agregado correctamente!',
+                    icon: 'success'
+                }).then((resultado) => {
+                    location.reload();
+                });
+            },
+            error: function (error) {
+                alert("Error: " + error);
+            }
+        });
+    }
+
+    function VerificarArchivo(campoArchivo){
+        let iconocargar = document.getElementById("iconoCargarImagen");
+        let labelArchivo = document.getElementById("LabelArchivo");
+        let spanlabel = document.getElementById("SpanLabel");
+        if (campoArchivo.files.length > 0) 
+        {
+            iconocargar.style.display = "initial";
+
+            console.log(campoArchivo.files[0].name);
+            console.log(campoArchivo.files[0]);
+
+            spanlabel.textContent = campoArchivo.files[0].name;
+            spanlabel.title = campoArchivo.files[0].name;
+            return true;
+        } else {
+            iconocargar.style.display = "none";
+
+            return false;
+        }
+    }
+    function VerificarArchivo_dos(campoArchivo){
+        let iconocargar = document.getElementById("iconoCargarImagen_dos");
+        let labelArchivo = document.getElementById("LabelArchivo_dos");
+        let spanlabel = document.getElementById("SpanLabel_dos");
+        if (campoArchivo.files.length > 0) 
+        {
+            iconocargar.style.display = "initial";
+
+            console.log(campoArchivo.files[0].name);
+            console.log(campoArchivo.files[0]);
+
+            spanlabel.textContent = campoArchivo.files[0].name;
+            spanlabel.title = campoArchivo.files[0].name;
+            return true;
+        } else {
+            iconocargar.style.display = "none";
+
+            return false;
+        }
+    }
+</script>
+
+{% endblock %}

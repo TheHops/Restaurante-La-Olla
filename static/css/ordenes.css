@@ -1,0 +1,307 @@
+
+.EncabezadoOrdenesList {
+    background-color: white;
+    height: auto;
+    padding-bottom: 10px;
+    border: #DF362D solid 1px;
+    display: flex;
+}
+
+#listaOrdenesPoFoC::-webkit-scrollbar {
+    width: 10px;
+}
+
+#listaOrdenesPoFoC::-webkit-scrollbar-thumb {
+    background: rgba(200, 100, 100, .5);
+    border-radius: 10px;
+}
+
+#listaOrdenesPoFoC {
+    width: 100vw;
+    height: 79vh;
+    display: flex;
+    flex-direction: column;
+    padding-left: 15%;
+    padding-right: 15%;
+    overflow-y: auto;
+    padding-bottom: 10px;
+}
+
+.ordenPoFoC {
+    margin-top: 20px;
+    /* background-color: hsl(3, 74%, 65%); */
+    background-color: #ffffff;
+    box-shadow: inset;
+    border: hsl(3, 74%, 60%) solid 1px;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.encabezadoPoFoC {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+
+    padding: 5px 15px 0;
+
+    display: flex;
+    justify-content: space-between;
+    justify-self: center;
+    align-items: center;
+    background-color: #DF362D;
+}
+
+.encabezadoPoFoC h3::selection,
+.encabezadoPoFoC h4::selection {
+    background-color: hsla(39, 100%, 60%, 0.8);
+    color: #ffffff;
+}
+
+.encabezadoPoFoC h3, .encabezadoPoFoC h4 {
+    color: white;
+}
+
+.seccionesPoFoC {
+    display: flex;
+    justify-content: space-between;
+    justify-self: center;
+    align-items: center;
+
+    padding: 5px 15px 0;
+}
+
+.seccionDerecha {
+    display: flex;
+    /* flex-direction: column; */
+}
+
+.Montotxt {
+    display: flex;
+    justify-content: space-between;
+}
+
+#MensajeMonto {
+    display: none;
+}
+
+.EstP {
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background-color: hsl(39, 100%, 55%);
+    display: inline-block;
+    transform: translateY(-4px);
+    margin-left: 6px;
+}
+
+.EstC {
+    width: 10px;
+    height: 10px;
+        
+    border-radius: 50%;
+
+    background-color: hsl(0, 100%, 80%);
+    display: inline-block;
+    transform: translateY(-4px);
+    margin-left: 6px;
+}
+
+.EstF {
+    width: 10px;
+    height: 10px;
+        
+    border-radius: 50%;
+
+    background-color: hsl(120, 100%, 45%);
+    display: inline-block;
+    transform: translateY(-4px);
+    margin-left: 6px;
+}
+
+.btnFacturarOrden {
+    width: 130px;
+    height: 30px; /*hsl(39, 100%, 55%)*/
+    background: hsl(24, 100%, 55%);
+    border-color: hsl(17, 100%, 56%);
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
+    transition: ease .2s;
+}
+
+.btnFacturarOrden:disabled {
+    transition: ease .2s;
+}
+
+.btnFacturarOrden:hover {
+    background: hsl(29, 100%, 67%);
+    border-color: hsl(35, 100%, 68%);
+}
+
+.btnCancelarOrden {
+    width: 130px;
+    height: 30px;
+    margin-right: 5%;
+    background: hsl(0, 0%, 30%);
+    border-color: hsl(350, 0%, 35%);
+    color: #ffffff;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    transition: .2s ease;
+}
+
+.btnCancelarOrden:hover {
+    background: hsl(0, 0%, 35%);
+    border-color: hsl(350, 0%, 40%);
+}
+
+#btnVolver {
+    width: 100px;
+    height: 40px;
+    background: rgb(255, 100, 100);
+    border-color: rgb(255, 130, 150);
+    border-radius: 10px;
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
+
+    margin: 10px 0 0 10px;
+}
+
+.detallitoOrden {
+    overflow: hidden;
+    width: calc(100% - 20px);
+    background-color: white;
+    margin: 0 10px;
+    padding: 0 0 0 15px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-left: #DF362D solid 1px;
+    border-right: #DF362D solid 1px;
+}
+
+.detalleTruncar {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.detallitoOrden > span {
+    display: inline-block;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.detalle {
+    width: 100%;
+}
+
+.detalle > span {
+    display: inline-block;
+}
+
+.cuerpoDetalleOrden {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: .4s grid-template-rows;
+}
+
+.cuerpoDetalleOrden.desplegado {
+    grid-template-rows: 1fr;
+}
+
+.cuerpoDetalleOrden.desplegado > .detallitoOrden {
+    border-bottom: #DF362D solid 1px;
+}
+
+.botonDesplazarDetalleOrden {
+    display: flex;
+    justify-content: center;
+}
+
+.botonDesplazarDetalleOrden button {
+    width: 50px;
+    height: 30px;
+    background: #DF362D;
+    border:#DF362D 0px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.iconoDesplegarDetalles {
+    transition: .3s ease;
+}
+
+.iconoDesplegarDetalles.desplegado {
+    transform: rotate(180deg);
+}
+
+#listaEstadoOrdenes:hover {
+    background: rgb(255, 245, 245);
+    border-color: rgb(230, 100, 50) rgb(255, 150, 100) rgb(255, 150, 100) rgb(230, 100, 50);
+}
+
+#listaEstadoOrdenes {
+    width: 300px;
+    margin: 10px 0 0 15px;
+    min-width: 155px;
+    height: 40px;
+    border-color: rgb(200, 50, 50) rgb(255, 100, 100) rgb(255, 100, 100) rgb(200, 50, 50);
+    border-radius: 10px;
+    padding-left: 15px;
+    font-size: 20px;
+    color: #821414;
+    outline-color: rgb(200, 100, 100);
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    cursor: pointer;
+}
+
+/***************************************************/
+
+@media (max-width: 900px)
+{
+    .seccionDerecha {
+        flex-direction: column;
+    }
+
+    .btnFacturarOrden {
+        margin: 5px 0;
+    }
+}
+
+@media (max-width: 700px)
+{
+    .encabezadoPoFoC h4 {
+        font-size: medium;
+    }
+
+    .encabezadoPoFoC h3 {
+        font-size: large;
+    }
+
+    .seccionIzquierda h4 {
+        font-size: large;
+    }
+
+    .seccionIzquierda h6 {
+        font-size: small;
+    }
+
+    .btnCancelarOrden, .btnFacturarOrden {
+        font-size: 15px;
+        width: 100px;
+    }
+}

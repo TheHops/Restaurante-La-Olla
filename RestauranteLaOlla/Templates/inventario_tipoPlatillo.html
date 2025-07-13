@@ -1,0 +1,305 @@
+{% extends 'index.html' %}
+
+{% block content %}
+{% load static %}
+
+<div id="encabezado_inventario">
+    <button id="agregar" data-toggle="modal" data-target="#AgregarTipoPlatillo" onclick="aparecerCapa()"  style="font-size: 15px;">
+        <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px; margin-right: 10px; transform: translateY(-9px);" title="Añadir el tipo de platillo"></img><span style="width: 100px; height: 30px; display: inline-block; line-height: 17px;">Agregar tipo de platillo</span>
+    </button>
+
+    <!-- <input type="text" id="buscar" placeholder="Buscar"> -->
+
+    <select name="" id="listaInventario">
+        <option value="">Tipo de platillo</option>
+        <!-- <option value="{% url 'inventario' %}">Insumos</option> -->
+        <option value="{% url 'inventario_platillos' %}">Platillos</option>
+        <!-- <option value="{% url 'inventario_proveedores' %}">Proveedores</option> -->
+    </select>
+
+    <div class="exportar">
+        <button class="excel">
+          <a href="{% url 'ExportarTipoPlatillo' %}">
+                <img src="{% static 'img/Export_excel_2.png' %}" alt="Exportar en excel" title="Exportar en excel">
+          </a>
+          </button>
+         <button class="pdf">
+          <a href="{% url 'CreacionTipoPlatillos_PDF' %}">
+            <img src="{% static 'img/Export_pdf_2.png' %}" alt="Exportar en pdf" title="Exportar en pdf">
+          </a>
+        </button> 
+    </div>
+</div>
+
+<div id="cuerpoInventario">
+
+    <!-- TABLA CON SU RESPECTIVO CONTENIDO -->
+    <table class="display tablaInventario" style="width:100%;">
+        <thead>
+            <!-- Columnas -->
+            <tr>
+                <th>Tipo de platillo</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <!-- Filas -->
+        <tbody>
+            {% for tipoplatillo in TypePlatillo%}
+            <tr>
+                <td style="text-transform: capitalize; ">{{tipoplatillo.nombretp|lower}}</td>
+                <td style="text-transform: capitalize; ">{{tipoplatillo.activo}}</td>
+                <td class="actions">
+
+                    <button class="actionButton btnEditar" data-toggle="modal" data-target="#exampleModal" onclick="Impresion('{{tipoplatillo.id}}', '{{tipoplatillo.nombretp}}','{{tipoplatillo.activo}}');" id=Editar{{tipoplatillo.id}}>
+                        <a >
+                            <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
+                            <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar el tipo de platillo">
+                        </a>
+                    </button>
+
+                    {% if tipoplatillo.activo|lower == "activo" %}
+                      <button class="actionButton btnEliminar" data-toggle="modal" data-target="#DarBajaTipoPlatillo" onclick="DarBajaImpresion('{{tipoplatillo.id}}');" id=Eliminar{{tipoplatillo.id}}>
+                          <a>
+                              <!-- <i class="fa-solid fa-trash-can fa-lg" style="color: #ff6969; padding: 5px 5px;"></i> -->
+                              <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar el tipo de platillo">
+                          </a>
+                      </button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+      
+    </table>
+</div>
+
+<div class="modal-overlay" onclick="desaparecerCapa()"></div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title " id="exampleModalLabel" >Modificar Tipo Platillo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="desaparecerCapa();">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form method="POST">
+                {% csrf_token %}
+                <h4 style="font-size: 20px;">Tipo Platillo</h4>
+                <input type="text" class="form-control" id="NameTipoPlatillo" required>
+                <h4 style="font-size: 20px;">Estado</h4>
+                <select class="form-control" id="EstadoTipoPlatillo">
+                    <option value = "1">Activo</option>
+                    <option value = "0">Inactivo</option>
+                  </select>
+                  <input type="hidden" class="form-control" id="IDTipoPlatillo" required>
+            </form>
+               
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="desaparecerCapa();">Cancelar</button>
+          <button type="button" class="btn btn-danger" onclick="ActulizarTipoPlatillo();">Actualizar</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade" id="DarBajaTipoPlatillo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title " id="exampleModalLabel" >¿Esta Seguro de Dar de Baja al Tipo de Platillo?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+              <div class="alert alert-warning" role="alert">
+                <h4 style="font-size: 20px;">Si da de Baja un Tipo de Platillo, los Platillos relacionados a este seran dado de baja automaticamente<span class="asterisco"></span></h4>
+              </div>
+      </div>  
+               
+        <div class="modal-footer" style="display: flex; justify-content: center;">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" id="IdTipoPlatilloBaja">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" onclick="DarBajaTipoPlatillo();">Dar Baja</button>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade" id="AgregarTipoPlatillo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title " id="exampleModalLabel" >Agregar Tipo de Platillo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form method="POST">
+                {% csrf_token %}
+                <h4 style="font-size: 20px;">Tipo de Platillo<span class="asterisco">*</span></h4>
+                <input type="text" class="form-control" id="NameTipoPlatilloAgregar" required>
+                <!-- <h4 style="font-size: 20px;">Estado</h4>
+                <select class="form-control" id="EstadoTipoPlatilloAgregar">
+                    <option>activo</option>
+                    <option>inactivo</option>
+                  </select> -->
+            </form>
+               
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-dark" onclick="Agregar_TipoPlatillo();">Agregar</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<script>
+  $('.modal').on('hidden.bs.modal', function (e) {
+      // Verificar si el usuario cerró el modal haciendo clic fuera de él
+      if (e.target === this) {
+        // El usuario hizo clic fuera del modal
+        desaparecerCapa()
+      }
+    });
+
+    function Impresion(id,nombre, estado){
+      aparecerCapa();
+      $("#NameTipoPlatillo").val(nombre);
+      $("#EstadoTipoPlatillo").val((estado === "activo")?1:0);
+      $("#IDTipoPlatillo").val(id);
+    }  
+
+    function ActulizarTipoPlatillo(){
+      debugger;
+        const nombre = $("#NameTipoPlatillo").val();
+        const Estado = ($("#EstadoTipoPlatillo").val()=== '1')?"Activo":"Inactivo";
+        const Id = $("#IDTipoPlatillo").val();
+        $.ajax({
+           url:'/ActualizarTipoPlatillo/',
+           type:'POST',
+           data:{
+             Nombre: nombre,
+             id:Id,
+             estado:Estado,
+             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+           },
+           success: function(response){
+            Swal.fire({
+              confirmButtonColor: '#ff6464',
+              title: '¡Tipo de platillo actualizado correctamente!',
+              icon: 'success'
+            }).then((resultado) => {
+              if (resultado.isConfirmed) {
+                location.reload();
+              }
+              else {
+                location.reload();
+              }
+            })
+
+             /*Se espera un segundo, y luego ejecuta lo que tiene dentro (reload) */
+            //  setTimeout(() => {
+            //    window.location.reload();
+            //  }, 1000);
+           }, 
+           error: function(error){
+            let ror = error;
+                alert("error " + error);
+           }
+        });
+    }
+    
+    function DarBajaImpresion(id)
+    {
+      aparecerCapa();
+      $("#IdTipoPlatilloBaja").val(id);
+    }
+
+    function DarBajaTipoPlatillo(){
+        const Id = $("#IdTipoPlatilloBaja").val();
+
+        $.ajax({
+           url:'/DarBajaTipoPlatillo/',
+           type:'POST',
+           data:{
+             id:Id,
+             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+           },
+           success: function(response){
+                Swal.fire({
+                  confirmButtonColor: '#ff6464',
+                  title: '¡Tipo de platillo dado de baja correctamente!',
+                  icon: 'success'
+             }).then((resultado) => {
+                  if (resultado.isConfirmed) {
+                    location.reload();
+                  }
+                  else {
+                    location.reload();
+                  }
+                })
+
+             /*Se espera un segundo, y luego ejecuta lo que tiene dentro (reload) */
+            //  setTimeout(() => {
+            //    window.location.reload();
+            //  }, 1000);
+           }, 
+           error: function(error){
+            let ror = error;
+                alert("error " + error);
+           }
+        });
+    }
+    
+    function Agregar_TipoPlatillo(){
+        const nombre = $("#NameTipoPlatilloAgregar").val();
+        const estado = $("#EstadoTipoPlatilloAgregar").val();
+        $.ajax({
+           url:'/AgregarTIpoPlatillo/',
+           type:'POST',
+           data:{
+             Nombre: nombre,
+             Estado: estado,
+             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+           },
+           success: function(response){
+                Swal.fire({
+                  confirmButtonColor: '#ff6464',
+               title: '¡Tipo de platillo agregado correctamente!',
+               icon: 'success'
+             }).then((resultado) => {
+                  if (resultado.isConfirmed) {
+                    location.reload();
+                  }
+                  else {
+                    location.reload();
+                  }
+                })
+
+             /*Se espera un segundo, y luego ejecuta lo que tiene dentro (reload) */
+            //  setTimeout(() => {
+            //    window.location.reload();
+            //  }, 1000);
+           }, 
+           error: function(error){
+            let ror = error;
+                alert("error " + error);
+           }
+        });
+    }
+
+  </script>
+{% endblock %}
