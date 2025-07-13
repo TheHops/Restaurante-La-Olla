@@ -1,0 +1,4 @@
+.deshabilitado {
+    pointer-events: none;
+    background-color: #f2f2f2; /* Opcional: Cambiar el color de fondo para indicar deshabilitado */
+}

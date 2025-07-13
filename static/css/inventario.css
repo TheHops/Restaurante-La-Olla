@@ -1,0 +1,252 @@
+#encabezado_inventario {
+    display: flex;
+    margin-bottom: 25px;
+    padding: 25px 40px 0px 40px;
+}
+
+/********************************************************************/
+/**************************** A G R E G A R ****************************/
+/********************************************************************/
+
+#agregar {
+    justify-self: flex-start;
+    width: 180px;
+    height: 40px;
+    color: white;
+    background: rgb(255, 100, 100);
+    border-color: rgb(255, 130, 150);
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+}
+
+#agregar:hover {
+    background: rgb(255, 120, 110);
+    border-color: rgb(255, 170, 120);
+}
+
+/* #agregar span {
+    width: 100%;
+    height: 100%;
+} */
+
+::placeholder {
+    color: rgb(230, 210, 210);
+}
+
+/********************************************************************/
+/***************************** B U S C A R *****************************/
+/********************************************************************/
+
+#buscar {
+    margin-left: 3%;
+    width: 30%;
+    height: 45px;
+    border-color: rgb(255, 100, 100);
+    border-radius: 10px;
+    padding-left: 15PX;
+    font-size: 25px;
+    color: rgb(180, 50, 50);
+    justify-self: flex-start;
+}
+
+#buscar:hover {
+    border-color: rgb(205, 50, 50);
+}
+
+#buscar:focus-visible {
+    outline-color: rgb(200, 100, 100);
+}
+
+/********************************************************************/
+/*********************** S E L E C C I O N A R ***************************/
+/********************************************************************/
+
+/* #listaInventario {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+} */
+
+/* Flechita del select */
+/* #listaInventario::-ms-expand {
+    display: none;
+    background-color: red;
+} */
+
+#listaInventario:hover {
+    background: rgb(255, 245, 245);
+    border-color: rgb(230, 100, 50) rgb(255, 150, 100) rgb(255, 150, 100) rgb(230, 100, 50);
+}
+
+#listaInventario {
+    width: 22%;
+    min-width: 155px;
+    height: 40px;
+    margin-left: 20px;
+    border-color: rgb(200, 50, 50) rgb(255, 100, 100) rgb(255, 100, 100) rgb(200, 50, 50);
+    border-radius: 10px;
+    padding-left: 15px;
+    font-size: 20px;
+    color: #821414;
+    outline-color: rgb(200, 100, 100);
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    cursor: pointer;
+}
+
+#cuerpoInventario {
+    overflow: auto;
+    padding: 20px 20px;
+    margin: 0 40px;
+    border-radius: 15px;
+    background-color: rgba(255, 245, 245, .8);
+    /* box-shadow: 2px 2px; */
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 15px;
+    height: 75vh;
+    z-index: -3;
+}
+
+.dataTables_scrollBody::-webkit-scrollbar {
+    width: 10px;
+    background: #ffffff;
+}
+
+.dataTables_scrollBody::-webkit-scrollbar-thumb {
+    background: rgba(255, 200, 200, 1);
+    border-radius: 10px;
+}
+
+a .paginate_button .current {
+    background-color: red;
+}
+
+/* .DataTables_wrapper {
+    height: 400px;
+} */
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    color: rgb(100, 100, 100) !important;
+    background: rgb(255, 255, 255);
+    border-color: rgb(100, 100, 100);
+    border-radius: 10px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    color: white !important;
+    background: rgb(100, 100, 100);
+    border-color: rgb(150, 150, 150);
+}
+
+/* Todos los botones */
+.actionButton {
+    width: 35px;
+    height: 35px;
+    display: inline-block;
+    margin: 0 3px;
+    cursor: pointer;
+    border-radius: 8px;
+    background: transparent;
+}
+
+.btnEditar:hover, .btnDetalles:hover{
+    background-color: rgb(255, 255, 200);
+}
+
+/* Campo de acciones */
+.actions {
+    display: flex;
+    justify-content: left;
+}
+
+/* -------------------------------------- */
+/* Detalle y Editar */
+.btnEditar, .btnDetalles {
+    border-color: #ffBA4A;
+}
+
+/* Eliminar */
+.btnEliminar {
+    border-color: #ff9696;
+}
+
+.btnEliminar:hover {
+    background-color: rgb(255, 230, 230);
+}
+/* -------------------------------------- */
+
+/*
+#FFBA4A
+*/
+
+/* E X P O R T A R */
+
+.exportar {
+    margin-left: 20px;
+}
+
+.exportar .pdf, .excel {
+    width: 50px;
+    height: 40px;
+    background: rgb(255, 255, 255);
+    border-color: rgb(230, 150, 150);
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+}
+
+.exportar .pdf:hover {
+    background: rgb(255, 240, 240);
+}
+
+.exportar .excel:hover {
+    background: rgb(255, 240, 240);
+}
+
+.exportarP {
+    margin-left: 20px;
+}
+
+.exportarP .pdf, .excel {
+    width: 50px;
+    height: 40px;
+    background: rgb(255, 255, 255);
+    border-color: rgb(230, 150, 150);
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+}
+
+.exportarP .pdf:hover {
+    background: rgb(255, 240, 240);
+}
+
+.exportarP .excel:hover {
+    background: rgb(255, 240, 240);
+}
+
+
+/**** MODAL****/
+
+/* .modal-backdrop + .show {
+    display: none;
+} */
+
+/* .modal-backdrop {
+    display: none;
+    z-index: 10;
+} */
+
+/* .modal-open .modal-backdrop{
+    z-index: 1;
+}
+
+.modal-dialog {
+    z-index: 100;
+} */
+
+/* .modal-content {
+    z-index: 10;
+} */
+ /* #AgregarInsumo {
+    z-index: 10;
+ } */

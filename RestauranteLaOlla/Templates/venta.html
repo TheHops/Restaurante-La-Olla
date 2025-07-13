@@ -1,0 +1,739 @@
+{% extends 'index.html' %}
+
+{% block content %}
+{% load static %}
+
+<form action="">
+    {% csrf_token %}
+</form>
+
+<div class="contenidoVenta">
+    <!-- <form action="">
+    {% csrf_token %} -->
+
+        <!-- Pagina 1 (Para seleccion de mesa y area) -->
+        <div id="pag1">
+
+            <!-- Encabezado del inventario -->
+            <div id="encabezadoVenta_pag1">
+                <a href="{% url 'OrdenesPendientes' %}">
+                    <button id="btnver_ordenes">
+                        <img src="{% static 'img/Order2.png' %}" style="width: 30px; height: 30px;" title="Ver ordenes"><span>Ver
+                            ordenes</span></img>
+                    </button>
+                </a>
+
+                {% if ordenesPendientes > 0 %}
+                    <span id="noti">{{ordenesPendientes}}</span>
+                {% endif %}
+
+                <!-- <div class="exportarV">
+                        <button class="excel">
+                            <img src="{% static 'img/Export_excel_2.png' %}" alt="Exportar en excel" title="Exportar en excel">
+                        </button>
+                        <button class="pdf">
+                            <img src="{% static 'img/Export_pdf_2.png' %}" alt="Exportar en pdf" title="Exportar en pdf">
+                        </button>
+                    </div>  -->
+            </div>
+
+            <!-- --------------------------------------------------------------- -->
+            <!-- --------------------------------------------------------------- -->
+
+            <div id="cuerpoVenta_pag1">
+                <fieldset>
+                    <legend>Elija el área de mesa</legend>
+
+                    <select name="" id="listaAreasDeMesa" onchange="filtrarMesas(this.value)">
+                        {% for areamesa in AreaMesa %}
+
+                            <option value="{{areamesa.id}}">{{areamesa.nombream}}</option>
+                        
+                        {% endfor %}
+                    
+                        <!-- <option value="">Salón</option>
+                        <option value="">Piscina</option>
+                        <option value="">Ranchito</option> -->
+                    
+                    </select>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Elija la mesa</legend>
+
+                    <div id="mesas">
+
+                        {% for mesa in Mesas %}
+                            <div class="grid_item">
+                                <input type="radio" name="mesa" id="mesa{{mesa.numeromesa}}" onchange="activarBoton()" value="{{mesa.id}}">
+                                <label for="mesa{{mesa.numeromesa}}">{{mesa.numeromesa}}</label>
+                            </div>
+                        {% endfor %}
+
+                        <!--  -->
+
+                        <!-- <div class="grid_item">
+                            <input type="radio" name="mesa" id="mesa2">
+                            <label for="mesa2">2</label>
+                        </div>
+                        <div class="grid_item">
+                            <input type="radio" name="mesa" id="mesa3">
+                            <label for="mesa3">3</label>
+                        </div>
+                        <div class="grid_item">
+                            <input type="radio" name="mesa" id="mesa4">
+                            <label for="mesa4">4</label>
+                        </div> -->
+
+                    </div>
+
+                </fieldset>
+
+                <button id="btn_siguiente" onclick="pagina2()" disabled>
+                    <img src="{% static 'img/Flecha-Derecha.png' %}" style="width: 25px; height: 25px;" alt="Siguiente">
+                    <span>Siguiente</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- --------------------------------------------------------------- -->
+        <!-- --------------------------------------------------------------- -->
+        <!-- --------------------------------------------------------------- -->
+
+        <!-- Pagina 2 (Se crean las ordenes) -->
+        <div id="pag2">
+            <!-- BOTONES REGRESAR Y BUSCAR -->
+
+            <div id="capaventas" onclick="cerrarCarrito()"></div>
+
+            <div id="acciones_pag2">
+                <button id="btn_volver" onclick="volver()">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Volver</span>
+                </button>
+            
+                <!-- Input de buscar -->
+                <input type="text" name="InputBuscarPlatillo" id="InputBuscarPlatillo" placeholder="Buscar platillo"
+                    onkeyup="filtrarPlatillos(this.value);">
+            
+                <button id="btn_abrirListaOrdenes" onclick="abrirCarrito()">
+                    <!-- <i class="fa-regular fa-square-list"></i> -->
+                    <!-- <i class="fa-solid fa-bars"></i> -->
+                    <!-- <i class="fa-regular fa-cart-shopping-fast"></i>                     -->
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </button>
+            
+                <span id="notiPlatillosOrden">1</span>
+            
+                <!-- <img src="{% static 'img/List2.png' %}" style="width: 20px; height: 20px;" title="Crear orden"></img> -->
+            </div>
+
+            <!-- Se muestran todos los platillos -->
+            <div class="VPlatillos">
+
+                <div id="PlatillosVenta">
+                    {% for platillo in Platillos %}
+                    
+                    <!-- Se muestra un platillo -->
+                    <div class="vplatillo" id="platillo{{platillo.id}}">
+                        <div class="datoPlatillo">
+                            {% if platillo.imagen_platillo != "" %}
+                                <img src="/media/{{ platillo.imagen_platillo }}" alt="Imagen de {{platillo.nombreplatillo}}">
+                            {% else %}
+                                <img src="{% static 'img/ProductoSinFoto.png' %}" alt="">
+                            {% endif %}
+                        </div>
+
+                        <div class="accionesPlatillo">
+                            <span class="nombrePlatillo">{{ platillo.nombreplatillo }}</span>
+                            <span class="precioPlatillo">C${{ platillo.precioplatillo }}</span>
+
+                            <fieldset>
+                                <legend>Cantidad</legend>
+                            
+                                <div class="cantidad">
+                            
+                                    <!-- Botones input para cantidad -->
+                                    <button id="less" onclick="cambio('{{platillo.id}}', 0)">-</button>
+                                    <input type="number" id="{{platillo.id}}" value="0" disabled>
+                                    <button id="plus" onclick="cambio('{{platillo.id}}', 1)">+</button>
+                            
+                                </div>
+                            </fieldset>
+                            
+                            <div class="botonesPlatillo">
+                                <button class="btninfoPlatillo">
+                                    <img src="{% static 'img/info2.png' %}" alt="" style="width: 15px; height: 15px; padding: 1px;">
+                                </button>
+                            
+                                <button class="btnaddCarrito" id="addcarrito{{platillo.id}}"
+                                    onclick='addCarrito("{{platillo.id}}", "{{platillo.nombreplatillo}}", "{{platillo.precioplatillo}}")' disabled>
+                                    <img src="{% static 'img/carrito.png' %}" alt="" style="width: 20px; height: 20px;">
+                                    <span style="transform: translateY(-5px);">Agregar</span>
+                                    </img>
+                                </button>
+                            </div>
+                        </div>
+                    </div> <!-- Cierre vplatillo -->
+                    
+                    {% endfor %}
+                </div>
+
+            </div> <!-- Cierre Vplatillos de página 2 -->
+
+            <!-- Inicio Ordenes -->
+            <div id="Ordenes">
+                <div class="separador"></div>
+
+                <!-- --------------------------- -->
+
+                <div class="encabezado_ordenes">
+                    <i class="fa-solid fa-angles-right fa-lg" id="iconoCerrarCarrito" onclick="cerrarCarrito()"></i>
+                    <span>Ordenes</span>
+                </div>
+
+                <!-- --------------------------- -->
+
+                <!-- animate__fadeIn -->
+
+                <div id="cuerpo_ordenes">
+
+                    <!-- La orden es cada detalle de las ordenes -->
+                    <!-- -------------------------- -->
+
+                    <!-- <div class="orden">
+                        <span>Deditos de pescado</span>
+            
+                        <div class="detalleorden">
+                            <span>Subtotal: C$450</span>
+                            <span style="margin-left: auto;">Cantidad: 1</span>
+                        </div>
+            
+                        <div class="botonQuitar">
+                            <button class="btnQuitar">Quitar</button>
+                        </div>
+                    </div> -->
+
+                </div>
+
+                <!-- --------------------------- -->
+
+                <div class="pie_ordenes">
+                    <div class="total">
+                        <span>Total: C$<span id="preciototal">0</span></span>
+                    </div>
+                    <div class="botonesOrden">
+
+                        <button id="btnAgregarOrden" onclick="agregarOrden()" disabled>
+                            <i class="fa-solid fa-clipboard-list"></i>
+                            <span>Agregar orden</span>
+                        </button>
+
+                        <button class="btnLimpiar" onclick="limpiarOrdenes()">
+                            <img src="{% static 'img/Limpiar.png' %}" style="width: 20px; height: 20px;"
+                                title="Limpiar orden">
+                            <span>Limpiar</span>
+                            </img>
+                        </button>
+                    </div>
+                </div> <!-- Cierre pie ordenes -->
+            </div> <!-- Cierre Ordenes -->
+
+
+        </div>
+    <!-- </form> -->
+</div>
+
+    <script src="//code.jquery.com/jquery.min.js"></script>
+    <script src="app/js/handleCounter.js"></script>
+
+    <script>
+        var x = document.getElementById("pag1");
+        var y = document.getElementById("pag2");
+
+        function pagina2() {
+            // Se eliminan las clases por si se habían añadido antes, todo es para tener un orden
+            x.classList.remove('animate__animated', 'animate__fadeInLeft');
+            y.classList.remove('animate__animated', 'animate__fadeOutRight');
+
+            /**************************************************************/
+
+            // Se establece la duración del objeto 'opciones'
+            x.style.setProperty('--animate-duration', '1s');
+            y.style.setProperty('--animate-duration', '1.5s');
+
+            /**************************************************************/
+
+            // Se asigna la clase de animación al objeto 'opciones'
+            x.classList.add('animate__animated', 'animate__fadeOutLeft');
+            y.classList.add('animate__animated', 'animate__fadeInRight');
+
+            // y.style.transition = "0s"
+            y.style.left = "0%";
+        }
+
+        function volver() {
+            // Se eliminan las clases por si se habían añadido antes, todo es para tener un orden
+            x.classList.remove('animate__animated', 'animate__fadeOutLeft');
+            y.classList.remove('animate__animated', 'animate__fadeInRight');
+
+            /**************************************************************/
+
+            // Se establece la duración del objeto 'opciones'
+            x.style.setProperty('--animate-duration', '1s');
+            y.style.setProperty('--animate-duration', '1.5s');
+
+            /**************************************************************/
+
+            // Se asigna la clase de animación al objeto 'opciones'
+            x.classList.add('animate__animated', 'animate__fadeInLeft');
+            y.classList.add('animate__animated', 'animate__fadeOutRight');
+
+            // y.style.transition = "1.5s"
+            // y.style.left = "100%";
+        }
+
+        // Arreglo para manejar las ordenes listadas por medio del ID
+        var ordenP = [];
+        var indice = 0;
+        var cantOrdenes = 0;
+
+        function addCarrito(id, nombre, precio) {
+            // console.log(id + " - " + nombre + " - " + precio);
+
+            // Se reinicia el indice
+            indice = 0;
+
+            // Se crea la variable global para verificar si una orden ya existe o no
+            let existeOrden = false;
+
+            // Se obtiene el contenedor de las órdenes
+            let contOrdenes = document.getElementById("cuerpo_ordenes");
+
+            // Se obtiene la cantidad
+            let cant = document.getElementById(id);
+
+            // Se calcula el subtotal
+            let subtotal = cant.value * parseInt(precio);
+
+            // Se recorre el arreglo para verificar si existe el platillo dentro de las órdenes
+            // ordenP.forEach(function(elemento){
+            //     if (id = elemento.id)
+            //     {
+            //         existeOrden = true;
+            //     }
+            // })
+
+            // Se recorre el arreglo para verificar si existe el platillo dentro de las órdenes
+            while (indice < ordenP.length) {
+                if (ordenP[indice].id == id) {
+                    existeOrden = true;
+                    break;
+                }
+
+                indice++;
+            }
+
+            // Se verifica si ya existe o no
+            if (existeOrden) {
+                console.log("ENTRÓ A LA FUNCION SI EXISTE");
+
+                // Se obtiene la orden
+                ordenExistente = document.getElementById("ordenP" + id);
+
+                ordenP[indice].subtotal += subtotal;
+                ordenP[indice].cantidad += parseInt(cant.value);
+
+                ordenExistente.innerHTML = "<span>" + nombre + "</span><div class='detalleorden'><span>Subtotal: C$" + ordenP[indice].subtotal + "</span><span style='margin-left: auto;''>Cantidad: " + ordenP[indice].cantidad + "</span></div ><div class='botonQuitar' onclick='quitarOrden(" + ordenP[indice].id + ", " + ordenP[indice].subtotal + ")'><button class='btnQuitar'>Quitar</button></div>";
+            }
+            else {
+                ordenP.push({
+                    "id": id,
+                    "subtotal": subtotal,
+                    "cantidad": parseInt(cant.value)
+                });
+
+                // Se imprime
+                // console.log(subtotal);
+
+                // Se habilita el botón de agregar orden
+                let btnAgregarOrden = document.getElementById('btnAgregarOrden');
+                btnAgregarOrden.disabled = false;
+
+                // Se crea el div
+                var tempDiv = document.createElement("div");
+
+                // Se le añade una clase
+                tempDiv.classList.add("orden", "animate__animated", "animate__fadeIn");
+
+                // Se asigna un id a la orden
+                tempDiv.id = "ordenP" + id;
+
+                tempDiv.innerHTML = "<span>" + nombre + "</span><div class='detalleorden'><span>Subtotal: C$" + subtotal + "</span><span style='margin-left: auto;''>Cantidad: " + cant.value + "</span></div ><div class='botonQuitar'><button class='btnQuitar' onclick='quitarOrden(" + id + ", " + subtotal + ")'>Quitar</button></div>";
+
+                contOrdenes.appendChild(tempDiv);
+
+                cantOrdenes += 1;
+
+                /* Se verifica si hay más de un platillo */
+
+               notiPlatillos();
+            }
+
+            // console.log(ordenP);
+
+            calcularTotal(1, subtotal)
+        }
+
+        function notiPlatillos ()
+        {
+             let noti = document.getElementById("notiPlatillosOrden");
+
+            let newWidth = window.innerWidth;
+
+            if (newWidth < 730)
+            {
+                if (cantOrdenes > 0) {
+                    noti.style.display = "inline-block";
+                    noti.textContent = cantOrdenes;
+                }
+                else {
+                    noti.style.display = "none";
+                }
+            }
+        }
+
+        var total = 0;
+
+        function calcularTotal(tipo, subtotal) {
+            let LabelTotal = document.getElementById("preciototal");
+
+            // console.log(LabelTotal);
+
+            if (tipo == 1) // Si es de tipo 1 entonces se está agregando
+            {
+                total += subtotal;
+
+                // console.log(total);
+
+                // console.log(parseInt(LabelTotal.value))
+
+                // Se va aumentando el valor del total sumandole el subtotal
+                LabelTotal.innerHTML = total;
+            }
+        }
+
+        /* SE LIMPIAN LAS ORDENES */
+
+        function limpiarOrdenes() {
+            let cuerpo_ordenes = document.getElementById("cuerpo_ordenes");
+            let LabelTotal = document.getElementById("preciototal");
+
+            ordenP.forEach(function (elemento) {
+                let ordenLimpiar = document.getElementById("ordenP" + elemento.id);
+
+                cuerpo_ordenes.removeChild(ordenLimpiar);
+            })
+
+            // Se habilita el botón de agregar orden
+            let btnAgregarOrden = document.getElementById('btnAgregarOrden');
+            btnAgregarOrden.disabled = true;
+
+            ordenP = [];
+            total = 0;
+            cantOrdenes = 0;
+
+            LabelTotal.innerHTML = total;
+
+            notiPlatillos();
+        }
+
+        function quitarOrden (idOrden, subtotalOrden){
+            console.log("ENTRÓ A FUNCION QUITAR ORDEN");
+
+            let cuerpo_ordenes = document.getElementById("cuerpo_ordenes");
+            let ordenQuitar = document.getElementById("ordenP" + idOrden);
+            let LabelTotal = document.getElementById("preciototal");
+
+            // Se quita la orden en la vista
+            cuerpo_ordenes.removeChild(ordenQuitar);
+
+            // Se reduce el valor del total
+            total -= subtotalOrden;
+            LabelTotal.innerHTML = total;
+
+            // Se identifica el elemento de referencia a esa orden dentro del arreglo
+            indice = 0;
+
+            while (indice < ordenP.length) {
+                if (ordenP[indice].id == idOrden) {
+                    // Una vez encontrada la orden procederemos a cerrar el ciclo
+                    break;
+                }
+
+                indice++;
+            }
+
+            // Y la eliminamos del arreglo
+            ordenP.splice(indice, 1);
+
+            // Se disminuye la cantidad de ordenes contadas
+            cantOrdenes -= 1;
+
+            if (cantOrdenes == 0)
+            {
+                // Se habilita el botón de agregar orden
+                let btnAgregarOrden = document.getElementById('btnAgregarOrden');
+                btnAgregarOrden.disabled = true;
+            }
+
+            console.log(ordenP);
+            console.log("Cantidad de ordenes: " + cantOrdenes);
+
+            notiPlatillos();
+        }
+
+        /* PLATILLOS FILTRADOS */
+        function filtrarPlatillos (cadena)
+        {
+            let request = new XMLHttpRequest();
+            // let data = new FormData();
+
+            // data.append('InputBuscarPlatillo', cadena);
+            request.open('GET', '/BuscarPlatillo?InputBuscarPlatillo=' + cadena);
+            request.send();
+            request.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    let contenedor = document.getElementById("PlatillosVenta");
+                    contenedor.innerHTML = this.responseText;
+
+                    console.log("SI ENTRÓ A LA FUNCIÓN ONREADY");
+                }
+            }
+        }
+
+        function filtrarMesas(cadena) {
+            let request = new XMLHttpRequest();
+            // let data = new FormData();
+
+            let boton = document.getElementById("btn_siguiente");
+            boton.disabled = true;
+
+            console.log(cadena);
+
+            // data.append('InputBuscarPlatillo', cadena);
+            request.open('GET', '/FiltrarMesas?listaAreasDeMesa=' + cadena);
+            request.send();
+            request.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    let contenedor = document.getElementById("mesas");
+                    contenedor.innerHTML = this.responseText;
+
+                    console.log("SI ENTRÓ A LA FUNCIÓN ONREADY")
+                }
+            }
+        }
+
+        function activarBoton (){
+            let boton = document.getElementById("btn_siguiente");
+            boton.disabled = false;
+        }
+
+        /**************************************************************/
+        /**************************************************************/
+        /********************* C R E A R  O R D E N************************/
+        /**************************************************************/
+        /**************************************************************/
+
+        function agregarOrden() {
+            Swal.fire({
+                title: '¿Realmente desea crear la orden?',
+                showCancelButton: true,
+                cancelButtonText: 'No',
+                confirmButtonText: 'Sí',
+                confirmButtonColor:  '#ff6464', //'#ff964e',
+                iconColor: '#ff964e'
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+
+                    // OrdenP contiene todas las ordenes guardadas en un arreglo
+                    console.log(ordenP);
+                    enviarDatos();
+
+                    Swal.fire({
+                        confirmButtonColor:  '#ff6464', //'#ff964e',
+                        title: '¡Orden creada correctamente!', 
+                        icon: 'success'
+                    }).then((resultado) => {
+                        if (resultado.isConfirmed)
+                        {
+                            location.reload();
+                        }
+                        else
+                        {
+                            location.reload();
+                        }
+                    })
+                }
+            })
+        }
+
+        // Funcion para mandar los datos al views
+        function enviarDatos ()
+        {
+            let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+            console.log(token);
+
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", "/CrearOrden", true);
+
+            // SE OBTIENEN LOS VALORES DE LAS MESAS
+            var mesas = document.getElementsByName("mesa");
+            var seleccionado;
+
+            // Se busca al elemento seleccionado y se obtiene el id de la mesa
+            for (var i = 0; i < mesas.length; i++) {
+                if (mesas[i].checked) {
+                    seleccionado = mesas[i].value;
+                    break;
+                }
+            }
+
+            // xhr.setRequestHeader('Content-Type', 'application/json');
+            // Abrir la conexión, y especificamos el método
+
+            let datos = new FormData(); // Es un formulario de JS para leer el codigo
+            datos.append("OrdenPlatillos", JSON.stringify(ordenP)); // Se envía el arreglo en formato JSON
+            datos.append("csrfmiddlewaretoken", token);
+            datos.append("mesa", seleccionado);
+            datos.append("total", total);
+
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    console.log("SI ENTRÓ A LA FUNCIÓN ONREADY (ENVIAR PLATILLOS)");
+                }
+            }
+
+            // let datos = {
+            //     'OrdenPlatillos' : JSON.stringify(ordenP),
+            //     'csrfmiddlewaretoken' : token[0].value
+            // }
+
+            // Se envían los datos
+            xhr.send(datos);
+
+            // $.ajax({
+            //     type: "POST",
+            //     url: "/CrearOrden",
+            //     data: {
+            //         'OrdenPlatillos': JSON.stringify(ordenP),
+            //         'csrfmiddlewaretoken':  JSON.stringify(token[0].value)
+            //     },
+            //     success: function (data) {
+            //         // manejo de la respuesta
+            //     },
+            //     dataType: 'json'
+            // });
+        }
+
+        /**/
+
+        
+
+        function abrirCarrito() {
+            /* Se obtiene el elemento con el id 'opciones' */
+            var carrito = document.getElementById("Ordenes");
+            var capa = document.getElementById("capaventas");
+
+            /*Hacemos aparecer la capa y las opciones*/
+            capa.style.display = "initial";
+            carrito.style.display = "initial";
+
+            // Se eliminan las clases por si se habían añadido antes, todo es para tener un orden
+            capa.classList.remove('animate__animated', 'animate__fadeOut');
+
+            // Se establece la duración de la animación
+            capa.style.setProperty('--animate-duration', '0.3s');
+
+            // Se asigna la clase de animación a la capa
+            capa.classList.add('animate__animated', 'animate__fadeIn');
+
+            /*******************************************************************************************/
+
+            // Lo mismo para el objeto ;opciones;
+            carrito.classList.remove('animate__animated', 'animate__fadeIn');
+            carrito.classList.remove('animate__animated', 'animate__fadeOutRight');
+            carrito.style.setProperty('--animate-duration', '0.5s');
+            carrito.classList.add('animate__animated', 'animate__fadeInRight');
+
+            /* Se mueve el objeto 300px a la derecha */
+            // opciones.style.transform = "translateX(0px)";
+        }
+
+        function cerrarCarrito() {
+            /* Se obtiene el elemento con el id 'opciones' */
+            var carrito = document.getElementById("Ordenes");
+            var capa = document.getElementById("capaventas");
+
+            // Se eliminan las clases por si se habían añadido antes, todo es para tener un orden
+            carrito.classList.remove('animate__animated', 'animate__fadeInRight');
+            carrito.classList.remove('animate__animated', 'animate__fadeIn');
+
+            // Se establece la duración del objeto 'opciones'
+            carrito.style.setProperty('--animate-duration', '0.5s');
+
+            // Se asigna la clase de animación al objeto 'opciones'
+            carrito.classList.add('animate__animated', 'animate__fadeOutRight');
+
+            /*******************************************************************************************/
+
+            // Lo mismo para la capa
+            capa.classList.remove('animate__animated', 'animate__fadeIn');
+            capa.style.setProperty('--animate-duration', '0.3s');
+            capa.classList.add('animate__animated', 'animate__fadeOut');
+
+            /* Se mueve el objeto 300px a la derecha */
+            // opciones.style.transform = "translateX(-305px)";
+
+            /*Hacemos aparecer la capa*/
+            setTimeout(() => {
+                capa.style.display = "none";
+            }, 500);
+        }
+
+        window.addEventListener('resize', function () {
+            let newWidth = window.innerWidth;
+
+            let carrito = document.getElementById("Ordenes");
+
+            let noti = document.getElementById("notiPlatillosOrden");
+             
+            if (newWidth >= 730)
+            {
+                cerrarCarrito();
+                Restablecer();
+                
+                noti.style.display = "none";
+            }
+            else if (newWidth < 730) {
+                carrito.style.display = "none";
+                notiPlatillos();
+            }
+        });
+
+        function Restablecer ()
+        {
+            carrito = document.getElementById("Ordenes");
+
+            carrito.style.display = "initial";
+
+            carrito.classList.remove('animate__animated', 'animate__fadeInRight');
+
+            carrito.classList.remove('animate__animated', 'animate__fadeOutRight');
+
+            carrito.classList.add('animate__animated', 'animate__fadeIn');
+        }
+    </script>
+
+    {% endblock %}

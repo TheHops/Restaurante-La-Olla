@@ -1,0 +1,584 @@
+{% extends 'index.html' %}
+
+{% block content %}
+{% load static %}
+
+<div id="encabezado_inventario">
+    <button id="agregar"  data-toggle="modal" data-target="#AgregarPersonal" onclick="aparecerCapa()">
+        <img src="{% static 'img/Add_user.png' %}" style="width: 30px; height: 30px; margin-right: 5px;" title="Añadir insumo"></img>Agregar personal
+    </button>
+
+    <!-- <select name="" id="listaInventario">
+        <option value="">Personal</option>
+        <option value="{% url 'cargo' %}">Cargos</option>
+    </select> -->
+
+    <!-- <input type="text" id="buscar" placeholder="Buscar"> -->
+
+    <!-- <div class="exportarP">
+        <button class="excel">
+            <img src="{% static 'img/Export_excel_2.png' %}" alt="Exportar en excel" title="Exportar en excel">
+        </button>
+        <button class="pdf">
+            <img src="{% static 'img/Export_pdf_2.png' %}" alt="Exportar en pdf" title="Exportar en pdf">
+        </button>
+    </div> -->
+</div>
+
+<div id="cuerpoInventario">
+
+    <!-- TABLA CON SU RESPECTIVO CONTENIDO -->
+    <table class="display tablaInventario" style="width:100%;">
+        <thead>
+            <!-- Columnas -->
+            <tr>
+                <th>Usuario</th>
+                <th>Nombres y apellidos</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Cargo</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <!-- Filas -->
+        <tbody>
+            {% for personal in Personal %}
+            <tr>
+                <td>{{personal.username}}</td>
+                <td>{{personal.nombres}} {{personal.apellidos}}</td>
+                <td>{{personal.email}}</td>
+                <td>
+                    {% if personal.telefonopers != "" %}
+                        <a href="https://wa.me/+505{{personal.telefonopers}}" target="_blank" style="color:black;">  {{personal.telefonopers}} </a>
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>{{personal.idcargo.nombrecargo}}</td>
+                {% if personal.activo == '1'%}
+                    <td>Activo</td>
+                {% else %}
+                    <td>Inactivo</td>
+                {%endif%}
+                <td class="actions">
+
+                    <button class="actionButton btnEditar" id="{{personal.id}}" data-toggle="modal"  data-target="#ModificarPersonal" 
+                    onclick="ImpresionPersonal('{{personal.username}}','{{personal.email}}','{{personal.telefonopers}}', '{{personal.idcargo.nombrecargo}}', '{{personal.id}}','{{personal.activo}}','{{personal.nombres}}','{{personal.apellidos}}')" >
+                        <a >
+                            <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
+                            <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar Personal">
+                        </a>
+                    </button>
+                    
+                    {%if personal.activo == '1'%}
+                    <button class="actionButton btnEliminar"  id="{{personal.id}}"  data-toggle="modal"  data-target="#DarBajaPersonal" onclick="PasoIDBaja('{{personal.id}}')">
+                        <a>
+                            <!-- <i class="fa-solid fa-trash-can fa-lg" style="color: #ff6969; padding: 5px 5px;"></i> -->
+                            <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Dar Baja Personal">
+                        </a>
+                    </button>
+                    {% endif%}
+                    <!-- <button class="actionButton btnDetalles">
+                            <a href="">
+                                <i class="fa-solid fa-info fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
+                    <!-- <img src="{% static 'img/info1.png' %}" alt="Más información">
+                            </a>
+                        </button> -->
+
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <!-- <tfoot>
+                <tr>
+                    <th>Insumo</th>
+                    <th>Presentación</th>
+                    <th>Stock</th>
+                    <th>Unidad de medida</th>
+                </tr>
+            </tfoot> -->
+    </table>
+</div>
+
+<div class="modal-overlay" onclick="desaparecerCapa()"></div>
+
+<div class="modal fade" id="AgregarPersonal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title " id="exampleModalLabel" >Agregar Personal</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="alert alert-info alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Recuerde!</strong> Campos con <span class="asterisco">*</span> son obligatorios.
+          </div>
+        <div class="modal-body">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 style="font-size: 20px;">Nombres<span class="asterisco">*</span></h4>
+                        <input type="text" class="form-control" id="Fullname" required>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 style="font-size: 20px;">Apellidos<span class="asterisco">*</span></h4>
+                        <input type="text" class="form-control" id="Apellidos" required>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 style="font-size: 20px;">Usuario<span class="asterisco">*</span></h4>
+                        <input type="text" class="form-control" id="User" required>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 style="font-size: 20px;">Contraseña<span class="asterisco">*</span></h4>
+                        <input type="Password" class="form-control" id="Pass" required>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 20px;">Correo</h4>
+                <input type="email" class="form-control" id="e-mail" required>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 style="font-size: 20px;">Telefono</h4>
+                        <input type="text"inputmode="numeric" class="form-control" maxlength="8" id="telefono" onkeypress="return soloNumeros(event)" required>
+               
+                    </div>
+                    <div class="col-md-6">
+                        <h4 style="font-size: 20px;">Cargo<span class="asterisco">*</span></h4>
+                        <select class="form-control" id="idCargo" required>
+                            {% for cargo in Cargos %}
+                            <option value="{{cargo.id}}">{{cargo.nombrecargo}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </form>
+               
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" onclick="Agregar_Personal();">Agregar</button>
+        </div>
+      </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="ModificarPersonal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title " id="exampleModalLabel" >Modificar Personal</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="desaparecerCapa();">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="alert alert-info alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Recuerde!</strong> Campos con <span class="asterisco">*</span> son obligatorios.
+          </div>
+        <div class="modal-body">
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 style="font-size: 20px;">Nombres<span class="asterisco">*</span></h4>
+                        <input type="text" class="form-control" id="NombreUsuarioMod" required>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 style="font-size: 20px;">Apellidos<span class="asterisco">*</span></h4>
+                        <input type="text" class="form-control" id="ApellidosUsuarioMod" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 style="font-size: 20px;">Usuario<span class="asterisco">*</span></h4>
+                        <input type="text" class="form-control" id="NameUsuario" required>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 style="font-size: 20px;">Correo</h4>
+                        <input type="email" class="form-control" id="CorreoUsuario"  required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 style="font-size: 20px;">Nueva Contraseña</h4>
+                        <input type="text" class="form-control" id="NewPassword"  required>  
+                    </div>
+                    <div class="col-md-6">
+                        <h4 style="font-size: 20px;">Verificar Contraseña</h4>
+                        <input type="password" class="form-control" id="CheckPassword"   required>        
+                    </div>
+                </div>
+               
+               
+                
+                
+                <h4 style="font-size: 20px;">Numero de Telefono</h4>
+                <input type="hidden" class="form-control" id="IdPersonal">
+                <input type="text"inputmode="numeric" class="form-control" maxlength="8" id="NumberUsuario" onkeypress="return soloNumeros(event)"  required>
+             
+                    <h4 style="font-size: 20px;">Cargo<span class="asterisco">*</span></h4>
+                    <select class="form-control" id="idCargoModificar" required>
+                        {% for cargo in Cargos %}
+                        <option value="{{cargo.id}}">{{cargo.nombrecargo}}</option>
+                        {% endfor %}
+                    </select>
+
+                    <h4 style="font-size: 20px;">Estado<span class="asterisco">*</span></h4>
+                    <select class="form-control" id="idEstadoModificar" required>
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+               
+            </form>
+               
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="desaparecerCapa();">Cancelar</button>
+          <button type="submit" class="btn btn-success" onclick="ModificarPersonal();">Actualizar</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade" id="DarBajaPersonal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title " id="exampleModalLabel" >¿Esta Seguro de Dar de Baja al Usuario?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+               
+               
+        <div class="modal-footer" style="display: flex; justify-content: center;">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" id="IdPersonalBaja">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="BajaPersonal();">Dar Baja</button>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+
+<script>
+$('.modal').on('hidden.bs.modal', function (e) {
+    // Verificar si el usuario cerró el modal haciendo clic fuera de él
+    if (e.target === this) {
+        // El usuario hizo clic fuera del modal
+        desaparecerCapa()
+    }
+});
+function ImpresionPersonal(usuario,correo,telefono,cargo,ID, estado, nombre,apellido){
+    aparecerCapa();
+     
+    $("#NameUsuario").val(usuario);
+    $("#CorreoUsuario").val(correo);
+    $("#NumberUsuario").val(telefono);
+    $("#IdPersonal").val(ID);
+    $("#NombreUsuarioMod").val(nombre);
+    $("#ApellidosUsuarioMod").val(apellido);
+   
+    switch(cargo){
+        case "Administrador":
+            $("#idCargo").val(1);
+            break;
+        case "Cajero":
+             $("#idCargo").val(2);
+            break
+        case "Desarrollador":
+            $("#idCargo").val(3);
+            break
+    }
+    $("#idEstadoModificar").val( (estado==='1')?1:0);
+}
+
+function Agregar_Personal(){
+    const fullname = $("#Fullname").val();
+    const LastName = $("#Apellidos").val();
+    const usuario = $("#User").val();
+    const pass = $("#Pass").val();
+    const correo = $("#e-mail").val();
+    const telefono = $("#telefono").val();
+    const cargo = $("#idCargo").val();
+
+    if (ValidacionCamposVacios(1)){
+        $.ajax({
+            url:'/AgregarPersonal/',
+            type:'POST',
+            data:{
+            Nombre: fullname,
+            Apellido:LastName,
+            User: usuario,
+            Pass: pass,
+            Correo: correo,
+            Telefono:telefono,
+            Cargo:cargo,
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(response){
+               
+                 
+                var message = response.message;
+               if (message === "1"){
+                Swal.fire({
+                    title: '¡Agregado!',
+                    text: 'Personal agregado correctamente',
+                    icon: 'success',
+                    timer: 1500
+                })
+               }else{
+                Swal.fire({
+                    title: 'Usuario Ocupado',
+                    text: 'Usuario ingresado ya esta en la Base de Datos del Sistema',
+                    icon: 'error',
+                    timer: 1500
+                })
+               }
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            }, 
+            error: function(error){
+            let ror = error;
+                alert("error " + error);
+            }
+        });
+
+    }
+}
+
+function ModificarPersonal(){
+    const usuario = $("#NameUsuario").val();
+    const correo = $("#CorreoUsuario").val();
+    const NewPassword = $("#NewPassword").val();
+    const CheckPassword = $("#CheckPassword").val();
+    const NumberUsuario = $("#NumberUsuario").val();
+    const cargo = $("#idCargoModificar").val();
+    const ID_personal = $("#IdPersonal").val();
+    const estado = $("#idEstadoModificar").val();
+    const NombreUsuario = $("#NombreUsuarioMod").val();
+    const ApellidoUsuario = $("#ApellidosUsuarioMod").val();
+
+    if (ValidacionCamposVacios(2)){
+        $.ajax({
+            url:'/ModificarPersonal/',
+            type:'POST',
+            data:{
+            User: usuario,
+            Correo: correo,
+            NewPass:NewPassword,
+            Telefono:NumberUsuario,
+            Cargo:cargo,
+            IDPersonal:ID_personal, // ID del personal a modificar
+            Estado:estado,
+            NameUsuario: NombreUsuario,
+            LastNameUsuario: ApellidoUsuario,
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success:function(response){
+                var message = response.message;
+                if (message === "1"){
+                    Swal.fire({
+                        title: 'Modificacion Exitosa',
+                        text: 'Personal Modificado correctamente',
+                        icon: 'success',
+                        timer: 1500
+                   })
+                   setTimeout(() => {
+                    window.location.reload();
+                    }, 1000);
+                }else if(message === '3'){
+                    Swal.fire({
+                        title: 'Modificacion Interrumpida',
+                        text: 'El usuario ingresado ya esta registrado en Base de Datos',
+                        icon: 'warning',
+                        timer: 1500
+                   })
+                }else{
+                    Swal.fire({
+                        title: 'Usuario Ocupado',
+                        text: 'Usuario ingresado ya esta en la Base de Datos del Sistema',
+                        icon: 'error',
+                        timer: 1500
+                    })
+                    //document.getElementById("NameUsuario").focus();
+                }
+                
+            }, error: function(error){
+                alert("error " + error);
+            }
+        });
+    }
+}
+
+function BajaPersonal(){
+    const Id_personal = $("#IdPersonalBaja").val();
+    $.ajax({
+        url:'/DarBajaPersonal/',
+        type:'POST',
+        data:{
+        ID: Id_personal,
+        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+        },
+        success:function(response){
+            Swal.fire({
+                title: 'Usuario Dado de Baja Exitosamente',
+                text: 'El Usuario fue dado de Baja correctamente',
+                icon: 'success',
+                timer: 1500
+           })
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+            
+        }, error: function(error){
+            alert("error " + error);
+        }
+    });
+}
+
+function ValidacionCamposVacios (banderaFormulario){
+   // validamos los paremetros que no deben estar vacios en el
+    var bandera = banderaFormulario
+    if (bandera === 1){ // validacion en agregacion personal
+        const fullname = $("#Fullname").val();
+        const LastName = $("#Apellidos").val();
+        const usuario = $("#User").val();
+        const pass = $("#Pass").val();
+
+        if (fullname === "" ){
+            Swal.fire({
+                title: 'Campo Nombres Vacio',
+                text: 'No debe dejar el Campo Nombres Vacio',
+                icon: 'warning',
+                timer: 1500
+            })
+            $("#Fullname").focus();
+            return false;
+        }else if(LastName === ""){
+            Swal.fire({
+                title: 'Campo Apellidos Vacio',
+                text: 'No debe dejar el Campo Apellidos Vacio',
+                icon: 'warning',
+                timer: 1500
+            })
+            return false;
+        }else if(usuario === ""){
+            Swal.fire({
+                title: 'Campo Usuario Vacio',
+                text: 'No debe dejar el Campo Usuario Vacio',
+                icon: 'warning',
+                timer: 1500
+            })
+            return false;
+        }else if(pass === ""){
+            Swal.fire({
+                title: 'Campo Contraseña Vacio',
+                text: 'No debe dejar el Campo Contraseña Vacio',
+                icon: 'warning',
+                timer: 1500
+            })
+            return false;
+        }
+    }else if(bandera === 2) { // validacion en modificacion personal
+        const usuario = $("#NameUsuario").val();
+        const NombreUsuario = $("#NombreUsuarioMod").val();
+        const ApellidoUsuario = $("#ApellidosUsuarioMod").val()
+        const NewPassword = $("#NewPassword").val();
+        const CheckPassword = $("#CheckPassword").val();
+         
+        if (usuario === ""){
+            Swal.fire({
+                title: 'Campo Usuario Vacio',
+                text: 'No debe dejar el Campo Usuario Vacio',
+                icon: 'warning',
+                timer: 1500
+            })
+            $("NameUsuario").focus();
+            return false;
+        }else if (NombreUsuario === ""){
+            Swal.fire({
+                title: 'Campo Nombre Vacio',
+                text: 'No debe dejar el Campo Nombre del Usuario Vacio',
+                icon: 'warning',
+                timer: 1500
+            })
+            return false;
+        }else if (ApellidoUsuario === ""){
+            Swal.fire({
+                title: 'Campo Apellido Vacio',
+                text: 'No debe dejar el Campo Apellido del Usuario Vacio',
+                icon: 'warning',
+                timer: 1500
+            })
+            return false;
+        }else if(CheckPassword != "" || NewPassword != ""){
+            if(CheckPassword != NewPassword){
+                Swal.fire({
+                    title: 'Incompatibilidad en Contraseñas',
+                    text: 'El campo de Confirmacion de Contraseñas no es compatible con la Nueva Contraseña',
+                    icon: 'warning',
+                    timer: 1500
+                })
+                return false;
+            }
+        }
+
+    }
+    return true;
+}
+
+function soloNumeros(event) {
+    var charCode = event.which ? event.which : event.keyCode;
+
+    // Permitir números del 0 al 9 y la tecla de retroceso
+    if ((charCode >= 48 && charCode <= 57) || charCode === 8) {
+      var numero = event.target.value;
+      
+      // Verificar que no se ingresen múltiples puntos decimales
+      if (charCode === 46 && numero.indexOf('.') !== -1) {
+        event.preventDefault();
+        return false;
+      }
+      
+      if (numero.length > 7) { // Modificado a 7 ya que el índice comienza en 0
+        event.preventDefault();
+        return false;
+      }
+      
+      return true;
+    } else {
+      event.preventDefault();
+      return false;
+    }
+    
+}
+
+function PasoIDBaja(id){
+     
+    aparecerCapa();
+    $("#IdPersonalBaja").val(id);
+}
+
+
+</script>
+
+{% endblock %}

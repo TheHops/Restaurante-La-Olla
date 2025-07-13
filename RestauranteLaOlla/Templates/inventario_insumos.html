@@ -1,0 +1,397 @@
+{% extends 'index.html' %}
+
+{% block content %}
+{% load static %}
+
+    <div id="encabezado_inventario">
+        <button id="agregar" data-toggle="modal" data-target="#AgregarInsumo" onclick="aparecerCapa()">
+            <img src="{% static 'img/icon_add_2.png' %}" style="width: 30px; height: 30px;" title="Añadir insumo"></img>
+        </button>
+
+        <!-- <input type="text" id="buscar" placeholder="Buscar"> -->
+
+        <select name="" id="listaInventario">
+            <!-- <option value="Insumos">Insumos</option> -->
+            <option value="{% url 'inventario_platillos' %}">Platillos</option>
+            <option value="{% url 'inventario_tipoplatillo' %}">Tipo de platillo</option>
+            <!-- <option value="{% url 'inventario_proveedores' %}">Proveedores</option> -->
+        </select>
+
+        <div class="exportar">
+            <button class="excel">
+                <a href="{% url 'ExportarInsumos'%}">
+                    <img src="{% static 'img/Export_excel_2.png' %}" alt="Exportar en excel" title="Exportar en excel">
+                </a>
+            </button>
+            <!-- <button class="pdf">
+                <img src="{% static 'img/Export_pdf_2.png' %}" alt="Exportar en pdf" title="Exportar en pdf">
+            </button> -->
+        </div>
+    </div>
+
+    <div id="cuerpoInventario">
+
+        <!-- TABLA CON SU RESPECTIVO CONTENIDO -->
+        <table class="display tablaInventario" style="width:100%;">
+            <thead>
+                <!-- Columnas -->
+                <tr>
+                    <th>Insumo</th>
+                    <th>Presentación</th>
+                    <th>Stock</th>
+                    <th>Unidad de medida</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <!-- Filas -->
+            <tbody>
+                {% for insumos in Insumos%}
+                <tr>
+                    <td>{{insumos.nombreinsumo}}</td>
+                    <td>{{insumos.presentacion}}</td>
+                    <td>{{insumos.stock}}</td>
+                    <td>{{insumos.idunidadmedida.nombreum}}</td>
+                    <td>{{insumos.activo}}</td>
+                    <td class="actions">
+
+                        <button class="actionButton btnEditar" data-toggle="modal" data-target="#exampleModal" onclick="Impresion('{{insumos.id}}', '{{insumos.nombreinsumo}}','{{insumos.presentacion}}','{{insumos.stock}}','{{insumos.idunidadmedida.nombreum}}','{{insumos.activo}}');" id=Editar{{insumos.id}} >
+                            <a>
+                                <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
+                                <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar insumo">
+                            </a>
+                        </button> 
+
+                        {% if insumos.activo == "activo" %}
+                            <button class="actionButton btnEliminar" data-toggle="modal" data-target="#DarBajaInsumo" onclick="DarBajaImpresion('{{insumos.id}}')" id=Eliminar{{insumos.id}}>
+                                <a >
+                                    <!-- <i class="fa-solid fa-trash-can fa-lg" style="color: #ff6969; padding: 5px 5px;"></i> -->
+                                    <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar insumo">
+                                </a>
+                            </button> 
+                        {% endif %}
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+          
+        </table>
+    </div>
+
+    <div class="modal-overlay" onclick="desaparecerCapa()"></div>
+    
+<!--MODAL-->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title " id="exampleModalLabel" >Modificar Insumo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form method="POST">
+                {% csrf_token %}
+                <h4 style="font-size: 20px;">Insumo</h4>
+                <input type="text" class="form-control" id="NameInsumo" required>
+                <h4 style="font-size: 20px;">Presentacion</h4>
+                <input type="text" class="form-control" id="PresentacionInsumo" required>
+                <h4 style="font-size: 20px;">Stock</h4>
+                <input type="Number" class="form-control" id="StockInsumo" required>
+                <h4 style="font-size: 20px;">Unidad de Medida</h4>
+                <select class="form-control" id="UnidadMedida">
+                        <option value ="1">LIBRA</option>
+                        <option value ="2">ONZA</option>
+                        <option value ="3">KILOGRAMO</option>
+                        <option value ="4">LITRO</option>
+                        <option value ="5">TONELADA</option>
+                        <option value ="6">GRAMO</option>
+                        <option value ="7">MILIGRAMO</option>
+                        <option value ="8">GALON</option>
+                        <option value ="9">MILILITRO</option>
+                        <option value ="10">UNIDAD</option>
+                  </select> 
+                  
+                <h4 style="font-size: 20px;">Estado del Insumo</h4>
+                <select class="form-control" id="EstadoInsumo">
+                    <option>activo</option>
+                    <option>inactivo</option>
+              </select>
+                  <input type="hidden" class="form-control" id="IdInsumo">
+            </form>
+               
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" onclick="ActualizarInsumo();">Actualizar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="DarBajaInsumo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title " id="exampleModalLabel" >¿Esta Seguro de Dar de Baja al Insumo?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+               
+               
+        <div class="modal-footer" style="display: flex; justify-content: center;">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" id="IdInsumoBaja">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" onclick="DarBajaInsumo();">Dar Baja</button>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade" id="AgregarInsumo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title " id="exampleModalLabel" >Agregar Insumo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form method="POST">
+                {% csrf_token %}
+                <h4 style="font-size: 20px;">Insumo</h4>
+                <input type="text" class="form-control" id="NameInsumoAgregar" required>
+                <h4 style="font-size: 20px;">Presentacion</h4>
+                <input type="text" class="form-control" id="PresentacionInsumoAgregar" required>
+                <h4 style="font-size: 20px;">Stock</h4>
+                <input type="Number" class="form-control" id="StockInsumoAgregar" required>
+                <h4 style="font-size: 20px;">Unidad de Medida</h4>
+                <select class="form-control" id="UnidadMedidaAgregar">
+                        <option value ="1">LIBRA</option>
+                        <option value ="2">ONZA</option>
+                        <option value ="3">KILOGRAMO</option>
+                        <option value ="4">LITRO</option>
+                        <option value ="5">TONELADA</option>
+                        <option value ="6">GRAMO</option>
+                        <option value ="7">MILIGRAMO</option>
+                        <option value ="8">GALON</option>
+                        <option value ="9">MILILITRO</option>
+                        <option value ="10">UNIDAD</option>
+                  </select> 
+                  
+                <h4 style="font-size: 20px;">Estado del Insumo</h4>
+                <select class="form-control" id="EstadoInsumoAgregar">
+                    <option>activo</option>
+                    <option>inactivo</option>
+              </select>
+            </form>
+               
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" onclick="AgregarInsumo();">Agregar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+    $('.modal').on('hidden.bs.modal', function (e) {
+            // Verificar si el usuario cerró el modal haciendo clic fuera de él
+            if (e.target === this) {
+                // El usuario hizo clic fuera del modal
+                desaparecerCapa()
+            }
+        });
+
+    /**********************************************************/
+
+    function Impresion(id,nombre, presentacion, stock, unidadmedida, estado){
+        aparecerCapa();
+
+       $("#NameInsumo").val(nombre);
+       $("#PresentacionInsumo").val(presentacion);
+       $("#StockInsumo").val(stock);
+       $("#EstadoInsumo").val(estado);
+       $("#IdInsumo").val(id);
+       switch(unidadmedida){
+            case "LIBRA":
+                $("#UnidadMedida").val(1);
+                break;
+            case "ONZA":
+                $("#UnidadMedida").val(2);
+                break;
+            case "KILOGRAMO":
+                $("#UnidadMedida").val(3);
+                break;
+            case "LITRO":
+                $("#UnidadMedida").val(4);
+                break;
+            case "TONELADA":
+                $("#UnidadMedida").val(5);
+                break;
+            case "GRAMO":
+                $("#UnidadMedida").val(6);
+                break;
+            case "MILIGRAMO":
+                $("#UnidadMedida").val(7);
+                break;
+            case "GALON":
+                $("#UnidadMedida").val(8);
+                break;
+            case "MILILITRO":
+                $("#UnidadMedida").val(9);
+                break;
+            default:
+                $("#UnidadMedida").val(10);
+                break;
+       }
+    } 
+
+
+    function ActualizarInsumo(){
+        const insumo = $("#NameInsumo").val();
+        const presentacion = $("#PresentacionInsumo").val();
+        const stock = $("#StockInsumo").val();
+        const Id = $("#IdInsumo").val();
+        const Estado = document.getElementById("EstadoInsumo").value;
+        const UnidadMedidaInsumo = document.getElementById("UnidadMedida").value;
+        $.ajax({
+            url:'/ActualizarInsumo/',
+            type:'POST',
+            data:{
+              insumoNombre: insumo,
+              insumoPresentacion: presentacion,
+              insumoStock: stock,
+              insumoUM: UnidadMedidaInsumo,
+              idInsumo:Id,
+              insumoestado:Estado,
+              csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(response){
+                  Swal.fire({
+                    confirmButtonColor: '#ff6464',
+                    title: '¡Insumo actualizado correctamente!',
+                    icon: 'success'
+                }).then((resultado) => {
+                    if (resultado.isConfirmed) {
+                        location.reload();
+                    }
+                    else {
+                        location.reload();
+                    }
+                })
+
+                /*Se espera un segundo, y luego ejecuta lo que tiene dentro (reload) */
+                // setTimeout(() => {
+                //     window.location.reload();
+                // }, 1000);
+            }, 
+            error: function(error){
+             let ror = error;
+                 alert("error " + error);
+            }
+         });
+    }
+
+    function DarBajaImpresion(id){
+        aparecerCapa();
+        $("#IdInsumoBaja").val(id);
+    }
+
+    function DarBajaInsumo(){
+        const Id = $("#IdInsumoBaja").val();
+
+        $.ajax({
+           url:'/DarBajaInsumo/',
+           type:'POST',
+           data:{
+             id:Id,
+             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+           },
+           success: function(response){
+                Swal.fire({
+                    confirmButtonColor: '#ff6464',
+                    title: '¡Insumo dado de baja correctamente!',
+                    icon: 'success'
+               }).then((resultado) => {
+                    if (resultado.isConfirmed) {
+                        location.reload();
+                    }
+                    else {
+                        location.reload();
+                    }
+                })
+
+               /*Se espera un segundo, y luego ejecuta lo que tiene dentro (reload) */
+           }, 
+           error: function(error){
+            let ror = error;
+                alert("error " + error);
+           }
+        });
+    }
+   
+    
+    function AgregarInsumo()
+    {
+        const insumo = $("#NameInsumoAgregar").val();
+        const presentacion = $("#PresentacionInsumoAgregar").val();
+        const stock = $("#StockInsumoAgregar").val();
+        const Estado = document.getElementById("EstadoInsumoAgregar").value;
+        const UnidadMedidaInsumo = document.getElementById("UnidadMedidaAgregar").value;
+
+
+        // alert(UnidadMedidaInsumo);
+        $.ajax({
+            url:'/AgregarInsumo/',
+            type:'POST',
+            data:{
+              insumoNombre: insumo,
+              insumoPresentacion: presentacion,
+              insumoStock: stock,
+              insumoUM: UnidadMedidaInsumo,
+              insumoestado:Estado,
+              csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(response){
+                 Swal.fire({
+                    confirmButtonColor: '#ff6464',
+                    title: '¡Insumo agregado correctamente!',
+                    icon: 'success',
+                }).then((resultado) => {
+                    if (resultado.isConfirmed) {
+                        location.reload();
+                    }
+                    else {
+                        location.reload();
+                    }
+                })
+
+                /*Se espera un segundo, y luego ejecuta lo que tiene dentro (reload) */
+                // setTimeout(() => {
+                //     window.location.reload();
+                // }, 1000);
+            }, 
+            error: function(error){
+             let ror = error;
+                 alert("error " + error);
+            }
+         });
+
+         // Seleccionar el elemento por la clase
+        // let elemento = document.querySelector('.modal-backdrop.fade.show');
+        // // Eliminar el elemento
+        // elemento.remove();
+    }
+
+</script>
+{% endblock %}
