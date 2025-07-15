@@ -143,15 +143,15 @@ class Orden(models.Model):
     
     IdMesa = models.ForeignKey(Mesa, models.DO_NOTHING, db_column='id_mesa')
     
-    Total = models.DecimalField(db_column='total')
+    Total = models.DecimalField(db_column='total', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     
-    Monto = models.DecimalField(db_column='monto', null=True, blank=True, default=0)
+    Monto = models.DecimalField(db_column='monto', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     
-    Cambio = models.DecimalField(db_column='cambio', null=True, blank=True, default=0)
+    Cambio = models.DecimalField(db_column='cambio', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     
-    Propina = models.DecimalField(db_column='propina', null=True, blank=True, default=0)
+    Propina = models.DecimalField(db_column='propina', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     
-    Descuento = models.DecimalField(db_column='descuento', null=True, blank=True, default=0)
+    Descuento = models.DecimalField(db_column='descuento', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     
     Fecha = models.DateTimeField(db_column='fecha', auto_now_add=True)
     
@@ -201,14 +201,13 @@ class Platillo(models.Model):
     
     Nombre = models.CharField(db_column='nombre', max_length=50)
     
-    Precio = models.DecimalField(db_column='precio')
+    Precio = models.DecimalField(db_column='precio', max_digits=8, decimal_places=2)
     
     Descripcion = models.CharField(db_column='descripcion', max_length=300, blank=True, null=True)
     
     # imagenplatillo = models.TextField(db_column='ImagenPlatillo', blank=True, null=True)
 
-    ImagenUrl = models.ImageField(
-        upload_to="platillos", default="platillos/ProductoSinFoto.png", null=True, blank=True, db_column='imagen_url')
+    ImagenUrl = models.ImageField(upload_to="platillos", default="platillos/ProductoSinFoto.png", null=True, blank=True, db_column='imagen_url')
 
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
@@ -223,7 +222,7 @@ class Platillo(models.Model):
 
 #endregion Platillo
 
-#region DetalleOrden (wip)
+#region DetalleOrden
 
 class DetalleOrden(models.Model):
     Id = models.AutoField(primary_key=True, db_column='id_detalle_orden')
@@ -236,9 +235,9 @@ class DetalleOrden(models.Model):
     
     Cantidad = models.IntegerField(db_column='cantidad')
     
-    PrecioVenta = models.DecimalField(db_column='precio_venta')
+    PrecioVenta = models.DecimalField(db_column='precio_venta', max_digits=8, decimal_places=2)
 
-    SubTotal = models.DecimalField(db_column='subtotal')
+    SubTotal = models.DecimalField(db_column='subtotal', max_digits=8, decimal_places=2)
 
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
@@ -251,4 +250,4 @@ class DetalleOrden(models.Model):
     def __str__(self):
         return f"ID = {self.Id} | ID Orden = {self.IdOrden} | ID platillo = {self.IdPlatillo}"
 
-#endregion DetalleOrden (wip)
+#endregion DetalleOrden
