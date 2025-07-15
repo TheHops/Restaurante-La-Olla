@@ -3,28 +3,28 @@ from django.contrib.auth.models import AbstractUser
 
 # class Personal(AbstractUser):
 #     id = models.AutoField(primary_key=True)
-#     # Field name made lowercase.
+#     
 #     idcargo = models.ForeignKey(Cargo, models.DO_NOTHING, default=3)
-#     # Field name made lowercase.
+#     
 #     nombreusuario = models.CharField(
 #         db_column='NombreUsuario', max_length=20, blank=True, null=True)
-#     # Field name made lowercase.
+#     
 #     nombres = models.CharField(db_column='Nombres', max_length=15, default="")
-#     # Field name made lowercase.
+#     
 #     apellidos = models.CharField(
 #         db_column='Apellidos', max_length=15, default="")
-#     # Field name made lowercase.
+#     
 #     direccionpers = models.CharField(
 #         db_column='DireccionPers', max_length=70, blank=True, null=True, default="")
-#     # Field name made lowercase.
+#     
 #     correopers = models.CharField(
 #         db_column='CorreoPers', max_length=70, default="")
-#     # Field name made lowercase.
+#     
 #     telefonopers = models.CharField(
 #         db_column='TelefonoPers', max_length=20, blank=True, null=True)
-#     # Field name made lowercase.
+#     
 #     # clave = models.CharField(db_column='Clave', max_length=20)
-#     # Field name made lowercase. This field type is a guess.
+#      This field type is a guess.
 #     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
 #     ESTADOS = [("1", "Activo"), ("0", "Inactivo")]
@@ -41,197 +41,214 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 
-#region AreaMesa
-
-class Areamesa(models.Model):
-    id = models.AutoField(primary_key=True)
-    # Field name made lowercase.
-    nombream = models.CharField(db_column='NombreAM', max_length=20)
-    # Field name made lowercase. This field type is a guess.
-    # activo = models.TextField(db_column='Activo', blank=True, null=True)
-
-    ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    activo = models.CharField(max_length=10, choices=ESTADOS, default="1")
-
-    class Meta:
-        db_table = 'areamesa'
-
-    def __str__(self):
-        return f"Area de mesa = {self.nombream} | ID = {self.id}"
-    
-#endregion AreaMesa
-
 #region Cargo
 
 class Cargo(models.Model):
-    id = models.AutoField(primary_key=True)
-    # Field name made lowercase.
-    nombrecargo = models.CharField(db_column='NombreCargo', max_length=20)
-    # Field name made lowercase. This field type is a guess.
+    Id = models.AutoField(primary_key=True, db_column='id_cargo')
+    
+    Nombre = models.CharField(db_column='nombre', max_length=20)
+
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    activo = models.CharField(max_length=10, choices=ESTADOS, default="1")
+    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
         db_table = 'cargo'
 
     def __str__(self):
-        return f"Cargo = {self.nombrecargo} | ID = {self.id}"
+        return f"ID = {self.Id} | Cargo = {self.Nombre}"
     
 #endregion Cargo
 
-#region DetalleOrden (wip)
+#region Usuario
 
-class DetalleOrden(models.Model):
-    id = models.AutoField(primary_key=True)
-    # Field name made lowercase.
-    idfactura = models.ForeignKey(
-        'Factura', models.DO_NOTHING)
-    # Field name made lowercase.
-    idplatillo = models.ForeignKey(
-        'Platillo', models.DO_NOTHING)
-    # Field name made lowercase.
-    cantidad = models.IntegerField(db_column='Cantidad')
-    # Field name made lowercase.
-    precioventa = models.DecimalField(
-        db_column='PrecioVenta', max_digits=6, decimal_places=2)
-    # Field name made lowercase. This field type is a guess.
+class Usuario(AbstractUser):
+    Id = models.AutoField(primary_key=True, db_column='id_usuario')
+
+    IdCargo = models.ForeignKey(Cargo, on_delete=models.PROTECT, default=3, verbose_name="Cargo", db_column='id_cargo')
+
+    Nombres = models.CharField(max_length=15, default="", db_column='nombres')
+    
+    Apellidos = models.CharField(max_length=15, default="", db_column='apellidos')
+    
+    Direccion = models.CharField(max_length=120, blank=True, null=True, default="", db_column='direccion')
+    
+    Telefono = models.CharField(max_length=20, blank=True, null=True, db_column='telefono')
+
+    ESTADOS = [("1", "Activo"), ("0", "Inactivo")]
+    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
+
+    class Meta:
+        db_table = 'usuario'
+
+    def __str__(self):
+        return f"ID = {self.Id} | UserName = {self.username} | Nombres = {self.Nombres}"
+
+#endregion Usuario
+
+#region AreaMesa
+
+class AreaMesa(models.Model):
+    Id = models.AutoField(primary_key=True, db_column='id_area_mesa')
+    
+    Nombre = models.CharField(db_column='nombre', max_length=20)
+
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    activo = models.CharField(max_length=10, choices=ESTADOS, default="1")
+    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
-        db_table = 'detallefactura'
+        db_table = 'area_mesa'
 
     def __str__(self):
-        return f"ID factura = {self.idfactura} | ID platillo = {self.idplatillo}"
-
-#endregion DetalleOrden (wip)
-
-#region Orden (wip)
-
-class Orden(models.Model):
-    id = models.AutoField(primary_key=True)
-    # Field name made lowercase.
-    idpersonal = models.ForeignKey(
-        'Personal', models.DO_NOTHING)
-    # Field name made lowercase.
-    idmetodopago = models.ForeignKey(
-        'Metodopago', models.DO_NOTHING, default=1)
-    # Field name made lowercase.
-    idmesa = models.ForeignKey('Mesa', models.DO_NOTHING)
-    # Field name made lowercase.
-    total = models.IntegerField(db_column='Total')
-    # Field name made lowercase.
-    monto = models.IntegerField(
-        db_column='Monto', null=True, blank=True, default=0)
-    # Field name made lowercase.
-    cambio = models.IntegerField(
-        db_column='Cambio', null=True, blank=True, default=0)
-    # Field name made lowercase.
-    fechaventa = models.DateTimeField(
-        db_column='FechaVenta', auto_now_add=True)
-    # Field name made lowercase. This field type is a guess.
-    # activo = models.TextField(db_column='Activo', blank=True, null=True)
-
-    ESTADO = [("1", "Pendiente"), ("0", "Facturado"), ("2", "Anulado")]
-    estado = models.CharField(max_length=10, choices=ESTADO, default="1")
-
-    ACTIVO = [("1", "Activo"), ("0", "Eliminado")]
-    activo = models.CharField(max_length=10, choices=ACTIVO, default="1")
-
-    propina = models.IntegerField(
-        db_column='Propina', null=True, blank=True, default=0)
-
-    class Meta:
-        db_table = 'factura'
-
-    def __str__(self):
-        return f"ID = {self.id} | Personal = {self.idpersonal.username} | Fecha de venta = {self.fechaventa} | Estado = {self.estado}"
-
-#endregion Orden
+        return f"ID = {self.Id} | Area de mesa = {self.Nombre}"
+    
+#endregion AreaMesa
 
 #region Mesa
 
 class Mesa(models.Model):
-    id = models.AutoField(primary_key=True)
-    # Field name made lowercase.
-    idareamesa = models.ForeignKey(
-        Areamesa, models.DO_NOTHING)
-    # Field name made lowercase.
-    numeromesa = models.IntegerField(db_column='NumeroMesa')
-    # Field name made lowercase.
-    capacidad = models.IntegerField(db_column='Capacidad')
-    # Field name made lowercase. This field type is a guess.
-    estado = models.TextField(db_column='Estado', blank=True, null=True)
-    # Field name made lowercase. This field type is a guess.
+    Id = models.AutoField(primary_key=True, db_column='id_mesa')
+    
+    IdAreaMesa = models.ForeignKey(AreaMesa, models.DO_NOTHING, db_column='id_area_mesa')
+    
+    Numero = models.IntegerField(db_column='numero')
+    
+    Capacidad = models.IntegerField(db_column='capacidad')
+
+    ESTADOSMESA = [("1", "Disponible"), ("0", "Ocupado")]
+    Estado = models.CharField(db_column='Estado', choices=ESTADOSMESA, blank=True, null=True, db_column='estado')
+
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    activo = models.CharField(max_length=10, choices=ESTADOS, default="1")
+    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
         db_table = 'mesa'
 
     def __str__(self):
-        return f"Mesa = {self.numeromesa} | Area de mesa = {self.idareamesa.nombream} | ID = {self.id}"
+        return f"ID = {self.Id} | Mesa = {self.Numero} | Area de mesa = {self.IdAreaMesa.Nombre} | Estado = {self.Estado}"
 
 #endregion Mesa
+
+#region Orden (wip)
+
+class Orden(models.Model):
+    Id = models.AutoField(primary_key=True)
+    
+    IdUsuario = models.ForeignKey(Usuario, models.DO_NOTHING, db_column='id_usuario')
+    
+    IdMesa = models.ForeignKey(Mesa, models.DO_NOTHING, db_column='id_mesa')
+    
+    Total = models.DecimalField(db_column='total')
+    
+    Monto = models.DecimalField(db_column='monto', null=True, blank=True, default=0)
+    
+    Cambio = models.DecimalField(db_column='cambio', null=True, blank=True, default=0)
+    
+    Propina = models.DecimalField(db_column='propina', null=True, blank=True, default=0)
+    
+    Descuento = models.DecimalField(db_column='descuento', null=True, blank=True, default=0)
+    
+    Fecha = models.DateTimeField(db_column='fecha', auto_now_add=True)
+    
+    METODOPAGO = [("1", "Efectivo"), ("2", "Tarjeta"), ("3", "Transferencia")]
+    MetodoPago = models.CharField(max_length=10, choices=METODOPAGO, default="1", db_column='metodo_pago')
+
+    ESTADO = [("1", "Pendiente"), ("2", "Preparado"), ("3", "Facturado"), ("4", "Anulado")]
+    Estado = models.CharField(max_length=10, choices=ESTADO, default="1", db_column='estado')
+
+    ACTIVO = [("1", "Activo"), ("0", "Eliminado")]
+    EsActivo = models.CharField(max_length=10, choices=ACTIVO, default="1", db_column='es_activo')
+    # activo = models.TextField(db_column='Activo', blank=True, null=True)
+
+    class Meta:
+        db_table = 'orden'
+
+    def __str__(self):
+        return f"ID = {self.Id} | Usuario = {self.IdUsuario.username} | Fecha = {self.Fecha} | Estado = {self.Estado} | Mesa = {self.IdMesa.Numero} | Area = {self.IdMesa.IdAreaMesa.Nombre}"
+
+#endregion Orden
+
+#region TipoPlatillo
+
+class Tipoplatillo(models.Model):
+    Id = models.AutoField(primary_key=True, db_column='id_tipo_platillo')
+    
+    Nombre = models.CharField(db_column='nombre')
+    # activo = models.TextField(db_column='Activo', blank=True, null=True)
+
+    ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
+    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
+
+    class Meta:
+        db_table = 'tipo_platillo'
+
+    def __str__(self):
+        return f"ID = {self.Id} | Tipo de platillo = {self.Nombre} | Activo = {self.EsActivo}"
+
+#endregion TipoPlatillo
 
 #region Platillo
 
 class Platillo(models.Model):
-    id = models.AutoField(primary_key=True)
-    # Field name made lowercase.
-    idtipoplatillo = models.ForeignKey(
-        'Tipoplatillo', models.DO_NOTHING)
-    # Field name made lowercase.
-    nombreplatillo = models.CharField(
-        db_column='NombrePlatillo', max_length=50)
-    # Field name made lowercase.
-    precioplatillo = models.DecimalField(
-        db_column='PrecioPlatillo', max_digits=7, decimal_places=2)
-    # Field name made lowercase.
-    descripcionplatillo = models.CharField(
-        db_column='DescripcionPlatillo', max_length=150, blank=True, null=True)
-    # Field name made lowercase.
+    Id = models.AutoField(primary_key=True, db_column='id_platillo')
+    
+    IdTipoPlatillo = models.ForeignKey(Tipoplatillo, models.DO_NOTHING, db_column='id_tipo_platillo')
+    
+    Nombre = models.CharField(db_column='nombre', max_length=50)
+    
+    Precio = models.DecimalField(db_column='precio')
+    
+    Descripcion = models.CharField(db_column='descripcion', max_length=300, blank=True, null=True)
+    
     # imagenplatillo = models.TextField(db_column='ImagenPlatillo', blank=True, null=True)
 
-    imagen_platillo = models.ImageField(
-        upload_to="platillos", default="platillos/ProductoSinFoto.png", null=True, blank=True)
+    ImagenUrl = models.ImageField(
+        upload_to="platillos", default="platillos/ProductoSinFoto.png", null=True, blank=True, db_column='imagen_url')
 
-    # Field name made lowercase. This field type is a guess.
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    activo = models.CharField(max_length=10, choices=ESTADOS, default="1")
+    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
         db_table = 'platillo'
 
     def __str__(self):
-        return f"ID = {self.id} | Platillo = {self.nombreplatillo} | Tipo de platillo = {self.idtipoplatillo.nombretp}"
+        return f"ID = {self.Id} | Platillo = {self.Nombre} | Tipo de platillo = {self.IdTipoPlatillo.Nombre}"
 
 #endregion Platillo
 
-#region TipoPlatillo
+#region DetalleOrden (wip)
 
-class Tipoplatillo(models.Model):
-    id = models.AutoField(primary_key=True)
-    # Field name made lowercase.
-    nombretp = models.CharField(db_column='NombreTP', max_length=15)
-    # Field name made lowercase. This field type is a guess.
+class DetalleOrden(models.Model):
+    Id = models.AutoField(primary_key=True, db_column='id_detalle_orden')
+    
+    IdOrden = models.ForeignKey(
+        Orden, models.DO_NOTHING, db_column='id_orden')
+    
+    IdPlatillo = models.ForeignKey(
+        Platillo, models.DO_NOTHING, db_column='id_platillo')
+    
+    Cantidad = models.IntegerField(db_column='cantidad')
+    
+    PrecioVenta = models.DecimalField(db_column='precio_venta')
+
+    SubTotal = models.DecimalField(db_column='subtotal')
+
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    activo = models.CharField(max_length=10, choices=ESTADOS, default="1")
+    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
-        db_table = 'tipoplatillo'
+        db_table = 'detalle_orden'
 
     def __str__(self):
-        return f"Tipo de platillo = {self.nombretp} | ID = {self.id} | activo = {self.activo}"
+        return f"ID = {self.Id} | ID Orden = {self.IdOrden} | ID platillo = {self.IdPlatillo}"
 
-#endregion TipoPlatillo
+#endregion DetalleOrden (wip)
