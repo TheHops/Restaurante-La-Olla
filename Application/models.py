@@ -66,7 +66,7 @@ class Cargo(models.Model):
 class Usuario(AbstractUser):
     Id = models.AutoField(primary_key=True, db_column='id_usuario')
 
-    IdCargo = models.ForeignKey(Cargo, on_delete=models.PROTECT, default=3, verbose_name="Cargo", db_column='id_cargo')
+    IdCargo = models.ForeignKey(Cargo, on_delete=models.SET_NULL, null=True, verbose_name="Cargo", db_column='id_cargo')
 
     Nombres = models.CharField(max_length=15, default="", db_column='nombres')
     
@@ -119,7 +119,7 @@ class Mesa(models.Model):
     Capacidad = models.IntegerField(db_column='capacidad')
 
     ESTADOSMESA = [("1", "Disponible"), ("0", "Ocupado")]
-    Estado = models.CharField(db_column='Estado', choices=ESTADOSMESA, blank=True, null=True, db_column='estado')
+    Estado = models.CharField(max_length=15, choices=ESTADOSMESA, blank=True, null=True, db_column='estado')
 
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
@@ -178,7 +178,7 @@ class Orden(models.Model):
 class Tipoplatillo(models.Model):
     Id = models.AutoField(primary_key=True, db_column='id_tipo_platillo')
     
-    Nombre = models.CharField(db_column='nombre')
+    Nombre = models.CharField(max_length=70, db_column='nombre')
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
