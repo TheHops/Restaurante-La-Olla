@@ -1,19 +1,16 @@
-{% extends 'index.html' %}
-
-{% block content %}
-{% load static %}
+{% extends 'index.html' %} {% block content %} {% load static %}
 <style>
-    #myChart {
-      margin-top: 7vh;
-      width: 100%;
-      height: 60vh;
-    }
-    #pieChart {
-      margin-top: 7vh;
-      width: 100%;
-      height: 60vh;
-    }
-    #modal-overlay-ini {
+  #myChart {
+    margin-top: 7vh;
+    width: 100%;
+    height: 60vh;
+  }
+  #pieChart {
+    margin-top: 7vh;
+    width: 100%;
+    height: 60vh;
+  }
+  #modal-overlay-ini {
     position: fixed;
     top: 0;
     left: 0;
@@ -24,8 +21,8 @@
     z-index: 900;
     display: none;
     transform: translateY(-10vh);
-}
-  </style>
+  }
+</style>
 
 <div id="modal-overlay-ini" onclick="desaparecerCapa()"></div>
 
@@ -36,146 +33,202 @@
     </button>
   </div> -->
   <div class="container-fluid">
-    <div class= "row">
-
-      <div class="col-sm-8" style="    display: flex;
-      flex-direction: column;
-      flex-wrap: wrap;
-      align-content: space-around;
-      justify-content: flex-start;">
+    <div class="row">
+      <div
+        class="col-sm-8"
+        style="
+          display: flex;
+          flex-direction: column;
+          flex-wrap: wrap;
+          align-content: space-around;
+          justify-content: flex-start;
+        "
+      >
         <canvas id="myChart"></canvas>
       </div>
-      <div class="col-sm-4" style="    display: flex;
-      flex-direction: column;
-      flex-wrap: wrap;
-      align-content: space-around;
-      justify-content: flex-start;">
+      <div
+        class="col-sm-4"
+        style="
+          display: flex;
+          flex-direction: column;
+          flex-wrap: wrap;
+          align-content: space-around;
+          justify-content: flex-start;
+        "
+      >
         <canvas id="pieChart"></canvas>
       </div>
     </div>
   </div>
- 
-    <script>
-        $(document).ready(function() {
-          $.ajax({
-            url: "{% url 'GraficaFacturas' %}",
-            dataType: 'json',
-            success: function(data) {
-              console.log(data);
-              Chart.defaults.locale = 'es';
-              var ctx = document.getElementById('myChart').getContext('2d');
-              var gradient = ctx.createLinearGradient(0,0,0,400);
-              gradient.addColorStop(0, "rgba(184,109,62,1)");
-              gradient.addColorStop(1, "rgba(254,218,162, 0.3)");
 
+  <script>
+    $(document).ready(function () {
+      $.ajax({
+        url: "{% url 'GraficaOrdenes' %}",
+        dataType: "json",
+        success: function (data) {
+          console.log(data);
+          Chart.defaults.locale = "es";
+          var ctx = document.getElementById("myChart").getContext("2d");
+          var gradient = ctx.createLinearGradient(0, 0, 0, 400);
+          gradient.addColorStop(0, "rgba(184,109,62,1)");
+          gradient.addColorStop(1, "rgba(254,218,162, 0.3)");
 
-              var myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                  labels: ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'],
-                  datasets: [{
-                    label: 'Facturas por día de la semana',
-                    data: data.num_facturas,
-                    fill: true,
-                    backgroundColor: gradient,
-                    borderColor: "#fff",
-                    pointBackgroundColor: "“#fff",
-                  }]
+          var myChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+              labels: [
+                "Lunes",
+                "Martes",
+                "Miércoles",
+                "Jueves",
+                "Viernes",
+                "Sábado",
+                "Domingo",
+              ],
+              datasets: [
+                {
+                  label: "Facturas por día de la semana",
+                  data: data.num_facturas,
+                  fill: true,
+                  backgroundColor: gradient,
+                  borderColor: "#fff",
+                  pointBackgroundColor: "“#fff",
                 },
-                options: {
-                    responsive:true,
-                  scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                            if (Number.isInteger(value)) {
-                                return value;
-                            }
-                            return '';
-                            }
-                        }
-                    }
-                  }
-                }
-              });
-
-               // Gráfico de pastel para los 5 platillos más vendidos
-              var pieCtx = document.getElementById('pieChart').getContext('2d');
-              var pieChart = new Chart(pieCtx, {
-                type: 'pie',
-                data: {
-                  labels: data.platillos_nombres,
-                  datasets: [{
-                    data: data.num_ventas_platillos,
-                    backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"],
-                    hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"]
-                  }]
+              ],
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    callback: function (value) {
+                      if (Number.isInteger(value)) {
+                        return value;
+                      }
+                      return "";
+                    },
+                  },
                 },
-                options: {
-                  responsive: true
-                }
-              });
-            }
+              },
+            },
           });
-        });
-      
-        function aparecerCapa() {
-            var capa = document.querySelector("#modal-overlay-ini");
 
-            /*Hacemos aparecer la capa y las opciones*/
-            capa.style.display = "initial";
+          // Gráfico de pastel para los 5 platillos más vendidos
+          var pieCtx = document.getElementById("pieChart").getContext("2d");
+          var pieChart = new Chart(pieCtx, {
+            type: "pie",
+            data: {
+              labels: data.platillos_nombres,
+              datasets: [
+                {
+                  data: data.num_ventas_platillos,
+                  backgroundColor: [
+                    "#FF6384",
+                    "#36A2EB",
+                    "#FFCE56",
+                    "#4BC0C0",
+                    "#9966FF",
+                  ],
+                  hoverBackgroundColor: [
+                    "#FF6384",
+                    "#36A2EB",
+                    "#FFCE56",
+                    "#4BC0C0",
+                    "#9966FF",
+                  ],
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+            },
+          });
+        },
+      });
+    });
 
-            capa.classList.remove('animate__animated', 'animate__fadeOut');
+    function aparecerCapa() {
+      var capa = document.querySelector("#modal-overlay-ini");
 
-            // Se establece la duración de la animación
-            capa.style.setProperty('--animate-duration', '0.3s');
+      /*Hacemos aparecer la capa y las opciones*/
+      capa.style.display = "initial";
 
-            // Se asigna la clase de animación a la capa
-            capa.classList.add('animate__animated', 'animate__fadeIn');
-          }
+      capa.classList.remove("animate__animated", "animate__fadeOut");
 
-          function desaparecerCapa() {
-            var capa = document.querySelector("#modal-overlay-ini");
+      // Se establece la duración de la animación
+      capa.style.setProperty("--animate-duration", "0.3s");
 
-            // Lo mismo para la capa
-            capa.classList.remove('animate__animated', 'animate__fadeIn');
-            capa.style.setProperty('--animate-duration', '0.3s');
-            capa.classList.add('animate__animated', 'animate__fadeOut');
+      // Se asigna la clase de animación a la capa
+      capa.classList.add("animate__animated", "animate__fadeIn");
+    }
 
-            /*Hacemos aparecer la capa*/
-            setTimeout(() => {
-              capa.style.display = "none";
-            }, 300);
-          }
-      </script>
+    function desaparecerCapa() {
+      var capa = document.querySelector("#modal-overlay-ini");
 
+      // Lo mismo para la capa
+      capa.classList.remove("animate__animated", "animate__fadeIn");
+      capa.style.setProperty("--animate-duration", "0.3s");
+      capa.classList.add("animate__animated", "animate__fadeOut");
+
+      /*Hacemos aparecer la capa*/
+      setTimeout(() => {
+        capa.style.display = "none";
+      }, 300);
+    }
+  </script>
 </body>
 
-<div class="modal fade" id="RealizarCierre" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-  aria-hidden="true">
+<div
+  class="modal fade"
+  id="RealizarCierre"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title " id="exampleModalLabel">Realizar cierre</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="desaparecerCapa();">
+        <h5 class="modal-title" id="exampleModalLabel">Realizar cierre</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+          onclick="desaparecerCapa();"
+        >
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <form method="POST">
           {% csrf_token %}
-          <h4 style="font-size: 20px;">Platillo<span class="asterisco">*</span></h4>
-          <input type="text" class="form-control" id="NombrePlatilloAgregar" required>
+          <h4 style="font-size: 20px">
+            Platillo<span class="asterisco">*</span>
+          </h4>
+          <input
+            type="text"
+            class="form-control"
+            id="NombrePlatilloAgregar"
+            required
+          />
 
           <div class="row">
-        
             <div class="col-md-6">
-              <h4 style="font-size: 20px;">Precio del Platillo<span class="asterisco">*</span></h4>
-              <input type="number" class="form-control" id="PrecioPlatilloAgregar" required>
+              <h4 style="font-size: 20px">
+                Precio del Platillo<span class="asterisco">*</span>
+              </h4>
+              <input
+                type="number"
+                class="form-control"
+                id="PrecioPlatilloAgregar"
+                required
+              />
             </div>
             <div class="col-md-6">
-              <h4 style="font-size: 20px;">Estado Platillo</h4>
+              <h4 style="font-size: 20px">Estado Platillo</h4>
 
               <select class="form-control" id="EstadoPlatilloAgregar">
                 <option value="1">activo</option>
@@ -184,20 +237,28 @@
             </div>
 
             <div class="col-md-12">
-              <h4 style="font-size: 20px;">Descripcion del Platillo</h4>
-              <input type="text" class="form-control" id="DescripcionPlatilloAgregar">
-
+              <h4 style="font-size: 20px">Descripcion del Platillo</h4>
+              <input
+                type="text"
+                class="form-control"
+                id="DescripcionPlatilloAgregar"
+              />
             </div>
           </div>
-
-
         </form>
-
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal"
-          onclick="desaparecerCapa();">Cancelar</button>
-        <button type="button" class="btn btn-dark" onclick="AgregarPlatillo();">Agregar</button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+          onclick="desaparecerCapa();"
+        >
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-dark" onclick="AgregarPlatillo();">
+          Agregar
+        </button>
       </div>
     </div>
   </div>
