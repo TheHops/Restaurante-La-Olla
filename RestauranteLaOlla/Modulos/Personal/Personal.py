@@ -1,21 +1,16 @@
-
-
-
 #region Personal
-
 
 import json
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from Application.models import Cargo, Personal
-
+from Application.models import Cargo, Usuario
 
 def personal(request):
     if request.user.is_authenticated:
         try:
-            personal = Personal.objects.all()
-            cargos = Cargo.objects.filter(activo=1)
+            personal = Usuario.objects.all()
+            cargos = Cargo.objects.filter(EsActivo="Activo")
 
             return render(request, "personal.html", {'Personal': personal, 'Cargos': cargos})
         except Exception as ex:
@@ -52,10 +47,10 @@ def AgregarPersonal(request):
                 cargo = request.POST.get("Cargo")
                 tipoCargo = Cargo.objects.get(id=cargo)
 
-                nombreUsuario = Personal.objects.filter(nombreusuario = usuario)
+                nombreUsuario = Usuario.objects.filter(nombreusuario = usuario)
                 if not nombreUsuario:
 
-                    personal = Personal.objects.create_user(
+                    personal = Usuario.objects.create_user(
                         nombres=Nombre,
                         apellidos=Apellido,
                         username=usuario,
@@ -96,15 +91,15 @@ def ModificarPersonal(request):
             if request.method == "POST":
                 Usuario = request.POST.get("User")
                 ID = request.POST.get("IDPersonal")
-                personal = Personal.objects.get(id=ID)
+                personal = Usuario.objects.get(id=ID)
 
                 if Usuario == personal.nombreusuario:
                     if personal.activo == 0:
-                        nombreUsuario = Personal.objects.filter(nombreusuario=Usuario).exclude(activo='Inactivo').exists()
+                        nombreUsuario = Usuario.objects.filter(nombreusuario=Usuario).exclude(activo='Inactivo').exists()
                     else:
                         nombreUsuario = False
                 else:
-                    nombreUsuario = Personal.objects.filter(nombreusuario=Usuario).exclude(activo='Inactivo').exists()
+                    nombreUsuario = Usuario.objects.filter(nombreusuario=Usuario).exclude(activo='Inactivo').exists()
 
                 if not nombreUsuario:
                     Email = request.POST.get("Correo")
@@ -132,7 +127,7 @@ def ModificarPersonal(request):
                     if Password:
                         personal.set_password(Password)
 
-                    if Usuario != personal.nombreusuario and Personal.objects.filter(nombreusuario=Usuario).exists():
+                    if Usuario != personal.nombreusuario and Usuario.objects.filter(nombreusuario=Usuario).exists():
                         response_data = {'message': '0'}  # nombreUsuario ya existe en otro registro
                     else:
                         personal.save()
@@ -156,7 +151,7 @@ def DarBajaPersonal(request):
         try:
             if request.method == "POST":
                 id = request.POST.get("ID")
-                personal = Personal.objects.get(id=id)
+                personal = Usuario.objects.get(id=id)
                 personal.activo = "Inactivo"
                 personal.save()
                 return HttpResponse("")
@@ -169,4 +164,4 @@ def DarBajaPersonal(request):
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
-#endregion
+#endregion CRUD PERSONAL

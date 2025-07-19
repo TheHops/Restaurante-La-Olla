@@ -1,44 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-# class Personal(AbstractUser):
-#     id = models.AutoField(primary_key=True)
-#     
-#     idcargo = models.ForeignKey(Cargo, models.DO_NOTHING, default=3)
-#     
-#     nombreusuario = models.CharField(
-#         db_column='NombreUsuario', max_length=20, blank=True, null=True)
-#     
-#     nombres = models.CharField(db_column='Nombres', max_length=15, default="")
-#     
-#     apellidos = models.CharField(
-#         db_column='Apellidos', max_length=15, default="")
-#     
-#     direccionpers = models.CharField(
-#         db_column='DireccionPers', max_length=70, blank=True, null=True, default="")
-#     
-#     correopers = models.CharField(
-#         db_column='CorreoPers', max_length=70, default="")
-#     
-#     telefonopers = models.CharField(
-#         db_column='TelefonoPers', max_length=20, blank=True, null=True)
-#     
-#     # clave = models.CharField(db_column='Clave', max_length=20)
-#      This field type is a guess.
-#     # activo = models.TextField(db_column='Activo', blank=True, null=True)
-
-#     ESTADOS = [("1", "Activo"), ("0", "Inactivo")]
-#     activo = models.CharField(max_length=10, choices=ESTADOS, default="1")
-
-#     # def __str__(self):
-#     #     return f"ID = {self.id} | Usuario = {self.nombreusuario} | Existe = {self.existe}"
-
-#     class Meta:
-#         db_table = 'personal'
-
-#     def __str__(self):
-#         return f"Nombre de usuario = {self.username} | Cargo = {self.idcargo.nombrecargo} | Correo = {self.email}"
-
 # Create your models here.
 
 #region Cargo
@@ -83,7 +45,7 @@ class Usuario(AbstractUser):
         db_table = 'usuario'
 
     def __str__(self):
-        return f"ID = {self.Id} | UserName = {self.username} | Nombres = {self.Nombres}"
+        return f"ID = {self.Id} | UserName = {self.username} | Nombres = {self.Nombres} | EsActivo = {self.EsActivo}"
 
 #endregion Usuario
 
@@ -134,7 +96,7 @@ class Mesa(models.Model):
 
 #endregion Mesa
 
-#region Orden (wip)
+#region Orden
 
 class Orden(models.Model):
     Id = models.AutoField(primary_key=True)
@@ -158,7 +120,7 @@ class Orden(models.Model):
     METODOPAGO = [("1", "Efectivo"), ("2", "Tarjeta"), ("3", "Transferencia")]
     MetodoPago = models.CharField(max_length=10, choices=METODOPAGO, default="1", db_column='metodo_pago')
 
-    ESTADO = [("1", "Pendiente"), ("2", "Preparado"), ("3", "Facturado"), ("4", "Anulado")]
+    ESTADO = [("0", "Facturado"), ("1", "Pendiente"), ("2", "Anulado"), ("4", "Preparado")]
     Estado = models.CharField(max_length=10, choices=ESTADO, default="1", db_column='estado')
 
     ACTIVO = [("1", "Activo"), ("0", "Eliminado")]
@@ -175,7 +137,7 @@ class Orden(models.Model):
 
 #region TipoPlatillo
 
-class Tipoplatillo(models.Model):
+class TipoPlatillo(models.Model):
     Id = models.AutoField(primary_key=True, db_column='id_tipo_platillo')
     
     Nombre = models.CharField(max_length=70, db_column='nombre')
@@ -197,7 +159,7 @@ class Tipoplatillo(models.Model):
 class Platillo(models.Model):
     Id = models.AutoField(primary_key=True, db_column='id_platillo')
     
-    IdTipoPlatillo = models.ForeignKey(Tipoplatillo, models.DO_NOTHING, db_column='id_tipo_platillo')
+    IdTipoPlatillo = models.ForeignKey(TipoPlatillo, models.DO_NOTHING, db_column='id_tipo_platillo')
     
     Nombre = models.CharField(db_column='nombre', max_length=50)
     

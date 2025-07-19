@@ -2,7 +2,7 @@ from gettext import translation
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from Application.models import Platillo, Tipoplatillo
+from Application.models import Platillo, TipoPlatillo
 
 
 #region CRUD TIPO PLATILLOS
@@ -14,11 +14,9 @@ def Actualizar_TipoPlatillo(request):
                 estado = request.POST.get("estado")
                 id = request.POST.get("id")
                 print("nombreInsumo "+tipoplatilloname+" estado "+estado)
-                print("xdxdxd  "+id)
-                tipoplatillo = Tipoplatillo.objects.get(id=id)
-                print("proveedor ------------------------------> " + str(tipoplatillo))
-                tipoplatillo.nombretp = tipoplatilloname
-                tipoplatillo.activo = estado
+                tipoplatillo = TipoPlatillo.objects.get(Id=id)
+                tipoplatillo.Nombre = tipoplatilloname
+                tipoplatillo.EsActivo = estado
                 tipoplatillo.save()
                 return HttpResponse("")
         except Exception as ex:
@@ -36,11 +34,10 @@ def DarBaja_TipoPlatillo(request):
         try:
             if request.method == "POST":
                 id = request.POST.get("id")
-                print("xdxdxd  " + id)
                 with translation.atomic():
                     # Obtener el tipo de platillo y marcarlo como inactivo
-                    tipoplatillo = Tipoplatillo.objects.get(id=id)
-                    tipoplatillo.activo = "Inactivo"
+                    tipoplatillo = TipoPlatillo.objects.get(id=id)
+                    tipoplatillo.EsActivo = "Inactivo"
                     tipoplatillo.save()
 
                     # Obtener los platillos asociados al tipo de platillo y marcarlos como inactivos
@@ -64,10 +61,10 @@ def Agregar_TipoPlatillo(request):
                 tipoplatilloname = request.POST.get("Nombre")
                 estado = request.POST.get("Estado")
 
-                tipoplatillo = Tipoplatillo()
+                tipoplatillo = TipoPlatillo()
 
-                tipoplatillo.nombretp = tipoplatilloname
-                tipoplatillo.activo = estado
+                tipoplatillo.Nombre = tipoplatilloname
+                tipoplatillo.EsActivo = estado
 
                 tipoplatillo.save()
                 return HttpResponse("")

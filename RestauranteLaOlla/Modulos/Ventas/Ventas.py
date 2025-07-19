@@ -1,8 +1,9 @@
 import json
+import traceback
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from Application.models import Areamesa, Detallefactura, Factura, Mesa, Metodopago, Personal, Platillo, Proveedor
+from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Platillo
 from django.db.models import Q
 
 # region VENTAS
@@ -10,27 +11,30 @@ def venta(request):
     if request.user.is_authenticated:
         try:
             platillo = Platillo.objects.filter(
-                activo="activo").order_by('nombreplatillo').values()
+                EsActivo="Activo").order_by('Nombre').values()
 
-            areaMesa = Areamesa.objects.filter(activo="1").values()
+            AreaM = AreaMesa.objects.filter(EsActivo="1").values()
 
-            areamesaSeleccionada = Areamesa.objects.get(id=1)
+            AreaMesaSeleccionada = AreaMesa.objects.filter(Id = 1).first()
 
-            mesa = Mesa.objects.filter(
-                Q(idareamesa=areamesaSeleccionada) & Q(activo="1")).values()
+            if AreaMesaSeleccionada:
+                mesa = Mesa.objects.filter(
+                    Q(IdAreaMesa=AreaMesaSeleccionada) & Q(EsActivo="1")).values()
+            else:
+                mesa = []
 
-            ordenesPendientes = Factura.objects.filter(
-                Q(estado="1") & Q(activo="1")).count()
+            ordenesPendientes = Orden.objects.filter(
+                Q(Estado="1") & Q(EsActivo="1")).count()
 
-            # print("-----------------> URL Platillos <-----------------")
-            # for p in platillo:
-            #     print(p)
-            #     print("-------------------------------------------------------------------------------------------------------------")
+            print("-----------------> URL Platillos <-----------------")
+            for p in platillo:
+                print(p)
+                print("-------------------------------------------------------------------------------------------------------------")
 
             contexto = {
                 'Platillos': platillo,
                 'Mesas': mesa,
-                'AreaMesa': areaMesa,
+                'AreaMesa': AreaM,
                 'ordenesPendientes': ordenesPendientes
             }
 
@@ -38,84 +42,8 @@ def venta(request):
         except Exception as ex:
             print()
             print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
-    else:
-        # Si no lo ha hecho entonces deberá iniciar sesión
-        return render(request, "login.html")
-
-def Detalle_Proveedor(request):
-    if request.user.is_authenticated:
-        try:
-            if request.method == "POST":
-                Nombre = request.POST.get("Nombre")
-                Direccion = request.POST.get("Direction")
-                Telefono = request.POST.get("Telefono")
-                Correo = request.POST.get("Correo")
-                Estado = request.POST.get("estado")
-                id = request.POST.get("id")
-                print("xdxdxd  "+id)
-                proveedor = Proveedor.objects.get(id=id)
-                print("proveedor ------------------------------> " + str(proveedor))
-                proveedor.nombreprov = Nombre
-                proveedor.direccionprov = Direccion
-                proveedor.telefonoprov = Telefono
-                proveedor.correoprov = Correo
-                proveedor.activo = Estado
-                proveedor.save()
-                return HttpResponse("")
-        except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
-    else:
-        # Si no lo ha hecho entonces deberá iniciar sesión
-        return render(request, "login.html")
-
-def Agregar_Proveedor(request):
-    if request.user.is_authenticated:
-        try:
-            if request.method == "POST":
-                Nombre = request.POST.get("Nombre")
-                Direccion = request.POST.get("Direction")
-                Telefono = request.POST.get("Telefono")
-                Correo = request.POST.get("Correo")
-                proveedor = Proveedor()
-                proveedor.nombreprov = Nombre
-                proveedor.direccionprov = Direccion
-                proveedor.telefonoprov = Telefono
-                proveedor.correoprov = Correo
-                proveedor.activo = "Inactivo"
-                proveedor.save()
-                return HttpResponse("")
-        except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()    
-    else:
-        # Si no lo ha hecho entonces deberá iniciar sesión
-        return render(request, "login.html")
-
-def DarBaja_Proveedor(request):
-    if request.user.is_authenticated:
-        try:
-            if request.method == "POST":
-                id = request.POST.get("id")
-                print("xdxdxd  "+id)
-                proveedor = Proveedor.objects.get(id=id)
-                print("proveedor ------------------------------> " + str(proveedor))
-                proveedor.activo = "Inactivo"
-                proveedor.save()
-                return HttpResponse("")
-        except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
+            print("--------------------------'venta'--------------------------")
+            print(traceback.format_exc())
             print("########################################################")
             print()
     else:
@@ -132,11 +60,11 @@ def BuscarPlatillo(request):
 
                 if Texto != "":
                     PlatillosObtenidos = Platillo.objects.filter(
-                        nombreplatillo__icontains=Texto).order_by('nombreplatillo').values()
+                        nombreplatillo__icontains=Texto).order_by('Nombre').values()
                     # No será sensible a las mayusculas con la i antes de contains
                 else:
                     PlatillosObtenidos = Platillo.objects.filter(
-                        activo="activo").order_by('nombreplatillo').values()
+                        EsActivo="Activo").order_by('Nombre').values()
 
                 contexto = {
                     "Platillos": PlatillosObtenidos
@@ -146,7 +74,8 @@ def BuscarPlatillo(request):
         except Exception as ex:
             print()
             print("#################### E X C E P C I O N ########################")
-            print(ex)
+            print("----------------------'BuscarPlatillo'---------------------")
+            print(traceback.format_exc())
             print("########################################################")
             print()
     else:
@@ -162,10 +91,10 @@ def FiltrarMesas(request):
                 print("-----------------------vvvvvv---------------------------")
                 print(idAM)
 
-                areamesaSeleccionada = Areamesa.objects.get(id=idAM)
+                AreaMesaSeleccionada = AreaMesa.objects.get(Id=idAM)
 
                 MesasObtenidas = Mesa.objects.filter(
-                    Q(idareamesa=areamesaSeleccionada) & Q(activo="1")).values()
+                    Q(IdAreaMesa=AreaMesaSeleccionada) & Q(EsActivo="1")).values()
                 # No será sensible a las mayusculas con la i antes de contains
 
                 contexto = {
@@ -176,7 +105,8 @@ def FiltrarMesas(request):
         except Exception as ex:
             print()
             print("#################### E X C E P C I O N ########################")
-            print(ex)
+            print("--------------------'FiltrarMesas'--------------------")
+            print(traceback.format_exc())
             print("########################################################")
             print()
     else:
@@ -187,8 +117,8 @@ def OrdenesPendientes(request):
     if request.user.is_authenticated:
         try:
             # El signo negativo para ordenarlos de manera descendiente
-            ordenes =  Factura.objects.filter(Q(estado="1") & Q(activo="1")).order_by('-id').values()
-            # ordenes = Factura.objects.filter(activo="1").order_by(
+            ordenes =  Orden.objects.filter(Q(Estado="1") & Q(EsActivo="1")).order_by('-Id').values()
+            # ordenes = Orden.objects.filter(activo="1").order_by(
             #     F('id').desc(), F('estado').asc()).values()
 
             # print("----------------------- ORDENES --------------------------")
@@ -198,9 +128,8 @@ def OrdenesPendientes(request):
             #     print(mesa)
             #     print("**************")
 
-            mesas = Mesa.objects.filter(activo="1")
-            metodoPago = Metodopago.objects.filter(activo="1").values()
-            detalleOrden = Detallefactura.objects.all().values()
+            mesas = Mesa.objects.filter(EsActivo="1")
+            detalleOrden = DetalleOrden.objects.all().values()
             platillos = Platillo.objects.all().values()
 
             print(detalleOrden)
@@ -208,7 +137,6 @@ def OrdenesPendientes(request):
             # print(ordenes)
             contexto = {
                 "Ordenes": ordenes,
-                "MetodoPago": metodoPago,
                 "Mesas": mesas,
                 "DetalleOrden": detalleOrden,
                 "Platillos": platillos
@@ -218,7 +146,8 @@ def OrdenesPendientes(request):
         except Exception as ex:
             print()
             print("#################### E X C E P C I O N ########################")
-            print(ex)
+            print("--------------------'OrdenesPendientes'--------------------")
+            print(traceback.format_exc())
             print("########################################################")
             print()
     else:
@@ -239,8 +168,8 @@ def CrearOrden(request):
                 datos = json.loads(datos_json)
 
                 print("id mesa: ", mesa)
-                print("Numero mesa: ", mesaseleccionada.numeromesa)
-                print("Area de mesa: ", mesaseleccionada.idareamesa.nombream)
+                print("Numero mesa: ", mesaseleccionada.Numero)
+                print("Area de mesa: ", mesaseleccionada.IdAreaMesa.Nombre)
                 print("Total: ", totalval)
                 print(datos)
 
@@ -255,10 +184,10 @@ def CrearOrden(request):
                 # SE CREA LA ORDEN
 
                 # Se obtiene el usuario en sesión
-                personalensesion = Personal.objects.get(id=request.user.id)
+                Usuarioensesion = Usuario.objects.get(id=request.user.id)
 
-                Orden = Factura.objects.create(
-                    idpersonal=personalensesion,
+                Orden = Orden.objects.create(
+                    idUsuario=Usuarioensesion,
                     idmesa=mesaseleccionada,
                     total=totalval
                 )
@@ -274,8 +203,8 @@ def CrearOrden(request):
 
                     platillodeldetalle = Platillo.objects.get(id=dato["id"])
 
-                    OrdenDetalle = Detallefactura.objects.create(
-                        idfactura=Orden,
+                    OrdenDetalle = DetalleOrden.objects.create(
+                        idOrden=Orden,
                         idplatillo=platillodeldetalle,
                         cantidad=dato['cantidad'],
                         precioventa=platillodeldetalle.precioplatillo
@@ -308,7 +237,7 @@ def CancelarOrden (request):
                 idOrden = request.POST.get('idOrden')
 
                 # Se obtiene la orden con esa id
-                OrdenACancelar = Factura.objects.get(id=idOrden)
+                OrdenACancelar = Orden.objects.get(id=idOrden)
 
                 # Se modifica el estado a "Cancelado"
                 OrdenACancelar.estado = "2"
@@ -345,17 +274,17 @@ def FacturarOrden(request):
                 Propina {}
                 """.format(idOrden, monto, cambio, propina))
 
-                # Se obtiene la orden que se va a facturar
-                OrdenAFacturar = Factura.objects.get(id=idOrden)
-                print(OrdenAFacturar)
+                # Se obtiene la orden que se va a Ordenr
+                orden = Orden.objects.get(id=idOrden)
+                print(orden)
 
-                OrdenAFacturar.monto = monto
-                OrdenAFacturar.cambio = cambio
-                OrdenAFacturar.estado = "0"
-                OrdenAFacturar.propina = propina
+                orden.monto = monto
+                orden.cambio = cambio
+                orden.estado = "0"
+                orden.propina = propina
 
                 # Se guardan los cambios
-                OrdenAFacturar.save()
+                orden.save()
 
                 return HttpResponse(request, "Hola")
         except Exception as ex:

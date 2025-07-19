@@ -58,7 +58,7 @@ ROOT_URLCONF = 'RestauranteLaOlla.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['Restaurante_La_Olla/templates'],
+        'DIRS': ['RestauranteLaOlla/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

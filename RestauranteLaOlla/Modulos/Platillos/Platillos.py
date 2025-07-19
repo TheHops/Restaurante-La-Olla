@@ -1,12 +1,12 @@
 
 from csv import reader
+import traceback
 from django.http import HttpResponse
 from django.shortcuts import render
-from Application.models import Platillo, Tipoplatillo
+from Application.models import Platillo, TipoPlatillo
 from django.core.files.storage import default_storage
 
 #region CRUD PLATILLOS
-
 
 def Actualizar_Platillos(request):
     if request.user.is_authenticated:
@@ -21,18 +21,18 @@ def Actualizar_Platillos(request):
                 id_Platillo = request.POST.get("id")
                 imagen = request.FILES.get("Imagen")
                 print(id_Platillo)
-                platillo = Platillo.objects.get(id=id_Platillo)
+                platillo = Platillo.objects.get(Id=id_Platillo)
                 print("OBTUVO EL ID")
-                platillo.nombreplatillo = platilloname
-                tipo = Tipoplatillo.objects.get(id=tipoplatillo)
-                platillo.idtipoplatillo = tipo
-                platillo.precioplatillo = precio
-                platillo.activo = estado
-                platillo.descripcionplatillo = descripcion
+                platillo.Nombre = platilloname
+                tipo = TipoPlatillo.objects.get(Id=tipoplatillo)
+                platillo.IdTipoPlatillo = tipo
+                platillo.Precio = precio
+                platillo.EsActivo = estado
+                platillo.Descripcion = descripcion
                 if imagen:
                     # Guardar la imagen en el sistema de archivos
                     file_path = default_storage.save('platillos/' + imagen.name, imagen)
-                    platillo.imagen_platillo = file_path
+                    platillo.ImagenUrl = file_path
                     
                 platillo.save()
                 return HttpResponse("")
@@ -51,10 +51,9 @@ def DarBajar_Platillo(request):
         try:
             if request.method == "POST":
                 id = request.POST.get("id")
-                print("xdxdxd  "+id)
-                platillo = Platillo.objects.get(id=id)
-                print("proveedor ------------------------------> " + str(platillo))
-                platillo.activo = "Inactivo"
+                print("ID: "+id)
+                platillo = Platillo.objects.get(Id=id)
+                platillo.EsActivo = "Inactivo"
                 platillo.save()
                 return HttpResponse("")
         except Exception as ex:
@@ -83,24 +82,25 @@ def Agregar_Platillo(request):
                 print(imagen)
             
                 platillo = Platillo()
-                platillo.nombreplatillo = platilloname
-                tipo = Tipoplatillo.objects.get(id=tipoplatillo)
-                platillo.idtipoplatillo = tipo
-                platillo.precioplatillo = precio
-                platillo.activo = estado
-                platillo.descripcionplatillo = descripcion
+                platillo.Nombre = platilloname
+                tipo = TipoPlatillo.objects.get(Id=tipoplatillo)
+                platillo.IdTipoPlatillo = tipo
+                platillo.Precio = precio
+                platillo.EsActivo = estado
+                platillo.Descripcion = descripcion
 
                 if imagen:
                     # Guardar la imagen en el sistema de archivos
                     file_path = default_storage.save('platillos/' + imagen.name, imagen)
-                    platillo.imagen_platillo = file_path
+                    platillo.ImagenUrl = file_path
                 
                 platillo.save()
                 return HttpResponse("")
-        except Exception as ex:
+        except Exception:
             print()
             print("#################### E X C E P C I O N ########################")
-            print(ex)
+            print("--------------------'agregar_platillo'--------------------")
+            print(traceback.format_exc())
             print("########################################################")
             print()
     else:
