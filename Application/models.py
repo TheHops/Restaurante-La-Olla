@@ -16,6 +16,7 @@ class Cargo(models.Model):
     EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
+        verbose_name_plural = 'Cargo'
         db_table = 'cargo'
 
     def __str__(self):
@@ -42,6 +43,7 @@ class Usuario(AbstractUser):
     EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
+        verbose_name_plural = 'Usuario'
         db_table = 'usuario'
 
     def __str__(self):
@@ -62,6 +64,7 @@ class AreaMesa(models.Model):
     EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
+        verbose_name_plural = 'AreaMesa'
         db_table = 'area_mesa'
 
     def __str__(self):
@@ -89,6 +92,7 @@ class Mesa(models.Model):
     EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
+        verbose_name_plural = 'Mesa'
         db_table = 'mesa'
 
     def __str__(self):
@@ -128,6 +132,7 @@ class Orden(models.Model):
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     class Meta:
+        verbose_name_plural = 'Orden'
         db_table = 'orden'
 
     def __str__(self):
@@ -147,6 +152,7 @@ class TipoPlatillo(models.Model):
     EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
+        verbose_name_plural = 'TipoPlatillo'
         db_table = 'tipo_platillo'
 
     def __str__(self):
@@ -177,6 +183,7 @@ class Platillo(models.Model):
     EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
+        verbose_name_plural = 'Platillo'
         db_table = 'platillo'
 
     def __str__(self):
@@ -207,6 +214,7 @@ class DetalleOrden(models.Model):
     EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
+        verbose_name_plural = 'DetalleOrden'
         db_table = 'detalle_orden'
 
     def __str__(self):
