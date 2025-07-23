@@ -47,33 +47,33 @@
             {% for personal in Personal %}
             <tr>
                 <td>{{personal.username}}</td>
-                <td>{{personal.nombres}} {{personal.apellidos}}</td>
+                <td>{{personal.Nombres}} {{personal.Apellidos}}</td>
                 <td>{{personal.email}}</td>
                 <td>
                     {% if personal.telefonopers != "" %}
-                        <a href="https://wa.me/+505{{personal.telefonopers}}" target="_blank" style="color:black;">  {{personal.telefonopers}} </a>
+                        <a href="https://wa.me/+505{{personal.telefonopers}}" target="_blank" style="color:black;">  {{personal.Telefono}} </a>
                     {% else %}
                         N/A
                     {% endif %}
                 </td>
-                <td>{{personal.idcargo.nombrecargo}}</td>
-                {% if personal.activo == '1'%}
+                <td>{{personal.IdCargo.Nombre}}</td>
+                {% if personal.EsActivo == '1'%}
                     <td>Activo</td>
                 {% else %}
                     <td>Inactivo</td>
                 {%endif%}
                 <td class="actions">
 
-                    <button class="actionButton btnEditar" id="{{personal.id}}" data-toggle="modal"  data-target="#ModificarPersonal" 
-                    onclick="ImpresionPersonal('{{personal.username}}','{{personal.email}}','{{personal.telefonopers}}', '{{personal.idcargo.nombrecargo}}', '{{personal.id}}','{{personal.activo}}','{{personal.nombres}}','{{personal.apellidos}}')" >
+                    <button class="actionButton btnEditar" id="{{personal.Id}}" data-toggle="modal"  data-target="#ModificarPersonal" 
+                    onclick="ImpresionPersonal('{{personal.username}}','{{personal.email}}','{{personal.Telefono}}', '{{personal.IdCargo.Nombre}}', '{{personal.Id}}','{{personal.EsActivo}}','{{personal.Nombres}}','{{personal.Apellidos}}')" >
                         <a >
                             <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
                             <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar Personal">
                         </a>
                     </button>
                     
-                    {%if personal.activo == '1'%}
-                    <button class="actionButton btnEliminar"  id="{{personal.id}}"  data-toggle="modal"  data-target="#DarBajaPersonal" onclick="PasoIDBaja('{{personal.id}}')">
+                    {% if personal.EsActivo == '1' %}
+                    <button class="actionButton btnEliminar"  id="{{personal.Id}}"  data-toggle="modal"  data-target="#DarBajaPersonal" onclick="PasoIDBaja('{{personal.Id}}')">
                         <a>
                             <!-- <i class="fa-solid fa-trash-can fa-lg" style="color: #ff6969; padding: 5px 5px;"></i> -->
                             <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Dar Baja Personal">
@@ -156,7 +156,7 @@
                         <h4 style="font-size: 20px;">Cargo<span class="asterisco">*</span></h4>
                         <select class="form-control" id="idCargo" required>
                             {% for cargo in Cargos %}
-                            <option value="{{cargo.id}}">{{cargo.nombrecargo}}</option>
+                            <option value="{{cargo.Id}}">{{cargo.Nombre}}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -222,9 +222,6 @@
                     </div>
                 </div>
                
-               
-                
-                
                 <h4 style="font-size: 20px;">Numero de Telefono</h4>
                 <input type="hidden" class="form-control" id="IdPersonal">
                 <input type="text"inputmode="numeric" class="form-control" maxlength="8" id="NumberUsuario" onkeypress="return soloNumeros(event)"  required>
@@ -232,7 +229,7 @@
                     <h4 style="font-size: 20px;">Cargo<span class="asterisco">*</span></h4>
                     <select class="form-control" id="idCargoModificar" required>
                         {% for cargo in Cargos %}
-                        <option value="{{cargo.id}}">{{cargo.nombrecargo}}</option>
+                        <option value="{{cargo.Id}}">{{cargo.Nombre}}</option>
                         {% endfor %}
                     </select>
 

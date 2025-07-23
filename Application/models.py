@@ -47,7 +47,7 @@ class Usuario(AbstractUser):
         db_table = 'usuario'
 
     def __str__(self):
-        return f"ID = {self.Id} | UserName = {self.username} | Nombres = {self.Nombres} | EsActivo = {self.EsActivo}"
+        return f"ID = {self.Id} | UserName = {self.username} | Nombres = {self.Nombres} | Apellidos = {self.Apellidos} | EsActivo = {self.EsActivo}"
 
 #endregion Usuario
 
@@ -206,7 +206,7 @@ class DetalleOrden(models.Model):
     
     PrecioVenta = models.DecimalField(db_column='precio_venta', max_digits=8, decimal_places=2)
 
-    SubTotal = models.DecimalField(db_column='subtotal', max_digits=8, decimal_places=2)
+    SubTotal = models.DecimalField(db_column='sub_total', max_digits=8, decimal_places=2)
 
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
