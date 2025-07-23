@@ -9,8 +9,8 @@ from Application.models import Cargo, Usuario
 def personal(request):
     if request.user.is_authenticated:
         try:
-            personal = Usuario.objects.all()
-            cargos = Cargo.objects.filter(EsActivo="Activo")
+            personal = Usuario.objects.filter(EsActivo="1")
+            cargos = Cargo.objects.filter(EsActivo="1")
 
             return render(request, "personal.html", {'Personal': personal, 'Cargos': cargos})
         except Exception as ex:
@@ -38,34 +38,34 @@ def AgregarPersonal(request):
     if request.user.is_authenticated:
         try:
             if request.method == "POST":
-                Nombre = request.POST.get("Nombre")
-                Apellido = request.POST.get("Apellido")
+                nombre = request.POST.get("Nombre")
+                apellido = request.POST.get("Apellido")
                 usuario = request.POST.get("User")
                 passw = request.POST.get("Pass")
                 correo = request.POST.get("Correo")
                 telefono = request.POST.get("Telefono")
                 cargo = request.POST.get("Cargo")
-                tipoCargo = Cargo.objects.get(id=cargo)
+                tipoCargo = Cargo.objects.get(Id=cargo)
 
-                nombreUsuario = Usuario.objects.filter(nombreusuario = usuario)
+                # se verifica si existe buscandolo
+                nombreUsuario = Usuario.objects.filter(username = usuario)
+                
                 if not nombreUsuario:
 
                     personal = Usuario.objects.create_user(
-                        nombres=Nombre,
-                        apellidos=Apellido,
+                        Nombres=nombre,
+                        Apellidos=apellido,
                         username=usuario,
-                        nombreusuario=usuario,
                         password=passw,
                         email=correo,
-                        correopers=correo,
-                        telefonopers=telefono,
-                        idcargo=tipoCargo
+                        Telefono=telefono,
+                        IdCargo=tipoCargo
                     )
+                    
+                    print(personal)
 
                     # Le damos los privilegios de superusuario en caso de que el usuario sea administrador
                     if cargo == "1":
-                        personal.is_staff = True
-                    elif cargo == "3":
                         personal.is_staff = True
                         personal.is_superuser = True
 
@@ -89,45 +89,42 @@ def ModificarPersonal(request):
     if request.user.is_authenticated:
         try:
             if request.method == "POST":
-                Usuario = request.POST.get("User")
-                ID = request.POST.get("IDPersonal")
-                personal = Usuario.objects.get(id=ID)
+                usuario = request.POST.get("User")
+                id = request.POST.get("IDPersonal")
+                personal = Usuario.objects.get(Id=id)
 
-                if Usuario == personal.nombreusuario:
-                    if personal.activo == 0:
-                        nombreUsuario = Usuario.objects.filter(nombreusuario=Usuario).exclude(activo='Inactivo').exists()
+                if usuario == personal.username:
+                    if personal.EsActivo == "0":
+                        nombreUsuario = Usuario.objects.filter(username=usuario).exclude(EsActivo="0").exists()
                     else:
                         nombreUsuario = False
                 else:
-                    nombreUsuario = Usuario.objects.filter(nombreusuario=Usuario).exclude(activo='Inactivo').exists()
+                    nombreUsuario = Usuario.objects.filter(username=usuario).exclude(EsActivo='0').exists()
 
                 if not nombreUsuario:
-                    Email = request.POST.get("Correo")
-                    Password = request.POST.get("NewPass")
-                    Numero = request.POST.get("Telefono")
-                    NewCargo = request.POST.get("Cargo")
-                    Estado = request.POST.get("Estado")
-                    NameUsuario = request.POST.get("NameUsuario")
-                    LastNameUsuario = request.POST.get("LastNameUsuario")
-                    tipoCargo = Cargo.objects.get(id=NewCargo)
+                    email = request.POST.get("Correo")
+                    password = request.POST.get("NewPass")
+                    numero = request.POST.get("Telefono")
+                    newCargo = request.POST.get("Cargo")
+                    estado = request.POST.get("Estado")
+                    nameUsuario = request.POST.get("NameUsuario")
+                    lastNameUsuario = request.POST.get("LastNameUsuario")
+                    tipoCargo = Cargo.objects.get(Id=newCargo)
             
-                    personal.email = Email
-                    personal.correopers = Email
-                    personal.telefonopers = Numero
-                    personal.idcargo_id = tipoCargo
-                    personal.activo = Estado
-                    personal.nombres = NameUsuario
-                    personal.apellidos = LastNameUsuario
-                    if NewCargo == "1":
-                        personal.is_staff = True
-                    elif NewCargo == "3":
+                    personal.email = email
+                    personal.Telefono = numero
+                    personal.IdCargo = tipoCargo
+                    personal.EsActivo = estado
+                    personal.Nombres = nameUsuario
+                    personal.Apellidos = lastNameUsuario
+                    if newCargo == "1":
                         personal.is_staff = True
                         personal.is_superuser = True
 
-                    if Password:
-                        personal.set_password(Password)
+                    if password:
+                        personal.set_password(password)
 
-                    if Usuario != personal.nombreusuario and Usuario.objects.filter(nombreusuario=Usuario).exists():
+                    if Usuario != personal.username and Usuario.objects.filter(username=Usuario).exists():
                         response_data = {'message': '0'}  # nombreUsuario ya existe en otro registro
                     else:
                         personal.save()
@@ -151,8 +148,8 @@ def DarBajaPersonal(request):
         try:
             if request.method == "POST":
                 id = request.POST.get("ID")
-                personal = Usuario.objects.get(id=id)
-                personal.activo = "Inactivo"
+                personal = Usuario.objects.get(Id=id)
+                personal.EsActivo = "0"
                 personal.save()
                 return HttpResponse("")
         except Exception as ex:

@@ -47,7 +47,7 @@
                     <select name="" id="listaAreasDeMesa" onchange="filtrarMesas(this.value)">
                         {% for areamesa in AreaMesa %}
 
-                            <option value="{{areamesa.id}}">{{areamesa.nombream}}</option>
+                            <option value="{{areamesa.Id}}">{{areamesa.Nombre}}</option>
                         
                         {% endfor %}
                     
@@ -65,8 +65,8 @@
 
                         {% for mesa in Mesas %}
                             <div class="grid_item">
-                                <input type="radio" name="mesa" id="mesa{{mesa.numeromesa}}" onchange="activarBoton()" value="{{mesa.id}}">
-                                <label for="mesa{{mesa.numeromesa}}">{{mesa.numeromesa}}</label>
+                                <input type="radio" name="mesa" id="mesa{{mesa.Numero}}" onchange="activarBoton()" value="{{mesa.Id}}">
+                                <label for="mesa{{mesa.Numero}}">{{mesa.Numero}}</label>
                             </div>
                         {% endfor %}
 
@@ -135,18 +135,18 @@
                     {% for platillo in Platillos %}
                     
                     <!-- Se muestra un platillo -->
-                    <div class="vplatillo" id="platillo{{platillo.id}}">
+                    <div class="vplatillo" id="platillo{{platillo.Id}}">
                         <div class="datoPlatillo">
-                            {% if platillo.imagen_platillo != "" %}
-                                <img src="/media/{{ platillo.imagen_platillo }}" alt="Imagen de {{platillo.nombreplatillo}}">
+                            {% if platillo.ImagenUrl != "" %}
+                                <img src="/media/{{ platillo.ImagenUrl }}" alt="Imagen de {{platillo.Nombre}}">
                             {% else %}
                                 <img src="{% static 'img/ProductoSinFoto.png' %}" alt="">
                             {% endif %}
                         </div>
 
                         <div class="accionesPlatillo">
-                            <span class="nombrePlatillo">{{ platillo.nombreplatillo }}</span>
-                            <span class="precioPlatillo">C${{ platillo.precioplatillo }}</span>
+                            <span class="nombrePlatillo">{{ platillo.Nombre }}</span>
+                            <span class="precioPlatillo">C${{ platillo.Precio }}</span>
 
                             <fieldset>
                                 <legend>Cantidad</legend>
@@ -154,9 +154,9 @@
                                 <div class="cantidad">
                             
                                     <!-- Botones input para cantidad -->
-                                    <button id="less" onclick="cambio('{{platillo.id}}', 0)">-</button>
-                                    <input type="number" id="{{platillo.id}}" value="0" disabled>
-                                    <button id="plus" onclick="cambio('{{platillo.id}}', 1)">+</button>
+                                    <button id="less" onclick="cambio('{{platillo.Id}}', 0)">-</button>
+                                    <input type="number" id="{{platillo.Id}}" value="0" disabled>
+                                    <button id="plus" onclick="cambio('{{platillo.Id}}', 1)">+</button>
                             
                                 </div>
                             </fieldset>
@@ -167,7 +167,7 @@
                                 </button>
                             
                                 <button class="btnaddCarrito" id="addcarrito{{platillo.id}}"
-                                    onclick='addCarrito("{{platillo.id}}", "{{platillo.nombreplatillo}}", "{{platillo.precioplatillo}}")' disabled>
+                                    onclick='addCarrito("{{platillo.Id}}", "{{platillo.Nombre}}", "{{platillo.Precio}}")' disabled>
                                     <img src="{% static 'img/carrito.png' %}" alt="" style="width: 20px; height: 20px;">
                                     <span style="transform: translateY(-5px);">Agregar</span>
                                     </img>

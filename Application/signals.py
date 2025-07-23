@@ -18,12 +18,16 @@ def initial_data(sender, **kwargs):
             Cargo.objects.update_or_create(Id=data["Id"], defaults=data)
 
         # Áreas de mesa
-        # areas = [
-        #     {"Id": 1, "Nombre": "Interior", "EsActivo": "1"},
-        #     {"Id": 2, "Nombre": "Terraza", "EsActivo": "1"},
-        # ]
-        # for data in areas:
-        #     AreaMesa.objects.update_or_create(Id=data["Id"], defaults=data)
+        areas = [
+            {"Id": 1, "Nombre": "Salón principal", "EsActivo": "1"},
+            {"Id": 2, "Nombre": "Cabañita", "EsActivo": "1"},
+            {"Id": 3, "Nombre": "Cabaña de arriba", "EsActivo": "1"},
+            {"Id": 4, "Nombre": "Mesas de borde", "EsActivo": "1"},
+            {"Id": 5, "Nombre": "Cabaña piso rojo", "EsActivo": "1"},
+            {"Id": 6, "Nombre": "Salón de eventos", "EsActivo": "1"},
+        ]
+        for data in areas:
+            AreaMesa.objects.update_or_create(Id=data["Id"], defaults=data)
 
         # Tipos de platillo
         # tipos = [
