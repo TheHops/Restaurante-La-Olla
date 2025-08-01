@@ -2,113 +2,156 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-   <link rel="icon" href="../static/img/Logo la olla 2.png">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <link rel="icon" href="../static/img/Logo la olla 2.png" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
     <!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.jqueryui.min.css"> -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"
+    />
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.8/semantic.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.semanticui.min.css" /> -->
-    <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
-    
+    <script
+      src="https://code.jquery.com/jquery-3.6.1.js"
+      integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+      crossorigin="anonymous"
+    ></script>
+
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+      integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+      crossorigin="anonymous"
+    ></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
-    <link rel="stylesheet" href="{% static 'css/inventario.css' %}">
-    <link rel="stylesheet" href="{% static 'css/venta.css' %}">
-    <link rel="stylesheet" href="{% static 'css/ordenes.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/inventario.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/venta.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/ordenes.css' %}" />
 
     <script src="{% static 'js/opciones.js' %}"></script>
     <script src="{% static 'js/cantidad.js' %}"></script>
     <script src="{% static 'js/toggle.js' %}"></script>
 
     <title>Inicio</title>
-</head>
-<body>
+  </head>
+  <body>
     <div id="capa" onclick="cerrar()"></div>
 
     <header>
-        <div id="opciones">
-            <div id="btnopciones2" onclick="cerrar()">
-                <div class="burger2-1"></div>
-                <div class="burger2-2"></div>
-                <div class="burger2-3"></div>
-            </div>
-
-            <!---------------------------------------------- -->
-
-            <!-- Se encontrarán todas las opciones para este apartado -->
-            <ul class="listaOpciones">
-                <li class="opcion"><a href="{% url 'index' %}">Inicio</a></li>
-
-                {% if request.user.is_staff %}
-                    <li class="opcion"><a href="{% url 'inventario' %}">Menú</a></li>
-                {% endif %}
-
-                <!-- <li class="opcion"><a href="">Compra</a></li> -->
-                
-                <li class="opcion"><a href="{% url 'venta' %}">Ordenes</a></li>
-
-                {% if request.user.is_staff %}
-                    <li class="opcion"><a href="{% url 'personal' %}">Personal</a></li>
-                {% endif %}
-                <!-- <li class="opcion"><a href="">Configuraciones</a></li> -->
-            </ul>
-
-            <img src="/static/img/Logo la olla 2.png" alt="" id="logodeco">
+      <div id="opciones">
+        <div id="btnopciones2" onclick="cerrar()">
+          <div class="burger2-1"></div>
+          <div class="burger2-2"></div>
+          <div class="burger2-3"></div>
         </div>
 
-        <nav>
-            <ul class="menu">
-                <li><div id="btnopciones1" onclick="abrir()">
-                    <div class="burger1-1"></div>
-                    <div class="burger1-2"></div>
-                    <div class="burger1-3"></div>
-                </div></li>
-                
-                <li class="logo">
-                    <a href="{% url 'index' %}"><img src="{% static 'img/LogoNav.png' %}" alt=""></a>
-                    <!-- <a href="#">Historial</a> -->
-                </li>
+        <!---------------------------------------------- -->
 
-                <!-- <li id="userConfig">
+        <!-- Se encontrarán todas las opciones para este apartado -->
+        <ul class="listaOpciones">
+          <li class="opcion"><a href="{% url 'index' %}">Inicio</a></li>
+
+          {% if request.user.is_staff %}
+          <li class="opcion"><a href="{% url 'inventario' %}">Menú</a></li>
+          {% endif %}
+
+          <!-- <li class="opcion"><a href="">Compra</a></li> -->
+
+          <li class="opcion"><a href="{% url 'venta' %}">Ordenes</a></li>
+
+          {% if request.user.is_staff %}
+          <li class="opcion"><a href="{% url 'personal' %}">Personal</a></li>
+          {% endif %}
+          <!-- <li class="opcion"><a href="">Configuraciones</a></li> -->
+        </ul>
+
+        <img src="/static/img/Logo la olla 2.png" alt="" id="logodeco" />
+      </div>
+
+      <nav>
+        <ul class="menu">
+          <li>
+            <div id="btnopciones1" onclick="abrir()">
+              <div class="burger1-1"></div>
+              <div class="burger1-2"></div>
+              <div class="burger1-3"></div>
+            </div>
+          </li>
+
+          <li class="logo">
+            <a href="{% url 'index' %}"
+              ><img src="{% static 'img/LogoNav.png' %}" alt=""
+            /></a>
+            <!-- <a href="#">Historial</a> -->
+          </li>
+
+          <!-- <li id="userConfig">
                     <a href="#">
                         <img src="{% static 'img/Icon_UserSet.png' %}" alt="">
                     </a>
                 </li> -->
 
-                <li id="logout">
-                    <a href="{% url 'logoutUser' %}">
-                        <img src="{% static 'img/Icon_logout.png' %}" alt="">
-                        <!-- Cerrar sesión -->
-                    </a>
-                </li>
-            </ul>
-        </nav>
+          <li id="logout">
+            <a href="{% url 'logoutUser' %}">
+              <img src="{% static 'img/Icon_logout.png' %}" alt="" />
+              <!-- Cerrar sesión -->
+            </a>
+          </li>
+        </ul>
+      </nav>
 
-        <!-- Imagen de fondo -->
-        <img src="{% static 'img/wavebgTest4-1.png' %}" alt="" style="position: absolute; width: 100vw; z-index: -1; height: 90vh; transform: translateY(-17px); user-select: none;">
+      <!-- Imagen de fondo -->
+      <img
+        src="{% static 'img/wavebgTest4-1.png' %}"
+        alt=""
+        style="
+          position: absolute;
+          width: 100vw;
+          z-index: -1;
+          height: 90vh;
+          transform: translateY(-17px);
+          user-select: none;
+        "
+      />
 
-        <div class="contenido">
-            <!-- {% comment %} Aqui es donde va todo el contenido {% endcomment %} -->
+      <div class="contenido">
+        <!-- {% comment %} Aqui es donde va todo el contenido {% endcomment %} -->
 
-            {% block content %}
-            {% endblock %}
-        </div>
-        <!-- <img src="/Restaurante_La_Olla/Static/img/waveTest3.svg" alt="Onda de fondo" style="transform: translateY(-25px);"> -->
+        {% block content %} {% endblock %}
+      </div>
+      <!-- <img src="/Restaurante_La_Olla/Static/img/waveTest3.svg" alt="Onda de fondo" style="transform: translateY(-25px);"> -->
     </header>
 
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
@@ -119,98 +162,95 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="sweetalert2.all.min.js"></script>
     <script src="sweetalert2.min.js"></script>
-    <link rel="stylesheet" href="sweetalert2.min.css">
+    <link rel="stylesheet" href="sweetalert2.min.css" />
     <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 
     <!-- <script src="https://cdn.datatables.net/1.12.1/js/dataTables.semanticui.min.js"></script> -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.8/semantic.min.js"></script> -->
-    
+
     <script>
-        // $(document).ready(function () {
-        //         $('#tablaInsumos').DataTable({
+      // $(document).ready(function () {
+      //         $('#tablaInsumos').DataTable({
 
-        //         });
-        //     });
+      //         });
+      //     });
 
-        $(document).ready(function () {
-            $('.tablaInventario').DataTable({
-                scrollY: '45vh',
-                scrollCollapse: true,
-                paging: true,
-                language: {
-                    url: 'https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json'
-                }
-            });
+      $(document).ready(function () {
+        $(".tablaInventario").DataTable({
+          scrollY: "45vh",
+          scrollCollapse: true,
+          paging: true,
+          language: {
+            url: "https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json",
+          },
         });
+      });
 
-        document.getElementById("listaInventario").addEventListener('change',
-            function () {
-                window.location = this.value;
-            }, false
-        );
+      document.getElementById("listaInventario").addEventListener(
+        "change",
+        function () {
+          window.location = this.value;
+        },
+        false
+      );
 
+      function aparecerCapa() {
+        var capa = document.querySelector(".modal-overlay");
 
+        /*Hacemos aparecer la capa y las opciones*/
+        capa.style.display = "initial";
 
+        capa.classList.remove("animate__animated", "animate__fadeOut");
 
+        // Se establece la duración de la animación
+        capa.style.setProperty("--animate-duration", "0.3s");
 
+        // Se asigna la clase de animación a la capa
+        capa.classList.add("animate__animated", "animate__fadeIn");
+      }
 
-        function aparecerCapa() {
-            var capa = document.querySelector(".modal-overlay");
+      function desaparecerCapa() {
+        var capa = document.querySelector(".modal-overlay");
 
-            /*Hacemos aparecer la capa y las opciones*/
-            capa.style.display = "initial";
+        // Lo mismo para la capa
+        capa.classList.remove("animate__animated", "animate__fadeIn");
+        capa.style.setProperty("--animate-duration", "0.3s");
+        capa.classList.add("animate__animated", "animate__fadeOut");
 
-            capa.classList.remove('animate__animated', 'animate__fadeOut');
-
-            // Se establece la duración de la animación
-            capa.style.setProperty('--animate-duration', '0.3s');
-
-            // Se asigna la clase de animación a la capa
-            capa.classList.add('animate__animated', 'animate__fadeIn');
-        }
-
-        function desaparecerCapa() {
-            var capa = document.querySelector(".modal-overlay");
-
-            // Lo mismo para la capa
-            capa.classList.remove('animate__animated', 'animate__fadeIn');
-            capa.style.setProperty('--animate-duration', '0.3s');
-            capa.classList.add('animate__animated', 'animate__fadeOut');
-
-            /*Hacemos aparecer la capa*/
-            setTimeout(() => {
-                capa.style.display = "none";
-            }, 300);
-        }
+        /*Hacemos aparecer la capa*/
+        setTimeout(() => {
+          capa.style.display = "none";
+        }, 300);
+      }
     </script>
 
     <script>
-            (function (d) {
-                var s = d.createElement("script");
-                /* uncomment the following line to override default position*/
-                s.setAttribute("data-position", 5);
-                /* uncomment the following line to override default size (values: small, large)*/
-                s.setAttribute("data-size", "small");
-                /* uncomment the following line to override default language (e.g., fr, de, es, he, nl, etc.)*/
-                s.setAttribute("data-language", "es");
-                /* uncomment the following line to override color set via widget (e.g., #053f67)*/
-                s.setAttribute("data-color", "#DF362D");
-                /* uncomment the following line to override type set via widget (1=person, 2=chair, 3=eye, 4=text)*/
-                s.setAttribute("data-type", "2");
-                /* s.setAttribute("data-statement_text:", "Our Accessibility Statement");*/
-                /* s.setAttribute("data-statement_url", "http://www.example.com/accessibility";*/
-                /* uncomment the following line to override support on mobile devices*/
-                /* s.setAttribute("data-mobile", true);*/
-                /* uncomment the following line to set custom trigger action for accessibility menu*/
-                /* s.setAttribute("data-trigger", "triggerId")*/
-                s.setAttribute("data-account", "MkFThQLmW7");
-                s.setAttribute("src", "https://cdn.userway.org/widget.js");
-                (d.body || d.head).appendChild(s);
-            })(document)
+      (function (d) {
+        var s = d.createElement("script");
+        /* uncomment the following line to override default position*/
+        s.setAttribute("data-position", 5);
+        /* uncomment the following line to override default size (values: small, large)*/
+        s.setAttribute("data-size", "small");
+        /* uncomment the following line to override default language (e.g., fr, de, es, he, nl, etc.)*/
+        s.setAttribute("data-language", "es");
+        /* uncomment the following line to override color set via widget (e.g., #053f67)*/
+        s.setAttribute("data-color", "#DF362D");
+        /* uncomment the following line to override type set via widget (1=person, 2=chair, 3=eye, 4=text)*/
+        s.setAttribute("data-type", "2");
+        /* s.setAttribute("data-statement_text:", "Our Accessibility Statement");*/
+        /* s.setAttribute("data-statement_url", "http://www.example.com/accessibility";*/
+        /* uncomment the following line to override support on mobile devices*/
+        /* s.setAttribute("data-mobile", true);*/
+        /* uncomment the following line to set custom trigger action for accessibility menu*/
+        /* s.setAttribute("data-trigger", "triggerId")*/
+        s.setAttribute("data-account", "MkFThQLmW7");
+        s.setAttribute("src", "https://cdn.userway.org/widget.js");
+        (d.body || d.head).appendChild(s);
+      })(document);
     </script>
     <noscript>
-        Please ensure Javascript is enabled for purposes of
-        <a href="https://userway.org">website accessibility</a>
+      Please ensure Javascript is enabled for purposes of
+      <a href="https://userway.org">website accessibility</a>
     </noscript>
-</body>
+  </body>
 </html>

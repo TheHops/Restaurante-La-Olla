@@ -35,8 +35,6 @@ def loginUser(request):
         # Si no existe devolcerá un None
         
         print(user)
-        print("\n\n====================")
-        print("usuario inactivo ",user.EsActivo)
 
         # Si el usuario existe se inIcia sesión
         if user is not None and (user.EsActivo == '1' or user.EsActivo.lower() == 'inactivo'):

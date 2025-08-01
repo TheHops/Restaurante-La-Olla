@@ -175,7 +175,7 @@ class Platillo(models.Model):
     
     # imagenplatillo = models.TextField(db_column='ImagenPlatillo', blank=True, null=True)
 
-    ImagenUrl = models.ImageField(upload_to="platillos", default="platillos/ProductoSinFoto.png", null=True, blank=True, db_column='imagen_url')
+    ImagenUrl = models.ImageField(upload_to="platillos", default="platillos/ProductoSinFoto.png", db_column='imagen_url')
 
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 

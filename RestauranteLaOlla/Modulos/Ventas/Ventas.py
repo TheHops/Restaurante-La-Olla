@@ -11,7 +11,7 @@ def venta(request):
     if request.user.is_authenticated:
         try:
             platillo = Platillo.objects.filter(
-                EsActivo="Activo").order_by('Nombre').values()
+                EsActivo="1").order_by('Nombre').values()
 
             AreaM = AreaMesa.objects.filter(EsActivo="1").values()
 
@@ -25,11 +25,6 @@ def venta(request):
 
             ordenesPendientes = Orden.objects.filter(
                 Q(Estado="1") & Q(EsActivo="1")).count()
-
-            print("-----------------> URL Platillos <-----------------")
-            for p in platillo:
-                print(p)
-                print("-------------------------------------------------------------------------------------------------------------")
 
             contexto = {
                 'Platillos': platillo,
@@ -82,6 +77,7 @@ def BuscarPlatillo(request):
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
 
+#region FiltrarMesas
 def FiltrarMesas(request):
     if request.user.is_authenticated:
         try:
@@ -92,10 +88,14 @@ def FiltrarMesas(request):
                 print(idAM)
 
                 AreaMesaSeleccionada = AreaMesa.objects.get(Id=idAM)
+                
+                print(AreaMesaSeleccionada)
 
                 MesasObtenidas = Mesa.objects.filter(
                     Q(IdAreaMesa=AreaMesaSeleccionada) & Q(EsActivo="1")).values()
                 # No será sensible a las mayusculas con la i antes de contains
+
+                print(MesasObtenidas)
 
                 contexto = {
                     "Mesas": MesasObtenidas
@@ -112,6 +112,7 @@ def FiltrarMesas(request):
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
+#endregion FiltrarMesas
 
 def OrdenesPendientes(request):
     if request.user.is_authenticated:

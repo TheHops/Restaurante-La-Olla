@@ -3,18 +3,18 @@
 {% for platillo in Platillos %}
 
 <!-- Se muestra un platillo -->
-<div class="vplatillo" id="platillo{{platillo.id}}">
+<div class="vplatillo" id="platillo{{platillo.Id}}">
     <div class="datoPlatillo">
-        {% if platillo.imagen_platillo != "" %}
-        <img src="/media/{{ platillo.imagen_platillo }}" alt="Imagen de {{platillo.nombreplatillo}}">
+        {% if platillo.ImagenUrl != "" %}
+        <img src="/media/{{ platillo.ImagenUrl }}" alt="Imagen de {{platillo.Nombre}}">
         {% else %}
-        <img src="{% static 'img/ProductoSinFoto.png' %}" alt="">
+        <img src="{% static 'platillos/ProductoSinFoto.png' %}" alt="">
         {% endif %}
     </div>
 
     <div class="accionesPlatillo">
-        <span class="nombrePlatillo">{{ platillo.nombreplatillo }}</span>
-        <span class="precioPlatillo">C${{ platillo.precioplatillo }}</span>
+        <span class="nombrePlatillo">{{ platillo.Nombre }}</span>
+        <span class="precioPlatillo">C${{ platillo.Precio }}</span>
 
         <fieldset>
             <legend>Cantidad</legend>
@@ -22,9 +22,9 @@
             <div class="cantidad">
 
                 <!-- Botones input para cantidad -->
-                <button id="less" onclick="cambio('{{platillo.id}}', 0)">-</button>
-                <input type="number" id="{{platillo.id}}" value="0" disabled>
-                <button id="plus" onclick="cambio('{{platillo.id}}', 1)">+</button>
+                <button id="less" onclick="cambio('{{platillo.Id}}', 0)">-</button>
+                <input type="number" id="{{platillo.Id}}" value="0" disabled>
+                <button id="plus" onclick="cambio('{{platillo.Id}}', 1)">+</button>
 
             </div>
         </fieldset>
@@ -34,8 +34,8 @@
                 <img src="{% static 'img/info2.png' %}" alt="" style="width: 15px; height: 15px; padding: 1px;">
             </button>
 
-            <button class="btnaddCarrito" id="addcarrito{{platillo.id}}"
-                onclick='addCarrito("{{platillo.id}}", "{{platillo.nombreplatillo}}", "{{platillo.precioplatillo}}")'
+            <button class="btnaddCarrito" id="addcarrito{{platillo.Id}}"
+                onclick='addCarrito("{{platillo.Id}}", "{{platillo.Nombre}}", "{{platillo.Precio}}")'
                 disabled>
                 <img src="{% static 'img/carrito.png' %}" alt="" style="width: 20px; height: 20px;">
                 <span style="transform: translateY(-5px);">Agregar</span>
