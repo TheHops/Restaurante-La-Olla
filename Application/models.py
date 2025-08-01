@@ -81,7 +81,7 @@ class Mesa(models.Model):
     
     Numero = models.IntegerField(db_column='numero')
     
-    Capacidad = models.IntegerField(db_column='capacidad')
+    Capacidad = models.IntegerField(db_column='capacidad', blank=True, null=True)
 
     ESTADOSMESA = [("1", "Disponible"), ("0", "Ocupado")]
     Estado = models.CharField(max_length=15, choices=ESTADOSMESA, blank=True, null=True, db_column='estado')
@@ -175,7 +175,7 @@ class Platillo(models.Model):
     
     # imagenplatillo = models.TextField(db_column='ImagenPlatillo', blank=True, null=True)
 
-    ImagenUrl = models.ImageField(upload_to="platillos", default="platillos/ProductoSinFoto.png", null=True, blank=True, db_column='imagen_url')
+    ImagenUrl = models.ImageField(upload_to="platillos", default="platillos/ProductoSinFoto.png", db_column='imagen_url')
 
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 

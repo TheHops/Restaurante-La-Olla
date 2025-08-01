@@ -1,9 +1,12 @@
-{% load static %}
-
-
-{% for mesa in Mesas %}
-    <div class="grid_item">
-        <input type="radio" name="mesa" id="mesa{{mesa.numeromesa}}" onchange="activarBoton()" value="{{mesa.id}}">
-        <label for="mesa{{mesa.numeromesa}}">{{mesa.numeromesa}}</label>
-    </div>
+{% load static %} {% for mesa in Mesas %}
+<div class="grid_item">
+  <input
+    type="radio"
+    name="mesa"
+    id="mesa{{mesa.Numero}}"
+    onchange="activarBoton()"
+    value="{{mesa.Id}}"
+  />
+  <label for="mesa{{mesa.Numero}}">{{mesa.Numero}}</label>
+</div>
 {% endfor %}
