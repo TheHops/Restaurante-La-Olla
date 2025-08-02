@@ -1,18 +1,18 @@
-{% csrf_token %} {% load static %} {% for Orden in Ordenes %}
-
-<!-- ------------------------------------------------------- -->
+{% csrf_token %} {% load static %} 
+{% for Orden in Ordenes %}
 
 <div class="ordenPoFoC">
   <div class="encabezadoPoFoC">
-    <h3>
-      Orden #{{Orden.Id}} - {% if Orden.Estado == "1" %} Pendiente
-      <div class="EstP"></div>
-      {% elif Orden.Estado == "0" %} Facturada
-      <div class="EstF"></div>
-      {% else %} Anulada
-      <div class="EstC"></div>
-      {% endif %}
-    </h3>
+    <h5>
+        Orden #{{ Orden.Id }} -
+        {% if Orden.Estado == "1" %}
+            Pendiente <div class="EstP"></div>
+        {% elif Orden.Estado == "0" %}
+            Facturada <div class="EstF"></div>
+        {% else %}
+            Anulada <div class="EstC"></div>
+        {% endif %}
+    </h5>
     <h4>Total: C${{Orden.Total}}</h4>
   </div>
   <!-- Fin encabezadoPoFoC -->
@@ -20,10 +20,7 @@
   <div class="seccionesPoFoC">
     <div class="seccionIzquierda">
       <h4>
-        Mesa {% for Mesa in Mesas %} {% if Mesa.Id == Orden.IdMesa %} #{{
-        Mesa.Numero }} {% endif %} {% endfor %} del área : {% for Mesa in Mesas
-        %} {% if Mesa.Id == Orden.IdMesa %} {{ Mesa.IdAreaMesa.Nombre }} {%
-        endif %} {% endfor %}
+        Mesa #{{Orden.IdMesa.Numero}} del área {{Orden.IdMesa.IdAreaMesa.Nombre}}
       </h4>
       <h6>{{Orden.Fecha}}</h6>
     </div>
@@ -59,27 +56,24 @@
           margin-top: 0;
           margin-bottom: 3px;
           width: 97%;
-          border-color: #df362d50;
-        "
+          border-color: #df362d50;"
       />
 
-      {% for Detalle in DetalleOrden %} {% if Detalle.IdOrden == Orden.Id %}
+      {% for Detalle in DetalleOrden %}
+            {% if Detalle.IdOrden.Id == Orden.Id %}
+                <div class="detalle">
+                    <span
+                        style="width: 70%"
+                        class="detalleTruncar"
+                        title="{{ Platillo.Nombre }}"
+                        >{{ Detalle.IdPlatillo.Nombre }}
+                    </span>
 
-      <div class="detalle">
-        {% for Platillo in Platillos %} {% if Detalle.IdPlatillo == Platillo.Id
-        %}
-        <span
-          style="width: 70%"
-          class="detalleTruncar"
-          title="{{ Platillo.Nombre }}"
-          >{{ Platillo.Nombre }}</span
-        >
-        {% endif %} {% endfor %}
-
-        <span style="width: 15%">{{ Detalle.Cantidad }}</span>
-        <span style="width: 10%">{{ Detalle.Precio }}</span>
-      </div>
-      {% endif %} {% endfor %}
+                    <span style="width: 15%">{{ Detalle.Cantidad }}</span>
+                    <span style="width: 10%">{{ Detalle.PrecioVenta }}</span>
+                </div>
+            {% endif %} 
+        {% endfor %}
     </div>
   </div>
   <!-- fin cuerpoDetalleOrden -->

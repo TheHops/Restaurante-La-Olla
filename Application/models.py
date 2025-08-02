@@ -124,7 +124,7 @@ class Orden(models.Model):
     METODOPAGO = [("1", "Efectivo"), ("2", "Tarjeta"), ("3", "Transferencia")]
     MetodoPago = models.CharField(max_length=10, choices=METODOPAGO, default="1", db_column='metodo_pago')
 
-    ESTADO = [("0", "Facturado"), ("1", "Pendiente"), ("2", "Anulado"), ("4", "Preparado")]
+    ESTADO = [("0", "Facturado"), ("1", "Pendiente"), ("2", "Anulado"), ("3", "Preparado")]
     Estado = models.CharField(max_length=10, choices=ESTADO, default="1", db_column='estado')
 
     ACTIVO = [("1", "Activo"), ("0", "Eliminado")]

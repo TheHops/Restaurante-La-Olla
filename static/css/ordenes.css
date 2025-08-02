@@ -43,6 +43,7 @@
 
     padding: 5px 15px 0;
 
+    width: 100%;
     display: flex;
     justify-content: space-between;
     justify-self: center;
@@ -56,13 +57,14 @@
     color: #ffffff;
 }
 
-.encabezadoPoFoC h3, .encabezadoPoFoC h4 {
+.encabezadoPoFoC h3, .encabezadoPoFoC h4, .encabezadoPoFoC h5 {
     color: white;
 }
 
 .seccionesPoFoC {
     display: flex;
     justify-content: space-between;
+    width: 100%;
     justify-self: center;
     align-items: center;
 
@@ -91,7 +93,7 @@
 
     background-color: hsl(39, 100%, 55%);
     display: inline-block;
-    transform: translateY(-4px);
+    /* transform: translateY(-4px); */
     margin-left: 6px;
 }
 
