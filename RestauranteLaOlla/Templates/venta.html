@@ -586,7 +586,7 @@
             console.log(token);
 
             let xhr = new XMLHttpRequest();
-            xhr.open("POST", "/CrearOrden", true);
+            xhr.open("POST", "/CrearOrden/", true);
 
             // SE OBTIENEN LOS VALORES DE LAS MESAS
             var mesas = document.getElementsByName("mesa");
@@ -636,10 +636,6 @@
             //     dataType: 'json'
             // });
         }
-
-        /**/
-
-        
 
         function abrirCarrito() {
             /* Se obtiene el elemento con el id 'opciones' */

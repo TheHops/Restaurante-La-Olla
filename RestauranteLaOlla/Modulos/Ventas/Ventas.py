@@ -1,6 +1,6 @@
 import json
 import traceback
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
 from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Platillo
@@ -114,25 +114,22 @@ def FiltrarMesas(request):
         return render(request, "login.html")
 #endregion FiltrarMesas
 
+#region OrdenesPendientes
 def OrdenesPendientes(request):
     if request.user.is_authenticated:
         try:
             # El signo negativo para ordenarlos de manera descendiente
-            ordenes =  Orden.objects.filter(Q(Estado="1") & Q(EsActivo="1")).order_by('-Id').values()
-            # ordenes = Orden.objects.filter(activo="1").order_by(
-            #     F('id').desc(), F('estado').asc()).values()
+            ordenes =  Orden.objects.select_related('IdMesa__IdAreaMesa', 'IdUsuario').filter(Q(Estado="1") & Q(EsActivo="1")).order_by('-Id')
 
-            # print("----------------------- ORDENES --------------------------")
-            # for orden in ordenes:
-            #     print(orden["idmesa_id"])
-            #     mesa = Mesa.objects.filter(id=orden["idmesa_id"])
-            #     print(mesa)
-            #     print("**************")
-
+            detalleOrden = DetalleOrden.objects.filter(IdOrden__in=ordenes).select_related('IdPlatillo')
+            
             mesas = Mesa.objects.filter(EsActivo="1")
-            detalleOrden = DetalleOrden.objects.all().values()
             platillos = Platillo.objects.all().values()
 
+            print("ORDENES PENDIENTES ==> ")
+            print(ordenes)
+            
+            print("\nDETALLES DE ORDEN ==> ")
             print(detalleOrden)
 
             # print(ordenes)
@@ -154,7 +151,9 @@ def OrdenesPendientes(request):
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
+#endregion OrdenesPendientes
 
+#region CrearOrden
 def CrearOrden(request):
     if request.user.is_authenticated:
         try:
@@ -163,7 +162,7 @@ def CrearOrden(request):
                 mesa = request.POST.get('mesa')
                 totalval = request.POST.get('total')
 
-                mesaseleccionada = Mesa.objects.get(id=mesa)
+                mesaseleccionada = Mesa.objects.get(Id=mesa)
 
                 print("---------------------------- ORDEN CREADA -----------------------")
                 datos = json.loads(datos_json)
@@ -179,21 +178,21 @@ def CrearOrden(request):
 
                 print("--------------------------------------------------------------------")
 
-                print("User ID: ", request.user.id)
+                print("User ID: ", request.user.Id)
 
                 #################################################
                 # SE CREA LA ORDEN
 
                 # Se obtiene el usuario en sesión
-                Usuarioensesion = Usuario.objects.get(id=request.user.id)
+                Usuarioensesion = Usuario.objects.get(Id=request.user.Id)
 
-                Orden = Orden.objects.create(
-                    idUsuario=Usuarioensesion,
-                    idmesa=mesaseleccionada,
-                    total=totalval
+                orden = Orden.objects.create(
+                    IdUsuario=Usuarioensesion,
+                    IdMesa=mesaseleccionada,
+                    Total=totalval
                 )
 
-                Orden.save()
+                orden.save()
 
                 #################################################
                 # SE CREAN LOS DETALLEN DE LA ORDEN
@@ -202,13 +201,14 @@ def CrearOrden(request):
                     print(dato['id'], dato['subtotal'], dato['cantidad'])
                     print("Precio: ", dato['subtotal']/dato['cantidad'])
 
-                    platillodeldetalle = Platillo.objects.get(id=dato["id"])
+                    platillodeldetalle = Platillo.objects.get(Id=dato["id"])
 
                     OrdenDetalle = DetalleOrden.objects.create(
-                        idOrden=Orden,
-                        idplatillo=platillodeldetalle,
-                        cantidad=dato['cantidad'],
-                        precioventa=platillodeldetalle.precioplatillo
+                        IdOrden = orden,
+                        IdPlatillo = platillodeldetalle,
+                        Cantidad = dato['cantidad'],
+                        PrecioVenta = platillodeldetalle.Precio,
+                        SubTotal = dato['subtotal']
                     )
 
                     OrdenDetalle.save()
@@ -216,20 +216,21 @@ def CrearOrden(request):
                 #################################################
 
                 print("-----------------------------------------------------")
-                print("Orden: ", Orden)
+                print("Orden: ", orden)
                 print("-----------------------------------------------------")
 
                 return HttpResponse(request, "Hola")
         except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
+            print("\n############### EXCEPCIÓN ###############")
+            print(traceback.format_exc())
+            print("#########################################\n")
+            return JsonResponse({'error': str(ex)}, status=500)
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
+#endregion CrearOrden
 
+#region AnularOrden
 def CancelarOrden (request):
     if request.user.is_authenticated:
         try:
@@ -238,11 +239,12 @@ def CancelarOrden (request):
                 idOrden = request.POST.get('idOrden')
 
                 # Se obtiene la orden con esa id
-                OrdenACancelar = Orden.objects.get(id=idOrden)
+                OrdenACancelar = Orden.objects.get(Id=idOrden)
 
                 # Se modifica el estado a "Cancelado"
-                OrdenACancelar.estado = "2"
+                OrdenACancelar.Estado = "2"
 
+                print("====== ANULAR ======")
                 print(OrdenACancelar)
 
                 # Se guardan los cambios
@@ -250,14 +252,14 @@ def CancelarOrden (request):
 
                 return HttpResponse(request, "Hola")
         except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
+            print("\n############### EXCEPCIÓN ###############")
+            print(traceback.format_exc())
+            print("#########################################\n")
+            return JsonResponse({'error': str(ex)}, status=500)
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
+#endregion AnularOrden
 
 def FacturarOrden(request):
     if request.user.is_authenticated:

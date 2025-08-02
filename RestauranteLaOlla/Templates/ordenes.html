@@ -1,438 +1,495 @@
-{% extends 'index.html' %}
-
-{% block content %}
-{% load static %}
+{% extends 'index.html' %} {% block content %} {% load static %}
 
 <div class="EncabezadoOrdenesList">
-    <a href="{% url 'venta' %}">
-        <button id="btnVolver"><i class="fa-solid fa-arrow-left"></i> Volver</button>
-    </a>
-    <select name="" id="listaEstadoOrdenes" onchange="filtrarOrdenes(this.value)">
-        <option value="1">Pendientes</option>
-        <option value="0">Facturadas</option>
-        <option value="2">Anuladas</option>
-        <option value="3">Todas</option>
-    </select>
+  <a href="{% url 'venta' %}">
+    <button id="btnVolver">
+      <i class="fa-solid fa-arrow-left"></i> Volver
+    </button>
+  </a>
+  <select name="" id="listaEstadoOrdenes" onchange="filtrarOrdenes(this.value)">
+    <option value="1">Pendientes</option>
+    <option value="0">Facturadas</option>
+    <option value="2">Anuladas</option>
+    <option value="3">Todas</option>
+  </select>
 </div>
 
 <div id="listaOrdenesPoFoC">
-    {% csrf_token %}
-    {% for Orden in Ordenes %}
+  {% csrf_token %} 
+  
+  {% for Orden in Ordenes %}
 
-        <!-- ------------------------------------------------------- -->
+  <div class="ordenPoFoC">
+    <div class="encabezadoPoFoC">
+        <h5>
+            Orden #{{ Orden.Id }} -
+            {% if Orden.Estado == "1" %}
+                Pendiente <div class="EstP"></div>
+            {% elif Orden.Estado == "0" %}
+                Facturada <div class="EstF"></div>
+            {% else %}
+                Anulada <div class="EstC"></div>
+            {% endif %}
+        </h5>
+        <h4>Total: C${{Orden.Total}}</h4>
+    </div>
+    <!-- Fin encabezadoPoFoC -->
 
-        <div class="ordenPoFoC">
-            <div class="encabezadoPoFoC">
-                <h3>Orden #{{Orden.id}} -
-                    {% if Orden.estado == "1" %}
-                    Pendiente
-                    <div class="EstP"></div>
-                    {% elif Orden.estado == "0" %}
-                    Facturada
-                    <div class="EstF"></div>
-                    {% else %}
-                    Anulada
-                    <div class="EstC"></div>
-                    {% endif %}
-                </h3>
-                <h4>Total: C${{Orden.total}}</h4>
-            </div> <!-- Fin encabezadoPoFoC -->
+    <div class="seccionesPoFoC">
+      <div class="seccionIzquierda">
+        <h4>
+          Mesa #{{Orden.IdMesa.Numero}} del área {{Orden.IdMesa.IdAreaMesa.Nombre}}
+        </h4>
+        <h6>{{Orden.Fecha}}</h6>
+      </div>
+      <div class="seccionDerecha">
+        {% if Orden.Estado == "1" %}
+        <button
+          class="btnCancelarOrden"
+          onclick="CancelarOrden('{{Orden.Id}}')"
+        >
+          <i class="fa-solid fa-ban"></i> Anular
+        </button>
 
-            <div class="seccionesPoFoC">
-                <div class="seccionIzquierda">
-                    
-                    <h4>
-                        Mesa
-                        {% for Mesa in Mesas %}
-                        {% if Mesa.id == Orden.idmesa_id %}
-                        #{{ Mesa.numeromesa }}
-                        {% endif %}
-                        {% endfor %}
-                
-                        del área :
-                
-                        {% for Mesa in Mesas %}
-                        {% if Mesa.id == Orden.idmesa_id %}
-                        {{ Mesa.idareamesa.nombream }}
-                        {% endif %}
-                        {% endfor %}
-                    </h4>
-                    <h6>{{Orden.fechaventa}}</h6>
+        <button
+          class="btnFacturarOrden"
+          data-toggle="modal"
+          data-target="#FacturarOrden"
+          onclick="rellenarParaFacturar('{{Orden.Id}}', '{{Orden.Total}}')"
+        >
+          <i class="fa-solid fa-file-invoice-dollar"></i> Facturar
+        </button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <!-- Fin ordenPoFoc -->
+
+  <div class="detalleOrdenPoFoC">
+    <div class="cuerpoDetalleOrden" id="idDetalleOrden{{Orden.Id}}">
+      <div class="detallitoOrden">
+        <span style="width: 70%">Platillo</span>
+        <span style="width: 15%">Cantidad</span>
+        <span style="width: 10%">Precio</span>
+
+        <hr
+          style="
+            margin-top: 0;
+            margin-bottom: 3px;
+            width: 97%;
+            border-color: #df362d50;
+          "
+        />
+
+        {% for Detalle in DetalleOrden %}
+            {% if Detalle.IdOrden.Id == Orden.Id %}
+                <div class="detalle">
+                    <span
+                        style="width: 70%"
+                        class="detalleTruncar"
+                        title="{{ Platillo.Nombre }}"
+                        >{{ Detalle.IdPlatillo.Nombre }}
+                    </span>
+
+                    <span style="width: 15%">{{ Detalle.Cantidad }}</span>
+                    <span style="width: 10%">{{ Detalle.PrecioVenta }}</span>
                 </div>
-                <div class="seccionDerecha">
-                    {% if Orden.estado == "1" %}
-                    <button class="btnCancelarOrden" onclick="CancelarOrden('{{Orden.id}}')"><i class="fa-solid fa-ban"></i> Anular</button>
-                
-                    <button class="btnFacturarOrden" data-toggle="modal" data-target="#FacturarOrden"
-                        onclick="rellenarParaFacturar('{{Orden.id}}', '{{Orden.total}}')"><i class="fa-solid fa-file-invoice-dollar"></i> Facturar</button>
-                    {% endif %}
-                </div>
-            </div>
-        </div> <!-- Fin ordenPoFoc -->
-
-        <div class="detalleOrdenPoFoC">
-            <div class="cuerpoDetalleOrden" id="idDetalleOrden{{Orden.id}}">
-                <div class="detallitoOrden">
-                    
-                    <span style="width: 70%;">Platillo</span>
-                    <span style="width: 15%;">Cantidad</span>
-                    <span style="width: 10%;">Precio</span>
-
-                    <hr style="margin-top: 0; margin-bottom: 3px; width: 97%; border-color: #DF362D50;">
-                    
-                    {% for Detalle in DetalleOrden %}
-                        {% if Detalle.idfactura_id == Orden.id %}
-
-                            <div class="detalle">
-                                {% for Platillo in Platillos %}
-                                {% if Detalle.idplatillo_id == Platillo.id %}
-                                <span style="width: 70%;" class="detalleTruncar" title="{{ Platillo.nombreplatillo }}">{{ Platillo.nombreplatillo }}</span>
-                                {% endif %}
-                                {% endfor %}
-                                
-                                <span style="width: 15%;">{{ Detalle.cantidad }}</span>
-                                <span style="width: 10%;">{{ Detalle.precioventa }}</span>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div> <!-- fin cuerpoDetalleOrden -->
-            <div class="botonDesplazarDetalleOrden">
-                <button onclick="desplegarDetalles('{{Orden.id}}')"><i class="fa-solid fa-angles-down iconoDesplegarDetalles" id="iconoOrden{{Orden.id}}"></i></button>
-            </div> <!-- fin botonDesplazarDetalleOrden -->
-        </div> <!-- Fin ordenPoFoC -->
-    {% endfor %}
-</div> <!-- Fin listaOrdenesPoFoC -->
+            {% endif %} 
+        {% endfor %}
+      </div>
+    </div>
+    <!-- fin cuerpoDetalleOrden -->
+    <div class="botonDesplazarDetalleOrden">
+      <button onclick="desplegarDetalles('{{Orden.Id}}')">
+        <i
+          class="fa-solid fa-angles-down iconoDesplegarDetalles"
+          id="iconoOrden{{Orden.Id}}"
+        ></i>
+      </button>
+    </div>
+    <!-- fin botonDesplazarDetalleOrden -->
+  </div>
+  <!-- Fin ordenPoFoC -->
+  {% endfor %}
+</div>
+<!-- Fin listaOrdenesPoFoC -->
 
 <script>
-    function desplegarDetalles(idOrden)
-    {
-        let detallitos = document.getElementById("idDetalleOrden" + idOrden);
-        let icono = document.getElementById("iconoOrden" + idOrden);
+  function desplegarDetalles(idOrden) {
+    let detallitos = document.getElementById("idDetalleOrden" + idOrden);
+    let icono = document.getElementById("iconoOrden" + idOrden);
 
-        // if (detallitos.classList.contains("desplegado")) 
-        // {
-        //     detallitos.style.gridTemplateRows = "0fr";
+    // if (detallitos.classList.contains("desplegado"))
+    // {
+    //     detallitos.style.gridTemplateRows = "0fr";
 
-        //     console.log("El elemento tiene la clase 'desplegado'");
-        // } 
-        // else 
-        // {
-        //     detallitos.style.gridTemplateRows = "1fr";
+    //     console.log("El elemento tiene la clase 'desplegado'");
+    // }
+    // else
+    // {
+    //     detallitos.style.gridTemplateRows = "1fr";
 
-        //     console.log("El elemento no tiene la clase 'desplegado'");
-        // }
+    //     console.log("El elemento no tiene la clase 'desplegado'");
+    // }
 
-        icono.classList.toggle("desplegado");
-        detallitos.classList.toggle("desplegado");
-    }
+    icono.classList.toggle("desplegado");
+    detallitos.classList.toggle("desplegado");
+  }
 </script>
 
 <!-- ------------------------------------------------------------------------ -->
 
 <div class="modal-overlay" onclick="desaparecerCapa()"></div>
 
-<div class="modal fade" id="FacturarOrden" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title " id="exampleModalLabel">Facturar orden</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+<div
+  class="modal fade"
+  id="FacturarOrden"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Facturar orden</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="POST">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-12" style="display: none">
+              <h4 style="font-size: 20px">
+                Método de pago<span class="asterisco">*</span>
+              </h4>
+              <select
+                class="form-control"
+                id="SelectMetodoPago"
+                onchange="MP(this.value)"
+              >
+                {% for mp in MetodoPago %}
+                <option value="{{mp.id}}">{{mp.metodopago}}</option>
+                {% endfor %}
+              </select>
             </div>
-            <div class="modal-body">
-                <form method="POST">
 
-                    {% csrf_token %}
-                    <div class="row">
-                        <div class="col-md-12" style="display: none;">
-                            <h4 style="font-size: 20px;">Método de pago<span class="asterisco">*</span></h4>
-                            <select class="form-control" id="SelectMetodoPago" onchange="MP(this.value)">
-                                {% for mp in MetodoPago %}
-                                <option value="{{mp.id}}">{{mp.metodopago}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
+            <div class="col-md-6" id="monto">
+              <div class="Montotxt">
+                <h4 style="font-size: 20px">
+                  Monto<span class="asterisco">*</span>
+                </h4>
+                <span
+                  style="font-size: 15px; color: rgb(105, 105, 105)"
+                  id="totalOrdenMonto"
+                  >Total: C$555</span
+                >
+              </div>
 
-                        <div class="col-md-6" id="monto">
-                            <div class="Montotxt">
-                                <h4 style="font-size: 20px;">Monto<span class="asterisco">*</span></h4>
-                                <span style="font-size: 15px; color: rgb(105, 105, 105);" id="totalOrdenMonto">Total: C$555</span>
-                            </div>
-                            
-                            <input type="number" class="form-control" id="MontoOrden" required>
-                        </div>
-
-                        <div class="col-md-6" id="cambio">
-                            <h4 style="font-size: 20px;">Cambio<span class="asterisco">*</span></h4>
-                            <input type="number" class="form-control" id="CambioOrden" required disabled>
-                        </div>
-
-                        <div class="col-md-12" id="MensajeMonto">
-                            <span style="color: hsl(0, 100%, 70%); font-size: 15px;">El monto debe ser mayor o igual al total</span>
-                        </div>
-
-                        <div class="col-md-6" id="cambio">
-                            <h4 style="font-size: 20px;">Propina</h4>
-                            <input type="number" class="form-control" id="PropinaOrden" required>
-                        </div>
-                    </div>
-                    <input type="text" value="" id="idOrdenFactura" style="display: none;">
-                </form>
-
+              <input
+                type="number"
+                class="form-control"
+                id="MontoOrden"
+                required
+              />
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
 
-                <button type="button" class="btn btn-danger" id="btnFacturar" onclick="FacturarOrden()" disabled>Facturar</button>
+            <div class="col-md-6" id="cambio">
+              <h4 style="font-size: 20px">
+                Cambio<span class="asterisco">*</span>
+              </h4>
+              <input
+                type="number"
+                class="form-control"
+                id="CambioOrden"
+                required
+                disabled
+              />
             </div>
-        </div>
+
+            <div class="col-md-12" id="MensajeMonto">
+              <span style="color: hsl(0, 100%, 70%); font-size: 15px"
+                >El monto debe ser mayor o igual al total</span
+              >
+            </div>
+
+            <div class="col-md-6" id="cambio">
+              <h4 style="font-size: 20px">Propina</h4>
+              <input
+                type="number"
+                class="form-control"
+                id="PropinaOrden"
+                required
+              />
+            </div>
+          </div>
+          <input
+            type="text"
+            value=""
+            id="idOrdenFactura"
+            style="display: none"
+          />
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-danger"
+          id="btnFacturar"
+          onclick="FacturarOrden()"
+          disabled
+        >
+          Facturar
+        </button>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- --------------------------------------------------------------------- -->
 
 <script>
-    $('.modal').on('hidden.bs.modal', function (e) {
-            // Verificar si el usuario cerró el modal haciendo clic fuera de él
-            if (e.target === this) {
-                // El usuario hizo clic fuera del modal
-                desaparecerCapa()
-            }
-        });
+  $(".modal").on("hidden.bs.modal", function (e) {
+    // Verificar si el usuario cerró el modal haciendo clic fuera de él
+    if (e.target === this) {
+      // El usuario hizo clic fuera del modal
+      desaparecerCapa();
+    }
+  });
 
-    function FacturarOrden ()
-    {
-        let idOrdenF = document.getElementById("idOrdenFactura");
-        let CambioOrden = document.getElementById("CambioOrden");
-        let MontoOrden = document.getElementById("MontoOrden");
-        let PropinaOrden = document.getElementById("PropinaOrden");
+  function FacturarOrden() {
+    let idOrdenF = document.getElementById("idOrdenFactura");
+    let CambioOrden = document.getElementById("CambioOrden");
+    let MontoOrden = document.getElementById("MontoOrden");
+    let PropinaOrden = document.getElementById("PropinaOrden");
 
-        let Propina = PropinaOrden.value
+    let Propina = PropinaOrden.value;
 
-        if (PropinaOrden.value == "")
-        {
-            Propina = 0;
-        }
-
-        console.log("ID: " + idOrdenF.value + " Cambio: " + CambioOrden.value + " Monto: " + MontoOrden.value + " Propina: " + Propina);
-
-        /***********************************************/
-
-        let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
-        console.log(token);
-
-        let xhr = new XMLHttpRequest();
-        xhr.open("POST", "/FacturarOrden", true);
-
-        // xhr.setRequestHeader('Content-Type', 'application/json');
-        // Abrir la conexión, y especificamos el método
-
-        let datos = new FormData(); // Es un formulario de JS para leer el codigo
-
-        datos.append("csrfmiddlewaretoken", token);
-        datos.append("monto", MontoOrden.value);
-        datos.append("cambio", CambioOrden.value);
-        datos.append("idOrden", idOrdenF.value);
-        datos.append("propinaOrden", Propina);
-
-        xhr.onreadystatechange = function () {
-            if (this.readyState == 4) {
-                console.log("SI ENTRÓ A LA FUNCIÓN ONREADY (FACTURAR ORDEN)");
-            }
-        }
-        // Se envían los datos
-        xhr.send(datos);
-
-        /************************************************/
-
-        Swal.fire({
-            confirmButtonColor: '#ff6464', //'#ff964e',
-            title: '¡Orden #' + idOrdenF.value + ' facturada correctamente!',
-            icon: 'success'
-        }).then((resultado) => {
-            if (resultado.isConfirmed) {
-                location.reload();
-            }
-            else {
-                location.reload();
-            }
-        })
+    if (PropinaOrden.value == "") {
+      Propina = 0;
     }
 
-    // Se guarda el total de forma global
-    var TotalGlobal;
+    console.log(
+      "ID: " +
+        idOrdenF.value +
+        " Cambio: " +
+        CambioOrden.value +
+        " Monto: " +
+        MontoOrden.value +
+        " Propina: " +
+        Propina
+    );
 
-    function rellenarParaFacturar (id, total)
-    {
-        aparecerCapa();
+    /***********************************************/
 
-        // El total declarado de forma global se le asigna un valor del total según la orden
-        TotalGlobal = parseInt(total);
-        console.log(TotalGlobal);
+    let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+    console.log(token);
 
-        let idOrdenF = document.getElementById("idOrdenFactura");
-        idOrdenF.value = id;
-        console.log("ID Orden: " + id);
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "/FacturarOrden", true);
 
-        // Se vacían los campos
-        ReiniciarCampos()
+    // xhr.setRequestHeader('Content-Type', 'application/json');
+    // Abrir la conexión, y especificamos el método
 
-        // Se coloca el total para mostrarlo y que el usuario ingrese un buen monto
-        let Monto = document.getElementById("totalOrdenMonto");
-        Monto.innerHTML = "Total: C$" + total
-    }
+    let datos = new FormData(); // Es un formulario de JS para leer el codigo
 
-    document.getElementById("MontoOrden").addEventListener("input", function () 
-    {
-        // Se obtiene el valor de lo que se ingresa cada vez que se escribe algo
-        let MontoIngresado = document.getElementById("MontoOrden").value;
-        console.log(MontoIngresado)
+    datos.append("csrfmiddlewaretoken", token);
+    datos.append("monto", MontoOrden.value);
+    datos.append("cambio", CambioOrden.value);
+    datos.append("idOrden", idOrdenF.value);
+    datos.append("propinaOrden", Propina);
 
-        let MensajeMonto = document.getElementById("MensajeMonto");
-        let CambioOrden = document.getElementById("CambioOrden");
-        let btnFacturar = document.getElementById("btnFacturar");
+    xhr.onreadystatechange = function () {
+      if (this.readyState == 4) {
+        console.log("SI ENTRÓ A LA FUNCIÓN ONREADY (FACTURAR ORDEN)");
+      }
+    };
+    // Se envían los datos
+    xhr.send(datos);
 
-        try 
-        {
-            // Se realiza el cálculo del monto
-            let Cambio = parseInt(MontoIngresado) - TotalGlobal;
-            console.log("Cambio = " + Cambio);
+    /************************************************/
 
-            // Se verifica si el monto está bien ingresado
-            if (MontoIngresado < TotalGlobal)
-            {
-                MensajeMonto.style.display = "initial";
-
-                CambioOrden.value = "";
-
-                btnFacturar.disabled = true;
-            }
-            else
-            {
-                MensajeMonto.style.display = "none";
-
-                CambioOrden.value = Cambio;
-
-                btnFacturar.disabled = false;
-            }
-        }
-        catch (error)
-        {
-            MensajeMonto.style.display = "initial";
-
-            CambioOrden.value = "";
-
-            btnFacturar.disabled = true;
-        }
+    Swal.fire({
+      confirmButtonColor: "#ff6464", //'#ff964e',
+      title: "¡Orden #" + idOrdenF.value + " facturada correctamente!",
+      icon: "success",
+    }).then((resultado) => {
+      if (resultado.isConfirmed) {
+        location.reload();
+      } else {
+        location.reload();
+      }
     });
+  }
 
-    function ReiniciarCampos() {
-        let CambioOrden = document.getElementById("CambioOrden");
-        let MontoOrden = document.getElementById("MontoOrden");
-        let MensajeMonto = document.getElementById("MensajeMonto");
-        let btnFacturar = document.getElementById("btnFacturar");
+  // Se guarda el total de forma global
+  var TotalGlobal;
+
+  function rellenarParaFacturar(id, total) {
+    aparecerCapa();
+
+    // El total declarado de forma global se le asigna un valor del total según la orden
+    TotalGlobal = parseInt(total);
+    console.log(TotalGlobal);
+
+    let idOrdenF = document.getElementById("idOrdenFactura");
+    idOrdenF.value = id;
+    console.log("ID Orden: " + id);
+
+    // Se vacían los campos
+    ReiniciarCampos();
+
+    // Se coloca el total para mostrarlo y que el usuario ingrese un buen monto
+    let Monto = document.getElementById("totalOrdenMonto");
+    Monto.innerHTML = "Total: C$" + total;
+  }
+
+  document.getElementById("MontoOrden").addEventListener("input", function () {
+    // Se obtiene el valor de lo que se ingresa cada vez que se escribe algo
+    let MontoIngresado = document.getElementById("MontoOrden").value;
+    console.log(MontoIngresado);
+
+    let MensajeMonto = document.getElementById("MensajeMonto");
+    let CambioOrden = document.getElementById("CambioOrden");
+    let btnFacturar = document.getElementById("btnFacturar");
+
+    try {
+      // Se realiza el cálculo del monto
+      let Cambio = parseInt(MontoIngresado) - TotalGlobal;
+      console.log("Cambio = " + Cambio);
+
+      // Se verifica si el monto está bien ingresado
+      if (MontoIngresado < TotalGlobal) {
+        MensajeMonto.style.display = "initial";
 
         CambioOrden.value = "";
-        MontoOrden.value = "";
-        MensajeMonto.style.display = "none";
+
         btnFacturar.disabled = true;
+      } else {
+        MensajeMonto.style.display = "none";
+
+        CambioOrden.value = Cambio;
+
+        btnFacturar.disabled = false;
+      }
+    } catch (error) {
+      MensajeMonto.style.display = "initial";
+
+      CambioOrden.value = "";
+
+      btnFacturar.disabled = true;
     }
+  });
 
-    function MP (valor)
-    {
-        ReiniciarCampos();
+  function ReiniciarCampos() {
+    let CambioOrden = document.getElementById("CambioOrden");
+    let MontoOrden = document.getElementById("MontoOrden");
+    let MensajeMonto = document.getElementById("MensajeMonto");
+    let btnFacturar = document.getElementById("btnFacturar");
 
-        let CambioOrden = document.getElementById("cambio");
-        let MontoOrden = document.getElementById("monto");
+    CambioOrden.value = "";
+    MontoOrden.value = "";
+    MensajeMonto.style.display = "none";
+    btnFacturar.disabled = true;
+  }
 
-        console.log(valor);
+  function MP(valor) {
+    ReiniciarCampos();
 
-        if (valor == 1)
-        {
-            CambioOrden.style.display = "initial";
-            MontoOrden.style.display = "initial";
-        }
-        else
-        {
-            CambioOrden.style.display = "none";
-            MontoOrden.style.display = "none";
-        }
+    let CambioOrden = document.getElementById("cambio");
+    let MontoOrden = document.getElementById("monto");
+
+    console.log(valor);
+
+    if (valor == 1) {
+      CambioOrden.style.display = "initial";
+      MontoOrden.style.display = "initial";
+    } else {
+      CambioOrden.style.display = "none";
+      MontoOrden.style.display = "none";
     }
+  }
 
-    function ConfirmarCancelarOrden (idOrden) {
-        let xhr = new XMLHttpRequest();
-        xhr.open("POST", "/CancelarOrden", true);
+  function ConfirmarCancelarOrden(idOrden) {
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "/CancelarOrden/", true);
 
-        // xhr.setRequestHeader('Content-Type', 'application/json');
-        // Abrir la conexión, y especificamos el método
+    // xhr.setRequestHeader('Content-Type', 'application/json');
+    // Abrir la conexión, y especificamos el método
 
-        let datos = new FormData(); // Es un formulario de JS para leer el codigo
+    let datos = new FormData(); // Es un formulario de JS para leer el codigo
 
-        let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
-        
-        datos.append("csrfmiddlewaretoken", token); 
-        datos.append("idOrden", idOrden);
+    let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
 
-        xhr.onreadystatechange = function () {
-            if (this.readyState == 4) {
-                console.log("SI ENTRÓ A LA FUNCIÓN ONREADY (FACTURAR ORDEN)");
-            }
-        }
-        // Se envían los datos
-        xhr.send(datos);
-    }
+    datos.append("csrfmiddlewaretoken", token);
+    datos.append("idOrden", idOrden);
 
-    function CancelarOrden(idOrden) {
+    xhr.onreadystatechange = function () {
+      if (this.readyState == 4) {
+        console.log("SI ENTRÓ A LA FUNCIÓN ONREADY (ANULAR ORDEN)");
+      }
+    };
+    // Se envían los datos
+    xhr.send(datos);
+  }
+
+  function CancelarOrden(idOrden) {
+    Swal.fire({
+      title: "¿Realmente desea cancelar la orden?",
+      showCancelButton: true,
+      cancelButtonText: "No",
+      confirmButtonText: "Sí",
+      confirmButtonColor: "#ff6464", //'#ff964e',
+      iconColor: "#ff964e",
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        // OrdenP contiene todas las ordenes guardadas en un arreglo
+        console.log(idOrden);
+        ConfirmarCancelarOrden(idOrden);
+
         Swal.fire({
-            title: '¿Realmente desea cancelar la orden?',
-            showCancelButton: true,
-            cancelButtonText: 'No',
-            confirmButtonText: 'Sí',
-            confirmButtonColor: '#ff6464', //'#ff964e',
-            iconColor: '#ff964e'
-        }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
-            if (result.isConfirmed) {
+          confirmButtonColor: "#ff6464", //'#ff964e',
+          title: "¡Orden #" + idOrden + " anulada correctamente!",
+          icon: "success",
+        }).then((resultado) => {
+          if (resultado.isConfirmed) {
+            location.reload();
+          } else {
+            location.reload();
+          }
+        });
+      }
+    });
+  }
 
-                // OrdenP contiene todas las ordenes guardadas en un arreglo
-                console.log(idOrden);
-                ConfirmarCancelarOrden(idOrden);
+  function filtrarOrdenes(cadena) {
+    let request = new XMLHttpRequest();
+    // let data = new FormData();
 
-                Swal.fire({
-                    confirmButtonColor: '#ff6464', //'#ff964e',
-                    title: '¡Orden #' + idOrden + ' anulada correctamente!',
-                    icon: 'success'
-                }).then((resultado) => {
-                    if (resultado.isConfirmed) {
-                        location.reload();
-                    }
-                    else {
-                        location.reload();
-                    }
-                })
-            }
-        })
-    }
+    // data.append('InputBuscarPlatillo', cadena);
+    request.open("GET", "/FiltrarOrdenes?SelectFiltrarOrdenes=" + cadena);
+    request.send();
+    request.onreadystatechange = function () {
+      if (this.readyState == 4) {
+        let contenedor = document.getElementById("listaOrdenesPoFoC");
+        contenedor.innerHTML = this.responseText;
 
-    function filtrarOrdenes(cadena) {
-        let request = new XMLHttpRequest();
-        // let data = new FormData();
-
-        // data.append('InputBuscarPlatillo', cadena);
-        request.open('GET', '/FiltrarOrdenes?SelectFiltrarOrdenes=' + cadena);
-        request.send();
-        request.onreadystatechange = function () {
-            if (this.readyState == 4) {
-                let contenedor = document.getElementById("listaOrdenesPoFoC");
-                contenedor.innerHTML = this.responseText;
-
-                console.log("SI ENTRÓ A LA FUNCIÓN ONREADY");
-            }
-        }
-    }
+        console.log("SI ENTRÓ A LA FUNCIÓN ONREADY");
+      }
+    };
+  }
 </script>
 
 {% endblock %}
