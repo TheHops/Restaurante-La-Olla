@@ -5,10 +5,13 @@
 <!-- Se muestra un platillo -->
 <div class="vplatillo" id="platillo{{platillo.Id}}">
     <div class="datoPlatillo">
+        <h1>
+            {{platillo.ImagenUrl}}
+        </h1> 
         {% if platillo.ImagenUrl != "" %}
-        <img src="/media/{{ platillo.ImagenUrl }}" alt="Imagen de {{platillo.Nombre}}">
+            <img src="/media/{{ platillo.ImagenUrl }}" alt="Imagen de {{platillo.Nombre}}">
         {% else %}
-        <img src="{% static 'platillos/ProductoSinFoto.png' %}" alt="">
+            <img src="{% static 'img/ProductoSinFoto.png' %}" alt="">
         {% endif %}
     </div>
 

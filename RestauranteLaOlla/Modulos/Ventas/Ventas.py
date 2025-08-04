@@ -52,18 +52,22 @@ def BuscarPlatillo(request):
         try:
             if request.method == "GET":
                 Texto = request.GET.get("InputBuscarPlatillo")
+                
+                print("TEXTO: " + Texto)
 
                 if Texto != "":
                     PlatillosObtenidos = Platillo.objects.filter(
-                        nombreplatillo__icontains=Texto).order_by('Nombre').values()
+                        Q(Nombre__icontains=Texto) & Q(EsActivo="1")).order_by('Nombre').values()
                     # No será sensible a las mayusculas con la i antes de contains
                 else:
                     PlatillosObtenidos = Platillo.objects.filter(
-                        EsActivo="Activo").order_by('Nombre').values()
+                        EsActivo="1").order_by('Nombre').values()
 
                 contexto = {
                     "Platillos": PlatillosObtenidos
                 }
+                
+                print(PlatillosObtenidos)
 
                 return render(request, "platillos.html", contexto)
         except Exception as ex:
@@ -261,6 +265,7 @@ def CancelarOrden (request):
         return render(request, "login.html")
 #endregion AnularOrden
 
+#region FacturarOrden
 def FacturarOrden(request):
     if request.user.is_authenticated:
         try:
@@ -278,25 +283,24 @@ def FacturarOrden(request):
                 """.format(idOrden, monto, cambio, propina))
 
                 # Se obtiene la orden que se va a Ordenr
-                orden = Orden.objects.get(id=idOrden)
+                orden = Orden.objects.get(Id=idOrden)
                 print(orden)
 
-                orden.monto = monto
-                orden.cambio = cambio
-                orden.estado = "0"
-                orden.propina = propina
+                orden.Monto = monto
+                orden.Cambio = cambio
+                orden.Estado = "0"
+                orden.Propina = propina
 
                 # Se guardan los cambios
                 orden.save()
 
                 return HttpResponse(request, "Hola")
         except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
+            print("\n############### EXCEPCIÓN ###############")
+            print(traceback.format_exc())
+            print("#########################################\n")
+            return JsonResponse({'error': str(ex)}, status=500)
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
-#endregion
+#endregion FacturarOrden

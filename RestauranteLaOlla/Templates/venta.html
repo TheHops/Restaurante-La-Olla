@@ -114,7 +114,7 @@
             
                 <!-- Input de buscar -->
                 <input type="text" name="InputBuscarPlatillo" id="InputBuscarPlatillo" placeholder="Buscar platillo"
-                    onkeyup="filtrarPlatillos(this.value);">
+                    onkeyup="debouncedFiltrarPlatillos(this.value)">
             
                 <button id="btn_abrirListaOrdenes" onclick="abrirCarrito()">
                     <!-- <i class="fa-regular fa-square-list"></i> -->
@@ -494,6 +494,18 @@
         }
 
         /* PLATILLOS FILTRADOS */
+        let temporizadorFiltrar = null;
+
+        function debouncedFiltrarPlatillos(cadena) {
+            // Limpia cualquier temporizador anterior
+            clearTimeout(temporizadorFiltrar);
+
+            // Establece uno nuevo: espera 500ms después de que el usuario deje de escribir
+            temporizadorFiltrar = setTimeout(() => {
+                filtrarPlatillos(cadena);
+            }, 500);
+        }
+
         function filtrarPlatillos (cadena)
         {
             let request = new XMLHttpRequest();
