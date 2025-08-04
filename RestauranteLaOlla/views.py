@@ -47,7 +47,7 @@ def logoutUser(request):
     logout(request)
     return redirect("/")
 
-#region GRAFICAS DASHBOARD
+#region GraficasOrdenes
 def GraficarOrdenes(request):
     if request.user.is_authenticated:
         try:
@@ -105,9 +105,9 @@ def GraficarOrdenes(request):
             return JsonResponse({'error': str(ex)}, status=500)
     else:
         return render(request, "login.html")
+#endregion GraficarOrdenes
 
-#endregion
-
+#region FiltrarOrdenes
 def FiltrarOrdenes(request):
     if request.user.is_authenticated:
         try:
@@ -144,17 +144,11 @@ def FiltrarOrdenes(request):
 
                 return render(request, "ordenesFiltradas.html", contexto)
         except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
+            print("\n############### EXCEPCIÓN ###############")
+            print(traceback.format_exc())
+            print("#########################################\n")
+            return JsonResponse({'error': str(ex)}, status=500)
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
-
-       # print("==========dia semana====================")
-        #print("==============================")
-        #print(dia_semana)
-
-
+#endregion FiltrarOrdenes

@@ -1,6 +1,8 @@
 .contenidoVenta {
     overflow: hidden;
     height: 550px;
+    position: relative;
+    height: 92vh;
     /* padding: 25px 50px; */
     /* display: inline-block; */
 }
@@ -305,17 +307,19 @@ legend {
     border-bottom: #DF362D solid 1px;
 
     border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
+    /* border-bottom-right-radius: 15px; */
 }
 
 #Ordenes {
     margin-left: auto;
     width: 300px;
-    height: 570px;
+    height: auto;
     background: rgba(255, 255, 255, .8);
 
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
+
+    overflow: hidden;
 
     z-index: 15;
     /* border-left-style: solid;
@@ -327,8 +331,8 @@ legend {
     background-color: #DF362D;
     width: 100%;
     height: 60px;
-    border-bottom-left-radius: 30px;
-    border-bottom-right-radius: 30px;
+    /* border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px; */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -433,8 +437,8 @@ legend {
     background-color: #DF362D;
     width: 100%;
     height: 80px;
-    border-bottom-left-radius: 30px;
-    border-bottom-right-radius: 30px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -544,6 +548,8 @@ legend {
     /* height: calc(100% - 10vh); */
     height: 100vh;
     overflow: auto;
+
+    padding-bottom: 100px;
 
     /* display: grid;
     grid-template-columns: auto auto auto; */
@@ -910,6 +916,7 @@ legend {
         position: absolute;
 
         right: 0;
+        top: 10vh;
 
         display: none;
     }
