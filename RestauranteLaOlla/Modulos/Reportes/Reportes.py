@@ -1,6 +1,7 @@
 import datetime
 import os
-from django.http import HttpResponse
+import traceback
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from jinja2 import Environment, FileSystemLoader
 import pdfkit, xlwt
@@ -28,8 +29,8 @@ def Exportar_ExcelPlatillo(request):
                 ws.write(row_num, col_num, Columns[col_num], font_style)
 
             font_style = xlwt.XFStyle()
-            rows = Platillo.objects.all().values_list('nombreplatillo', 'precioplatillo',
-                                                    'idtipoplatillo', 'descripcionplatillo', 'activo')
+            rows = Platillo.objects.all().values_list('Nombre', 'Precio',
+                                                    'IdTipoPlatillo', 'Descripcion', 'EsActivo')
 
             for row in rows:
                 row_num += 1
@@ -67,7 +68,7 @@ def ExportarTipoPlatillos(request):
                 ws.write(row_num, col_num, Columns[col_num], font_style)
 
             font_style = xlwt.XFStyle()
-            rows = TipoPlatillo.objects.all().values_list('nombretp', 'activo')
+            rows = TipoPlatillo.objects.all().values_list('Nombre', 'EsActivo')
 
             for row in rows:
                 row_num += 1
@@ -92,28 +93,26 @@ def ExportarTipoPlatillos(request):
 def CreacionPlatillos_PDF(request):
     if request.user.is_authenticated:
         try:
-            # ruta_template = 'C:/Users/Hops/OneDrive/Escritorio/Universidad/Proyectos pa Monografia/Restaurante-La-Olla/Restaurante_La_Olla/Templates/Platillos_PDF.html'
-            # ruta_template = 'C:/Users/samue/OneDrive/Escritorio/Universidad/Proyectos pa Monografia/Restaurante-La-Olla/Restaurante_La_Olla/Templates/Platillos_PDF.html'
-        
             directorio = os.getcwd()
-
-            ruta_template = os.path.normpath(directorio + '/Restaurante-La-Olla/Restaurante_La_Olla/Templates/Platillos_PDF.html')
-            segmentos = ruta_template.split('\\')
-            ruta = '/'.join(segmentos)
-            ruta_template = ruta.replace('/Restaurante-La-Olla/', '/')
-
-            print("********************** P D F *************************")
+            
+            print("\n########## DIRECTORIO ###########")
             print(directorio)
-            print()
-            print(ruta_template)
-            print()
-            print(segmentos)
-            print()
-            print(os.path.isfile(ruta_template))
-            print()
 
-            # C:\Users\ASUS\Documents\5T2\Tendencias tecnológicas\Proyecto\Restaurante-La-Olla\Restaurante_La_Olla\Templates\Platillos_PDF.html
-        
+            ruta_template = os.path.normpath(directorio + '/RestauranteLaOlla/Templates/Platillos_PDF.html')
+            
+            print("\n########## RUTA TEMPLATE ###########")
+            print(ruta_template)
+            
+            segmentos = ruta_template.split('\\')
+            
+            print("\n########## SEGMENTOS ###########")
+            print(segmentos)           
+
+            ruta = '/'.join(segmentos)
+            
+            print("\n########## RUTA ###########")
+            print(ruta)
+
             if not os.path.isfile(ruta_template):
                 return HttpResponse("Error: El archivo HTML del template no existe.")
 
@@ -122,11 +121,10 @@ def CreacionPlatillos_PDF(request):
 
             env = Environment(loader=FileSystemLoader(ruta))
             template = env.get_template(nombre_template)
-            platillos = Platillo.objects.filter(activo="activo").order_by('nombreplatillo').values()
-            # <<<<<<< HEAD
+            platillos = Platillo.objects.filter(EsActivo="1").order_by('Nombre').values()
 
             # filtro de tipo platillo
-            tp = TipoPlatillo.objects.filter(activo="activo").values()
+            tp = TipoPlatillo.objects.filter(EsActivo="1").values()
     
             # nuevo elemento a contexto
             html = template.render({'platillos': platillos, 'tipoplatillos' : tp})
@@ -140,11 +138,10 @@ def CreacionPlatillos_PDF(request):
 
             return response
         except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
+            print("\n############### EXCEPCIÓN ###############")
+            print(traceback.format_exc())
+            print("#########################################\n")
+            return JsonResponse({'error': str(ex)}, status=500)
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
@@ -152,14 +149,12 @@ def CreacionPlatillos_PDF(request):
 def CreacionTipoPlatillos_PDF(request):
     if request.user.is_authenticated:
         try:
-            #ruta_template = 'C:/Users/samue/OneDrive/Escritorio/Universidad/Proyectos pa Monografia/Restaurante-La-Olla/Restaurante_La_Olla/Templates/TipoPlatillos_PDF.html'
-        
             directorio = os.getcwd()
             
-            ruta_template = os.path.normpath(directorio + '/Restaurante-La-Olla/Restaurante_La_Olla/Templates/TipoPlatillos_PDF.html')
+            ruta_template = os.path.normpath(directorio + '/RestauranteLaOlla/RestauranteLaOlla/Templates/TipoPlatillos_PDF.html')
             segmentos = ruta_template.split('\\')
             ruta = '/'.join(segmentos)
-            ruta_template = ruta.replace('/Restaurante-La-Olla/', '/')
+            ruta_template = ruta.replace('/RestauranteLaOlla/', '/')
 
             if not os.path.isfile(ruta_template):
                 return HttpResponse("Error: El archivo HTML del template no existe.")

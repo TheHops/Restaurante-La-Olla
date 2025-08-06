@@ -50,22 +50,25 @@
         <tbody>
             {% for platillos in Platillos %}
             <tr>
-                <td style="text-transform: capitalize; ">{{platillos.nombreplatillo|lower}}</td>
-                <td>{{platillos.idtipoplatillo.nombretp}}</td>
-                <td>C${{platillos.precioplatillo}}</td>
-                <td style="text-transform: capitalize; ">{{platillos.activo}}</td>
+                <td style="text-transform: capitalize; ">{{platillos.Nombre|lower}}</td>
+                <td>{{platillos.IdTipoPlatillo.Nombre}}</td>
+                <td>C${{platillos.Precio}}</td>
+
+                {% comment %} TODO: Agregar un ícono en lugar de un texto {% endcomment %}
+                <td style="text-transform: capitalize; ">{{platillos.EsActivo}}</td>
+                
                 <td class="actions">
 
                     <button class="actionButton btnEditar" data-toggle="modal" data-target="#exampleModal" 
-                    onclick='Impresion("{{platillos.id}}" , "{{platillos.nombreplatillo}}", "{{platillos.idtipoplatillo.nombretp}}","{{platillos.precioplatillo}}","{{platillos.activo}}", "{{platillos.descripcionplatillo}}" );'  id =Editar{{platillos.id}}>
+                    onclick='Impresion("{{platillos.Id}}" , "{{platillos.Nombre}}", "{{platillos.IdTipoPlatillo.Nombre}}","{{platillos.Precio}}","{{platillos.EsActivo}}", "{{platillos.Descripcion}}" );'  id="Editar{{platillos.Id}}">
                         <a>
                             <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
                             <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar platillo">
                         </a>
                     </button>
 
-                    {% if platillos.activo|lower == "activo" %}
-                        <button class="actionButton btnEliminar" data-toggle="modal" data-target="#DarBajaPlatillo" onclick="BajaImpresion('{{platillos.id}}');" id=Eliminar{{platillos.id}}>
+                    {% if platillos.EsActivo == "1" %}
+                        <button class="actionButton btnEliminar" data-toggle="modal" data-target="#DarBajaPlatillo" onclick="BajaImpresion('{{platillos.Id}}');" id="Eliminar{{platillos.Id}}">
                             <a>
                                 <!-- <i class="fa-solid fa-trash-can fa-lg" style="color: #ff6969; padding: 5px 5px;"></i> -->
                                 <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar platillo">
@@ -118,10 +121,10 @@
                         <h4 style="font-size: 20px;">Tipo de Platillo</h4>
                         <select class="form-control" id="TipoPlatillo">
                             {% for tipoplatillo in TypePlatillo %}
-                            {% if tipoplatillo.activo|lower == "activo" %}
-                                <option value="{{ tipoplatillo.id }}">{{ tipoplatillo.nombretp }}</option>
+                            {% if tipoplatillo.EsActivo|lower == "activo" %}
+                                <option value="{{ tipoplatillo.Id }}">{{ tipoplatillo.Nombre }}</option>
                             {% else %}
-                                <option value="{{ tipoplatillo.id }}" disabled>{{ tipoplatillo.nombretp }}</option>
+                                <option value="{{ tipoplatillo.Id }}" disabled>{{ tipoplatillo.Nombre }}</option>
                             {% endif %}
                             {% endfor %}
                         </select>
@@ -229,10 +232,10 @@
                         <h4 style="font-size: 20px;">Tipo de Platillo<span class="asterisco">*</span></h4>
                         <select class="form-control" id="TipoPlatilloAgregar">
                             {% for tipoplatillo in TypePlatillo %}
-                                {% if tipoplatillo.activo|lower == "activo" %}
-                                    <option value="{{ tipoplatillo.id }}">{{ tipoplatillo.nombretp }}</option>
+                                {% if tipoplatillo.EsActivo == "1" %}
+                                    <option value="{{ tipoplatillo.Id }}">{{ tipoplatillo.Nombre }}</option>
                                  {% else %}
-                                    <option value="{{ tipoplatillo.id }}" disabled>{{ tipoplatillo.nombretp }}</option>
+                                    <option value="{{ tipoplatillo.Id }}" disabled>{{ tipoplatillo.Nombre }}</option>
                                 {% endif %}
                             {% endfor %}
                            
@@ -251,7 +254,6 @@
                         </select> 
                     </div>
 
-                    
                     <div class="col-md-6 pb-4">
                         <h4 style="font-size: 20px;">Imagen del Platillo</h4>
                         <label for="archivoModal"

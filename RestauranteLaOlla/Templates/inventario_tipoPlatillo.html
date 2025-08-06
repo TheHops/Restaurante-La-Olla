@@ -46,19 +46,19 @@
         <tbody>
             {% for tipoplatillo in TypePlatillo%}
             <tr>
-                <td style="text-transform: capitalize; ">{{tipoplatillo.nombretp|lower}}</td>
-                <td style="text-transform: capitalize; ">{{tipoplatillo.activo}}</td>
+                <td style="text-transform: capitalize; ">{{tipoplatillo.Nombre}}</td>
+                <td style="text-transform: capitalize; ">{{tipoplatillo.EsActivo}}</td>
                 <td class="actions">
 
-                    <button class="actionButton btnEditar" data-toggle="modal" data-target="#exampleModal" onclick="Impresion('{{tipoplatillo.id}}', '{{tipoplatillo.nombretp}}','{{tipoplatillo.activo}}');" id=Editar{{tipoplatillo.id}}>
+                    <button class="actionButton btnEditar" data-toggle="modal" data-target="#exampleModal" onclick="Impresion('{{tipoplatillo.Id}}', '{{tipoplatillo.Nombre}}','{{tipoplatillo.EsActivo}}');" id="Editar{{tipoplatillo.Id}}">
                         <a >
                             <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
                             <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar el tipo de platillo">
                         </a>
                     </button>
 
-                    {% if tipoplatillo.activo|lower == "activo" %}
-                      <button class="actionButton btnEliminar" data-toggle="modal" data-target="#DarBajaTipoPlatillo" onclick="DarBajaImpresion('{{tipoplatillo.id}}');" id=Eliminar{{tipoplatillo.id}}>
+                    {% if tipoplatillo.activo == "1" %}
+                      <button class="actionButton btnEliminar" data-toggle="modal" data-target="#DarBajaTipoPlatillo" onclick="DarBajaImpresion('{{tipoplatillo.Id}}');" id="Eliminar{{tipoplatillo.id}}">
                           <a>
                               <!-- <i class="fa-solid fa-trash-can fa-lg" style="color: #ff6969; padding: 5px 5px;"></i> -->
                               <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar el tipo de platillo">
