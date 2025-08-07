@@ -137,6 +137,15 @@ a .paginate_button .current {
     border-color: rgb(150, 150, 150);
 }
 
+.tablaInventario thead tr th {
+    font-weight: bolder;
+    font-size: large;
+}
+
+.tablaInventario tbody tr td {
+    font-family: monospace;
+}
+
 /* Todos los botones */
 .actionButton {
     width: 35px;

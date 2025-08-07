@@ -41,7 +41,7 @@
                 <th>Platillo</th>
                 <th>Tipo de platillo</th>
                 <th>Precio</th>
-                <th>Estado</th>
+                <th style="text-align: center">Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -55,12 +55,18 @@
                 <td>C${{platillos.Precio}}</td>
 
                 {% comment %} TODO: Agregar un ícono en lugar de un texto {% endcomment %}
-                <td style="text-transform: capitalize; ">{{platillos.EsActivo}}</td>
+                <td style="text-align: center;">
+                    {% if platillos.EsActivo == "1" %} 
+                    &#9989;
+                    {% else %}
+                    &#9940;
+                    {% endif %}
+                </td>
                 
                 <td class="actions">
 
                     <button class="actionButton btnEditar" data-toggle="modal" data-target="#exampleModal" 
-                    onclick='Impresion("{{platillos.Id}}" , "{{platillos.Nombre}}", "{{platillos.IdTipoPlatillo.Nombre}}","{{platillos.Precio}}","{{platillos.EsActivo}}", "{{platillos.Descripcion}}" );'  id="Editar{{platillos.Id}}">
+                    onclick='Impresion("{{platillos.Id}}" , "{{platillos.Nombre}}", "{{platillos.IdTipoPlatillo.Nombre}}", "{{platillos.IdTipoPlatillo.Id}}","{{platillos.Precio}}","{{platillos.EsActivo}}", "{{platillos.Descripcion}}" );'  id="Editar{{platillos.Id}}">
                         <a>
                             <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
                             <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar platillo">
@@ -121,7 +127,7 @@
                         <h4 style="font-size: 20px;">Tipo de Platillo</h4>
                         <select class="form-control" id="TipoPlatillo">
                             {% for tipoplatillo in TypePlatillo %}
-                            {% if tipoplatillo.EsActivo|lower == "activo" %}
+                            {% if tipoplatillo.EsActivo == "1" %}
                                 <option value="{{ tipoplatillo.Id }}">{{ tipoplatillo.Nombre }}</option>
                             {% else %}
                                 <option value="{{ tipoplatillo.Id }}" disabled>{{ tipoplatillo.Nombre }}</option>
@@ -182,7 +188,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-success" onclick="ActualizarPlatillo();">Actualizar</button>
+          <button type="button" class="btn btn-dark" onclick="ActualizarPlatillo();">Actualizar</button>
         </div>
       </div>
     </div>
@@ -205,7 +211,7 @@
                 {% csrf_token %}
                 <input type="hidden" id="IdPlatilloBaja">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-success" onclick="DarBaja_Platillo();">Dar Baja</button>
+                <button type="button" class="btn btn-dark" onclick="DarBaja_Platillo();">Dar Baja</button>
             </form>
         </div>
       </div>
@@ -346,43 +352,18 @@
 
     /**********************************************************/
 
-    function Impresion(id, nombre, TipoPlatillo, precio, estado, descripcion){
+    function Impresion(id, nombre, tipoPlatillo, idTipoPLatillo, precio, estado, descripcion){
         aparecerCapa();
+
         $("#IDPlatillo").val(id);
         $("#NombrePlatillo").val(nombre);
-        $("#TipoPlatillo").val(TipoPlatillo);
+        $("#TipoPlatillo").val(tipoPlatillo);
         $("#PrecioPlatillo").val(precio);
         $("#EstadoPlatillo").val(estado);
         $("#DescripcionPlatillo").val(descripcion);
-        // alert(TipoPlatillo);
-        switch(TipoPlatillo){
-            case "Bebidas":
-                $("#TipoPlatillo").val(1);
-                break
-            case "Licores":
-                $("#TipoPlatillo").val(2);
-                break
-            case "Carnes":
-                $("#TipoPlatillo").val(3);
-                break
-            case "Entradas":
-                $("#TipoPlatillo").val(4);
-                break
-            case "Para los niños":
-                $("#TipoPlatillo").val(5);
-                break
-            case "Rones":
-                $("#TipoPlatillo").val(6);
-                break
-            case "Postres":
-                $("#TipoPlatillo").val(7);
-                break
-            case "EXTRAS":
-                $("#TipoPlatillo").val(8);
-                break
-        }
+        $("#TipoPlatillo").val(idTipoPLatillo);
 
-        $("#EstadoPlatillo").val( (estado==="activo")?1:0);
+        $("#EstadoPlatillo").val( (estado === "1") ? 1 : 0 );
      }  
 
     function ActualizarPlatillo(){
@@ -390,7 +371,7 @@
         const tipoPlatillo = $("#TipoPlatillo").val();
         const precio =  parseFloat($("#PrecioPlatillo").val());
         const Id = $("#IDPlatillo").val();
-        const Estado =  ($("#EstadoPlatillo").val() === "1")? "Activo": "Inactivo";
+        const Estado =  ($("#EstadoPlatillo").val());
         const descripcion = $("#DescripcionPlatillo").val();
         const archivo = $("#archivoModal_dos")[0].files[0]; // Obtenemos el archivo seleccionado
 
@@ -441,8 +422,9 @@
     function BajaImpresion(id)
     {
         aparecerCapa();
-       $("#IdPlatilloBaja").val(id);
+        $("#IdPlatilloBaja").val(id);
     }
+
     function DarBaja_Platillo(){
         const Id = $("#IdPlatilloBaja").val();
 
@@ -478,7 +460,7 @@
         const nombre = $("#NombrePlatilloAgregar").val();
         const tipoPlatillo = $("#TipoPlatilloAgregar").val();
         const precio = parseFloat($("#PrecioPlatilloAgregar").val());
-        const estado = ($("#EstadoPlatilloAgregar").val() === "1") ? "Activo" : "Inactivo";
+        const estado = ($("#EstadoPlatilloAgregar").val());
         const descripcion = $("#DescripcionPlatilloAgregar").val();
         const archivo = $("#archivoModal")[0].files[0]; // Obtenemos el archivo seleccionado
 

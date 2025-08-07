@@ -37,7 +37,7 @@
             <!-- Columnas -->
             <tr>
                 <th>Tipo de platillo</th>
-                <th>Estado</th>
+                <th style="text-align: center">Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -47,7 +47,13 @@
             {% for tipoplatillo in TypePlatillo%}
             <tr>
                 <td style="text-transform: capitalize; ">{{tipoplatillo.Nombre}}</td>
-                <td style="text-transform: capitalize; ">{{tipoplatillo.EsActivo}}</td>
+                <td style="text-align: center">
+                  {% if tipoplatillo.EsActivo == "1" %} 
+                    &#9989;
+                  {% else %}
+                  &#9940;
+                  {% endif %}
+                </td>
                 <td class="actions">
 
                     <button class="actionButton btnEditar" data-toggle="modal" data-target="#exampleModal" onclick="Impresion('{{tipoplatillo.Id}}', '{{tipoplatillo.Nombre}}','{{tipoplatillo.EsActivo}}');" id="Editar{{tipoplatillo.Id}}">
@@ -57,8 +63,8 @@
                         </a>
                     </button>
 
-                    {% if tipoplatillo.activo == "1" %}
-                      <button class="actionButton btnEliminar" data-toggle="modal" data-target="#DarBajaTipoPlatillo" onclick="DarBajaImpresion('{{tipoplatillo.Id}}');" id="Eliminar{{tipoplatillo.id}}">
+                    {% if tipoplatillo.EsActivo == "1" %}
+                      <button class="actionButton btnEliminar" data-toggle="modal" data-target="#DarBajaTipoPlatillo" onclick="DarBajaImpresion('{{tipoplatillo.Id}}');" id="Eliminar{{tipoplatillo.Id}}">
                           <a>
                               <!-- <i class="fa-solid fa-trash-can fa-lg" style="color: #ff6969; padding: 5px 5px;"></i> -->
                               <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar el tipo de platillo">
@@ -100,7 +106,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="desaparecerCapa();">Cancelar</button>
-          <button type="button" class="btn btn-danger" onclick="ActulizarTipoPlatillo();">Actualizar</button>
+          <button type="button" class="btn btn-dark" onclick="ActulizarTipoPlatillo();">Actualizar</button>
         </div>
       </div>
     </div>
@@ -126,7 +132,7 @@
                 {% csrf_token %}
                 <input type="hidden" id="IdTipoPlatilloBaja">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" onclick="DarBajaTipoPlatillo();">Dar Baja</button>
+                <button type="button" class="btn btn-dark" onclick="DarBajaTipoPlatillo();">Dar Baja</button>
             </form>
         </div>
       </div>
@@ -176,14 +182,13 @@
     function Impresion(id,nombre, estado){
       aparecerCapa();
       $("#NameTipoPlatillo").val(nombre);
-      $("#EstadoTipoPlatillo").val((estado === "activo")?1:0);
+      $("#EstadoTipoPlatillo").val((estado === "1") ? 1 : 0);
       $("#IDTipoPlatillo").val(id);
     }  
 
     function ActulizarTipoPlatillo(){
-      debugger;
         const nombre = $("#NameTipoPlatillo").val();
-        const Estado = ($("#EstadoTipoPlatillo").val()=== '1')?"Activo":"Inactivo";
+        const Estado = ($("#EstadoTipoPlatillo").val());
         const Id = $("#IDTipoPlatillo").val();
         $.ajax({
            url:'/ActualizarTipoPlatillo/',
