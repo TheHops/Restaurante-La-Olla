@@ -135,3 +135,6 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+WKHTMLTOPDF_CMD = 'C:\Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'
+WKHTMLTOPDF_BIN = 'C:\Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'

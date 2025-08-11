@@ -1,7 +1,7 @@
 
 from csv import reader
 import traceback
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from Application.models import Platillo, TipoPlatillo
 from django.core.files.storage import default_storage
@@ -37,11 +37,10 @@ def Actualizar_Platillos(request):
                 platillo.save()
                 return HttpResponse("")
         except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
+            print("\n############### EXCEPCIÓN ###############")
+            print(traceback.format_exc())
+            print("#########################################\n")
+            return JsonResponse({'error': str(ex)}, status=500)
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return reader(request, "login.html")
@@ -53,7 +52,7 @@ def DarBajar_Platillo(request):
                 id = request.POST.get("id")
                 print("ID: "+id)
                 platillo = Platillo.objects.get(Id=id)
-                platillo.EsActivo = "Inactivo"
+                platillo.EsActivo = "0"
                 platillo.save()
                 return HttpResponse("")
         except Exception as ex:
