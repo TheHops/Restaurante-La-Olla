@@ -3,6 +3,17 @@ body ::selection {
     color: white;
 }
 
+body {
+    background-image: url('/static/img/wavebgTest4-1.png');
+    background-size: cover; /* o contain */
+    background-repeat: no-repeat;
+    background-position: center top;
+}
+
+body.modal-open {
+    height: 100vh;
+}
+
 /* Basic styling */
 * {
     padding: 0;
@@ -16,7 +27,7 @@ html {
 
 nav {
     background: #DF362D;
-    padding: 0px 20px;
+    padding: 8px 20px 0px 20px;
 }
 
 body > header > nav > ul::selection {
@@ -42,7 +53,7 @@ a:hover {
 
 .menu li {
     font-size: 20px;
-    padding: 15px 5px;
+    padding: 10px 5px;
     white-space: nowrap;
 }
 
@@ -187,7 +198,6 @@ a:hover {
 }
 
 #logout {
-    margin-top: 5px;
     height: 5px;
     width: 30px;
     padding: 20px;
@@ -257,18 +267,11 @@ html {
 /***************************************************************************************************/
 
 .contenido {
-    /* padding: 25px 50px; */
-    transform: translateY(-17px);
+    height: 100vh;
+    width: 100%;
+    position: absolute;
+    top: 8vh;
 }
-
-/* .modal-backdrop {
-    display: none;
-    z-index: 10;
-}
-
-#AgregarInsumo {
-    z-index: 10;
-} */
 
 .modal {
     position: fixed;

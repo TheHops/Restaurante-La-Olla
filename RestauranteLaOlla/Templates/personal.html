@@ -5,7 +5,7 @@
 
 <div id="encabezado_inventario">
     <button id="agregar"  data-toggle="modal" data-target="#AgregarPersonal" onclick="aparecerCapa()">
-        <img src="{% static 'img/Add_user.png' %}" style="width: 30px; height: 30px; margin-right: 5px;" title="Añadir insumo"></img>Agregar personal
+        <img src="{% static 'img/Add_user.png' %}" style="width: 30px; height: 30px; margin-right: 5px;" title="Agregar personal"></img>Agregar personal
     </button>
 
     <!-- <select name="" id="listaInventario">
@@ -51,7 +51,7 @@
                 <td>{{personal.email}}</td>
                 <td>
                     {% if personal.telefonopers != "" %}
-                        <a href="https://wa.me/+505{{personal.telefonopers}}" target="_blank" style="color:black;">  {{personal.Telefono}} </a>
+                        <a href="https://wa.me/+505{{personal.Telefono}}" target="_blank" style="color:black;">  {{personal.Telefono}} </a>
                     {% else %}
                         N/A
                     {% endif %}
@@ -65,7 +65,7 @@
                 <td class="actions">
 
                     <button class="actionButton btnEditar" id="{{personal.Id}}" data-toggle="modal"  data-target="#ModificarPersonal" 
-                    onclick="ImpresionPersonal('{{personal.username}}','{{personal.email}}','{{personal.Telefono}}', '{{personal.IdCargo.Nombre}}', '{{personal.Id}}','{{personal.EsActivo}}','{{personal.Nombres}}','{{personal.Apellidos}}')" >
+                    onclick="ImpresionPersonal('{{personal.username}}','{{personal.email}}','{{personal.Telefono}}', '{{personal.IdCargo.Nombre}}', {{personal.IdCargo.Id}}, '{{personal.Id}}','{{personal.EsActivo}}','{{personal.Nombres}}','{{personal.Apellidos}}')" >
                         <a >
                             <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
                             <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar Personal">
@@ -135,21 +135,21 @@
                 <div class="row">
                     <div class="col-md-6">
                         <h4 style="font-size: 20px;">Usuario<span class="asterisco">*</span></h4>
-                        <input type="text" class="form-control" id="User" required>
+                        <input type="text" class="form-control" id="User" required autocomplete="off">
                     </div>
                     <div class="col-md-6">
                         <h4 style="font-size: 20px;">Contraseña<span class="asterisco">*</span></h4>
-                        <input type="Password" class="form-control" id="Pass" required>
+                        <input type="Password" class="form-control" id="Pass" required autocomplete="new-password">
                     </div>
                 </div>
 
                 <h4 style="font-size: 20px;">Correo</h4>
-                <input type="email" class="form-control" id="e-mail" required>
+                <input type="email" class="form-control" id="e-mail">
 
                 <div class="row">
                     <div class="col-md-6">
                         <h4 style="font-size: 20px;">Telefono</h4>
-                        <input type="text"inputmode="numeric" class="form-control" maxlength="8" id="telefono" onkeypress="return soloNumeros(event)" required>
+                        <input type="text"inputmode="numeric" class="form-control" maxlength="8" id="telefono" onkeypress="return soloNumeros(event)">
                
                     </div>
                     <div class="col-md-6">
@@ -166,7 +166,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-success" onclick="Agregar_Personal();">Agregar</button>
+          <button type="button" class="btn btn-dark" onclick="Agregar_Personal();">Agregar</button>
         </div>
       </div>
     </div>
@@ -203,7 +203,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <h4 style="font-size: 20px;">Usuario<span class="asterisco">*</span></h4>
-                        <input type="text" class="form-control" id="NameUsuario" required>
+                        <input type="text" class="form-control" id="NameUsuario" required autocomplete="off">
                     </div>
                     <div class="col-md-6">
                         <h4 style="font-size: 20px;">Correo</h4>
@@ -214,11 +214,11 @@
                 <div class="row">
                     <div class="col-md-6">
                         <h4 style="font-size: 20px;">Nueva Contraseña</h4>
-                        <input type="text" class="form-control" id="NewPassword"  required>  
+                        <input type="password" class="form-control" id="NewPassword" required autocomplete="new-password">
                     </div>
                     <div class="col-md-6">
                         <h4 style="font-size: 20px;">Verificar Contraseña</h4>
-                        <input type="password" class="form-control" id="CheckPassword"   required>        
+                        <input type="password" class="form-control" id="CheckPassword" required autocomplete="new-password">
                     </div>
                 </div>
                
@@ -229,7 +229,7 @@
                     <h4 style="font-size: 20px;">Cargo<span class="asterisco">*</span></h4>
                     <select class="form-control" id="idCargoModificar" required>
                         {% for cargo in Cargos %}
-                        <option value="{{cargo.Id}}">{{cargo.Nombre}}</option>
+                            <option value="{{cargo.Id}}" id="personalCargo{{cargo.Id}}">{{cargo.Nombre}}</option>
                         {% endfor %}
                     </select>
 
@@ -244,7 +244,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="desaparecerCapa();">Cancelar</button>
-          <button type="submit" class="btn btn-success" onclick="ModificarPersonal();">Actualizar</button>
+          <button type="submit" class="btn btn-dark" onclick="ModificarPersonal();">Actualizar</button>
         </div>
       </div>
     </div>
@@ -266,7 +266,7 @@
                 {% csrf_token %}
                 <input type="hidden" id="IdPersonalBaja">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-success" onclick="BajaPersonal();">Dar Baja</button>
+                <button type="button" class="btn btn-dark" onclick="BajaPersonal();">Dar Baja</button>
             </form>
         </div>
       </div>
@@ -283,27 +283,17 @@ $('.modal').on('hidden.bs.modal', function (e) {
         desaparecerCapa()
     }
 });
-function ImpresionPersonal(usuario,correo,telefono,cargo,ID, estado, nombre,apellido){
+
+function ImpresionPersonal(usuario, correo, telefono, cargo, idCargo, idPersonal, estado, nombre, apellido){
     aparecerCapa();
      
     $("#NameUsuario").val(usuario);
     $("#CorreoUsuario").val(correo);
     $("#NumberUsuario").val(telefono);
-    $("#IdPersonal").val(ID);
+    $("#IdPersonal").val(idPersonal);
     $("#NombreUsuarioMod").val(nombre);
     $("#ApellidosUsuarioMod").val(apellido);
-   
-    switch(cargo){
-        case "Administrador":
-            $("#idCargo").val(1);
-            break;
-        case "Cajero":
-             $("#idCargo").val(2);
-            break
-        case "Desarrollador":
-            $("#idCargo").val(3);
-            break
-    }
+    $("#idCargoModificar").val(idCargo);
     $("#idEstadoModificar").val( (estado==='1')?1:0);
 }
 
@@ -344,7 +334,7 @@ function Agregar_Personal(){
                }else{
                 Swal.fire({
                     title: 'Usuario Ocupado',
-                    text: 'Usuario ingresado ya esta en la Base de Datos del Sistema',
+                    text: 'Usuario ingresado ya esta registrado en el Sistema',
                     icon: 'error',
                     timer: 1500
                 })

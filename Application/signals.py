@@ -23,8 +23,8 @@ def initial_data(sender, **kwargs):
         areas = [
             {"Id": 1, "Nombre": "Salón principal", "EsActivo": "1"},
             {"Id": 2, "Nombre": "Cabañita", "EsActivo": "1"},
-            {"Id": 3, "Nombre": "Cabaña de arriba", "EsActivo": "1"},
-            {"Id": 4, "Nombre": "Mesas de borde", "EsActivo": "1"},
+            {"Id": 3, "Nombre": "Cabaña de borde", "EsActivo": "1"},
+            {"Id": 4, "Nombre": "Mesas de arriba", "EsActivo": "1"},
             {"Id": 5, "Nombre": "Cabaña piso rojo", "EsActivo": "1"},
             {"Id": 6, "Nombre": "Salón de eventos", "EsActivo": "0"},
         ]
@@ -45,27 +45,27 @@ def initial_data(sender, **kwargs):
             {"Id": 8, "IdAreaMesa": AreaMesa.objects.get(Id=1), "Numero": 8, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
             
             # Cabañita
-            {"Id": 9, "IdAreaMesa": AreaMesa.objects.get(Id=2), "Numero": 1, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
-            {"Id": 10, "IdAreaMesa": AreaMesa.objects.get(Id=2), "Numero": 2, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
-            {"Id": 11, "IdAreaMesa": AreaMesa.objects.get(Id=2), "Numero": 3, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
+            {"Id": 9, "IdAreaMesa": AreaMesa.objects.get(Id=2), "Numero": 9, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
+            {"Id": 10, "IdAreaMesa": AreaMesa.objects.get(Id=2), "Numero": 10, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
+            {"Id": 11, "IdAreaMesa": AreaMesa.objects.get(Id=2), "Numero": 11, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
             
-            # Cabaña de arriba
-            {"Id": 12, "IdAreaMesa": AreaMesa.objects.get(Id=3), "Numero": 1, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
-            {"Id": 13, "IdAreaMesa": AreaMesa.objects.get(Id=3), "Numero": 2, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
-            {"Id": 14, "IdAreaMesa": AreaMesa.objects.get(Id=3), "Numero": 3, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
-            {"Id": 15, "IdAreaMesa": AreaMesa.objects.get(Id=3), "Numero": 4, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
+            # Cabaña de borde
+            {"Id": 12, "IdAreaMesa": AreaMesa.objects.get(Id=3), "Numero": 12, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
+            {"Id": 13, "IdAreaMesa": AreaMesa.objects.get(Id=3), "Numero": 13, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
+            {"Id": 14, "IdAreaMesa": AreaMesa.objects.get(Id=3), "Numero": 14, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
+            {"Id": 15, "IdAreaMesa": AreaMesa.objects.get(Id=3), "Numero": 15, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
             
-            # Mesas de borde
-            {"Id": 16, "IdAreaMesa": AreaMesa.objects.get(Id=4), "Numero": 1, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
-            {"Id": 17, "IdAreaMesa": AreaMesa.objects.get(Id=4), "Numero": 2, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
-            {"Id": 18, "IdAreaMesa": AreaMesa.objects.get(Id=4), "Numero": 3, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
-            {"Id": 19, "IdAreaMesa": AreaMesa.objects.get(Id=4), "Numero": 4, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
+            # Mesas de arriba
+            {"Id": 16, "IdAreaMesa": AreaMesa.objects.get(Id=4), "Numero": 16, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
+            {"Id": 17, "IdAreaMesa": AreaMesa.objects.get(Id=4), "Numero": 17, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
+            {"Id": 18, "IdAreaMesa": AreaMesa.objects.get(Id=4), "Numero": 18, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
+            {"Id": 19, "IdAreaMesa": AreaMesa.objects.get(Id=4), "Numero": 19, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
             
             # Cabaña piso rojo
-            {"Id": 20, "IdAreaMesa": AreaMesa.objects.get(Id=5), "Numero": 1, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
-            {"Id": 21, "IdAreaMesa": AreaMesa.objects.get(Id=5), "Numero": 2, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
-            {"Id": 22, "IdAreaMesa": AreaMesa.objects.get(Id=5), "Numero": 3, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
-            {"Id": 23, "IdAreaMesa": AreaMesa.objects.get(Id=5), "Numero": 4, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
+            {"Id": 20, "IdAreaMesa": AreaMesa.objects.get(Id=5), "Numero": 20, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
+            {"Id": 21, "IdAreaMesa": AreaMesa.objects.get(Id=5), "Numero": 21, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
+            {"Id": 22, "IdAreaMesa": AreaMesa.objects.get(Id=5), "Numero": 22, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
+            {"Id": 23, "IdAreaMesa": AreaMesa.objects.get(Id=5), "Numero": 23, "Capacidad": None, "Estado": "1", "EsActivo": "1"},
         ]
         
         for mesa in mesas:
