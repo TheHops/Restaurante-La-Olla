@@ -1,92 +1,94 @@
 import datetime
+from django.utils import timezone
+from decimal import Decimal
 import os
 import traceback
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from jinja2 import Environment, FileSystemLoader
+from openpyxl import Workbook
+from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
 import pdfkit, xlwt
+from openpyxl.utils import get_column_letter
 
 from Application.models import Platillo, TipoPlatillo
 from RestauranteLaOlla import settings
 
 #region EXPORTACIONES
 def Exportar_ExcelPlatillo(request):
-    if request.user.is_authenticated:
-        try:
-            response = HttpResponse(content_type='application/ms-excel')
-            response['Content-Disposition'] = 'attachment; filename=Platillos_' +\
-                str(datetime.datetime.now())+'.xls'
-            wb = xlwt.Workbook(encoding='utf-8')
-            ws = wb.add_sheet('Platillo')
-            row_num = 0
-            font_style = xlwt.XFStyle()
-            font_style.font.bold = True
-
-            Columns = ['Nombre Platillo', 'Precio',
-                    'TipoPlatillo', 'Descripcion', 'Estado']
-
-            for col_num in range(len(Columns)):
-                ws.write(row_num, col_num, Columns[col_num], font_style)
-
-            font_style = xlwt.XFStyle()
-            rows = Platillo.objects.all().values_list('Nombre', 'Precio',
-                                                    'IdTipoPlatillo', 'Descripcion', 'EsActivo')
-
-            for row in rows:
-                row_num += 1
-
-                for column_num in range(len(row)):
-                    ws.write(row_num, column_num, str(row[column_num]), font_style)
-
-            wb.save(response)
-            return response
-        except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
-    else:
-        # Si no lo ha hecho entonces deberá iniciar sesión
+    if not request.user.is_authenticated:
         return render(request, "login.html")
+
+    try:
+        columnas = ['Nombre consumo', 'Precio', 'Tipo de consumo', 'Descripcion', 'Estado']
+        datos = []
+
+        for nombre, precio, tipo, desc, es_activo in Platillo.objects.values_list(
+            'Nombre', 'Precio', 'IdTipoPlatillo__Nombre', 'Descripcion', 'EsActivo'
+        ):
+            estado_symbol = '✅' if es_activo in (1, '1', True) else '⛔'
+            datos.append([
+                nombre,
+                precio,
+                tipo,
+                desc,
+                estado_symbol
+            ])
+
+        wb = exportar_excel_datos("PLATILLOS", columnas, datos)
+
+        # Preparar respuesta
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        
+        filename = 'Platillos_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        
+        wb.save(response)
+        
+        return response
+    except Exception:
+        import traceback
+        print()
+        print("#################### E X C E P C I O N ########################")
+        print("-------------------- 'exportar platillo' --------------------")
+        print(traceback.format_exc())
+        print("#############################################################")
+        print()
 
 def ExportarTipoPlatillos(request):
-    if request.user.is_authenticated:
-        try:
-            response = HttpResponse(content_type='application/ms-excel')
-            response['Content-Disposition'] = 'attachment; filename=TipoPlatillos_' +\
-                str(datetime.datetime.now())+'.xls'
-            wb = xlwt.Workbook(encoding='utf-8')
-            ws = wb.add_sheet('TipoPlatillos')
-            row_num = 0
-            font_style = xlwt.XFStyle()
-            font_style.font.bold = True
-
-            Columns = ['Tipo de Platillos', 'Estado']
-
-            for col_num in range(len(Columns)):
-                ws.write(row_num, col_num, Columns[col_num], font_style)
-
-            font_style = xlwt.XFStyle()
-            rows = TipoPlatillo.objects.all().values_list('Nombre', 'EsActivo')
-
-            for row in rows:
-                row_num += 1
-
-                for column_num in range(len(row)):
-                    ws.write(row_num, column_num, str(row[column_num]), font_style)
-
-            wb.save(response)
-            return response
-        except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
-    else:
-        # Si no lo ha hecho entonces deberá iniciar sesión
+    if not request.user.is_authenticated:
         return render(request, "login.html")
+
+    try:
+        columnas = ['Tipo de Platillos', 'Estado']
+        datos = []
+
+        for nombre, es_activo in TipoPlatillo.objects.values_list('Nombre', 'EsActivo'):
+            estado_symbol = '✅' if es_activo in (1, '1', True) else '⛔'
+            datos.append([
+                nombre,
+                estado_symbol
+            ])
+
+        wb = exportar_excel_datos("TIPO DE PLATILLO", columnas, datos)
+
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        filename = 'TipoPlatillos_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        wb.save(response)
+        return response
+
+    except Exception:
+        import traceback
+        print()
+        print("#################### E X C E P C I O N ########################")
+        print("---------------- 'exportar tipo platillo' ----------------")
+        print(traceback.format_exc())
+        print("#############################################################")
 #endregion
 
 #region  DOCUMENTOS PDF
@@ -185,3 +187,70 @@ def CreacionTipoPlatillos_PDF(request):
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
 #endregion
+
+#region PublicFunctions
+
+def exportar_excel_datos(titulo, columnas, datos):
+    # ==== CREAR LIBRO ====
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Datos"
+
+    # ==== ESTILOS ====
+    vino_oscuro = "800000"
+    blanco = "FFFFFF"
+    font_blanca_sans = Font(bold=True, color=blanco, name="Arial")
+
+    borde_resaltado = Border(
+        left=Side(border_style="thin", color="000000"),
+        right=Side(border_style="thin", color="000000"),
+        top=Side(border_style="thin", color="000000"),
+        bottom=Side(border_style="thin", color="000000")
+    )
+
+    # ==== TÍTULO ====
+    ultima_columna = get_column_letter(len(columnas))
+    ws.merge_cells(f"A1:{ultima_columna}1")
+    celda_titulo = ws["A1"]
+    celda_titulo.value = titulo
+    celda_titulo.font = font_blanca_sans
+    celda_titulo.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+    celda_titulo.fill = PatternFill("solid", fgColor=vino_oscuro)
+    celda_titulo.border = borde_resaltado
+    ws.row_dimensions[1].height = 25
+
+    # ==== ENCABEZADOS ====
+    for col_idx, header in enumerate(columnas, start=1):
+        c = ws.cell(row=2, column=col_idx, value=header)
+        c.font = font_blanca_sans
+        c.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        c.fill = PatternFill("solid", fgColor=vino_oscuro)
+        c.border = borde_resaltado
+    ws.row_dimensions[2].height = 20
+
+    # ==== DATOS ====
+    start_row = 3
+    for idx, fila in enumerate(datos, start=0):
+        row_index = start_row + idx
+
+        # Color alterno
+        fill_color = "FFF5F5" if idx % 2 == 0 else "FFF0E6"
+
+        for col_idx, valor in enumerate(fila, start=1):
+            cell = ws.cell(row=row_index, column=col_idx, value=valor)
+
+            # Formato moneda si la columna es "Precio"
+            if columnas[col_idx - 1].lower() == "precio" and isinstance(valor, (int, float, Decimal)):
+                cell.number_format = u'"C$"#,##0.00'
+
+            cell.fill = PatternFill("solid", fgColor=fill_color)
+            cell.border = borde_resaltado
+
+    # ==== AJUSTES VISUALES ====
+    ws.freeze_panes = "A3"
+    for i, header in enumerate(columnas, start=1):
+        ws.column_dimensions[get_column_letter(i)].width = max(len(header) + 5, 15)
+
+    return wb
+
+#endregion PublicFunctions
