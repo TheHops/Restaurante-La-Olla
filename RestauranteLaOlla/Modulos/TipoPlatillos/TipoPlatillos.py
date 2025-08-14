@@ -34,15 +34,14 @@ def DarBaja_TipoPlatillo(request):
         try:
             if request.method == "POST":
                 id = request.POST.get("id")
-                with translation.atomic():
-                    # Obtener el tipo de platillo y marcarlo como inactivo
-                    tipoplatillo = TipoPlatillo.objects.get(id=id)
-                    tipoplatillo.EsActivo = "Inactivo"
-                    tipoplatillo.save()
+                # Obtener el tipo de platillo y marcarlo como inactivo
+                tipoplatillo = TipoPlatillo.objects.get(Id=id)
+                tipoplatillo.EsActivo = "0"
+                tipoplatillo.save()
 
-                    # Obtener los platillos asociados al tipo de platillo y marcarlos como inactivos
-                    platillos_asociados = Platillo.objects.filter(idtipoplatillo=tipoplatillo)
-                    platillos_asociados.update(activo="Inactivo")
+                # Obtener los platillos asociados al tipo de platillo y marcarlos como inactivos
+                platillos_asociados = Platillo.objects.filter(IdTipoPlatillo=tipoplatillo)
+                platillos_asociados.update(EsActivo="0")
                 return HttpResponse("")
         except Exception as ex:
             print()
@@ -59,12 +58,12 @@ def Agregar_TipoPlatillo(request):
         try:
             if request.method == "POST":
                 tipoplatilloname = request.POST.get("Nombre")
-                estado = request.POST.get("Estado")
+                # estado = request.POST.get("Estado")
 
                 tipoplatillo = TipoPlatillo()
 
                 tipoplatillo.Nombre = tipoplatilloname
-                tipoplatillo.EsActivo = estado
+                tipoplatillo.EsActivo = "1"
 
                 tipoplatillo.save()
                 return HttpResponse("")
