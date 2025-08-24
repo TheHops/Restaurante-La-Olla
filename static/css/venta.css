@@ -417,7 +417,7 @@ legend {
 }
 
 #cuerpo_ordenes {
-    max-height: 420px;
+    max-height: 70vh;
     margin-bottom: 5px;
     overflow: auto;
     transition: .5s ease;
@@ -919,6 +919,10 @@ legend {
         top: 10vh;
 
         display: none;
+    }
+
+    #cuerpo_ordenes {
+        max-height: 60vh;
     }
 
     .vplatillo {

@@ -13,7 +13,10 @@
     width: 50%;
     height: 100%;
     background-color: rgb(255, 255, 255);
-    display: block;
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    justify-content: center;
 }
 
 .cuadro {
@@ -23,6 +26,7 @@
     border-radius: 25px;
     display: flex;
     align-items: flex-start;
+    transition: all 1s;
 }
 
 /* #contenido {
@@ -52,7 +56,7 @@
 
 .logo {
     width: 100%;
-    padding: 5% 0;
+    padding: 0 0 7% 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -66,6 +70,8 @@
 #imglogo {
     width: 45%;
     height: auto;
+    max-height: 210px;
+    max-width: 240px;
     transition: all 3s;
 }
 
@@ -74,21 +80,19 @@
 /*********************************************************/
 
 .form {
-    position: absolute;
-    width: 60%;
-    /* overflow: hidden; */
     text-align: left;
-    padding-left: 4%;
+    margin: 20px;
+    margin: 40px;
 }
 
 .form_in {
-    width: 70%;
+    width: 100%;
     position: relative;
-    margin: 0 25px 25px 0;
+    margin-top: 25px;
 }
 
 .campo {
-    width: 50%;
+    width: 100%;
     display: block;
     background: none;
     border: none;
@@ -148,13 +152,13 @@
 .form_button {
     margin-top: 60px;
     position: relative;
-    width: auto;
+    width: 100%;
     display: flex;
-    justify-content:flex-start;
+    justify-content: center;
 }
 
 .btn_login {
-    margin-left: 5%;
+    /* margin-left: 5%; */
     width: 25%;
     height: 40px;
     background: rgba(120, 20, 20, 1);
@@ -180,28 +184,32 @@
 @media (max-width : 1100px) {
     #imglogo {
         width: 50%;
-        transition: all 3s;
+        transition: all 1s;
     }
 
     .logo {
-        padding: 6% 0;
+        padding: 0 0 6% 0;
     }
 }
 
 @media (max-width : 950px) {
     #imglogo {
         width: 55%;
-        transition: all 3s;
+        transition: all 1s;
+    }
+
+    .cuadro {
+        width: 70%;
     }
 
     .logo {
-        padding: 7% 0;
+        padding: 0 0 7% 0;
     }
 }
 
-@media (max-width : 800px) {
+@media (max-width : 900px) {
     #imglogo {
-        width: 35%;
+        width: 45%;
         transition: all .5s;
     }
 
@@ -211,8 +219,8 @@
     }
 
     .form {
-        width: 140%;
-        padding-left: 5%;
+        /* padding-left: 5%; */
+        margin: 0 10%;
     }
 
     .derecha {
@@ -220,35 +228,43 @@
     }
 
     .logo {
-        padding: 8% 0;
+        padding: 0 0 8% 0;
     }
 }
 
 @media (max-width : 750px) {
     #imglogo {
-        width: 40%;
-        transition: all 3s;
+        width: 50%;
+        transition: all 1s;
     }
 
     .logo {
-        padding: 9% 0;
+        padding: 0 0 9% 0;
+    }
+
+    .cuadro {
+        width: 80%;
     }
 }
 
 @media (max-width : 650px) {
     #imglogo {
-        width: 45%;
-        transition: all 3s;
+        width: 60%;
+        transition: all 1s;
     }
 
     .logo {
-        padding: 10% 0;
+        padding: 0 0 10% 0;
     }
 }
 
 @media (max-width : 550px) {
     #imglogo {
-        width: 50%;
-        transition: all 3s;
+        width: 70%;
+        transition: all 1s;
+    }
+
+    .cuadro {
+        width: 90%;
     }
 }

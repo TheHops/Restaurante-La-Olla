@@ -18,13 +18,13 @@
 
 #listaOrdenesPoFoC {
     width: 100vw;
-    height: 79vh;
+    height: 85vh;
     display: flex;
     flex-direction: column;
     padding-left: 15%;
     padding-right: 15%;
     overflow-y: auto;
-    padding-bottom: 10px;
+    padding-bottom: 50px;
 }
 
 .ordenPoFoC {
