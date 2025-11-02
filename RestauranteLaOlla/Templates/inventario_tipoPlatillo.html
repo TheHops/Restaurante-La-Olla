@@ -106,7 +106,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="desaparecerCapa();">Cancelar</button>
-          <button type="button" class="btn btn-dark" onclick="ActulizarTipoPlatillo();">Actualizar</button>
+          <button type="button" class="btn btn-dark" onclick="ActualizarTipoPlatillo();">Actualizar</button>
         </div>
       </div>
     </div>
@@ -186,42 +186,33 @@
       $("#IDTipoPlatillo").val(id);
     }  
 
-    function ActulizarTipoPlatillo(){
+    function ActualizarTipoPlatillo(){
         const nombre = $("#NameTipoPlatillo").val();
         const Estado = ($("#EstadoTipoPlatillo").val());
         const Id = $("#IDTipoPlatillo").val();
         $.ajax({
-           url:'/ActualizarTipoPlatillo/',
-           type:'POST',
-           data:{
-             Nombre: nombre,
-             id:Id,
-             estado:Estado,
-             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-           },
-           success: function(response){
-            Swal.fire({
-              confirmButtonColor: '#ff6464',
-              title: '¡Tipo de platillo actualizado correctamente!',
-              icon: 'success'
-            }).then((resultado) => {
-              if (resultado.isConfirmed) {
-                location.reload();
-              }
-              else {
-                location.reload();
-              }
-            })
-
-             /*Se espera un segundo, y luego ejecuta lo que tiene dentro (reload) */
-            //  setTimeout(() => {
-            //    window.location.reload();
-            //  }, 1000);
-           }, 
-           error: function(error){
+          url:'/ActualizarTipoPlatillo/',
+          type:'POST',
+          data:{
+            Nombre: nombre,
+            id:Id,
+            estado:Estado,
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+          },
+          success: function(response){
+          Swal.fire({
+            confirmButtonColor: '#ff6464',
+            title: '¡Tipo de platillo actualizado correctamente!',
+            icon: 'success'
+          })
+          .then((resultado) => {
+            location.reload();
+          });
+          }, 
+          error: function(error){
             let ror = error;
-                alert("error " + error);
-           }
+            alert("error " + error);
+          }
         });
     }
     
@@ -242,27 +233,18 @@
              csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
            },
            success: function(response){
-                Swal.fire({
-                  confirmButtonColor: '#ff6464',
-                  title: '¡Tipo de platillo dado de baja correctamente!',
-                  icon: 'success'
-             }).then((resultado) => {
-                  if (resultado.isConfirmed) {
-                    location.reload();
-                  }
-                  else {
-                    location.reload();
-                  }
-                })
-
-             /*Se espera un segundo, y luego ejecuta lo que tiene dentro (reload) */
-            //  setTimeout(() => {
-            //    window.location.reload();
-            //  }, 1000);
+            Swal.fire({
+              confirmButtonColor: '#ff6464',
+              title: '¡Tipo de platillo dado de baja correctamente!',
+              icon: 'success'
+            })
+            .then((resultado) => {
+              location.reload();
+            });
            }, 
            error: function(error){
             let ror = error;
-                alert("error " + error);
+            alert("error " + error);
            }
         });
     }
@@ -279,23 +261,14 @@
              csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
            },
            success: function(response){
-                Swal.fire({
-                  confirmButtonColor: '#ff6464',
-               title: '¡Tipo de platillo agregado correctamente!',
-               icon: 'success'
-             }).then((resultado) => {
-                  if (resultado.isConfirmed) {
-                    location.reload();
-                  }
-                  else {
-                    location.reload();
-                  }
-                })
-
-             /*Se espera un segundo, y luego ejecuta lo que tiene dentro (reload) */
-            //  setTimeout(() => {
-            //    window.location.reload();
-            //  }, 1000);
+              Swal.fire({
+                confirmButtonColor: '#ff6464',
+                title: '¡Tipo de platillo agregado correctamente!',
+                icon: 'success'
+              })
+              .then((resultado) => {
+                location.reload();
+              });
            }, 
            error: function(error){
             let ror = error;

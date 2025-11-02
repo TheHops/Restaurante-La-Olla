@@ -397,25 +397,16 @@
                 Swal.fire({
                     confirmButtonColor: '#ff6464',
                     title: '¡Platillo actualizado correctamente!',
-                    icon: 'success',
-                }).then((resultado) => {
-                    if (resultado.isConfirmed) {
-                        location.reload();
-                    }
-                    else {
-                        location.reload();
-                    }
+                    icon: 'success'
                 })
-
-                /*Se espera un segundo, y luego ejecuta lo que tiene dentro (reload) */
-            //    setTimeout(() => {
-            //     window.location.reload();
-            //     }, 1000);
-           }, 
-           error: function(error){
-            let ror = error;
+                .then((resultado) => {
+                    location.reload();
+                });
+            }, 
+            error: function(error){
+                let ror = error;
                 alert("error " + error);
-           }
+            }
         });
     }
 
@@ -438,16 +429,14 @@
            success: function(response){
                 // alert("MODIFICACION EXITOSA");
                 Swal.fire({
-                confirmButtonColor: '#ff6464',
-                   title: '¡Platillo dado de baja correctamente!',
-                   text: 'Platillo Excluido de Menu correctamente',
-                   icon: 'success',
-               })  
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
-
-              
+                    confirmButtonColor: '#ff6464',
+                    title: '¡Platillo dado de baja correctamente!',
+                    //text: 'Platillo Excluido de Menu correctamente',
+                    icon: 'success'
+                })
+                .then((resultado) => {
+                    location.reload();
+                });
            }, 
            error: function(error){
             let ror = error;
