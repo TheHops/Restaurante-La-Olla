@@ -29,7 +29,7 @@ class Cargo(models.Model):
 class Usuario(AbstractUser):
     Id = models.AutoField(primary_key=True, db_column='id_usuario')
 
-    IdCargo = models.ForeignKey(Cargo, on_delete=models.SET_NULL, null=True, verbose_name="Cargo", db_column='id_cargo')
+    IdCargo = models.ForeignKey(Cargo, on_delete=models.SET_NULL, null=True, verbose_name="Cargo", db_column='id_cargo', related_name='Usuarios')
 
     Nombres = models.CharField(max_length=15, default="", db_column='nombres')
     
@@ -56,7 +56,7 @@ class Usuario(AbstractUser):
 class AreaMesa(models.Model):
     Id = models.AutoField(primary_key=True, db_column='id_area_mesa')
     
-    Nombre = models.CharField(db_column='nombre', max_length=20)
+    Nombre = models.CharField(db_column='nombre', max_length=30)
 
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
@@ -77,7 +77,7 @@ class AreaMesa(models.Model):
 class Mesa(models.Model):
     Id = models.AutoField(primary_key=True, db_column='id_mesa')
     
-    IdAreaMesa = models.ForeignKey(AreaMesa, models.DO_NOTHING, db_column='id_area_mesa')
+    IdAreaMesa = models.ForeignKey(AreaMesa, models.DO_NOTHING, db_column='id_area_mesa', related_name='Mesas')
     
     Numero = models.IntegerField(db_column='numero')
     
@@ -107,7 +107,13 @@ class Orden(models.Model):
     
     IdUsuario = models.ForeignKey(Usuario, models.DO_NOTHING, db_column='id_usuario')
     
-    IdMesa = models.ForeignKey(Mesa, models.DO_NOTHING, db_column='id_mesa')
+    AreaDeMesa = models.CharField(max_length=30, null=True, blank=True, db_column='area_de_mesa')
+    
+    Descripcion = models.CharField(max_length=100, null=True, blank=True, db_column='descripcion')
+    
+    Motivo = models.CharField(max_length=70, null=True, blank=True, db_column='motivo')
+    
+    NumRef = models.CharField(max_length=15, null=True, blank=True, db_column='num_ref')
     
     Total = models.DecimalField(db_column='total', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     
@@ -124,8 +130,11 @@ class Orden(models.Model):
     METODOPAGO = [("1", "Efectivo"), ("2", "Tarjeta"), ("3", "Transferencia")]
     MetodoPago = models.CharField(max_length=10, choices=METODOPAGO, default="1", db_column='metodo_pago')
 
-    ESTADO = [("0", "Facturado"), ("1", "Pendiente"), ("2", "Anulado"), ("3", "Preparado")]
+    ESTADO = [("0", "Facturado"), ("1", "Pendiente"), ("2", "Anulado"), ("3", "Preparado"), ("4", "EnPreparacion")]
     Estado = models.CharField(max_length=10, choices=ESTADO, default="1", db_column='estado')
+    
+    BANCOS = [("0", "Lafise"), ("1", "Banpro"), ("2", "BAC"), ("3", "Ficohsa"), ("4", "Avanz"), ("5", "Banco Atlántida"), ("6", "BFP"), ("7", "FDL")]
+    Banco = models.CharField(max_length=10, choices=BANCOS, null=True, blank=True, db_column='banco')
 
     ACTIVO = [("1", "Activo"), ("0", "Eliminado")]
     EsActivo = models.CharField(max_length=10, choices=ACTIVO, default="1", db_column='es_activo')
@@ -136,9 +145,29 @@ class Orden(models.Model):
         db_table = 'orden'
 
     def __str__(self):
-        return f"ID = {self.Id} | Usuario = {self.IdUsuario.username} | Fecha = {self.Fecha} | Estado = {self.Estado} | Mesa = {self.IdMesa.Numero} | Area = {self.IdMesa.IdAreaMesa.Nombre}"
+        return f"ID = {self.Id} | Usuario = {self.IdUsuario.username} | Fecha = {self.Fecha} | Estado = {self.Estado} | Area = {self.AreaDeMesa}"
 
 #endregion Orden
+
+#region MesasPorOrden
+
+class MesasPorOrden(models.Model):
+    Id = models.AutoField(primary_key=True, db_column='id_mesas_por_orden')
+    
+    IdOrden = models.ForeignKey(Orden, models.DO_NOTHING, db_column='id_orden')
+    IdMesa = models.ForeignKey(Mesa, models.DO_NOTHING, db_column='id_mesa', related_name='Mesas')
+
+    ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
+    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
+
+    class Meta:
+        verbose_name_plural = 'MesasPorOrden'
+        db_table = 'mesas_por_orden'
+
+    def __str__(self):
+        return f"ID = {self.Id} | Orden = #{self.IdOrden.Id} | Activo = {self.EsActivo} | Mesa = {self.IdMesa.Numero}"
+
+#endregion MesasPorOrden
 
 #region TipoPlatillo
 
@@ -165,7 +194,7 @@ class TipoPlatillo(models.Model):
 class Platillo(models.Model):
     Id = models.AutoField(primary_key=True, db_column='id_platillo')
     
-    IdTipoPlatillo = models.ForeignKey(TipoPlatillo, models.DO_NOTHING, db_column='id_tipo_platillo')
+    IdTipoPlatillo = models.ForeignKey(TipoPlatillo, models.DO_NOTHING, db_column='id_tipo_platillo', related_name='Platillos')
     
     Nombre = models.CharField(db_column='nombre', max_length=50)
     
@@ -197,7 +226,7 @@ class DetalleOrden(models.Model):
     Id = models.AutoField(primary_key=True, db_column='id_detalle_orden')
     
     IdOrden = models.ForeignKey(
-        Orden, models.DO_NOTHING, db_column='id_orden')
+        Orden, models.DO_NOTHING, db_column='id_orden', related_name='Detalles')
     
     IdPlatillo = models.ForeignKey(
         Platillo, models.DO_NOTHING, db_column='id_platillo')

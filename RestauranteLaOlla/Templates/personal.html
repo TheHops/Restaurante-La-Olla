@@ -321,27 +321,31 @@ function Agregar_Personal(){
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
             },
             success: function(response){
-               
-                 
                 var message = response.message;
-               if (message === "1"){
-                Swal.fire({
-                    title: '¡Agregado!',
-                    text: 'Personal agregado correctamente',
-                    icon: 'success',
-                    timer: 1500
-                })
-               }else{
-                Swal.fire({
-                    title: 'Usuario Ocupado',
-                    text: 'Usuario ingresado ya esta registrado en el Sistema',
-                    icon: 'error',
-                    timer: 1500
-                })
+                
+                if (message === "1"){
+                    Swal.fire({
+                        confirmButtonColor: '#ff6464',
+                        title: '¡Agregado!',
+                        text: 'Personal agregado correctamente',
+                        icon: 'success'
+                    })
+                    .then((resultado) => {
+                        location.reload();
+                    });
                }
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+               else
+               {
+                    Swal.fire({
+                        confirmButtonColor: '#ff6464',
+                        title: 'Usuario Ocupado',
+                        text: 'Usuario ingresado ya esta registrado en el Sistema',
+                        icon: 'error'
+                    })
+                    .then((resultado) => {
+                        location.reload();
+                    });
+               }
             }, 
             error: function(error){
             let ror = error;
@@ -384,28 +388,34 @@ function ModificarPersonal(){
                 var message = response.message;
                 if (message === "1"){
                     Swal.fire({
+                        confirmButtonColor: '#ff6464',
                         title: 'Modificacion Exitosa',
                         text: 'Personal Modificado correctamente',
-                        icon: 'success',
-                        timer: 1500
-                   })
-                   setTimeout(() => {
-                    window.location.reload();
-                    }, 1000);
+                        icon: 'success'
+                    })
+                    .then((resultado) => {
+                        location.reload();
+                    });
                 }else if(message === '3'){
                     Swal.fire({
+                        confirmButtonColor: '#ff6464',
                         title: 'Modificacion Interrumpida',
                         text: 'El usuario ingresado ya esta registrado en Base de Datos',
-                        icon: 'warning',
-                        timer: 1500
-                   })
+                        icon: 'warning'
+                    })
+                    .then((resultado) => {
+                        location.reload();
+                    });
                 }else{
                     Swal.fire({
+                        confirmButtonColor: '#ff6464',
                         title: 'Usuario Ocupado',
                         text: 'Usuario ingresado ya esta en la Base de Datos del Sistema',
-                        icon: 'error',
-                        timer: 1500
+                        icon: 'error'
                     })
+                    .then((resultado) => {
+                        location.reload();
+                    });
                     //document.getElementById("NameUsuario").focus();
                 }
                 
@@ -429,8 +439,7 @@ function BajaPersonal(){
             Swal.fire({
                 title: 'Usuario Dado de Baja Exitosamente',
                 text: 'El Usuario fue dado de Baja correctamente',
-                icon: 'success',
-                timer: 1500
+                icon: 'success'
            })
             setTimeout(() => {
                 window.location.reload();
@@ -455,8 +464,7 @@ function ValidacionCamposVacios (banderaFormulario){
             Swal.fire({
                 title: 'Campo Nombres Vacio',
                 text: 'No debe dejar el Campo Nombres Vacio',
-                icon: 'warning',
-                timer: 1500
+                icon: 'warning'
             })
             $("#Fullname").focus();
             return false;
@@ -464,24 +472,21 @@ function ValidacionCamposVacios (banderaFormulario){
             Swal.fire({
                 title: 'Campo Apellidos Vacio',
                 text: 'No debe dejar el Campo Apellidos Vacio',
-                icon: 'warning',
-                timer: 1500
+                icon: 'warning'
             })
             return false;
         }else if(usuario === ""){
             Swal.fire({
                 title: 'Campo Usuario Vacio',
                 text: 'No debe dejar el Campo Usuario Vacio',
-                icon: 'warning',
-                timer: 1500
+                icon: 'warning'
             })
             return false;
         }else if(pass === ""){
             Swal.fire({
                 title: 'Campo Contraseña Vacio',
                 text: 'No debe dejar el Campo Contraseña Vacio',
-                icon: 'warning',
-                timer: 1500
+                icon: 'warning'
             })
             return false;
         }
@@ -496,8 +501,7 @@ function ValidacionCamposVacios (banderaFormulario){
             Swal.fire({
                 title: 'Campo Usuario Vacio',
                 text: 'No debe dejar el Campo Usuario Vacio',
-                icon: 'warning',
-                timer: 1500
+                icon: 'warning'
             })
             $("NameUsuario").focus();
             return false;
@@ -505,16 +509,14 @@ function ValidacionCamposVacios (banderaFormulario){
             Swal.fire({
                 title: 'Campo Nombre Vacio',
                 text: 'No debe dejar el Campo Nombre del Usuario Vacio',
-                icon: 'warning',
-                timer: 1500
+                icon: 'warning'
             })
             return false;
         }else if (ApellidoUsuario === ""){
             Swal.fire({
                 title: 'Campo Apellido Vacio',
                 text: 'No debe dejar el Campo Apellido del Usuario Vacio',
-                icon: 'warning',
-                timer: 1500
+                icon: 'warning'
             })
             return false;
         }else if(CheckPassword != "" || NewPassword != ""){
@@ -522,8 +524,7 @@ function ValidacionCamposVacios (banderaFormulario){
                 Swal.fire({
                     title: 'Incompatibilidad en Contraseñas',
                     text: 'El campo de Confirmacion de Contraseñas no es compatible con la Nueva Contraseña',
-                    icon: 'warning',
-                    timer: 1500
+                    icon: 'warning'
                 })
                 return false;
             }
