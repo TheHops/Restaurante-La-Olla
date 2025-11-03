@@ -37,9 +37,15 @@
 
     <div class="seccionesPoFoC">
       <div class="seccionIzquierda">
-        <h4>
-          Mesa #{{Orden.IdMesa.Numero}} del área {{Orden.IdMesa.IdAreaMesa.Nombre}}
+        <h4 style="margin: 0">
+          Area: {{Orden.AreaDeMesa}}
         </h4>
+        <h5>
+          Mesas ocupadas: 
+          {% for mesa in Orden.Mesas.all %} 
+          #{{mesa.IdMesa.Numero}} {% if not forloop.last %} - {% endif %} 
+          {% endfor %}
+        </h5>
         <h6>{{Orden.Fecha}}</h6>
       </div>
       <div class="seccionDerecha">

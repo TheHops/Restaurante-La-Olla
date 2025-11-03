@@ -70,29 +70,21 @@
                             </div>
                         {% endfor %}
 
-                        <!--  -->
-
-                        <!-- <div class="grid_item">
-                            <input type="radio" name="mesa" id="mesa2">
-                            <label for="mesa2">2</label>
-                        </div>
-                        <div class="grid_item">
-                            <input type="radio" name="mesa" id="mesa3">
-                            <label for="mesa3">3</label>
-                        </div>
-                        <div class="grid_item">
-                            <input type="radio" name="mesa" id="mesa4">
-                            <label for="mesa4">4</label>
-                        </div> -->
-
                     </div>
 
                 </fieldset>
 
-                <button id="btn_siguiente" onclick="pagina2()" disabled>
-                    <img src="{% static 'img/Flecha-Derecha.png' %}" style="width: 25px; height: 25px;" alt="Siguiente">
-                    <span>Siguiente</span>
-                </button>
+                <div id="AccionesPrimerPagina">
+                    <label>
+                        <input type="checkbox" id="check_combinar_mesas" name="combinar_mesas" value="true">
+                        Combinar mesas
+                    </label>
+    
+                    <button id="btn_siguiente" onclick="pagina2()" disabled>
+                        <img src="{% static 'img/Flecha-Derecha.png' %}" style="width: 25px; height: 25px;" alt="Siguiente">
+                        <span>Siguiente</span>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -248,6 +240,44 @@
     <script src="app/js/handleCounter.js"></script>
 
     <script>
+        // Seleccionamos el checkbox por su id
+        const combinarCheckbox = document.getElementById('check_combinar_mesas');
+        const mesasDiv = document.getElementById('mesas');
+
+        combinarCheckbox.addEventListener('change', function() {
+            // Seleccionamos todos los inputs dentro del div de mesas
+            const inputs = mesasDiv.querySelectorAll('input');
+
+            inputs.forEach(input => {
+                // Guardamos el valor actual de name
+                const currentValue = input.value;
+
+                console.log(input);
+
+                if (this.checked) {
+                    // Activar "Combinar mesas": convertimos radio en checkbox
+                    input.type = 'checkbox';
+                    input.name = 'mesas_check'; // cambiamos el name para permitir múltiples
+                } else {
+                    // Desactivar "Combinar mesas": convertimos checkbox de nuevo a radio
+                    input.type = 'radio';
+                    input.name = 'mesa'; // nombre original para radio único
+                    input.checked = false; // desmarcamos todos
+                    desactivarBoton();
+                }
+            });
+        });
+
+        function activarBoton (){
+            let boton = document.getElementById("btn_siguiente");
+            boton.disabled = false;
+        }
+
+        function desactivarBoton (){
+            let boton = document.getElementById("btn_siguiente");
+            boton.disabled = true;
+        }
+
         var x = document.getElementById("pag1");
         var y = document.getElementById("pag2");
 
@@ -546,11 +576,6 @@
             }
         }
 
-        function activarBoton (){
-            let boton = document.getElementById("btn_siguiente");
-            boton.disabled = false;
-        }
-
         /**************************************************************/
         /**************************************************************/
         /********************* C R E A R  O R D E N************************/
@@ -578,14 +603,7 @@
                         title: '¡Orden creada correctamente!', 
                         icon: 'success'
                     }).then((resultado) => {
-                        if (resultado.isConfirmed)
-                        {
-                            location.reload();
-                        }
-                        else
-                        {
-                            location.reload();
-                        }
+                        location.reload();
                     })
                 }
             })

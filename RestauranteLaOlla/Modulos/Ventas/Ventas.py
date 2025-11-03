@@ -3,7 +3,7 @@ import traceback
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
-from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Platillo
+from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Platillo, MesasPorOrden
 from django.db.models import Q
 
 # region VENTAS
@@ -123,8 +123,8 @@ def OrdenesPendientes(request):
     if request.user.is_authenticated:
         try:
             # El signo negativo para ordenarlos de manera descendiente
-            ordenes =  Orden.objects.select_related('IdMesa__IdAreaMesa', 'IdUsuario').filter(Q(Estado="1") & Q(EsActivo="1")).order_by('-Id')
-
+            ordenes =  Orden.objects.select_related('IdUsuario').filter(Q(Estado="1") & Q(EsActivo="1")).order_by('-Id')
+            
             detalleOrden = DetalleOrden.objects.filter(IdOrden__in=ordenes).select_related('IdPlatillo')
             
             mesas = Mesa.objects.filter(EsActivo="1")
@@ -132,6 +132,7 @@ def OrdenesPendientes(request):
 
             print("ORDENES PENDIENTES ==> ")
             print(ordenes)
+            
             
             print("\nDETALLES DE ORDEN ==> ")
             print(detalleOrden)
@@ -151,7 +152,7 @@ def OrdenesPendientes(request):
             print("--------------------'OrdenesPendientes'--------------------")
             print(traceback.format_exc())
             print("########################################################")
-            print()
+            return JsonResponse({'error': str(ex)}, status=500)
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
@@ -192,11 +193,18 @@ def CrearOrden(request):
 
                 orden = Orden.objects.create(
                     IdUsuario=Usuarioensesion,
-                    IdMesa=mesaseleccionada,
                     Total=totalval
                 )
 
                 orden.save()
+                
+                # Se registran las mesas por orden creada
+                mesas = MesasPorOrden.objects.create(
+                    IdOrden = orden,
+                    IdMesa = mesaseleccionada
+                )
+                
+                mesas.save()
 
                 #################################################
                 # SE CREAN LOS DETALLEN DE LA ORDEN
