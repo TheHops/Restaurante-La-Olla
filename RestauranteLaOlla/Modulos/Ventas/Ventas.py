@@ -164,17 +164,14 @@ def CrearOrden(request):
         try:
             if request.method == "POST":
                 datos_json = request.POST.get('OrdenPlatillos')
-                mesa = request.POST.get('mesa')
+                mesas_json = request.POST.get('mesas')
                 totalval = request.POST.get('total')
-
-                mesaseleccionada = Mesa.objects.get(Id=mesa)
 
                 print("---------------------------- ORDEN CREADA -----------------------")
                 datos = json.loads(datos_json)
+                mesas = json.loads(mesas_json)
 
-                print("id mesa: ", mesa)
-                print("Numero mesa: ", mesaseleccionada.Numero)
-                print("Area de mesa: ", mesaseleccionada.IdAreaMesa.Nombre)
+                print("Mesas: ", mesas)
                 print("Total: ", totalval)
                 print(datos)
 
@@ -198,16 +195,22 @@ def CrearOrden(request):
 
                 orden.save()
                 
-                # Se registran las mesas por orden creada
-                mesas = MesasPorOrden.objects.create(
-                    IdOrden = orden,
-                    IdMesa = mesaseleccionada
-                )
+                # MESAS
+                mesas_objetos = Mesa.objects.filter(Id__in=mesas)
                 
-                mesas.save()
+                for mesa in mesas_objetos:
+                    # Se registran las mesas por orden creada
+                    mesaPorOrden = MesasPorOrden.objects.create(
+                        IdOrden = orden,
+                        IdMesa = mesa)
+                
+                    mesaPorOrden.save()
 
                 #################################################
                 # SE CREAN LOS DETALLEN DE LA ORDEN
+                
+                orden.AreaDeMesa = mesas_objetos[0].IdAreaMesa.Nombre
+                orden.save()
 
                 for dato in datos:
                     print(dato['id'], dato['subtotal'], dato['cantidad'])

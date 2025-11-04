@@ -243,6 +243,7 @@
         // Seleccionamos el checkbox por su id
         const combinarCheckbox = document.getElementById('check_combinar_mesas');
         const mesasDiv = document.getElementById('mesas');
+        const botonSiguiente = document.getElementById("btn_siguiente");
 
         combinarCheckbox.addEventListener('change', function() {
             // Seleccionamos todos los inputs dentro del div de mesas
@@ -251,8 +252,6 @@
             inputs.forEach(input => {
                 // Guardamos el valor actual de name
                 const currentValue = input.value;
-
-                console.log(input);
 
                 if (this.checked) {
                     // Activar "Combinar mesas": convertimos radio en checkbox
@@ -266,16 +265,25 @@
                     desactivarBoton();
                 }
             });
+
+            verificarSeleccionMesas();
         });
 
+        mesasDiv.addEventListener('change', verificarSeleccionMesas);
+
+        function verificarSeleccionMesas() {
+            const inputs = mesasDiv.querySelectorAll('input');
+            const algunoSeleccionado = Array.from(inputs).some(input => input.checked);
+    
+            botonSiguiente.disabled = !algunoSeleccionado;
+        }
+
         function activarBoton (){
-            let boton = document.getElementById("btn_siguiente");
-            boton.disabled = false;
+            botonSiguiente.disabled = false;
         }
 
         function desactivarBoton (){
-            let boton = document.getElementById("btn_siguiente");
-            boton.disabled = true;
+            botonSiguiente.disabled = true;
         }
 
         var x = document.getElementById("pag1");
@@ -347,14 +355,6 @@
             let subtotal = cant.value * parseInt(precio);
 
             // Se recorre el arreglo para verificar si existe el platillo dentro de las órdenes
-            // ordenP.forEach(function(elemento){
-            //     if (id = elemento.id)
-            //     {
-            //         existeOrden = true;
-            //     }
-            // })
-
-            // Se recorre el arreglo para verificar si existe el platillo dentro de las órdenes
             while (indice < ordenP.length) {
                 if (ordenP[indice].id == id) {
                     existeOrden = true;
@@ -383,9 +383,6 @@
                     "cantidad": parseInt(cant.value)
                 });
 
-                // Se imprime
-                // console.log(subtotal);
-
                 // Se habilita el botón de agregar orden
                 let btnAgregarOrden = document.getElementById('btnAgregarOrden');
                 btnAgregarOrden.disabled = false;
@@ -406,7 +403,6 @@
                 cantOrdenes += 1;
 
                 /* Se verifica si hay más de un platillo */
-
                notiPlatillos();
             }
 
@@ -620,15 +616,22 @@
 
             // SE OBTIENEN LOS VALORES DE LAS MESAS
             var mesas = document.getElementsByName("mesa");
+
+            if (mesas.length == 0)
+                mesas = document.getElementsByName("mesas_check");
+
             var seleccionado;
+
+            var listaMesasSeleccionadas = [];
 
             // Se busca al elemento seleccionado y se obtiene el id de la mesa
             for (var i = 0; i < mesas.length; i++) {
                 if (mesas[i].checked) {
-                    seleccionado = mesas[i].value;
-                    break;
+                    listaMesasSeleccionadas.push(mesas[i].value);
                 }
             }
+
+            console.log(listaMesasSeleccionadas);
 
             // xhr.setRequestHeader('Content-Type', 'application/json');
             // Abrir la conexión, y especificamos el método
@@ -636,7 +639,7 @@
             let datos = new FormData(); // Es un formulario de JS para leer el codigo
             datos.append("OrdenPlatillos", JSON.stringify(ordenP)); // Se envía el arreglo en formato JSON
             datos.append("csrfmiddlewaretoken", token);
-            datos.append("mesa", seleccionado);
+            datos.append("mesas", JSON.stringify(listaMesasSeleccionadas));
             datos.append("total", total);
 
             xhr.onreadystatechange = function () {
@@ -645,26 +648,8 @@
                 }
             }
 
-            // let datos = {
-            //     'OrdenPlatillos' : JSON.stringify(ordenP),
-            //     'csrfmiddlewaretoken' : token[0].value
-            // }
-
             // Se envían los datos
             xhr.send(datos);
-
-            // $.ajax({
-            //     type: "POST",
-            //     url: "/CrearOrden",
-            //     data: {
-            //         'OrdenPlatillos': JSON.stringify(ordenP),
-            //         'csrfmiddlewaretoken':  JSON.stringify(token[0].value)
-            //     },
-            //     success: function (data) {
-            //         // manejo de la respuesta
-            //     },
-            //     dataType: 'json'
-            // });
         }
 
         function abrirCarrito() {
