@@ -154,8 +154,8 @@ class Orden(models.Model):
 class MesasPorOrden(models.Model):
     Id = models.AutoField(primary_key=True, db_column='id_mesas_por_orden')
     
-    IdOrden = models.ForeignKey(Orden, models.DO_NOTHING, db_column='id_orden')
-    IdMesa = models.ForeignKey(Mesa, models.DO_NOTHING, db_column='id_mesa', related_name='Mesas')
+    IdOrden = models.ForeignKey(Orden, models.DO_NOTHING, db_column='id_orden', related_name='Mesas')
+    IdMesa = models.ForeignKey(Mesa, models.DO_NOTHING, db_column='id_mesa')
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
     EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')

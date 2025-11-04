@@ -1,4 +1,6 @@
-{% extends 'index.html' %} {% block content %} {% load static %}
+{% extends 'index.html' %} 
+{% block content %} 
+{% load static %}
 
 <div class="EncabezadoOrdenesList">
   <a href="{% url 'venta' %}">
@@ -16,30 +18,34 @@
 
 <div id="listaOrdenesPoFoC">
   {% csrf_token %} 
-  
   {% for Orden in Ordenes %}
 
   <div class="ordenPoFoC">
     <div class="encabezadoPoFoC">
-        <h5>
-            Orden #{{ Orden.Id }} -
-            {% if Orden.Estado == "1" %}
-                Pendiente <div class="EstP"></div>
-            {% elif Orden.Estado == "0" %}
-                Facturada <div class="EstF"></div>
-            {% else %}
-                Anulada <div class="EstC"></div>
-            {% endif %}
-        </h5>
-        <h4>Total: C${{Orden.Total}}</h4>
+      <h5>
+        Orden #{{ Orden.Id }} - 
+        {% if Orden.Estado == "1" %} Pendiente
+        <div class="EstP"></div>
+        {% elif Orden.Estado == "0" %} Facturada
+        <div class="EstF"></div>
+        {% else %} Anulada
+        <div class="EstC"></div>
+        {% endif %}
+      </h5>
+      <h4>Total: C${{Orden.Total}}</h4>
     </div>
     <!-- Fin encabezadoPoFoC -->
 
     <div class="seccionesPoFoC">
       <div class="seccionIzquierda">
-        <h4>
-          Mesa #{{Orden.IdMesa.Numero}} del área {{Orden.IdMesa.IdAreaMesa.Nombre}}
-        </h4>
+        <h4 style="margin: 0">Area: {{Orden.AreaDeMesa}}</h4>
+        <h5>
+          Mesas ocupadas: 
+          {% for mesa in Orden.Mesas.all %}
+          #{{mesa.IdMesa.Numero}} 
+          {% if not forloop.last %} - {% endif %} 
+          {% endfor %}
+        </h5>
         <h6>{{Orden.Fecha}}</h6>
       </div>
       <div class="seccionDerecha">
@@ -81,20 +87,20 @@
           "
         />
 
-        {% for Detalle in DetalleOrden %}
-            {% if Detalle.IdOrden.Id == Orden.Id %}
-                <div class="detalle">
-                    <span
-                        style="width: 70%"
-                        class="detalleTruncar"
-                        title="{{ Platillo.Nombre }}"
-                        >{{ Detalle.IdPlatillo.Nombre }}
-                    </span>
+        {% for Detalle in DetalleOrden %} 
+        {% if Detalle.IdOrden.Id == Orden.Id %}
+        <div class="detalle">
+          <span
+            style="width: 70%"
+            class="detalleTruncar"
+            title="{{ Platillo.Nombre }}"
+            >{{ Detalle.IdPlatillo.Nombre }}
+          </span>
 
-                    <span style="width: 15%">{{ Detalle.Cantidad }}</span>
-                    <span style="width: 10%">C${{ Detalle.PrecioVenta }}</span>
-                </div>
-            {% endif %} 
+          <span style="width: 15%">{{ Detalle.Cantidad }}</span>
+          <span style="width: 10%">C${{ Detalle.PrecioVenta }}</span>
+        </div>
+        {% endif %} 
         {% endfor %}
       </div>
     </div>
@@ -118,19 +124,6 @@
   function desplegarDetalles(idOrden) {
     let detallitos = document.getElementById("idDetalleOrden" + idOrden);
     let icono = document.getElementById("iconoOrden" + idOrden);
-
-    // if (detallitos.classList.contains("desplegado"))
-    // {
-    //     detallitos.style.gridTemplateRows = "0fr";
-
-    //     console.log("El elemento tiene la clase 'desplegado'");
-    // }
-    // else
-    // {
-    //     detallitos.style.gridTemplateRows = "1fr";
-
-    //     console.log("El elemento no tiene la clase 'desplegado'");
-    // }
 
     icono.classList.toggle("desplegado");
     detallitos.classList.toggle("desplegado");
@@ -446,7 +439,7 @@
 
   function CancelarOrden(idOrden) {
     Swal.fire({
-      title: "¿Realmente desea cancelar la orden?",
+      title: "¿Realmente desea anular la orden?",
       showCancelButton: true,
       cancelButtonText: "No",
       confirmButtonText: "Sí",
@@ -464,11 +457,7 @@
           title: "¡Orden #" + idOrden + " anulada correctamente!",
           icon: "success",
         }).then((resultado) => {
-          if (resultado.isConfirmed) {
-            location.reload();
-          } else {
-            location.reload();
-          }
+          location.reload();
         });
       }
     });

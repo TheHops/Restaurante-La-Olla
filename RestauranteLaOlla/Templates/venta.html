@@ -70,29 +70,21 @@
                             </div>
                         {% endfor %}
 
-                        <!--  -->
-
-                        <!-- <div class="grid_item">
-                            <input type="radio" name="mesa" id="mesa2">
-                            <label for="mesa2">2</label>
-                        </div>
-                        <div class="grid_item">
-                            <input type="radio" name="mesa" id="mesa3">
-                            <label for="mesa3">3</label>
-                        </div>
-                        <div class="grid_item">
-                            <input type="radio" name="mesa" id="mesa4">
-                            <label for="mesa4">4</label>
-                        </div> -->
-
                     </div>
 
                 </fieldset>
 
-                <button id="btn_siguiente" onclick="pagina2()" disabled>
-                    <img src="{% static 'img/Flecha-Derecha.png' %}" style="width: 25px; height: 25px;" alt="Siguiente">
-                    <span>Siguiente</span>
-                </button>
+                <div id="AccionesPrimerPagina">
+                    <label>
+                        <input type="checkbox" id="check_combinar_mesas" name="combinar_mesas" value="true">
+                        Combinar mesas
+                    </label>
+    
+                    <button id="btn_siguiente" onclick="pagina2()" disabled>
+                        <img src="{% static 'img/Flecha-Derecha.png' %}" style="width: 25px; height: 25px;" alt="Siguiente">
+                        <span>Siguiente</span>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -248,6 +240,52 @@
     <script src="app/js/handleCounter.js"></script>
 
     <script>
+        // Seleccionamos el checkbox por su id
+        const combinarCheckbox = document.getElementById('check_combinar_mesas');
+        const mesasDiv = document.getElementById('mesas');
+        const botonSiguiente = document.getElementById("btn_siguiente");
+
+        combinarCheckbox.addEventListener('change', function() {
+            // Seleccionamos todos los inputs dentro del div de mesas
+            const inputs = mesasDiv.querySelectorAll('input');
+
+            inputs.forEach(input => {
+                // Guardamos el valor actual de name
+                const currentValue = input.value;
+
+                if (this.checked) {
+                    // Activar "Combinar mesas": convertimos radio en checkbox
+                    input.type = 'checkbox';
+                    input.name = 'mesas_check'; // cambiamos el name para permitir múltiples
+                } else {
+                    // Desactivar "Combinar mesas": convertimos checkbox de nuevo a radio
+                    input.type = 'radio';
+                    input.name = 'mesa'; // nombre original para radio único
+                    input.checked = false; // desmarcamos todos
+                    desactivarBoton();
+                }
+            });
+
+            verificarSeleccionMesas();
+        });
+
+        mesasDiv.addEventListener('change', verificarSeleccionMesas);
+
+        function verificarSeleccionMesas() {
+            const inputs = mesasDiv.querySelectorAll('input');
+            const algunoSeleccionado = Array.from(inputs).some(input => input.checked);
+    
+            botonSiguiente.disabled = !algunoSeleccionado;
+        }
+
+        function activarBoton (){
+            botonSiguiente.disabled = false;
+        }
+
+        function desactivarBoton (){
+            botonSiguiente.disabled = true;
+        }
+
         var x = document.getElementById("pag1");
         var y = document.getElementById("pag2");
 
@@ -317,14 +355,6 @@
             let subtotal = cant.value * parseInt(precio);
 
             // Se recorre el arreglo para verificar si existe el platillo dentro de las órdenes
-            // ordenP.forEach(function(elemento){
-            //     if (id = elemento.id)
-            //     {
-            //         existeOrden = true;
-            //     }
-            // })
-
-            // Se recorre el arreglo para verificar si existe el platillo dentro de las órdenes
             while (indice < ordenP.length) {
                 if (ordenP[indice].id == id) {
                     existeOrden = true;
@@ -353,9 +383,6 @@
                     "cantidad": parseInt(cant.value)
                 });
 
-                // Se imprime
-                // console.log(subtotal);
-
                 // Se habilita el botón de agregar orden
                 let btnAgregarOrden = document.getElementById('btnAgregarOrden');
                 btnAgregarOrden.disabled = false;
@@ -376,7 +403,6 @@
                 cantOrdenes += 1;
 
                 /* Se verifica si hay más de un platillo */
-
                notiPlatillos();
             }
 
@@ -546,11 +572,6 @@
             }
         }
 
-        function activarBoton (){
-            let boton = document.getElementById("btn_siguiente");
-            boton.disabled = false;
-        }
-
         /**************************************************************/
         /**************************************************************/
         /********************* C R E A R  O R D E N************************/
@@ -578,14 +599,7 @@
                         title: '¡Orden creada correctamente!', 
                         icon: 'success'
                     }).then((resultado) => {
-                        if (resultado.isConfirmed)
-                        {
-                            location.reload();
-                        }
-                        else
-                        {
-                            location.reload();
-                        }
+                        location.reload();
                     })
                 }
             })
@@ -602,15 +616,22 @@
 
             // SE OBTIENEN LOS VALORES DE LAS MESAS
             var mesas = document.getElementsByName("mesa");
+
+            if (mesas.length == 0)
+                mesas = document.getElementsByName("mesas_check");
+
             var seleccionado;
+
+            var listaMesasSeleccionadas = [];
 
             // Se busca al elemento seleccionado y se obtiene el id de la mesa
             for (var i = 0; i < mesas.length; i++) {
                 if (mesas[i].checked) {
-                    seleccionado = mesas[i].value;
-                    break;
+                    listaMesasSeleccionadas.push(mesas[i].value);
                 }
             }
+
+            console.log(listaMesasSeleccionadas);
 
             // xhr.setRequestHeader('Content-Type', 'application/json');
             // Abrir la conexión, y especificamos el método
@@ -618,7 +639,7 @@
             let datos = new FormData(); // Es un formulario de JS para leer el codigo
             datos.append("OrdenPlatillos", JSON.stringify(ordenP)); // Se envía el arreglo en formato JSON
             datos.append("csrfmiddlewaretoken", token);
-            datos.append("mesa", seleccionado);
+            datos.append("mesas", JSON.stringify(listaMesasSeleccionadas));
             datos.append("total", total);
 
             xhr.onreadystatechange = function () {
@@ -627,26 +648,8 @@
                 }
             }
 
-            // let datos = {
-            //     'OrdenPlatillos' : JSON.stringify(ordenP),
-            //     'csrfmiddlewaretoken' : token[0].value
-            // }
-
             // Se envían los datos
             xhr.send(datos);
-
-            // $.ajax({
-            //     type: "POST",
-            //     url: "/CrearOrden",
-            //     data: {
-            //         'OrdenPlatillos': JSON.stringify(ordenP),
-            //         'csrfmiddlewaretoken':  JSON.stringify(token[0].value)
-            //     },
-            //     success: function (data) {
-            //         // manejo de la respuesta
-            //     },
-            //     dataType: 'json'
-            // });
         }
 
         function abrirCarrito() {
