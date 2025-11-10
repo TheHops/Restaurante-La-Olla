@@ -246,6 +246,10 @@
         const botonSiguiente = document.getElementById("btn_siguiente");
 
         combinarCheckbox.addEventListener('change', function() {
+            cambioTipoDeSeleccion(this);
+        });
+        
+        function cambioTipoDeSeleccion(check){
             // Seleccionamos todos los inputs dentro del div de mesas
             const inputs = mesasDiv.querySelectorAll('input');
 
@@ -253,7 +257,7 @@
                 // Guardamos el valor actual de name
                 const currentValue = input.value;
 
-                if (this.checked) {
+                if (check.checked) {
                     // Activar "Combinar mesas": convertimos radio en checkbox
                     input.type = 'checkbox';
                     input.name = 'mesas_check'; // cambiamos el name para permitir múltiples
@@ -267,7 +271,7 @@
             });
 
             verificarSeleccionMesas();
-        });
+        }
 
         mesasDiv.addEventListener('change', verificarSeleccionMesas);
 
@@ -550,17 +554,17 @@
             }
         }
 
-        function filtrarMesas(cadena) {
+        function filtrarMesas(idAreaMesa) {
             let request = new XMLHttpRequest();
             // let data = new FormData();
 
             let boton = document.getElementById("btn_siguiente");
             boton.disabled = true;
 
-            console.log(cadena);
+            console.log(idAreaMesa);
 
-            // data.append('InputBuscarPlatillo', cadena);
-            request.open('GET', '/FiltrarMesas?listaAreasDeMesa=' + cadena);
+            // data.append('InputBuscarPlatillo', idAreaMesa);
+            request.open('GET', '/FiltrarMesas?listaAreasDeMesa=' + idAreaMesa);
             request.send();
             request.onreadystatechange = function () {
                 if (this.readyState == 4) {
@@ -568,6 +572,8 @@
                     contenedor.innerHTML = this.responseText;
 
                     console.log("SI ENTRÓ A LA FUNCIÓN ONREADY")
+                    
+                    cambioTipoDeSeleccion(combinarCheckbox);
                 }
             }
         }
@@ -578,78 +584,107 @@
         /**************************************************************/
         /**************************************************************/
 
-        function agregarOrden() {
-            Swal.fire({
+        async function agregarOrden() {
+            const { value: descripcion, isConfirmed } = await Swal.fire({
                 title: '¿Realmente desea crear la orden?',
+                input: 'text',
+                inputPlaceholder: 'Agrega una descripción a tu orden (opcional)',
                 showCancelButton: true,
                 cancelButtonText: 'No',
                 confirmButtonText: 'Sí',
-                confirmButtonColor:  '#ff6464', //'#ff964e',
+                confirmButtonColor: '#ff6464',
+                icon: 'question',
                 iconColor: '#ff964e'
-            }).then((result) => {
-                /* Read more about isConfirmed, isDenied below */
-                if (result.isConfirmed) {
-
-                    // OrdenP contiene todas las ordenes guardadas en un arreglo
-                    console.log(ordenP);
-                    enviarDatos();
-
+            });
+        
+            if (isConfirmed) {
+                try {
+                    // Muestra un modal de carga mientras se envían los datos
                     Swal.fire({
-                        confirmButtonColor:  '#ff6464', //'#ff964e',
-                        title: '¡Orden creada correctamente!', 
-                        icon: 'success'
-                    }).then((resultado) => {
+                        title: 'Creando orden...',
+                        text: 'Por favor espere',
+                        allowOutsideClick: false,
+                        didOpen: () => Swal.showLoading()
+                    });
+        
+                    const respuesta = await enviarDatos(descripcion || "");
+        
+                    // Supongamos que Django responde con algo como:
+                    // { "status": "ok", "message": "Orden creada exitosamente" }
+        
+                    if (respuesta.status === "ok") {
+                        await Swal.fire({
+                            title: '¡Orden creada correctamente!',
+                            icon: 'success',
+                            confirmButtonColor: '#ff6464'
+                        });
                         location.reload();
-                    })
+                    } else {
+                        await Swal.fire({
+                            title: 'Error',
+                            text: respuesta.message || 'No se pudo crear la orden.',
+                            icon: 'error',
+                            confirmButtonColor: '#ff6464'
+                        });
+                    }
+        
+                } catch (error) {
+                    await Swal.fire({
+                        title: 'Error',
+                        text: error,
+                        icon: 'error',
+                        confirmButtonColor: '#ff6464'
+                    });
                 }
-            })
+            }
         }
 
         // Funcion para mandar los datos al views
-        function enviarDatos ()
-        {
-            let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
-            console.log(token);
-
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST", "/CrearOrden/", true);
-
-            // SE OBTIENEN LOS VALORES DE LAS MESAS
-            var mesas = document.getElementsByName("mesa");
-
-            if (mesas.length == 0)
-                mesas = document.getElementsByName("mesas_check");
-
-            var seleccionado;
-
-            var listaMesasSeleccionadas = [];
-
-            // Se busca al elemento seleccionado y se obtiene el id de la mesa
-            for (var i = 0; i < mesas.length; i++) {
-                if (mesas[i].checked) {
-                    listaMesasSeleccionadas.push(mesas[i].value);
+        function enviarDatos(descripcion) {
+            return new Promise((resolve, reject) => {
+                let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+                let xhr = new XMLHttpRequest();
+                xhr.open("POST", "/CrearOrden/", true);
+        
+                // Obtener las mesas seleccionadas
+                let mesas = document.getElementsByName("mesa");
+                if (mesas.length === 0) mesas = document.getElementsByName("mesas_check");
+        
+                let listaMesasSeleccionadas = [];
+                for (let i = 0; i < mesas.length; i++) {
+                    if (mesas[i].checked) listaMesasSeleccionadas.push(mesas[i].value);
                 }
-            }
-
-            console.log(listaMesasSeleccionadas);
-
-            // xhr.setRequestHeader('Content-Type', 'application/json');
-            // Abrir la conexión, y especificamos el método
-
-            let datos = new FormData(); // Es un formulario de JS para leer el codigo
-            datos.append("OrdenPlatillos", JSON.stringify(ordenP)); // Se envía el arreglo en formato JSON
-            datos.append("csrfmiddlewaretoken", token);
-            datos.append("mesas", JSON.stringify(listaMesasSeleccionadas));
-            datos.append("total", total);
-
-            xhr.onreadystatechange = function () {
-                if (this.readyState == 4) {
-                    console.log("SI ENTRÓ A LA FUNCIÓN ONREADY (ENVIAR PLATILLOS)");
-                }
-            }
-
-            // Se envían los datos
-            xhr.send(datos);
+        
+                // Crear los datos del formulario
+                let datos = new FormData();
+                datos.append("OrdenPlatillos", JSON.stringify(ordenP));
+                datos.append("csrfmiddlewaretoken", token);
+                datos.append("mesas", JSON.stringify(listaMesasSeleccionadas));
+                datos.append("descripcion", descripcion);
+                datos.append("total", total);
+        
+                // Manejamos la respuesta del servidor
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            try {
+                                let respuesta = JSON.parse(xhr.responseText);
+                                resolve(respuesta); // se devuelve el resultado al .then()
+                            } catch (e) {
+                                reject("Error al procesar la respuesta del servidor.");
+                            }
+                        } else {
+                            reject("Error de red o servidor: " + xhr.status);
+                        }
+                    }
+                };
+        
+                xhr.onerror = function() {
+                    reject("Error al conectar con el servidor.");
+                };
+        
+                xhr.send(datos);
+            });
         }
 
         function abrirCarrito() {
