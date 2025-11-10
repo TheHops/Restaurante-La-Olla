@@ -160,89 +160,75 @@ def OrdenesPendientes(request):
 
 #region CrearOrden
 def CrearOrden(request):
-    if request.user.is_authenticated:
-        try:
-            if request.method == "POST":
-                datos_json = request.POST.get('OrdenPlatillos')
-                mesas_json = request.POST.get('mesas')
-                totalval = request.POST.get('total')
-
-                print("---------------------------- ORDEN CREADA -----------------------")
-                datos = json.loads(datos_json)
-                mesas = json.loads(mesas_json)
-
-                print("Mesas: ", mesas)
-                print("Total: ", totalval)
-                print(datos)
-
-                for dato in datos:
-                    print(dato['id'], dato['subtotal'], dato['cantidad'])
-
-                print("--------------------------------------------------------------------")
-
-                print("User ID: ", request.user.Id)
-
-                #################################################
-                # SE CREA LA ORDEN
-
-                # Se obtiene el usuario en sesión
-                Usuarioensesion = Usuario.objects.get(Id=request.user.Id)
-
-                orden = Orden.objects.create(
-                    IdUsuario=Usuarioensesion,
-                    Total=totalval
-                )
-
-                orden.save()
-                
-                # MESAS
-                mesas_objetos = Mesa.objects.filter(Id__in=mesas)
-                
-                for mesa in mesas_objetos:
-                    # Se registran las mesas por orden creada
-                    mesaPorOrden = MesasPorOrden.objects.create(
-                        IdOrden = orden,
-                        IdMesa = mesa)
-                
-                    mesaPorOrden.save()
-
-                #################################################
-                # SE CREAN LOS DETALLEN DE LA ORDEN
-                
-                orden.AreaDeMesa = mesas_objetos[0].IdAreaMesa.Nombre
-                orden.save()
-
-                for dato in datos:
-                    print(dato['id'], dato['subtotal'], dato['cantidad'])
-                    print("Precio: ", dato['subtotal']/dato['cantidad'])
-
-                    platillodeldetalle = Platillo.objects.get(Id=dato["id"])
-
-                    OrdenDetalle = DetalleOrden.objects.create(
-                        IdOrden = orden,
-                        IdPlatillo = platillodeldetalle,
-                        Cantidad = dato['cantidad'],
-                        PrecioVenta = platillodeldetalle.Precio,
-                        SubTotal = dato['subtotal']
-                    )
-
-                    OrdenDetalle.save()
-
-                #################################################
-
-                print("-----------------------------------------------------")
-                print("Orden: ", orden)
-                print("-----------------------------------------------------")
-
-                return HttpResponse(request, "Hola")
-        except Exception as ex:
-            print("\n############### EXCEPCIÓN ###############")
-            print(traceback.format_exc())
-            print("#########################################\n")
-            return JsonResponse({'error': str(ex)}, status=500)
-    else:
-        # Si no lo ha hecho entonces deberá iniciar sesión
+    if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.method != "POST":
+        return JsonResponse({"status": "error", "message": "Método no permitido."}, status=405)
+    
+    try:
+        # Datos recibidos del frontend
+        datos_json = request.POST.get('OrdenPlatillos')
+        mesas_json = request.POST.get('mesas')
+        descripcion = request.POST.get('descripcion')
+        totalval = request.POST.get('total')
+
+        datos = json.loads(datos_json)
+        mesas = json.loads(mesas_json)
+
+        print("---------------------------- ORDEN CREADA -----------------------")
+        print("Mesas:", mesas)
+        print("Total:", totalval)
+        print("Descripción:", descripcion)
+        print("User ID:", request.user.Id)
+        print("--------------------------------------------------------------------")
+
+        # Obtener usuario en sesión
+        usuario_en_sesion = Usuario.objects.get(Id=request.user.Id)
+
+        # Crear la orden
+        orden = Orden.objects.create(
+            IdUsuario=usuario_en_sesion,
+            Total=totalval,
+            Descripcion=descripcion  # si tu modelo tiene este campo
+        )
+
+        # Asignar mesas a la orden
+        mesas_objetos = Mesa.objects.filter(Id__in=mesas)
+        for mesa in mesas_objetos:
+            MesasPorOrden.objects.create(IdOrden=orden, IdMesa=mesa)
+
+        # Establecer el área según la primera mesa seleccionada
+        if mesas_objetos.exists():
+            orden.AreaDeMesa = mesas_objetos[0].IdAreaMesa.Nombre
+            orden.save()
+
+        # Crear los detalles de la orden
+        for dato in datos:
+            platillo = Platillo.objects.get(Id=dato["id"])
+            DetalleOrden.objects.create(
+                IdOrden=orden,
+                IdPlatillo=platillo,
+                Cantidad=dato['cantidad'],
+                PrecioVenta=platillo.Precio,
+                SubTotal=dato['subtotal']
+            )
+
+        print("-----------------------------------------------------")
+        print("Orden creada correctamente:", orden)
+        print("-----------------------------------------------------")
+
+        # Respuesta final esperada por el frontend
+        return JsonResponse({
+            "status": "ok",
+            "message": "Orden creada exitosamente",
+            "orden_id": orden.Id
+        })
+    except Exception as ex:
+        print("\n############### EXCEPCIÓN ###############")
+        print(traceback.format_exc())
+        print("#########################################\n")
+        return JsonResponse({"status": "error", "message": str(ex)}, status=500)
 #endregion CrearOrden
 
 #region AnularOrden
