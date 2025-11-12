@@ -80,6 +80,7 @@ def GraficarOrdenes(request):
             num_facturas = num_facturas[dia_actual:] + num_facturas[:dia_actual]
 
             # Llevar el último al inicio (rotación visual)
+            
             ultimo_valor = num_facturas.pop()
             num_facturas.insert(0, ultimo_valor)
 
@@ -115,24 +116,19 @@ def FiltrarOrdenes(request):
                 EstadoOrden = request.GET.get("SelectFiltrarOrdenes")
 
                 if EstadoOrden == "3":
-                    OrdenesFiltradas = Orden.objects.select_related('IdMesa__IdAreaMesa', 'IdUsuario').filter(EsActivo="1").order_by(Case(When(Estado='1', then=0), When(Estado='0', then=1), When(Estado='2', then=2)), '-Id')
+                    OrdenesFiltradas = Orden.objects.select_related('IdUsuario').filter(EsActivo="1").order_by(Case(When(Estado='1', then=0), When(Estado='0', then=1), When(Estado='2', then=2)), '-Id')
                 else:
-                    OrdenesFiltradas = Orden.objects.select_related('IdMesa__IdAreaMesa', 'IdUsuario').filter(Q(Estado=EstadoOrden) & Q(EsActivo="1")).order_by('-Id')
-
-                mesas = Mesa.objects.filter(EsActivo="1")
+                    OrdenesFiltradas = Orden.objects.select_related('IdUsuario').filter(Q(Estado=EstadoOrden) & Q(EsActivo="1")).order_by('-Id')
                 
                 # metodoPago = ''
                 # asignar el metodo de pago desde el request
                 
-                detalleOrden = DetalleOrden.objects.filter(IdOrden__in=OrdenesFiltradas).select_related('IdPlatillo')
                 platillos = Platillo.objects.all().values()
 
                 # print(ordenes)
                 contexto = {
                     "Ordenes": OrdenesFiltradas,
                     # "MetodoPago": metodoPago,
-                    "Mesas": mesas,
-                    "DetalleOrden": detalleOrden,
                     "Platillos": platillos
                 }
 
