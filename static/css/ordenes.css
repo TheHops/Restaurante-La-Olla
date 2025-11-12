@@ -97,6 +97,30 @@
     margin-left: 6px;
 }
 
+.EstPre {
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background-color: hsl(60, 100%, 60%);
+    display: inline-block;
+    /* transform: translateY(-4px); */
+    margin-left: 6px;
+}
+
+.EstEnPre {
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background-color: hsl(39, 100%, 55%);
+    display: inline-block;
+    /* transform: translateY(-4px); */
+    margin-left: 6px;
+}
+
 .EstC {
     width: 10px;
     height: 10px;

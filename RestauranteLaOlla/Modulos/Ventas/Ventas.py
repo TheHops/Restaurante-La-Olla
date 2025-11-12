@@ -125,23 +125,14 @@ def OrdenesPendientes(request):
             # El signo negativo para ordenarlos de manera descendiente
             ordenes =  Orden.objects.select_related('IdUsuario').filter(Q(Estado="1") & Q(EsActivo="1")).order_by('-Id')
             
-            detalleOrden = DetalleOrden.objects.filter(IdOrden__in=ordenes).select_related('IdPlatillo')
-            
-            mesas = Mesa.objects.filter(EsActivo="1")
             platillos = Platillo.objects.all().values()
 
             print("ORDENES PENDIENTES ==> ")
             print(ordenes)
-            
-            
-            print("\nDETALLES DE ORDEN ==> ")
-            print(detalleOrden)
 
             # print(ordenes)
             contexto = {
                 "Ordenes": ordenes,
-                "Mesas": mesas,
-                "DetalleOrden": detalleOrden,
                 "Platillos": platillos
             }
 
@@ -232,34 +223,42 @@ def CrearOrden(request):
 #endregion CrearOrden
 
 #region AnularOrden
-def CancelarOrden (request):
-    if request.user.is_authenticated:
-        try:
-            if request.method == "POST":
-                # Se obtiene el valor del id de la orden
-                idOrden = request.POST.get('idOrden')
-
-                # Se obtiene la orden con esa id
-                OrdenACancelar = Orden.objects.get(Id=idOrden)
-
-                # Se modifica el estado a "Cancelado"
-                OrdenACancelar.Estado = "2"
-
-                print("====== ANULAR ======")
-                print(OrdenACancelar)
-
-                # Se guardan los cambios
-                OrdenACancelar.save()
-
-                return HttpResponse(request, "Hola")
-        except Exception as ex:
-            print("\n############### EXCEPCIÓN ###############")
-            print(traceback.format_exc())
-            print("#########################################\n")
-            return JsonResponse({'error': str(ex)}, status=500)
-    else:
-        # Si no lo ha hecho entonces deberá iniciar sesión
+def CancelarOrden(request):
+    if not request.user.is_authenticated:
         return render(request, "login.html")
+
+    if request.method != "POST":
+        return JsonResponse({"status": "error", "message": "Método no permitido."}, status=405)
+
+    try:
+        idOrden = request.POST.get('idOrden')
+        motivo = request.POST.get('motivo')
+
+        # Buscar la orden
+        orden = Orden.objects.get(Id=idOrden)
+
+        # Actualizar estado y motivo
+        orden.Estado = "2"  # Cancelada / Anulada
+        orden.Motivo = motivo
+        orden.save()
+
+        print("====== ORDEN ANULADA ======")
+        print(f"Orden: {orden.Id} - Motivo: {motivo}")
+        print("============================")
+
+        return JsonResponse({
+            "status": "ok",
+            "message": f"La orden #{orden.Id} fue anulada correctamente."
+        })
+
+    except Orden.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "La orden no existe."}, status=404)
+
+    except Exception as ex:
+        print("\n############### EXCEPCIÓN ###############")
+        print(traceback.format_exc())
+        print("#########################################\n")
+        return JsonResponse({"status": "error", "message": str(ex)}, status=500)
 #endregion AnularOrden
 
 #region FacturarOrden

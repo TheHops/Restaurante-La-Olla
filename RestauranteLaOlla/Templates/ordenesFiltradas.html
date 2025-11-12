@@ -4,14 +4,18 @@
 <div class="ordenPoFoC">
   <div class="encabezadoPoFoC">
     <h5>
-        Orden #{{ Orden.Id }} -
-        {% if Orden.Estado == "1" %}
-            Pendiente <div class="EstP"></div>
-        {% elif Orden.Estado == "0" %}
-            Facturada <div class="EstF"></div>
-        {% else %}
-            Anulada <div class="EstC"></div>
-        {% endif %}
+      Orden #{{ Orden.Id }} - 
+      {% if Orden.Estado == "1" %} Pendiente
+      <div class="EstP"></div>
+      {% elif Orden.Estado == "0" %} Facturada
+      <div class="EstF"></div>
+      {% elif Orden.Estado == "3" %} Preparada
+      <div class="EstPre"></div>
+      {% elif Orden.Estado == "4" %} En preparación
+      <div class="EstEnPre"></div>
+      {% else %} Anulada
+      <div class="EstC"></div>
+      {% endif %}
     </h5>
     <h4>Total: C${{Orden.Total}}</h4>
   </div>
@@ -19,20 +23,22 @@
 
   <div class="seccionesPoFoC">
     <div class="seccionIzquierda">
-      <h4 style="margin: 0">
-        Area: {{Orden.AreaDeMesa}}
-      </h4>
+      <h4 style="margin: 0">Area: {{Orden.AreaDeMesa}}</h4>
       <h5>
         Mesas ocupadas: 
-        {% for mesa in Orden.Mesas.all %} 
-        #{{mesa.IdMesa.Numero}} {% if not forloop.last %} - {% endif %} 
+        {% for mesa in Orden.Mesas.all %}
+        #{{mesa.IdMesa.Numero}} 
+        {% if not forloop.last %} - {% endif %} 
         {% endfor %}
       </h5>
       <h6>{{Orden.Fecha}}</h6>
     </div>
     <div class="seccionDerecha">
       {% if Orden.Estado == "1" %}
-      <button class="btnCancelarOrden" onclick="CancelarOrden('{{Orden.Id}}')">
+      <button
+        class="btnCancelarOrden"
+        onclick="CancelarOrden('{{Orden.Id}}')"
+      >
         <i class="fa-solid fa-ban"></i> Anular
       </button>
 
@@ -50,6 +56,14 @@
 </div>
 <!-- Fin ordenPoFoc -->
 
+<!-- Inicia descripcion (Se agrega si es necesario) -->
+{% if Orden.Descripcion is not none and orden.Descripcion != '' %}
+<div class="descripcionOrden">
+  <!-- TODO: RECORDAR PONER ICONO DE COMENTARIO -->
+  <span>{{ Orden.Descripcion }}</span>
+</div>  
+{% endif %}
+
 <div class="detalleOrdenPoFoC">
   <div class="cuerpoDetalleOrden" id="idDetalleOrden{{Orden.Id}}">
     <div class="detallitoOrden">
@@ -62,24 +76,23 @@
           margin-top: 0;
           margin-bottom: 3px;
           width: 97%;
-          border-color: #df362d50;"
+          border-color: #df362d50;
+        "
       />
 
-      {% for Detalle in DetalleOrden %}
-            {% if Detalle.IdOrden.Id == Orden.Id %}
-                <div class="detalle">
-                    <span
-                        style="width: 70%"
-                        class="detalleTruncar"
-                        title="{{ Platillo.Nombre }}"
-                        >{{ Detalle.IdPlatillo.Nombre }}
-                    </span>
+      {% for Detalle in Orden.Detalles.all %} 
+      <div class="detalle">
+        <span
+          style="width: 70%"
+          class="detalleTruncar"
+          title="{{ Detalle.IdPlatillo.Nombre }}"
+          >{{ Detalle.IdPlatillo.Nombre }}
+        </span>
 
-                    <span style="width: 15%">{{ Detalle.Cantidad }}</span>
-                    <span style="width: 10%">C${{ Detalle.PrecioVenta }}</span>
-                </div>
-            {% endif %} 
-        {% endfor %}
+        <span style="width: 15%">{{ Detalle.Cantidad }}</span>
+        <span style="width: 10%">C${{ Detalle.PrecioVenta }}</span>
+      </div>
+      {% endfor %}
     </div>
   </div>
   <!-- fin cuerpoDetalleOrden -->
@@ -94,4 +107,5 @@
   <!-- fin botonDesplazarDetalleOrden -->
 </div>
 <!-- Fin ordenPoFoC -->
+
 {% endfor %}
