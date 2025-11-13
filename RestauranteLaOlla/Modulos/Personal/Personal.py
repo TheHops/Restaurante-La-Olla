@@ -1,7 +1,7 @@
 #region Personal
 
 import json
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
 from Application.models import Cargo, Usuario
@@ -144,21 +144,30 @@ def ModificarPersonal(request):
         return render(request, "login.html")
 
 def DarBajaPersonal(request):
-    if request.user.is_authenticated:
-        try:
-            if request.method == "POST":
-                id = request.POST.get("ID")
-                personal = Usuario.objects.get(Id=id)
-                personal.EsActivo = "0"
-                personal.save()
-                return HttpResponse("")
-        except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
-    else:
-        # Si no lo ha hecho entonces deberá iniciar sesión
+    if not request.user.is_authenticated:
         return render(request, "login.html")
+
+    if request.method == "POST":
+        try:
+            id_personal = request.POST.get("ID")
+
+            if not id_personal:
+                return JsonResponse({'status': 'error', 'message': 'ID no proporcionado'}, status=400)
+
+            personal = Usuario.objects.get(Id=id_personal)
+            personal.EsActivo = "0"
+            personal.save()
+
+            return JsonResponse({'status': 'success', 'message': 'Usuario dado de baja correctamente'})
+        
+        except Usuario.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Usuario no encontrado'}, status=404)
+
+        except Exception as ex:
+            print("\n#################### EXCEPCIÓN ########################")
+            print(ex)
+            print("########################################################\n")
+            return JsonResponse({'status': 'error', 'message': 'Error interno del servidor'}, status=500)
+    
+    return JsonResponse({'status': 'error', 'message': 'Método no permitido'}, status=405)
 #endregion CRUD PERSONAL
