@@ -50,6 +50,16 @@
       >
         <i class="fa-solid fa-file-invoice-dollar"></i> Facturar
       </button>
+
+      {% elif Orden.Estado == "2" %}
+
+        {% if Orden.Motivo is not none and Orden.Motivo != '' %}
+          <div class="motivoOrden">
+            <!-- TODO: RECORDAR PONER ICONO DE COMENTARIO -->
+            <span>{{ Orden.Motivo }}</span>
+          </div>  
+        {% endif %}
+
       {% endif %}
     </div>
   </div>

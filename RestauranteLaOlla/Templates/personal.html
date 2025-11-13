@@ -73,11 +73,8 @@
                     </button>
                     
                     {% if personal.EsActivo == '1' %}
-                    <button class="actionButton btnEliminar"  id="{{personal.Id}}"  data-toggle="modal"  data-target="#DarBajaPersonal" onclick="PasoIDBaja('{{personal.Id}}')">
-                        <a>
-                            <!-- <i class="fa-solid fa-trash-can fa-lg" style="color: #ff6969; padding: 5px 5px;"></i> -->
-                            <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Dar Baja Personal">
-                        </a>
+                    <button class="actionButton btnEliminar" id="{{personal.Id}}" onclick="ConfirmarBaja('{{personal.Id}}')">
+                        <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Dar Baja Personal">
                     </button>
                     {% endif%}
                     <!-- <button class="actionButton btnDetalles">
@@ -250,30 +247,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="DarBajaPersonal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title " id="exampleModalLabel" >¿Esta Seguro de Dar de Baja al Usuario?</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-               
-               
-        <div class="modal-footer" style="display: flex; justify-content: center;">
-            <form method="POST">
-                {% csrf_token %}
-                <input type="hidden" id="IdPersonalBaja">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-dark" onclick="BajaPersonal();">Dar Baja</button>
-            </form>
-        </div>
-      </div>
-    </div>
-</div>
-
-
 
 <script>
 $('.modal').on('hidden.bs.modal', function (e) {
@@ -424,6 +397,55 @@ function ModificarPersonal(){
             }
         });
     }
+}
+
+function ConfirmarBaja(idPersonal) {
+    Swal.fire({
+        title: '¿Realmente desea dar de baja a este usuario?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ff6464',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Dar de baja',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/DarBajaPersonal/',
+                type: 'POST',
+                data: {
+                    ID: idPersonal,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        Swal.fire({
+                            title: '¡Usuario dado de baja!',
+                            icon: 'success',
+                            confirmButtonColor: '#ff6464'
+                        }).then((resultado) => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: response.message,
+                            icon: 'error',
+                            confirmButtonColor: '#343a40'
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Ocurrió un error en la solicitud.',
+                        icon: 'error',
+                        confirmButtonColor: '#343a40'
+                    });
+                }
+            });
+        }
+    });
 }
 
 function BajaPersonal(){
