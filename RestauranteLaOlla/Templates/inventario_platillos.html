@@ -6,15 +6,15 @@
 
 <div id="encabezado_inventario">
     <button id="agregar" data-toggle="modal" data-target="#AgregarPlatillo" onclick="aparecerCapa()">
-            <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px; margin-right: 10px;" title="Añadir platillo"></img>Agregar platillo
+            <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px; margin-right: 10px;" title="Añadir platillo">Agregar consumo
        
     </button>
 
     <!-- <input type="text" id="buscar" placeholder="Buscar"> -->
 
     <select name="" id="listaInventario">
-        <option value="">Platillos</option>
-        <option value="{% url 'inventario_tipoplatillo' %}">Tipo de platillo</option>
+        <option value="">Consumos</option>
+        <option value="{% url 'inventario_tipoplatillo' %}">Tipos de consumo</option>
     </select>
 
     <div class="exportar">
@@ -38,8 +38,8 @@
         <thead>
             <!-- Columnas -->
             <tr>
-                <th>Platillo</th>
-                <th>Tipo de platillo</th>
+                <th>Consumo</th>
+                <th>Tipo de consumo</th>
                 <th>Precio</th>
                 <th style="text-align: center">Estado</th>
                 <th>Acciones</th>
@@ -48,15 +48,15 @@
 
         <!-- Filas -->
         <tbody>
-            {% for platillos in Platillos %}
+            {% for platillo in Platillos %}
             <tr>
-                <td style="text-transform: capitalize; ">{{platillos.Nombre|lower}}</td>
-                <td>{{platillos.IdTipoPlatillo.Nombre}}</td>
-                <td>C${{platillos.Precio}}</td>
+                <td style="text-transform: capitalize; ">{{platillo.Nombre|lower}}</td>
+                <td>{{platillo.IdTipoPlatillo.Nombre}}</td>
+                <td>C${{platillo.Precio}}</td>
 
                 {% comment %} TODO: Agregar un ícono en lugar de un texto {% endcomment %}
                 <td style="text-align: center;">
-                    {% if platillos.EsActivo == "1" %} 
+                    {% if platillo.EsActivo == "1" %} 
                     &#9989;
                     {% else %}
                     &#9940;
@@ -66,15 +66,15 @@
                 <td class="actions">
 
                     <button class="actionButton btnEditar" data-toggle="modal" data-target="#exampleModal" 
-                    onclick='Impresion("{{platillos.Id}}" , "{{platillos.Nombre}}", "{{platillos.IdTipoPlatillo.Nombre}}", "{{platillos.IdTipoPlatillo.Id}}","{{platillos.Precio}}","{{platillos.EsActivo}}", "{{platillos.Descripcion}}" );'  id="Editar{{platillos.Id}}">
+                    onclick='Impresion("{{platillo.Id}}" , "{{platillo.Nombre}}", "{{platillo.IdTipoPlatillo.Nombre}}", "{{platillo.IdTipoPlatillo.Id}}","{{platillo.Precio}}","{{platillo.EsActivo}}", "{{platillo.Descripcion}}" );'  id="Editar{{platillo.Id}}">
                         <a>
                             <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
                             <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar platillo">
                         </a>
                     </button>
 
-                    {% if platillos.EsActivo == "1" %}
-                        <button class="actionButton btnEliminar" data-toggle="modal" data-target="#DarBajaPlatillo" onclick="BajaImpresion('{{platillos.Id}}');" id="Eliminar{{platillos.Id}}">
+                    {% if platillo.EsActivo == "1" %}
+                        <button class="actionButton btnEliminar" onclick="DarBaja_Platillo({{platillo.Id}});" id="Eliminar{{platillo.Id}}">
                             <a>
                                 <!-- <i class="fa-solid fa-trash-can fa-lg" style="color: #ff6969; padding: 5px 5px;"></i> -->
                                 <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar platillo">
@@ -109,7 +109,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title " id="exampleModalLabel" >Modificar Platillo</h5>
+          <h5 class="modal-title " id="exampleModalLabel" >Modificar consumo</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -120,11 +120,11 @@
                 <div class="row">
                     
                     <div class="col-md-12 pb-3">
-                        <h4 style="font-size: 20px;">Platillo</h4>
+                        <h4 style="font-size: 20px;">Nombre</h4>
                         <input type="text" class="form-control" id="NombrePlatillo" required>
                     </div>
                     <div class="col-md-6 pb-3">
-                        <h4 style="font-size: 20px;">Tipo de Platillo</h4>
+                        <h4 style="font-size: 20px;">Tipo de consumo</h4>
                         <select class="form-control" id="TipoPlatillo">
                             {% for tipoplatillo in TypePlatillo %}
                             {% if tipoplatillo.EsActivo == "1" %}
@@ -136,11 +136,11 @@
                         </select>
                     </div>
                     <div class="col-md-6 pb-3">
-                        <h4 style="font-size: 20px;">Precio del Platillo (C$)</h4>
+                        <h4 style="font-size: 20px;">Precio (C$)</h4>
                         <input type="text" inputmode="numeric" class="form-control" id="PrecioPlatillo"  onkeypress="return soloNumeros(event)" required>
                     </div>
                     <div class="col-md-6 pb-3">
-                        <h4 style="font-size: 20px;">Estado del Platillo </h4>
+                        <h4 style="font-size: 20px;">Estado</h4>
                         <select class="form-control" id="EstadoPlatillo">
                             <option value="1">Activo</option>
                             <option value="0">Inactivo</option>
@@ -148,7 +148,7 @@
                     </div>
 
                     <div class="col-md-6 pb-3">
-                        <h4 style="font-size: 20px;">Imagen del Platillo</h4>
+                        <h4 style="font-size: 20px;">Imagen</h4>
                         <label for="archivoModal_dos"
                         id="LabelArchivo_dos"
                         style="font-size: medium; 
@@ -179,7 +179,7 @@
                     <input type="hidden" class="form-control" id="IDPlatillo">
                     
                     <div class="col-md-12">
-                        <h4 style="font-size: 20px;">Descripción del Platillo</h4>
+                        <h4 style="font-size: 20px;">Descripción</h4>
                         <input type="text" class="form-control" id="DescripcionPlatillo" >
                     </div>
                 </div>
@@ -188,31 +188,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-dark" onclick="ActualizarPlatillo();">Actualizar</button>
-        </div>
-      </div>
-    </div>
-</div>
-
-
-<div class="modal fade" id="DarBajaPlatillo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title " id="exampleModalLabel" >¿Esta Seguro de Dar de Baja al Platillo?</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-               
-               
-        <div class="modal-footer" style="display: flex; justify-content: center;">
-            <form method="POST">
-                {% csrf_token %}
-                <input type="hidden" id="IdPlatilloBaja">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-dark" onclick="DarBaja_Platillo();">Dar Baja</button>
-            </form>
+          <button type="button" class="btn btn_confirmation_mi_color" onclick="ActualizarPlatillo();">Modificar</button>
         </div>
       </div>
     </div>
@@ -222,7 +198,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title " id="exampleModalLabel" >Agregar Platillo</h5>
+          <h5 class="modal-title " id="exampleModalLabel" >Agregar consumo</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="desaparecerCapa();">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -230,12 +206,12 @@
         <div class="modal-body">
             <form method="POST">
                 {% csrf_token %}
-                <h4 style="font-size: 20px;">Platillo<span class="asterisco">*</span></h4>
+                <h4 style="font-size: 20px;">Nombre<span class="asterisco">*</span></h4>
                 <input type="text" class="form-control" id="NombrePlatilloAgregar" required>
 
                 <div class="row">
                     <div class="col-md-6">
-                        <h4 style="font-size: 20px;">Tipo de Platillo<span class="asterisco">*</span></h4>
+                        <h4 style="font-size: 20px;">Tipo de consumo<span class="asterisco">*</span></h4>
                         <select class="form-control" id="TipoPlatilloAgregar">
                             {% for tipoplatillo in TypePlatillo %}
                                 {% if tipoplatillo.EsActivo == "1" %}
@@ -248,20 +224,20 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <h4 style="font-size: 20px;">Precio del Platillo (C$)<span class="asterisco">*</span></h4>
+                        <h4 style="font-size: 20px;">Precio (C$)<span class="asterisco">*</span></h4>
                         <input type="number" class="form-control" id="PrecioPlatilloAgregar" required>
                     </div>
                     <div class="col-md-6">
-                        <h4 style="font-size: 20px;">Estado Platillo</h4>
+                        <h4 style="font-size: 20px;">Estado</h4>
                         
                         <select class="form-control" id="EstadoPlatilloAgregar">
-                            <option value ="1">activo</option>
-                            <option value = "0">inactivo</option>
+                            <option value ="1">Activo</option>
+                            <option value = "0">Inactivo</option>
                         </select> 
                     </div>
 
                     <div class="col-md-6 pb-4">
-                        <h4 style="font-size: 20px;">Imagen del Platillo</h4>
+                        <h4 style="font-size: 20px;">Imagen</h4>
                         <label for="archivoModal"
                         id="LabelArchivo"
                         style="font-size: medium; 
@@ -277,7 +253,7 @@
                         border-radius: 5px;
                         text-align: center;
                         margin-top: 2px;">
-                           <span id="SpanLabel"> Cargar imagen</span>
+                           <span id="SpanLabel">Cargar imagen</span>
                             <!-- <i class='bx bx-check' id="iconoCargarImagen" style="color: #00ff1e; margin-left: 3px; display: none;"></i>  -->
                             <i class="fa-solid fa-check" id="iconoCargarImagen" style="color: #00ff1e; margin-left: 3px; display: none;"></i>                               
                         </label>
@@ -290,7 +266,7 @@
                     </div>
 
                     <div class="col-md-12">
-                      <h4 style="font-size: 20px;">Descripcion del Platillo</h4>
+                      <h4 style="font-size: 20px;">Descripcion</h4>
                       <input type="text" class="form-control" id="DescripcionPlatilloAgregar" >
                       
                     </div>
@@ -302,7 +278,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="desaparecerCapa();">Cancelar</button>
-          <button type="button" class="btn btn-dark" onclick="AgregarPlatillo();">Agregar</button>
+          <button type="button" class="btn btn_confirmation_mi_color" onclick="AgregarPlatillo();">Agregar</button>
         </div>
       </div>
     </div>
@@ -339,16 +315,15 @@
         
         event.preventDefault();
         return false;
-      }
+    }
 
     $('.modal').on('hidden.bs.modal', function (e) {
-            // Verificar si el usuario cerró el modal haciendo clic fuera de él
-            if (e.target === this) {
-                // El usuario hizo clic fuera del modal
-                desaparecerCapa()
-            }
-        });
-
+        // Verificar si el usuario cerró el modal haciendo clic fuera de él
+        if (e.target === this) {
+            // El usuario hizo clic fuera del modal
+            desaparecerCapa()
+        }
+    });
 
     /**********************************************************/
 
@@ -364,7 +339,7 @@
         $("#TipoPlatillo").val(idTipoPLatillo);
 
         $("#EstadoPlatillo").val( (estado === "1") ? 1 : 0 );
-     }  
+    }  
 
     function ActualizarPlatillo(){
         const nombre = $("#NombrePlatillo").val();
@@ -410,40 +385,70 @@
         });
     }
 
-    function BajaImpresion(id)
-    {
-        aparecerCapa();
-        $("#IdPlatilloBaja").val(id);
-    }
+    async function DarBaja_Platillo(idPlatillo) {
 
-    function DarBaja_Platillo(){
-        const Id = $("#IdPlatilloBaja").val();
-
-        $.ajax({
-           url:'/DarBajaPlatillo/',
-           type:'POST',
-           data:{
-             id:Id,
-             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-           },
-           success: function(response){
-                // alert("MODIFICACION EXITOSA");
-                Swal.fire({
-                    confirmButtonColor: '#ff6464',
-                    title: '¡Platillo dado de baja correctamente!',
-                    //text: 'Platillo Excluido de Menu correctamente',
-                    icon: 'success'
-                })
-                .then((resultado) => {
-                    location.reload();
-                });
-           }, 
-           error: function(error){
-            let ror = error;
-                alert("error " + error);
-           }
+        // Confirmación
+        const confirmacion = await Swal.fire({
+            title: "¿Realmente desea eliminar este consumo?",
+            icon: "question",
+            iconColor: "#ff964e",
+            showCancelButton: true,
+            cancelButtonText: "Cancelar",
+            confirmButtonText: "Eliminar",
+            confirmButtonColor: "#ff6464"
         });
-    }
+    
+        if (!confirmacion.isConfirmed) return;
+    
+        try {
+            // Cargando...
+            Swal.fire({
+                title: "Procesando...",
+                text: "Por favor espere",
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading(),
+            });
+    
+            // Enviar AJAX
+            const token = document.querySelector("input[name='csrfmiddlewaretoken']").value;
+    
+            const response = await fetch("/DarBajaPlatillo/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": token,
+                },
+                body: new URLSearchParams({
+                    id: idPlatillo
+                })
+            });
+    
+            const data = await response.json();
+    
+            if (data.status === "ok") {
+                await Swal.fire({
+                    title: "¡Consumo eliminado correctamente!",
+                    icon: "success",
+                    confirmButtonColor: "#ff6464"
+                });
+                location.reload();
+            } else {
+                await Swal.fire({
+                    title: "Error",
+                    text: data.message || "No se pudo eliminar el consumo.",
+                    icon: "error",
+                    confirmButtonColor: "#ff6464"
+                });
+            }
+    
+        } catch (error) {
+            await Swal.fire({
+                title: "Error",
+                text: error,
+                icon: "error",
+                confirmButtonColor: "#ff6464"
+            });
+        }
+    }    
 
     function AgregarPlatillo(){
         const nombre = $("#NombrePlatilloAgregar").val();

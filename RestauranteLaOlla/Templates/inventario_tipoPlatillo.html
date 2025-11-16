@@ -5,14 +5,16 @@
 
 <div id="encabezado_inventario">
     <button id="agregar" data-toggle="modal" data-target="#AgregarTipoPlatillo" onclick="aparecerCapa()"  style="font-size: 15px;">
-        <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px; margin-right: 10px; transform: translateY(-9px);" title="Añadir el tipo de platillo"></img><span style="width: 100px; height: 30px; display: inline-block; line-height: 17px;">Agregar tipo de platillo</span>
+        <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px; margin-right: 10px; transform: translateY(-9px);" title="Añadir el tipo de platillo">
+    
+        <span style="width: 100px; height: 30px; display: inline-block; line-height: 17px;">Agregar tipo de consumo</span>
     </button>
 
     <!-- <input type="text" id="buscar" placeholder="Buscar"> -->
 
     <select name="" id="listaInventario">
-        <option value="">Tipo de platillo</option>
-        <option value="{% url 'inventario_platillos' %}">Platillos</option>
+        <option value="">Tipos de consumo</option>
+        <option value="{% url 'inventario_platillos' %}">Consumos</option>
     </select>
 
     <div class="exportar">
@@ -36,7 +38,7 @@
         <thead>
             <!-- Columnas -->
             <tr>
-                <th>Tipo de platillo</th>
+                <th>Tipo de consumo</th>
                 <th style="text-align: center">Estado</th>
                 <th>Acciones</th>
             </tr>
@@ -64,12 +66,13 @@
                     </button>
 
                     {% if tipoplatillo.EsActivo == "1" %}
-                      <button class="actionButton btnEliminar" data-toggle="modal" data-target="#DarBajaTipoPlatillo" onclick="DarBajaImpresion('{{tipoplatillo.Id}}');" id="Eliminar{{tipoplatillo.Id}}">
-                          <a>
-                              <!-- <i class="fa-solid fa-trash-can fa-lg" style="color: #ff6969; padding: 5px 5px;"></i> -->
-                              <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar el tipo de platillo">
-                          </a>
-                      </button>
+                      <button class="actionButton btnEliminar"
+                      onclick="DarBajaTipoPlatillo('{{ tipoplatillo.Id }}')"
+                      id="Eliminar{{ tipoplatillo.Id }}">
+                        <a>
+                            <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar el tipo de platillo">
+                        </a>
+                    </button>
                     {% endif %}
                 </td>
             </tr>
@@ -85,7 +88,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title " id="exampleModalLabel" >Modificar Tipo Platillo</h5>
+          <h5 class="modal-title " id="exampleModalLabel" >Modificar tipo de consumo</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="desaparecerCapa();">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -93,7 +96,7 @@
         <div class="modal-body">
             <form method="POST">
                 {% csrf_token %}
-                <h4 style="font-size: 20px;">Tipo Platillo</h4>
+                <h4 style="font-size: 20px;">Nombre</h4>
                 <input type="text" class="form-control" id="NameTipoPlatillo" required>
                 <h4 style="font-size: 20px;">Estado</h4>
                 <select class="form-control" id="EstadoTipoPlatillo">
@@ -106,34 +109,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="desaparecerCapa();">Cancelar</button>
-          <button type="button" class="btn btn-dark" onclick="ActualizarTipoPlatillo();">Actualizar</button>
-        </div>
-      </div>
-    </div>
-</div>
-
-<div class="modal fade" id="DarBajaTipoPlatillo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title " id="exampleModalLabel" >¿Esta Seguro de Dar de Baja al Tipo de Platillo?</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-              <div class="alert alert-warning" role="alert">
-                <h4 style="font-size: 20px;">Si da de Baja un Tipo de Platillo, los Platillos relacionados a este seran dado de baja automaticamente<span class="asterisco"></span></h4>
-              </div>
-      </div>  
-               
-        <div class="modal-footer" style="display: flex; justify-content: center;">
-            <form method="POST">
-                {% csrf_token %}
-                <input type="hidden" id="IdTipoPlatilloBaja">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-dark" onclick="DarBajaTipoPlatillo();">Dar Baja</button>
-            </form>
+          <button type="button" class="btn btn_confirmation_mi_color" onclick="ActualizarTipoPlatillo();">Modificar</button>
         </div>
       </div>
     </div>
@@ -143,7 +119,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title " id="exampleModalLabel" >Agregar Tipo de Platillo</h5>
+          <h5 class="modal-title " id="exampleModalLabel" >Agregar tipo de consumo</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -151,7 +127,7 @@
         <div class="modal-body">
             <form method="POST">
                 {% csrf_token %}
-                <h4 style="font-size: 20px;">Tipo de Platillo<span class="asterisco">*</span></h4>
+                <h4 style="font-size: 20px;">Nombre<span class="asterisco">*</span></h4>
                 <input type="text" class="form-control" id="NameTipoPlatilloAgregar" required>
                 <!-- <h4 style="font-size: 20px;">Estado</h4>
                 <select class="form-control" id="EstadoTipoPlatilloAgregar">
@@ -163,7 +139,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-dark" onclick="Agregar_TipoPlatillo();">Agregar</button>
+          <button type="button" class="btn btn_confirmation_mi_color" onclick="Agregar_TipoPlatillo();">Agregar</button>
         </div>
       </div>
     </div>
@@ -222,31 +198,66 @@
       $("#IdTipoPlatilloBaja").val(id);
     }
 
-    function DarBajaTipoPlatillo(){
-        const Id = $("#IdTipoPlatilloBaja").val();
-
-        $.ajax({
-           url:'/DarBajaTipoPlatillo/',
-           type:'POST',
-           data:{
-             id:Id,
-             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-           },
-           success: function(response){
-            Swal.fire({
-              confirmButtonColor: '#ff6464',
-              title: '¡Tipo de platillo dado de baja correctamente!',
-              icon: 'success'
-            })
-            .then((resultado) => {
-              location.reload();
-            });
-           }, 
-           error: function(error){
-            let ror = error;
-            alert("error " + error);
-           }
+    async function DarBajaTipoPlatillo(idTipo) {
+      // Confirmación inicial
+      const confirmacion = await Swal.fire({
+          title: "¿Realmente desea eliminar este tipo de consumo?",
+          icon: "warning",
+          iconColor: "#ff964e",
+          showCancelButton: true,
+          cancelButtonText: "Cancelar",
+          confirmButtonText: "Eliminar",
+          confirmButtonColor: "#ff6464"
+      });
+  
+      if (!confirmacion.isConfirmed) return;
+  
+      try {
+        // Modal de carga
+        Swal.fire({
+            title: "Procesando...",
+            text: "Por favor espere",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
         });
+
+        const token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+
+        // Enviar petición
+        let datos = new FormData();
+        datos.append("id", idTipo);
+        datos.append("csrfmiddlewaretoken", token);
+
+        let respuesta = await fetch("/DarBajaTipoPlatillo/", {
+            method: "POST",
+            body: datos
+        });
+
+        let json = await respuesta.json();
+
+        if (json.status === "ok") {
+            await Swal.fire({
+                title: "¡Tipo de consumo eliminado correctamente!",
+                icon: "success",
+                confirmButtonColor: "#ff6464",
+            });
+            location.reload();
+        } else {
+            await Swal.fire({
+                title: "Error",
+                text: json.message || "No se pudo realizar la acción.",
+                icon: "error",
+                confirmButtonColor: "#ff6464"
+            });
+        }
+      } catch (error) {
+        Swal.fire({
+            title: "Error",
+            text: error,
+            icon: "error",
+            confirmButtonColor: "#ff6464"
+        });
+      }
     }
     
     function Agregar_TipoPlatillo(){
