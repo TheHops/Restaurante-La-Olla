@@ -24,7 +24,7 @@
   }
 </style>
 
-<div id="modal-overlay-ini" onclick="desaparecerCapa()"></div>
+<!-- <div id="modal-overlay-ini" onclick="desaparecerCapa()"></div> -->
 
 <body>
   <!-- <div class="funcionesCierre">
@@ -148,35 +148,6 @@
         },
       });
     });
-
-    function aparecerCapa() {
-      var capa = document.querySelector("#modal-overlay-ini");
-
-      /*Hacemos aparecer la capa y las opciones*/
-      capa.style.display = "initial";
-
-      capa.classList.remove("animate__animated", "animate__fadeOut");
-
-      // Se establece la duración de la animación
-      capa.style.setProperty("--animate-duration", "0.3s");
-
-      // Se asigna la clase de animación a la capa
-      capa.classList.add("animate__animated", "animate__fadeIn");
-    }
-
-    function desaparecerCapa() {
-      var capa = document.querySelector("#modal-overlay-ini");
-
-      // Lo mismo para la capa
-      capa.classList.remove("animate__animated", "animate__fadeIn");
-      capa.style.setProperty("--animate-duration", "0.3s");
-      capa.classList.add("animate__animated", "animate__fadeOut");
-
-      /*Hacemos aparecer la capa*/
-      setTimeout(() => {
-        capa.style.display = "none";
-      }, 300);
-    }
   </script>
 </body>
 
@@ -197,7 +168,6 @@
           class="close"
           data-dismiss="modal"
           aria-label="Close"
-          onclick="desaparecerCapa();"
         >
           <span aria-hidden="true">&times;</span>
         </button>
@@ -252,7 +222,6 @@
           type="button"
           class="btn btn-secondary"
           data-dismiss="modal"
-          onclick="desaparecerCapa();"
         >
           Cancelar
         </button>

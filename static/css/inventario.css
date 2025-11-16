@@ -4,6 +4,12 @@
     padding: 25px 40px 0px 40px;
 }
 
+.btn_confirmation_mi_color {
+    background-color: #ff6464 !important;
+    border-color: #ff6464 !important;
+    color: white !important;
+}
+
 /********************************************************************/
 /**************************** A G R E G A R ****************************/
 /********************************************************************/

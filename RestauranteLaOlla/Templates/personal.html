@@ -4,8 +4,8 @@
 {% load static %}
 
 <div id="encabezado_inventario">
-    <button id="agregar"  data-toggle="modal" data-target="#AgregarPersonal" onclick="aparecerCapa()">
-        <img src="{% static 'img/Add_user.png' %}" style="width: 30px; height: 30px; margin-right: 5px;" title="Agregar personal"></img>Agregar personal
+    <button id="agregar"  data-toggle="modal" data-target="#AgregarPersonal">
+        <img src="{% static 'img/Add_user.png' %}" style="width: 30px; height: 30px; margin-right: 5px;" title="Agregar personal">Agregar personal
     </button>
 
     <!-- <select name="" id="listaInventario">
@@ -99,7 +99,7 @@
     </table>
 </div>
 
-<div class="modal-overlay" onclick="desaparecerCapa()"></div>
+<div class="modal-overlay"></div>
 
 <div class="modal fade" id="AgregarPersonal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 
@@ -163,7 +163,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-dark" onclick="Agregar_Personal();">Agregar</button>
+          <button type="button" class="btn btn_confirmation_mi_color" onclick="Agregar_Personal();">Agregar</button>
         </div>
       </div>
     </div>
@@ -175,7 +175,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title " id="exampleModalLabel" >Modificar Personal</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="desaparecerCapa();">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -240,8 +240,8 @@
                
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="desaparecerCapa();">Cancelar</button>
-          <button type="submit" class="btn btn-dark" onclick="ModificarPersonal();">Actualizar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn_confirmation_mi_color" onclick="ModificarPersonal();">Actualizar</button>
         </div>
       </div>
     </div>
@@ -249,17 +249,8 @@
 
 
 <script>
-$('.modal').on('hidden.bs.modal', function (e) {
-    // Verificar si el usuario cerró el modal haciendo clic fuera de él
-    if (e.target === this) {
-        // El usuario hizo clic fuera del modal
-        desaparecerCapa()
-    }
-});
 
 function ImpresionPersonal(usuario, correo, telefono, cargo, idCargo, idPersonal, estado, nombre, apellido){
-    aparecerCapa();
-     
     $("#NameUsuario").val(usuario);
     $("#CorreoUsuario").val(correo);
     $("#NumberUsuario").val(telefono);
@@ -583,8 +574,6 @@ function soloNumeros(event) {
 }
 
 function PasoIDBaja(id){
-     
-    aparecerCapa();
     $("#IdPersonalBaja").val(id);
 }
 

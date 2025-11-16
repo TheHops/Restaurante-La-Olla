@@ -8,6 +8,7 @@ from django.core.files.storage import default_storage
 
 #region CRUD PLATILLOS
 
+#region ActualizarPlatillos
 def Actualizar_Platillos(request):
     if request.user.is_authenticated:
         try:
@@ -44,26 +45,59 @@ def Actualizar_Platillos(request):
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return reader(request, "login.html")
+    
+#endregion ActualizarPlatillos
 
-def DarBajar_Platillo(request):
-    if request.user.is_authenticated:
-        try:
-            if request.method == "POST":
-                id = request.POST.get("id")
-                print("ID: "+id)
-                platillo = Platillo.objects.get(Id=id)
-                platillo.EsActivo = "0"
-                platillo.save()
-                return HttpResponse("")
-        except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
-    else:
-        # Si no lo ha hecho entonces deberá iniciar sesión
-        return render(request, "login.html")
+#region EliminarPlatillos
+
+def DarBaja_Platillo(request):
+    if not request.user.is_authenticated:
+        return reader(request, "login.html")
+
+    try:
+        if request.method == "POST":
+            id_platillo = request.POST.get("id")
+
+            if not id_platillo:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'ID de platillo no proporcionado.'
+                }, status=400)
+
+            try:
+                platillo = Platillo.objects.get(Id=id_platillo)
+            except Platillo.DoesNotExist:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'El platillo no existe.'
+                }, status=404)
+
+            platillo.EsActivo = "0"
+            platillo.save()
+
+            return JsonResponse({
+                'status': 'ok',
+                'message': 'Platillo dado de baja correctamente.'
+            })
+
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Método no permitido.'
+        }, status=405)
+
+    except Exception as ex:
+        print("\n######## EXCEPCIÓN ########")
+        print(ex)
+        print("###########################\n")
+
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Error interno del servidor.'
+        }, status=500)
+        
+#endregion EliminarPlatillos
+
+#region AgregarPlatillos
 
 def Agregar_Platillo(request):
     if request.user.is_authenticated:
@@ -105,4 +139,7 @@ def Agregar_Platillo(request):
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
+    
+#endregion AgregarPlatillos
+
 #endregion

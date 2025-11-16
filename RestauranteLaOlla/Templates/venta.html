@@ -19,7 +19,7 @@
                 <a href="{% url 'OrdenesPendientes' %}">
                     <button id="btnver_ordenes">
                         <img src="{% static 'img/Order2.png' %}" style="width: 30px; height: 30px;" title="Ver ordenes"><span>Ver
-                            ordenes</span></img>
+                            ordenes</span>
                     </button>
                 </a>
 
@@ -129,6 +129,8 @@
                     <!-- Se muestra un platillo -->
                     <div class="vplatillo" id="platillo{{platillo.Id}}">
                         <div class="datoPlatillo">
+                            <button data-toggle="modal" data-target="#MostrarDetalleConsumo" style="position: absolute; align-self: end;" onclick="PonerInfoConsumo('{{platillo.ImagenUrl}}', '{{platillo.Nombre}}', '{{platillo.IdTipoPlatillo.Nombre}}', '{{platillo.Descripcion}}', '{{platillo.Precio}}')">Info</button>
+
                             {% if platillo.ImagenUrl != "" %}
                                 <img src="/media/{{ platillo.ImagenUrl }}" alt="Imagen de {{platillo.Nombre}}">
                             {% else %}
@@ -162,7 +164,6 @@
                                     onclick='addCarrito("{{platillo.Id}}", "{{platillo.Nombre}}", "{{platillo.Precio}}")' disabled>
                                     <img src="{% static 'img/carrito.png' %}" alt="" style="width: 20px; height: 20px;">
                                     <span style="transform: translateY(-5px);">Agregar</span>
-                                    </img>
                                 </button>
                             </div>
                         </div>
@@ -225,13 +226,10 @@
                             <img src="{% static 'img/Limpiar.png' %}" style="width: 20px; height: 20px;"
                                 title="Limpiar orden">
                             <span>Limpiar</span>
-                            </img>
                         </button>
                     </div>
                 </div> <!-- Cierre pie ordenes -->
             </div> <!-- Cierre Ordenes -->
-
-
         </div>
     <!-- </form> -->
 </div>
@@ -248,6 +246,36 @@
         combinarCheckbox.addEventListener('change', function() {
             cambioTipoDeSeleccion(this);
         });
+
+        function PonerInfoConsumo(imagenUrl, nombre, tipoConsumo, descripcion, precio) {
+            // Imagen
+            const img = document.getElementById("ImagenDetalleConsumo");
+            if (imagenUrl && imagenUrl !== "") {
+                img.src = `/media/${imagenUrl}`;
+            } else {
+                img.src = "/static/img/ProductoSinFoto.png";
+            }
+
+            console.log(imagenUrl);
+            console.log(nombre);
+            console.log(tipoConsumo);
+            console.log(descripcion);
+            console.log(precio);
+        
+            // Nombre del platillo
+            document.getElementById("NombreDetalleConsumo").textContent = nombre;
+        
+            // Tipo de consumo
+            document.getElementById("NombreDetalleTipoConsumo").textContent = tipoConsumo;
+        
+            // Descripción
+            document.getElementById("DescripcionDetalleConsumo").textContent =
+                descripcion && descripcion !== "" ? descripcion : "Sin descripción";
+        
+            // Precio
+            document.getElementById("PrecioDetalleConsumo").textContent = precio;
+        }
+        
         
         function cambioTipoDeSeleccion(check){
             // Seleccionamos todos los inputs dentro del div de mesas
@@ -589,6 +617,9 @@
                 title: '¿Realmente desea crear la orden?',
                 input: 'text',
                 inputPlaceholder: 'Agrega una descripción a tu orden (opcional)',
+                inputAttributes: {
+                    maxlength: 100
+                },
                 showCancelButton: true,
                 cancelButtonText: 'Cancelar',
                 confirmButtonText: 'Crear orden',

@@ -11,7 +11,7 @@ def venta(request):
     if request.user.is_authenticated:
         try:
             platillo = Platillo.objects.filter(
-                EsActivo="1").order_by('Nombre').values()
+                EsActivo="1").order_by('Nombre')
 
             AreaM = AreaMesa.objects.filter(EsActivo="1").values()
 
