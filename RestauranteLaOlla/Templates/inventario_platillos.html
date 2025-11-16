@@ -5,7 +5,7 @@
 
 
 <div id="encabezado_inventario">
-    <button id="agregar" data-toggle="modal" data-target="#AgregarPlatillo" onclick="aparecerCapa()">
+    <button id="agregar" data-toggle="modal" data-target="#AgregarPlatillo">
             <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px; margin-right: 10px;" title="Añadir platillo">Agregar consumo
        
     </button>
@@ -103,7 +103,7 @@
     </table>
 </div>
 
-<div class="modal-overlay" onclick="desaparecerCapa()"></div>
+<div class="modal-overlay"></div>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -199,7 +199,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title " id="exampleModalLabel" >Agregar consumo</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="desaparecerCapa();">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -277,7 +277,7 @@
                
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="desaparecerCapa();">Cancelar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
           <button type="button" class="btn btn_confirmation_mi_color" onclick="AgregarPlatillo();">Agregar</button>
         </div>
       </div>
@@ -317,18 +317,9 @@
         return false;
     }
 
-    $('.modal').on('hidden.bs.modal', function (e) {
-        // Verificar si el usuario cerró el modal haciendo clic fuera de él
-        if (e.target === this) {
-            // El usuario hizo clic fuera del modal
-            desaparecerCapa()
-        }
-    });
-
     /**********************************************************/
 
     function Impresion(id, nombre, tipoPlatillo, idTipoPLatillo, precio, estado, descripcion){
-        aparecerCapa();
 
         $("#IDPlatillo").val(id);
         $("#NombrePlatillo").val(nombre);

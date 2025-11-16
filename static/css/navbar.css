@@ -300,9 +300,27 @@ html {
     /* establece una menor prioridad que el modal */
 }
 
-.modal-backdrop {
-    display: none;
+.modal {
+    z-index: 1050 !important;
 }
+
+.modal-backdrop {
+    z-index: 1040 !important;
+    opacity: 0.3 !important;
+}
+
+.modal-backdrop.fade {
+    opacity: 0 !important;
+}
+
+.modal-backdrop.show {
+    opacity: 0.3 !important;  /* tu opacidad deseada */
+    transition: opacity .2s linear !important;
+}
+
+/* .modal-backdrop {
+    display: none;
+} */
 
 /********************* MODIFICANDO EL MODAL SWEET **************************/
 

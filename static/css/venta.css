@@ -601,9 +601,14 @@ legend {
 }
 
 .datoPlatillo {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.detalleConsumoElemento{
+  margin: 0 0;
 }
 
 .accionesPlatillo {
