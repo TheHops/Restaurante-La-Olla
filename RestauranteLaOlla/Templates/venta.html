@@ -99,32 +99,53 @@
             <div id="capaventas" onclick="cerrarCarrito()"></div>
 
             <div id="acciones_pag2">
-                <button id="btn_volver" onclick="volver()">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    <span>Volver</span>
-                </button>
-            
-                <!-- Input de buscar -->
-                <input type="text" name="InputBuscarPlatillo" id="InputBuscarPlatillo" placeholder="Buscar platillo"
-                    onkeyup="debouncedFiltrarPlatillos(this.value)">
-            
-                <button id="btn_abrirListaOrdenes" onclick="abrirCarrito()">
-                    <!-- <i class="fa-regular fa-square-list"></i> -->
-                    <!-- <i class="fa-solid fa-bars"></i> -->
-                    <!-- <i class="fa-regular fa-cart-shopping-fast"></i>                     -->
-                    <i class="fa-solid fa-cart-shopping"></i>
-                </button>
-            
-                <span id="notiPlatillosOrden">1</span>
-            
+                <div id="accionesGenerales">
+                    <button id="btn_volver" onclick="volver()">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Volver</span>
+                    </button>
+                
+                    <!-- Input de buscar -->
+                    <input type="text" name="InputBuscarPlatillo" id="InputBuscarPlatillo" placeholder="Buscar consumo"
+                        onkeyup="debouncedFiltrarPlatillos(this.value)">
+                
+                    <button id="btn_abrirListaOrdenes" onclick="abrirCarrito()">
+                        <!-- <i class="fa-regular fa-square-list"></i> -->
+                        <!-- <i class="fa-solid fa-bars"></i> -->
+                        <!-- <i class="fa-regular fa-cart-shopping-fast"></i>                     -->
+                        <i class="fa-solid fa-cart-shopping"></i>
+                    </button>
+                
+                    <span id="notiPlatillosOrden">1</span>
+                </div>
+                <div id="accionesBusqueda">
+                    {% for tipo in Tipos%}
+                    <div class="form-check">
+                        <input class="form-check-input" 
+                               type="checkbox" 
+                               name="tipos[]" 
+                               value="{{ tipo.Id }}" 
+                               id="tipo_{{ tipo.Id }}">
+                               
+                        <label class="form-check-label" for="tipo_{{ tipo.Id }}">
+                            {{ tipo.Nombre }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+
                 <!-- <img src="{% static 'img/List2.png' %}" style="width: 20px; height: 20px;" title="Crear orden"></img> -->
             </div>
 
             <!-- Se muestran todos los platillos -->
-            <div class="VPlatillos">
+            <div id="VPlatillos">
+
+                {% for Tipo in Tipos %}
+
+                <h3 style="justify-self: center;">{{Tipo.Nombre}}</h3>
 
                 <div id="PlatillosVenta">
-                    {% for platillo in Platillos %}
+                    {% for platillo in Tipo.Platillos.all %}
                     
                     <!-- Se muestra un platillo -->
                     <div class="vplatillo" id="platillo{{platillo.Id}}">
@@ -171,6 +192,8 @@
                     
                     {% endfor %}
                 </div>
+                
+                {% endfor %}
 
             </div> <!-- Cierre Vplatillos de página 2 -->
 
@@ -183,6 +206,8 @@
                 <div class="encabezado_ordenes">
                     <i class="fa-solid fa-angles-right fa-lg" id="iconoCerrarCarrito" onclick="cerrarCarrito()"></i>
                     <span>Ordenes</span>
+
+                    <button data-toggle="modal" data-target="#InfoCrearOrden">info</button>
                 </div>
 
                 <!-- --------------------------- -->
@@ -574,7 +599,10 @@
             request.send();
             request.onreadystatechange = function () {
                 if (this.readyState == 4) {
-                    let contenedor = document.getElementById("PlatillosVenta");
+                    let contenedor = document.getElementById("VPlatillos");
+
+                    console.log(contenedor);
+
                     contenedor.innerHTML = this.responseText;
 
                     console.log("SI ENTRÓ A LA FUNCIÓN ONREADY");

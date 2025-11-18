@@ -1,51 +1,55 @@
 {% load static %}
 
-{% for platillo in Platillos %}
+{% for Tipo in Tipos %}
 
-<!-- Se muestra un platillo -->
-<div class="vplatillo" id="platillo{{platillo.Id}}">
-    <div class="datoPlatillo">
-        <h1>
-            {{platillo.ImagenUrl}}
-        </h1> 
-        {% if platillo.ImagenUrl != "" %}
-            <img src="/media/{{ platillo.ImagenUrl }}" alt="Imagen de {{platillo.Nombre}}">
-        {% else %}
-            <img src="{% static 'img/ProductoSinFoto.png' %}" alt="">
-        {% endif %}
-    </div>
+    <h3 style="justify-self: center;">{{Tipo.Nombre}}</h3>
 
-    <div class="accionesPlatillo">
-        <span class="nombrePlatillo">{{ platillo.Nombre }}</span>
-        <span class="precioPlatillo">C${{ platillo.Precio }}</span>
+    <div id="PlatillosVenta">
+        {% for platillo in Tipo.PlatillosFiltrados %}
+        
+        <!-- Se muestra un platillo -->
+        <div class="vplatillo" id="platillo{{platillo.Id}}">
+            <div class="datoPlatillo">
+                <button data-toggle="modal" data-target="#MostrarDetalleConsumo" style="position: absolute; align-self: end;" onclick="PonerInfoConsumo('{{platillo.ImagenUrl}}', '{{platillo.Nombre}}', '{{platillo.IdTipoPlatillo.Nombre}}', '{{platillo.Descripcion}}', '{{platillo.Precio}}')">Info</button>
 
-        <fieldset>
-            <legend>Cantidad</legend>
-
-            <div class="cantidad">
-
-                <!-- Botones input para cantidad -->
-                <button id="less" onclick="cambio('{{platillo.Id}}', 0)">-</button>
-                <input type="number" id="{{platillo.Id}}" value="0" disabled>
-                <button id="plus" onclick="cambio('{{platillo.Id}}', 1)">+</button>
-
+                {% if platillo.ImagenUrl != "" %}
+                    <img src="/media/{{ platillo.ImagenUrl }}" alt="Imagen de {{platillo.Nombre}}">
+                {% else %}
+                    <img src="{% static 'img/ProductoSinFoto.png' %}" alt="">
+                {% endif %}
             </div>
-        </fieldset>
 
-        <div class="botonesPlatillo">
-            <button class="btninfoPlatillo">
-                <img src="{% static 'img/info2.png' %}" alt="" style="width: 15px; height: 15px; padding: 1px;">
-            </button>
+            <div class="accionesPlatillo">
+                <span class="nombrePlatillo">{{ platillo.Nombre }}</span>
+                <span class="precioPlatillo">C${{ platillo.Precio }}</span>
 
-            <button class="btnaddCarrito" id="addcarrito{{platillo.Id}}"
-                onclick='addCarrito("{{platillo.Id}}", "{{platillo.Nombre}}", "{{platillo.Precio}}")'
-                disabled>
-                <img src="{% static 'img/carrito.png' %}" alt="" style="width: 20px; height: 20px;">
-                <span style="transform: translateY(-5px);">Agregar</span>
-                </img>
-            </button>
-        </div>
-    </div>
-</div> <!-- Cierre vplatillo -->
-
+                <fieldset>
+                    <legend>Cantidad</legend>
+                
+                    <div class="cantidad">
+                
+                        <!-- Botones input para cantidad -->
+                        <button id="less" onclick="cambio('{{platillo.Id}}', 0)">-</button>
+                        <input type="number" id="{{platillo.Id}}" value="0" disabled>
+                        <button id="plus" onclick="cambio('{{platillo.Id}}', 1)">+</button>
+                
+                    </div>
+                </fieldset>
+                
+                <div class="botonesPlatillo">
+                    <button class="btninfoPlatillo">
+                        <img src="{% static 'img/info2.png' %}" alt="" style="width: 15px; height: 15px; padding: 1px;">
+                    </button>
+                
+                    <button class="btnaddCarrito" id="addcarrito{{platillo.Id}}"
+                        onclick='addCarrito("{{platillo.Id}}", "{{platillo.Nombre}}", "{{platillo.Precio}}")' disabled>
+                        <img src="{% static 'img/carrito.png' %}" alt="" style="width: 20px; height: 20px;">
+                        <span style="transform: translateY(-5px);">Agregar</span>
+                    </button>
+                </div>
+            </div>
+        </div> <!-- Cierre vplatillo -->
+        
+        {% endfor %}
+    </div>    
 {% endfor %}

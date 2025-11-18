@@ -3,8 +3,8 @@ import traceback
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
-from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Platillo, MesasPorOrden
-from django.db.models import Q
+from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Platillo, MesasPorOrden, TipoPlatillo
+from django.db.models import Q, Prefetch
 
 # region VENTAS
 def venta(request):
@@ -14,6 +14,14 @@ def venta(request):
                 EsActivo="1").order_by('Nombre')
 
             AreaM = AreaMesa.objects.filter(EsActivo="1").values()
+            
+            tipos = TipoPlatillo.objects.filter(EsActivo="1") \
+            .prefetch_related(
+                Prefetch(
+                    'Platillos',
+                    queryset=Platillo.objects.filter(EsActivo="1").order_by('Nombre')
+                )
+            )
 
             AreaMesaSeleccionada = AreaMesa.objects.filter(Id = 1).first()
 
@@ -27,6 +35,7 @@ def venta(request):
                 Q(Estado="1") & Q(EsActivo="1")).count()
 
             contexto = {
+                'Tipos': tipos,
                 'Platillos': platillo,
                 'Mesas': mesa,
                 'AreaMesa': AreaM,
@@ -46,28 +55,50 @@ def venta(request):
         return render(request, "login.html")
 #endregion
 
-#region VENTAS
+#region FiltrarPlatillo
 def BuscarPlatillo(request):
     if request.user.is_authenticated:
         try:
             if request.method == "GET":
                 Texto = request.GET.get("InputBuscarPlatillo")
                 
-                print("TEXTO: " + Texto)
-
                 if Texto != "":
-                    PlatillosObtenidos = Platillo.objects.filter(
-                        Q(Nombre__icontains=Texto) & Q(EsActivo="1")).order_by('Nombre').values()
-                    # No será sensible a las mayusculas con la i antes de contains
+                    PlatillosFiltrados = Platillo.objects.filter(
+                        Q(Nombre__icontains=Texto),
+                        Q(EsActivo="1")
+                    ).order_by('Nombre')
                 else:
-                    PlatillosObtenidos = Platillo.objects.filter(
-                        EsActivo="1").order_by('Nombre').values()
+                    PlatillosFiltrados = Platillo.objects.filter(
+                        EsActivo="1"
+                    ).order_by('Nombre')
+
+                # --- Obtener tipos que tengan esos platillos ---
+                TiposFiltrados = TipoPlatillo.objects.filter(
+                    EsActivo="1",
+                    Platillos__in=PlatillosFiltrados
+                ).distinct()
+                
+                print("TIPOS FILTRADOS 1")
+                print(TiposFiltrados)
+                
+                print("PLATILLOS FILTRADOS")
+                print(PlatillosFiltrados)
+
+                # --- Prefetch solo los platillos filtrados ---
+                TiposFiltrados = TiposFiltrados.prefetch_related(
+                    Prefetch(
+                        'Platillos',
+                        queryset=PlatillosFiltrados,
+                        to_attr='PlatillosFiltrados'
+                    )
+                )
+                
+                print("TIPOS FILTRADOS 2")
+                print(TiposFiltrados)
 
                 contexto = {
-                    "Platillos": PlatillosObtenidos
+                    "Tipos": TiposFiltrados
                 }
-                
-                print(PlatillosObtenidos)
 
                 return render(request, "platillos.html", contexto)
         except Exception as ex:
@@ -80,6 +111,7 @@ def BuscarPlatillo(request):
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
+#endregion FiltrarPlatillo
 
 #region FiltrarMesas
 def FiltrarMesas(request):
