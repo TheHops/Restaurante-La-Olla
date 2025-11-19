@@ -441,40 +441,55 @@
         }
     }    
 
-    function AgregarPlatillo(){
-        const nombre = $("#NombrePlatilloAgregar").val();
-        const tipoPlatillo = $("#TipoPlatilloAgregar").val();
-        const precio = parseFloat($("#PrecioPlatilloAgregar").val());
-        const estado = ($("#EstadoPlatilloAgregar").val());
-        const descripcion = $("#DescripcionPlatilloAgregar").val();
-        const archivo = $("#archivoModal")[0].files[0]; // Obtenemos el archivo seleccionado
+    function AgregarPlatillo() {
 
         const formData = new FormData();
-        formData.append('Nombre', nombre);
-        formData.append('tipoplatillo', tipoPlatillo);
-        formData.append('Precio', precio);
-        formData.append('estado', estado);
-        formData.append('Descripcion', descripcion);
-        formData.append('Imagen', archivo);
+        formData.append('Nombre', $("#NombrePlatilloAgregar").val());
+        formData.append('tipoplatillo', $("#TipoPlatilloAgregar").val());
+        formData.append('Precio', $("#PrecioPlatilloAgregar").val());
+        formData.append('estado', $("#EstadoPlatilloAgregar").val());
+        formData.append('Descripcion', $("#DescripcionPlatilloAgregar").val());
+        formData.append('Imagen', $("#archivoModal")[0].files[0]);
         formData.append('csrfmiddlewaretoken', $('input[name=csrfmiddlewaretoken]').val());
-
+    
         $.ajax({
             url: '/AgregarPlatillo/',
-            type: 'POST',
+            method: 'POST',
             data: formData,
-            processData: false, // Evita el procesamiento automático de los datos
-            contentType: false, // No establece el tipo de contenido automáticamente
+            processData: false,
+            contentType: false,
+    
             success: function (response) {
-                Swal.fire({
-                    confirmButtonColor: '#ff6464',
-                    title: '¡Platillo agregado correctamente!',
-                    icon: 'success'
-                }).then((resultado) => {
-                    location.reload();
-                });
+                if (response.status === "ok") {
+    
+                    Swal.fire({
+                        icon: "success",
+                        title: response.message,
+                        confirmButtonColor: '#ff6464'
+                    }).then(() => location.reload());
+    
+                } else {
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Advertencia",
+                        text: response.message,
+                        confirmButtonColor: '#ff6464'
+                    });
+                }
             },
-            error: function (error) {
-                alert("Error: " + error);
+            error: function (xhr) {
+                let msg = "Ocurrió un error inesperado.";
+    
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    msg = xhr.responseJSON.message;
+                }
+    
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: msg,
+                    confirmButtonColor: '#ff6464'
+                });
             }
         });
     }
