@@ -268,6 +268,33 @@
         const mesasDiv = document.getElementById('mesas');
         const botonSiguiente = document.getElementById("btn_siguiente");
 
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // 1. Obtener una referencia al elemento
+            const accionesBusquedaElement = document.getElementById('accionesBusqueda');
+            const vPlatillosElement = document.getElementById('VPlatillos');
+        
+            // 2. Definir la función que se ejecutará al cambiar el tamaño de la ventana
+            function obtenerAlturaAccionesBusqueda() {
+                // Utilizar clientHeight para obtener la altura del elemento
+                const altura = accionesBusquedaElement.clientHeight;
+    
+                // Mostrar el resultado en la consola (o realizar la acción deseada)
+                console.log(`El alto actual de 'accionesBusqueda' es: ${altura}px`);
+
+                vPlatillosElement.style.paddingTop = `${altura}px`;
+
+                console.log(`El alto de 'accionesBusqueda' es: ${altura}px`);
+                console.log(`Se aplicó padding-top: ${altura}px a 'VPlatillos'.`);
+            }
+        
+            // 3. Agregar el listener al evento 'resize' de la ventana
+            // Esto hace que la función se ejecute cada vez que el usuario redimensiona la ventana.
+            window.addEventListener('resize', obtenerAlturaAccionesBusqueda);
+        
+            // Opcional: Ejecutar la función una vez al cargar la página para obtener la altura inicial
+            obtenerAlturaAccionesBusqueda();
+        });
+
         combinarCheckbox.addEventListener('change', function() {
             cambioTipoDeSeleccion(this);
         });
@@ -589,23 +616,40 @@
             }, 500);
         }
 
+        document.getElementById("accionesBusqueda").addEventListener("change", function () {
+            const texto = document.getElementById("InputBuscarPlatillo").value || "";
+            debouncedFiltrarPlatillos(texto);
+        });
+
+        function obtenerTiposSeleccionados() {
+            const checkboxes = document.querySelectorAll('#accionesBusqueda input[type="checkbox"]:checked');
+            const tiposSeleccionados = Array.from(checkboxes).map(checkbox => checkbox.value);
+            return tiposSeleccionados;
+        }
+
         function filtrarPlatillos (cadena)
         {
+            const tiposSeleccionados = obtenerTiposSeleccionados();
+    
+            // Une los IDs con comas para enviarlos en un solo parámetro URL.
+            const tiposParam = tiposSeleccionados.join(',');
+
             let request = new XMLHttpRequest();
-            // let data = new FormData();
+
+            const url = `/BuscarPlatillo?InputBuscarPlatillo=${encodeURIComponent(cadena)}&TiposSeleccionados=${encodeURIComponent(tiposParam)}`;
 
             // data.append('InputBuscarPlatillo', cadena);
-            request.open('GET', '/BuscarPlatillo?InputBuscarPlatillo=' + cadena);
+            request.open('GET', url);
             request.send();
             request.onreadystatechange = function () {
                 if (this.readyState == 4) {
                     let contenedor = document.getElementById("VPlatillos");
 
-                    console.log(contenedor);
-
-                    contenedor.innerHTML = this.responseText;
-
-                    console.log("SI ENTRÓ A LA FUNCIÓN ONREADY");
+                    if (contenedor) {
+                        contenedor.innerHTML = this.responseText;
+                    }
+                    
+                    console.log("Filtrado completado con texto: " + cadena + " y tipos: " + tiposParam);
                 }
             }
         }
