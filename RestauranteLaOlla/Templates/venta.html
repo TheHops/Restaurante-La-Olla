@@ -616,23 +616,40 @@
             }, 500);
         }
 
+        document.getElementById("accionesBusqueda").addEventListener("change", function () {
+            const texto = document.getElementById("InputBuscarPlatillo").value || "";
+            debouncedFiltrarPlatillos(texto);
+        });
+
+        function obtenerTiposSeleccionados() {
+            const checkboxes = document.querySelectorAll('#accionesBusqueda input[type="checkbox"]:checked');
+            const tiposSeleccionados = Array.from(checkboxes).map(checkbox => checkbox.value);
+            return tiposSeleccionados;
+        }
+
         function filtrarPlatillos (cadena)
         {
+            const tiposSeleccionados = obtenerTiposSeleccionados();
+    
+            // Une los IDs con comas para enviarlos en un solo parámetro URL.
+            const tiposParam = tiposSeleccionados.join(',');
+
             let request = new XMLHttpRequest();
-            // let data = new FormData();
+
+            const url = `/BuscarPlatillo?InputBuscarPlatillo=${encodeURIComponent(cadena)}&TiposSeleccionados=${encodeURIComponent(tiposParam)}`;
 
             // data.append('InputBuscarPlatillo', cadena);
-            request.open('GET', '/BuscarPlatillo?InputBuscarPlatillo=' + cadena);
+            request.open('GET', url);
             request.send();
             request.onreadystatechange = function () {
                 if (this.readyState == 4) {
                     let contenedor = document.getElementById("VPlatillos");
 
-                    console.log(contenedor);
-
-                    contenedor.innerHTML = this.responseText;
-
-                    console.log("SI ENTRÓ A LA FUNCIÓN ONREADY");
+                    if (contenedor) {
+                        contenedor.innerHTML = this.responseText;
+                    }
+                    
+                    console.log("Filtrado completado con texto: " + cadena + " y tipos: " + tiposParam);
                 }
             }
         }

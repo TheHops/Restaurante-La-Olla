@@ -61,25 +61,35 @@ def BuscarPlatillo(request):
         try:
             if request.method == "GET":
                 Texto = request.GET.get("InputBuscarPlatillo")
-                
-                if Texto != "":
-                    PlatillosFiltrados = Platillo.objects.filter(
-                        Q(Nombre__icontains=Texto),
-                        Q(EsActivo="1")
-                    ).order_by('Nombre')
-                else:
-                    PlatillosFiltrados = Platillo.objects.filter(
-                        EsActivo="1"
-                    ).order_by('Nombre')
+                TiposParam = request.GET.get("TiposSeleccionados", "")
+
+                # Convertir "1,2,3" → [1,2,3]
+                tipos_ids = []
+                if TiposParam:
+                    tipos_ids = [int(x) for x in TiposParam.split(",") if x.isdigit()]
+
+                # --- Construir filtros dinámicos ---
+                filtros = Q(EsActivo="1")
+
+                # Filtrar por texto si existe
+                if Texto:
+                    filtros &= Q(Nombre__icontains=Texto)
+
+                # Filtrar por tipos (solo si hay tipos seleccionados)
+                if tipos_ids:
+                    filtros &= Q(IdTipoPlatillo_id__in=tipos_ids)
+
+                # Obtener los platillos filtrados
+                PlatillosFiltrados = (
+                    Platillo.objects.filter(filtros)
+                    .order_by("Nombre")
+                )
 
                 # --- Obtener tipos que tengan esos platillos ---
                 TiposFiltrados = TipoPlatillo.objects.filter(
                     EsActivo="1",
                     Platillos__in=PlatillosFiltrados
                 ).distinct()
-                
-                print("TIPOS FILTRADOS 1")
-                print(TiposFiltrados)
                 
                 print("PLATILLOS FILTRADOS")
                 print(PlatillosFiltrados)
