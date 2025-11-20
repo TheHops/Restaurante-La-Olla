@@ -261,63 +261,60 @@ function ImpresionPersonal(usuario, correo, telefono, cargo, idCargo, idPersonal
     $("#idEstadoModificar").val( (estado==='1')?1:0);
 }
 
-function Agregar_Personal(){
-    const fullname = $("#Fullname").val();
-    const LastName = $("#Apellidos").val();
-    const usuario = $("#User").val();
-    const pass = $("#Pass").val();
-    const correo = $("#e-mail").val();
-    const telefono = $("#telefono").val();
-    const cargo = $("#idCargo").val();
+function Agregar_Personal() {
+    const data = {
+        Nombre: $("#Fullname").val(),
+        Apellido: $("#Apellidos").val(),
+        User: $("#User").val(),
+        Pass: $("#Pass").val(),
+        Correo: $("#e-mail").val(),
+        Telefono: $("#telefono").val(),
+        Cargo: $("#idCargo").val(),
+        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+    };
 
-    if (ValidacionCamposVacios(1)){
-        $.ajax({
-            url:'/AgregarPersonal/',
-            type:'POST',
-            data:{
-            Nombre: fullname,
-            Apellido:LastName,
-            User: usuario,
-            Pass: pass,
-            Correo: correo,
-            Telefono:telefono,
-            Cargo:cargo,
-            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-            },
-            success: function(response){
-                var message = response.message;
-                
-                if (message === "1"){
-                    Swal.fire({
-                        confirmButtonColor: '#ff6464',
-                        title: '¡Agregado!',
-                        text: 'Personal agregado correctamente',
-                        icon: 'success'
-                    })
-                    .then((resultado) => {
-                        location.reload();
-                    });
-               }
-               else
-               {
-                    Swal.fire({
-                        confirmButtonColor: '#ff6464',
-                        title: 'Usuario Ocupado',
-                        text: 'Usuario ingresado ya esta registrado en el Sistema',
-                        icon: 'error'
-                    })
-                    .then((resultado) => {
-                        location.reload();
-                    });
-               }
-            }, 
-            error: function(error){
-            let ror = error;
-                alert("error " + error);
+    if (!ValidacionCamposVacios(1)) return;
+
+    Swal.fire({
+        title: "Procesando...",
+        text: "Por favor espere",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
+    $.ajax({
+        url: '/AgregarPersonal/',
+        type: 'POST',
+        data: data,
+        success: function (response) {
+
+            if (response.status === "ok") {
+                Swal.fire({
+                    confirmButtonColor: '#ff6464',
+                    title: '¡Personal agregado correctamente!',
+                    icon: 'success'
+                }).then(() => location.reload());
+                return;
             }
-        });
 
-    }
+            // cuando es error
+            Swal.fire({
+                confirmButtonColor: '#ff6464',
+                title: 'Error',
+                text: response.message,
+                icon: 'error'
+            });
+
+        },
+        error: function (xhr) {
+            Swal.fire({
+                confirmButtonColor: '#ff6464',
+                title: 'Error de servidor',
+                text: "Hubo un error inesperado.",
+                icon: 'error'
+            });
+        }
+    });
 }
 
 function ModificarPersonal(){

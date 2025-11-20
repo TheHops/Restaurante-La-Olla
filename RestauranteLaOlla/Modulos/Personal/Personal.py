@@ -5,6 +5,8 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
 from Application.models import Cargo, Usuario
+from django.views.decorators.http import require_POST
+from django.db import transaction
 
 def personal(request):
     if request.user.is_authenticated:
@@ -34,56 +36,80 @@ def cargo(request):
 
 #region CRUD PERSONAL
 
+#region Agregar personal
+
+@require_POST
 def AgregarPersonal(request):
-    if request.user.is_authenticated:
-        try:
-            if request.method == "POST":
-                nombre = request.POST.get("Nombre")
-                apellido = request.POST.get("Apellido")
-                usuario = request.POST.get("User")
-                passw = request.POST.get("Pass")
-                correo = request.POST.get("Correo")
-                telefono = request.POST.get("Telefono")
-                cargo = request.POST.get("Cargo")
-                tipoCargo = Cargo.objects.get(Id=cargo)
-
-                # se verifica si existe buscandolo
-                nombreUsuario = Usuario.objects.filter(username = usuario)
-                
-                if not nombreUsuario:
-
-                    personal = Usuario.objects.create_user(
-                        Nombres=nombre,
-                        Apellidos=apellido,
-                        username=usuario,
-                        password=passw,
-                        email=correo,
-                        Telefono=telefono,
-                        IdCargo=tipoCargo
-                    )
-                    
-                    print(personal)
-
-                    # Le damos los privilegios de superusuario en caso de que el usuario sea administrador
-                    if cargo == "1":
-                        personal.is_staff = True
-                        personal.is_superuser = True
-
-                    personal.save()
-                    response_data = {'message': '1'} #usuario agregado
-                else:
-                    response_data = {'message': '0'} #usuario no agregado
-                    
-                return HttpResponse(json.dumps(response_data), content_type="application/json")
-        except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
-    else:
-        # Si no lo ha hecho entonces deberá iniciar sesión
+    if not request.user.is_authenticated:
         return render(request, "login.html")
+
+    try:
+        nombre = request.POST.get("Nombre", "").strip()
+        apellido = request.POST.get("Apellido", "").strip()
+        usuario = request.POST.get("User", "").strip()
+        passw = request.POST.get("Pass", "")
+        correo = request.POST.get("Correo", "")
+        telefono = request.POST.get("Telefono", "")
+        cargo = request.POST.get("Cargo", "")
+
+        # Validación simple
+        if not (nombre and apellido and usuario and passw and cargo):
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Campos obligatorios faltantes.'
+            }, status=400)
+
+        # ¿Existe ya el username?
+        if Usuario.objects.filter(username=usuario).exists():
+            return JsonResponse({
+                'status': 'error',
+                'message': 'El usuario ya existe.'
+            })
+
+        # Obtener cargo
+        try:
+            tipoCargo = Cargo.objects.get(Id=cargo)
+        except Cargo.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'El cargo seleccionado no existe.'
+            }, status=400)
+
+        # Crear usuario
+        personal = Usuario.objects.create_user(
+            Nombres=nombre,
+            Apellidos=apellido,
+            username=usuario,
+            password=passw,
+            email=correo,
+            Telefono=telefono,
+            IdCargo=tipoCargo
+        )
+
+        # Si el cargo es administrador, dar permisos
+        if str(cargo) == "1":
+            personal.is_staff = True
+            personal.is_superuser = True
+            personal.save()
+
+        return JsonResponse({
+            'status': 'ok',
+            'message': 'Personal agregado correctamente.'
+        })
+
+    except Exception as ex:
+        print("### ERROR ###")
+        print(ex)
+        print("#############")
+
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Error interno en el servidor.'
+        }, status=500)
+        
+#endregion Agregar personal
+
+#region Modificar personal
 
 def ModificarPersonal(request):
     if request.user.is_authenticated:
@@ -142,6 +168,10 @@ def ModificarPersonal(request):
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
+    
+#endregion Modificar personal
+
+#region Eliminar personal
 
 def DarBajaPersonal(request):
     if not request.user.is_authenticated:
@@ -170,4 +200,7 @@ def DarBajaPersonal(request):
             return JsonResponse({'status': 'error', 'message': 'Error interno del servidor'}, status=500)
     
     return JsonResponse({'status': 'error', 'message': 'Método no permitido'}, status=405)
+
+#endregion Eliminar personal
+
 #endregion CRUD PERSONAL
