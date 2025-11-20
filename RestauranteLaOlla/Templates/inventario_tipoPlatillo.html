@@ -151,35 +151,55 @@
       $("#IDTipoPlatillo").val(id);
     }  
 
-    function ActualizarTipoPlatillo(){
-        const nombre = $("#NameTipoPlatillo").val();
-        const Estado = ($("#EstadoTipoPlatillo").val());
-        const Id = $("#IDTipoPlatillo").val();
-        $.ajax({
-          url:'/ActualizarTipoPlatillo/',
-          type:'POST',
-          data:{
-            Nombre: nombre,
-            id:Id,
-            estado:Estado,
-            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-          },
-          success: function(response){
-          Swal.fire({
-            confirmButtonColor: '#ff6464',
-            title: '¡Tipo de platillo actualizado correctamente!',
-            icon: 'success'
-          })
-          .then((resultado) => {
-            location.reload();
-          });
-          }, 
-          error: function(error){
-            let ror = error;
-            alert("error " + error);
+    function ActualizarTipoPlatillo() {
+      const nombre = $("#NameTipoPlatillo").val();
+      const estado = $("#EstadoTipoPlatillo").val();
+      const Id = $("#IDTipoPlatillo").val();
+  
+      $.ajax({
+        url: '/ActualizarTipoPlatillo/',
+        method: 'POST',
+        data: {
+          Nombre: nombre,
+          id: Id,
+          estado: estado,
+          csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+        },
+
+        success: function (response) {
+
+            if (response.status === "ok") {
+              Swal.fire({
+                icon: "success",
+                title: response.message,
+                confirmButtonColor: '#ff6464'
+              }).then(() => location.reload());
+            } 
+            else {
+              Swal.fire({
+                icon: "warning",
+                title: "Advertencia",
+                text: response.message,
+                confirmButtonColor: '#ff6464'
+              });
+            }
+        },
+
+        error: function (xhr) {
+          let msg = "Ocurrió un error inesperado.";
+          if (xhr.responseJSON && xhr.responseJSON.message) {
+              msg = xhr.responseJSON.message;
           }
-        });
-    }
+
+          Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: msg,
+              confirmButtonColor: '#ff6464'
+          });
+        }
+      });
+    }  
     
     function DarBajaImpresion(id)
     {
@@ -248,33 +268,51 @@
       }
     }
     
-    function Agregar_TipoPlatillo(){
-        const nombre = $("#NameTipoPlatilloAgregar").val();
-        const estado = $("#EstadoTipoPlatilloAgregar").val();
-        $.ajax({
-           url:'/AgregarTIpoPlatillo/',
-           type:'POST',
-           data:{
-             Nombre: nombre,
-             Estado: estado,
-             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-           },
-           success: function(response){
-              Swal.fire({
-                confirmButtonColor: '#ff6464',
-                title: '¡Tipo de platillo agregado correctamente!',
-                icon: 'success'
-              })
-              .then((resultado) => {
-                location.reload();
-              });
-           }, 
-           error: function(error){
-            let ror = error;
-                alert("error " + error);
-           }
-        });
-    }
+    function Agregar_TipoPlatillo() {
+      const nombre = $("#NameTipoPlatilloAgregar").val();
+      const estado = $("#EstadoTipoPlatilloAgregar").val();
+  
+      $.ajax({
+        url: '/AgregarTIpoPlatillo/',
+        method: 'POST',
+        data: {
+            Nombre: nombre,
+            Estado: estado,
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+        },
+
+        success: function (response) {
+            if (response.status === "ok") {
+                Swal.fire({
+                    icon: "success",
+                    title: response.message,
+                    confirmButtonColor: '#ff6464'
+                }).then(() => location.reload());
+            } else {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Advertencia",
+                    text: response.message,
+                    confirmButtonColor: '#ff6464'
+                });
+            }
+        },
+
+        error: function (xhr) {
+            let msg = "Ocurrió un error inesperado.";
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                msg = xhr.responseJSON.message;
+            }
+
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: msg,
+                confirmButtonColor: '#ff6464'
+            });
+        }
+      });
+    }  
 
   </script>
 {% endblock %}

@@ -332,49 +332,61 @@
         $("#EstadoPlatillo").val( (estado === "1") ? 1 : 0 );
     }  
 
-    function ActualizarPlatillo(){
-        const nombre = $("#NombrePlatillo").val();
-        const tipoPlatillo = $("#TipoPlatillo").val();
-        const precio =  parseFloat($("#PrecioPlatillo").val());
-        const Id = $("#IDPlatillo").val();
-        const Estado =  ($("#EstadoPlatillo").val());
-        const descripcion = $("#DescripcionPlatillo").val();
-        const archivo = $("#archivoModal_dos")[0].files[0]; // Obtenemos el archivo seleccionado
+    function ActualizarPlatillo() {
 
         const formData = new FormData();
-        formData.append('Nombre', nombre);
-        formData.append('tipoplatillo', tipoPlatillo);
-        formData.append('Precio', precio);
-        formData.append('estado', Estado);
-        formData.append('Descripcion', descripcion);
-        formData.append('Imagen', archivo);
-        formData.append('id', Id);
+        formData.append('id', $("#IDPlatillo").val());
+        formData.append('Nombre', $("#NombrePlatillo").val());
+        formData.append('tipoplatillo', $("#TipoPlatillo").val());
+        formData.append('Precio', parseFloat($("#PrecioPlatillo").val()));
+        formData.append('estado', $("#EstadoPlatillo").val());
+        formData.append('Descripcion', $("#DescripcionPlatillo").val());
+        formData.append('Imagen', $("#archivoModal_dos")[0].files[0]);
         formData.append('csrfmiddlewaretoken', $('input[name=csrfmiddlewaretoken]').val());
-
-
+    
         $.ajax({
-            url:'/ActualizarPlatillos/',
-            type:'POST',
+            url: '/ActualizarPlatillos/',
+            method: 'POST',
             data: formData,
-            processData: false, // Evita el procesamiento automático de los datos
-            contentType: false, // No establece el tipo de contenido automáticamente,
-            success: function(response){
-                // alert("MODIFICACION EXITOSA");
+            processData: false,
+            contentType: false,
+    
+            success: function(response) {
+    
+                if (response.status === "ok") {
+    
+                    Swal.fire({
+                        icon: "success",
+                        title: response.message,
+                        confirmButtonColor: '#ff6464'
+                    }).then(() => location.reload());
+    
+                } else {
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Advertencia",
+                        text: response.message,
+                        confirmButtonColor: '#ff6464'
+                    });
+                }
+            },
+    
+            error: function(xhr) {
+                let msg = "Ocurrió un error inesperado.";
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    msg = xhr.responseJSON.message;
+                }
+    
                 Swal.fire({
-                    confirmButtonColor: '#ff6464',
-                    title: '¡Platillo actualizado correctamente!',
-                    icon: 'success'
-                })
-                .then((resultado) => {
-                    location.reload();
+                    icon: "error",
+                    title: "Error",
+                    text: msg,
+                    confirmButtonColor: '#ff6464'
                 });
-            }, 
-            error: function(error){
-                let ror = error;
-                alert("error " + error);
             }
         });
     }
+    
 
     async function DarBaja_Platillo(idPlatillo) {
 

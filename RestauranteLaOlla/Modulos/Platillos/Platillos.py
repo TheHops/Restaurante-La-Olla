@@ -1,7 +1,6 @@
 
-from csv import reader
 import traceback
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 from Application.models import Platillo, TipoPlatillo
 from django.core.files.storage import default_storage
@@ -10,51 +9,77 @@ from django.db import transaction
 
 #region CRUD PLATILLOS
 
-#region ActualizarPlatillos
+@require_POST
 def Actualizar_Platillos(request):
-    if request.user.is_authenticated:
-        try:
-            if request.method == "POST":
-                platilloname = request.POST.get("Nombre")
-                precio = request.POST.get("Precio")
-                tipoplatillo = request.POST.get("tipoplatillo")
-                print(tipoplatillo)
-                estado = request.POST.get("estado")
-                descripcion = request.POST.get("Descripcion")
-                id_Platillo = request.POST.get("id")
-                imagen = request.FILES.get("Imagen")
-                print(id_Platillo)
-                platillo = Platillo.objects.get(Id=id_Platillo)
-                print("OBTUVO EL ID")
-                platillo.Nombre = platilloname
-                tipo = TipoPlatillo.objects.get(Id=tipoplatillo)
-                platillo.IdTipoPlatillo = tipo
-                platillo.Precio = precio
-                platillo.EsActivo = estado
-                platillo.Descripcion = descripcion
-                if imagen:
-                    # Guardar la imagen en el sistema de archivos
-                    file_path = default_storage.save('platillos/' + imagen.name, imagen)
-                    platillo.ImagenUrl = file_path
-                    
-                platillo.save()
-                return HttpResponse("")
-        except Exception as ex:
-            print("\n############### EXCEPCIÓN ###############")
-            print(traceback.format_exc())
-            print("#########################################\n")
-            return JsonResponse({'error': str(ex)}, status=500)
-    else:
-        # Si no lo ha hecho entonces deberá iniciar sesión
-        return reader(request, "login.html")
-    
-#endregion ActualizarPlatillos
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+
+    try:
+        with transaction.atomic():
+            platillo_id = request.POST.get("id")
+            nombre = request.POST.get("Nombre")
+            precio = request.POST.get("Precio")
+            tipo_id = request.POST.get("tipoplatillo")
+            estado = request.POST.get("estado")
+            descripcion = request.POST.get("Descripcion")
+            imagen = request.FILES.get("Imagen")
+
+            # Validaciones básicas
+            if not platillo_id or not nombre or not precio or not tipo_id:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Faltan datos obligatorios.'
+                }, status=400)
+
+            try:
+                platillo = Platillo.objects.get(Id=platillo_id)
+            except Platillo.DoesNotExist:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'El consumo no existe.'
+                }, status=404)
+
+            try:
+                tipo = TipoPlatillo.objects.get(Id=tipo_id)
+            except TipoPlatillo.DoesNotExist:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Tipo de consumo no válido.'
+                }, status=404)
+
+            # Asignar campos
+            platillo.Nombre = nombre
+            platillo.IdTipoPlatillo = tipo
+            platillo.Precio = precio
+            platillo.EsActivo = estado
+            platillo.Descripcion = descripcion
+
+            # Si viene nueva imagen, actualizarla
+            if imagen:
+                ruta = default_storage.save(f'platillos/{imagen.name}', imagen)
+                platillo.ImagenUrl = ruta
+
+            platillo.save()
+
+            return JsonResponse({
+                'status': 'ok',
+                'message': 'Consumo actualizado correctamente.'
+            })
+
+    except Exception as ex:
+        print("\n### ERROR EN Actualizar_Platillos ###")
+        print(traceback.format_exc())
+
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Error interno del servidor.'
+        }, status=500)
 
 #region EliminarPlatillos
 
 def DarBaja_Platillo(request):
     if not request.user.is_authenticated:
-        return reader(request, "login.html")
+        return render(request, "login.html")
 
     try:
         if request.method == "POST":
@@ -63,7 +88,7 @@ def DarBaja_Platillo(request):
             if not id_platillo:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'ID de platillo no proporcionado.'
+                    'message': 'ID de consumo no proporcionado.'
                 }, status=400)
 
             try:
@@ -71,7 +96,7 @@ def DarBaja_Platillo(request):
             except Platillo.DoesNotExist:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'El platillo no existe.'
+                    'message': 'El consumo no existe.'
                 }, status=404)
 
             platillo.EsActivo = "0"
@@ -79,7 +104,7 @@ def DarBaja_Platillo(request):
 
             return JsonResponse({
                 'status': 'ok',
-                'message': 'Platillo dado de baja correctamente.'
+                'message': 'Consumo dado de baja correctamente.'
             })
 
         return JsonResponse({
@@ -104,7 +129,7 @@ def DarBaja_Platillo(request):
 @require_POST
 def Agregar_Platillo(request):
     if not request.user.is_authenticated:
-        return reader(request, "login.html")
+        return render(request, "login.html")
 
     try:
         with transaction.atomic():  # Para asegurar que todo se guarda correctamente
@@ -127,7 +152,7 @@ def Agregar_Platillo(request):
             except TipoPlatillo.DoesNotExist:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'Tipo de platillo no válido.'
+                    'message': 'Tipo de consumo no válido.'
                 }, status=404)
 
             platillo = Platillo(
@@ -147,7 +172,7 @@ def Agregar_Platillo(request):
 
             return JsonResponse({
                 'status': 'ok',
-                'message': 'Platillo agregado correctamente.'
+                'message': 'Consumo agregado correctamente.'
             })
 
     except Exception as ex:
