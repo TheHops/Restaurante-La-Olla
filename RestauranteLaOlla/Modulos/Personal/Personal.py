@@ -111,63 +111,86 @@ def AgregarPersonal(request):
 
 #region Modificar personal
 
+@require_POST
 def ModificarPersonal(request):
-    if request.user.is_authenticated:
+    if not request.user.is_authenticated:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'No autorizado.'
+        }, status=401)
+
+    try:
+        usuario = request.POST.get("User", "").strip()
+        personal_id = request.POST.get("IDPersonal")
+        correo = request.POST.get("Correo", "")
+        new_pass = request.POST.get("NewPass", "")
+        telefono = request.POST.get("Telefono", "")
+        cargo = request.POST.get("Cargo", "")
+        estado = request.POST.get("Estado", "")
+        nombres = request.POST.get("NameUsuario", "").strip()
+        apellidos = request.POST.get("LastNameUsuario", "").strip()
+
+        # Obtener registro
         try:
-            if request.method == "POST":
-                usuario = request.POST.get("User")
-                id = request.POST.get("IDPersonal")
-                personal = Usuario.objects.get(Id=id)
+            personal = Usuario.objects.get(Id=personal_id)
+        except Usuario.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'El usuario no existe.'
+            }, status=404)
 
-                if usuario == personal.username:
-                    if personal.EsActivo == "0":
-                        nombreUsuario = Usuario.objects.filter(username=usuario).exclude(EsActivo="0").exists()
-                    else:
-                        nombreUsuario = False
-                else:
-                    nombreUsuario = Usuario.objects.filter(username=usuario).exclude(EsActivo='0').exists()
+        # Si cambia el username, validar que no exista otro igual
+        if usuario != personal.username:
+            if Usuario.objects.filter(username=usuario).exclude(Id=personal_id).exists():
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'El nombre de usuario ya está registrado por otro usuario.'
+                })
 
-                if not nombreUsuario:
-                    email = request.POST.get("Correo")
-                    password = request.POST.get("NewPass")
-                    numero = request.POST.get("Telefono")
-                    newCargo = request.POST.get("Cargo")
-                    estado = request.POST.get("Estado")
-                    nameUsuario = request.POST.get("NameUsuario")
-                    lastNameUsuario = request.POST.get("LastNameUsuario")
-                    tipoCargo = Cargo.objects.get(Id=newCargo)
-            
-                    personal.email = email
-                    personal.Telefono = numero
-                    personal.IdCargo = tipoCargo
-                    personal.EsActivo = estado
-                    personal.Nombres = nameUsuario
-                    personal.Apellidos = lastNameUsuario
-                    if newCargo == "1":
-                        personal.is_staff = True
-                        personal.is_superuser = True
+        # Obtener cargo
+        try:
+            tipoCargo = Cargo.objects.get(Id=cargo)
+        except Cargo.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'El cargo seleccionado no existe.'
+            })
 
-                    if password:
-                        personal.set_password(password)
+        # Aplicar cambios
+        personal.username = usuario
+        personal.email = correo
+        personal.Telefono = telefono
+        personal.IdCargo = tipoCargo
+        personal.EsActivo = estado
+        personal.Nombres = nombres
+        personal.Apellidos = apellidos
 
-                    if Usuario != personal.username and Usuario.objects.filter(username=Usuario).exists():
-                        response_data = {'message': '0'}  # nombreUsuario ya existe en otro registro
-                    else:
-                        personal.save()
-                        response_data = {'message': '1'}  # usuario modificado correctamente
-                else:
-                    response_data = {'message': '3'}  # nombreUsuario inactivo
+        # Asignar permisos si es admin
+        if str(cargo) == "1":
+            personal.is_staff = True
+            personal.is_superuser = True
+        else:
+            personal.is_staff = False
+            personal.is_superuser = False
 
-                return HttpResponse(json.dumps(response_data), content_type="application/json")
-        except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
-    else:
-        # Si no lo ha hecho entonces deberá iniciar sesión
-        return render(request, "login.html")
+        # Solo si ingresó nueva contraseña
+        if new_pass.strip():
+            personal.set_password(new_pass)
+
+        personal.save()
+
+        return JsonResponse({
+            'status': 'ok',
+            'message': 'Personal modificado correctamente.'
+        })
+
+    except Exception as ex:
+        print("### ERROR EN ModificarPersonal ###")
+        print(ex)
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Error interno en el servidor.'
+        }, status=500)
     
 #endregion Modificar personal
 

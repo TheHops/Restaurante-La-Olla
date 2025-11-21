@@ -317,74 +317,49 @@ function Agregar_Personal() {
     });
 }
 
-function ModificarPersonal(){
-    const usuario = $("#NameUsuario").val();
-    const correo = $("#CorreoUsuario").val();
-    const NewPassword = $("#NewPassword").val();
-    const CheckPassword = $("#CheckPassword").val();
-    const NumberUsuario = $("#NumberUsuario").val();
-    const cargo = $("#idCargoModificar").val();
-    const ID_personal = $("#IdPersonal").val();
-    const estado = $("#idEstadoModificar").val();
-    const NombreUsuario = $("#NombreUsuarioMod").val();
-    const ApellidoUsuario = $("#ApellidosUsuarioMod").val();
+function ModificarPersonal() {
+    const data = {
+        User: $("#NameUsuario").val(),
+        Correo: $("#CorreoUsuario").val(),
+        NewPass: $("#NewPassword").val(),
+        Telefono: $("#NumberUsuario").val(),
+        Cargo: $("#idCargoModificar").val(),
+        IDPersonal: $("#IdPersonal").val(),
+        Estado: $("#idEstadoModificar").val(),
+        NameUsuario: $("#NombreUsuarioMod").val(),
+        LastNameUsuario: $("#ApellidosUsuarioMod").val(),
+        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+    };
 
-    if (ValidacionCamposVacios(2)){
-        $.ajax({
-            url:'/ModificarPersonal/',
-            type:'POST',
-            data:{
-            User: usuario,
-            Correo: correo,
-            NewPass:NewPassword,
-            Telefono:NumberUsuario,
-            Cargo:cargo,
-            IDPersonal:ID_personal, // ID del personal a modificar
-            Estado:estado,
-            NameUsuario: NombreUsuario,
-            LastNameUsuario: ApellidoUsuario,
-            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-            },
-            success:function(response){
-                var message = response.message;
-                if (message === "1"){
-                    Swal.fire({
-                        confirmButtonColor: '#ff6464',
-                        title: 'Modificacion Exitosa',
-                        text: 'Personal Modificado correctamente',
-                        icon: 'success'
-                    })
-                    .then((resultado) => {
-                        location.reload();
-                    });
-                }else if(message === '3'){
-                    Swal.fire({
-                        confirmButtonColor: '#ff6464',
-                        title: 'Modificacion Interrumpida',
-                        text: 'El usuario ingresado ya esta registrado en Base de Datos',
-                        icon: 'warning'
-                    })
-                    .then((resultado) => {
-                        location.reload();
-                    });
-                }else{
-                    Swal.fire({
-                        confirmButtonColor: '#ff6464',
-                        title: 'Usuario Ocupado',
-                        text: 'Usuario ingresado ya esta en la Base de Datos del Sistema',
-                        icon: 'error'
-                    })
-                    .then((resultado) => {
-                        location.reload();
-                    });
-                    //document.getElementById("NameUsuario").focus();
-                }
-                
-            }, error: function(error){
-                alert("error " + error);
-            }
-        });
-    }
+    if (!ValidacionCamposVacios(2)) return;
+
+    $.ajax({
+        url: "/ModificarPersonal/",
+        type: "POST",
+        data: data,
+        success: function (response) {
+
+            let icon = response.status === "ok" ? "success" : "warning";
+            let title = response.status === "ok" ? "¡Modificación Exitosa!" : "Modificación Interrumpida";
+
+            Swal.fire({
+                confirmButtonColor: '#ff6464',
+                title: title,
+                text: response.message,
+                icon: icon
+            }).then(() => {
+                if (response.status === "ok") location.reload();
+            });
+        },
+        error: function () {
+            Swal.fire({
+                confirmButtonColor: "#ff6464",
+                title: "Error",
+                text: "Error interno del servidor.",
+                icon: "error"
+            });
+        }
+    });
 }
 
 function ConfirmarBaja(idPersonal) {
@@ -465,81 +440,97 @@ function ValidacionCamposVacios (banderaFormulario){
    // validamos los paremetros que no deben estar vacios en el
     var bandera = banderaFormulario
     if (bandera === 1){ // validacion en agregacion personal
-        const fullname = $("#Fullname").val();
-        const LastName = $("#Apellidos").val();
-        const usuario = $("#User").val();
-        const pass = $("#Pass").val();
+        const fullname = $("#Fullname").val().trim();
+        const lastName = $("#Apellidos").val().trim();
+        const usuario = $("#User").val().trim();
+        const pass = $("#Pass").val().trim();
 
-        if (fullname === "" ){
+        if (!fullname) {
             Swal.fire({
-                title: 'Campo Nombres Vacio',
-                text: 'No debe dejar el Campo Nombres Vacio',
+                title: 'Nombre vacío',
+                text: 'Debe ingresar los nombres del personal.',
                 icon: 'warning'
-            })
+            });
             $("#Fullname").focus();
             return false;
-        }else if(LastName === ""){
+        }
+
+        if (!lastName) {
             Swal.fire({
-                title: 'Campo Apellidos Vacio',
-                text: 'No debe dejar el Campo Apellidos Vacio',
+                title: 'Apellido vacío',
+                text: 'Debe ingresar los apellidos del personal.',
                 icon: 'warning'
-            })
+            });
+            $("#Apellidos").focus();
             return false;
-        }else if(usuario === ""){
+        }
+
+        if (!usuario) {
             Swal.fire({
-                title: 'Campo Usuario Vacio',
-                text: 'No debe dejar el Campo Usuario Vacio',
+                title: 'Usuario vacío',
+                text: 'Debe ingresar el nombre de usuario.',
                 icon: 'warning'
-            })
+            });
+            $("#User").focus();
             return false;
-        }else if(pass === ""){
+        }
+
+        if (!pass) {
             Swal.fire({
-                title: 'Campo Contraseña Vacio',
-                text: 'No debe dejar el Campo Contraseña Vacio',
+                title: 'Contraseña vacía',
+                text: 'Debe ingresar la contraseña.',
                 icon: 'warning'
-            })
+            });
+            $("#Pass").focus();
             return false;
         }
     }else if(bandera === 2) { // validacion en modificacion personal
         const usuario = $("#NameUsuario").val();
-        const NombreUsuario = $("#NombreUsuarioMod").val();
-        const ApellidoUsuario = $("#ApellidosUsuarioMod").val()
-        const NewPassword = $("#NewPassword").val();
-        const CheckPassword = $("#CheckPassword").val();
-         
-        if (usuario === ""){
+        const nombre = $("#NombreUsuarioMod").val();
+        const apellido = $("#ApellidosUsuarioMod").val();
+        const newPass = $("#NewPassword").val();
+        const checkPass = $("#CheckPassword").val();
+
+        // Validar campos obligatorios
+        if (!usuario.trim()) {
             Swal.fire({
-                title: 'Campo Usuario Vacio',
-                text: 'No debe dejar el Campo Usuario Vacio',
+                title: 'Campo Usuario Vacío',
+                text: 'Debe ingresar un usuario.',
                 icon: 'warning'
-            })
-            $("NameUsuario").focus();
+            });
+            $("#NameUsuario").focus();
             return false;
-        }else if (NombreUsuario === ""){
+        }
+
+        if (!nombre.trim()) {
             Swal.fire({
-                title: 'Campo Nombre Vacio',
-                text: 'No debe dejar el Campo Nombre del Usuario Vacio',
+                title: 'Nombre Vacío',
+                text: 'Debe ingresar el nombre del usuario.',
                 icon: 'warning'
-            })
+            });
             return false;
-        }else if (ApellidoUsuario === ""){
+        }
+
+        if (!apellido.trim()) {
             Swal.fire({
-                title: 'Campo Apellido Vacio',
-                text: 'No debe dejar el Campo Apellido del Usuario Vacio',
+                title: 'Apellido Vacío',
+                text: 'Debe ingresar el apellido del usuario.',
                 icon: 'warning'
-            })
+            });
             return false;
-        }else if(CheckPassword != "" || NewPassword != ""){
-            if(CheckPassword != NewPassword){
+        }
+
+        // Si el usuario quiere cambiar contraseña, deben coincidir
+        if (newPass || checkPass) {
+            if (newPass !== checkPass) {
                 Swal.fire({
-                    title: 'Incompatibilidad en Contraseñas',
-                    text: 'El campo de Confirmacion de Contraseñas no es compatible con la Nueva Contraseña',
+                    title: 'Contraseñas no coinciden',
+                    text: 'La confirmación no coincide con la nueva contraseña.',
                     icon: 'warning'
-                })
+                });
                 return false;
             }
         }
-
     }
     return true;
 }
