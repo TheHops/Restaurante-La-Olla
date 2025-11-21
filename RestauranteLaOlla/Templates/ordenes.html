@@ -10,7 +10,7 @@
   </a>
   <select name="" id="listaEstadoOrdenes" onchange="filtrarOrdenes(this.value)">
     <option value="1">Pendientes</option>
-    <option value="0">Facturadas</option>
+    <option value="0">Registradas</option>
     <option value="2">Anuladas</option>
     <option value="3">Todas</option>
   </select>
@@ -26,7 +26,7 @@
         Orden #{{ Orden.Id }} - 
         {% if Orden.Estado == "1" %} Pendiente
         <div class="EstP"></div>
-        {% elif Orden.Estado == "0" %} Facturada
+        {% elif Orden.Estado == "0" %} Registrada
         <div class="EstF"></div>
         {% elif Orden.Estado == "3" %} Preparada
         <div class="EstPre"></div>
@@ -53,6 +53,7 @@
         <h6 style="color: #555555">{{ Orden.Fecha|date:"j \\d\\e F \\d\\e Y \\a \\l\\a\\s g:i A" }}</h6>
       </div>
       <div class="seccionDerecha">
+        <!-- Pendiente -->
         {% if Orden.Estado == "1" %}
         
           <button
@@ -68,9 +69,16 @@
             data-target="#FacturarOrden"
             onclick="rellenarParaFacturar('{{Orden.Id}}', '{{Orden.Total}}')"
           >
-            <i class="fa-solid fa-file-invoice-dollar"></i> Facturar
+            <i class="fa-solid fa-file-invoice-dollar"></i> Registrar
           </button>
 
+        <!-- Preparado -->
+        {% elif Orden.Estado == "3" %}
+
+        <!-- En preparación -->
+        {% elif Orden.Estado == "4" %}
+
+        <!-- Anulada -->
         {% elif Orden.Estado == "2" %}
 
           {% if Orden.Motivo is not none and Orden.Motivo != '' %}
@@ -165,7 +173,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Facturar orden</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Registrar orden</h5>
         <button
           type="button"
           class="close"
@@ -263,7 +271,7 @@
           onclick="FacturarOrden()"
           disabled
         >
-          Facturar
+          Registrar
         </button>
       </div>
     </div>
@@ -328,7 +336,7 @@
 
     Swal.fire({
       confirmButtonColor: "#ff6464", //'#ff964e',
-      title: "¡Orden #" + idOrdenF.value + " facturada correctamente!",
+      title: "¡Orden #" + idOrdenF.value + " registrada correctamente!",
       icon: "success",
     }).then((resultado) => {
       if (resultado.isConfirmed) {

@@ -169,13 +169,14 @@ def OrdenesPendientes(request):
             
             platillos = Platillo.objects.all().values()
 
-            print("ORDENES PENDIENTES ==> ")
-            print(ordenes)
+            # Obtener cargo del usuario en sesión
+            cargo_usuario = request.user.IdCargo.Nombre if request.user.IdCargo else None
 
             # print(ordenes)
             contexto = {
                 "Ordenes": ordenes,
-                "Platillos": platillos
+                "Platillos": platillos,
+                "CargoUsuario": cargo_usuario
             }
 
             return render(request, "ordenes.html", contexto)
