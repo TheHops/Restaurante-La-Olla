@@ -115,7 +115,7 @@ def FiltrarOrdenes(request):
             if request.method == "GET":
                 EstadoOrden = request.GET.get("SelectFiltrarOrdenes")
 
-                if EstadoOrden == "3":
+                if EstadoOrden == "5":
                     OrdenesFiltradas = Orden.objects.select_related('IdUsuario').filter(EsActivo="1").order_by(Case(When(Estado='1', then=0), When(Estado='0', then=1), When(Estado='2', then=2)), '-Id')
                 else:
                     OrdenesFiltradas = Orden.objects.select_related('IdUsuario').filter(Q(Estado=EstadoOrden) & Q(EsActivo="1")).order_by('-Id')

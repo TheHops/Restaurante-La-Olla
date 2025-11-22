@@ -58,7 +58,9 @@ urlpatterns = [
     path('CreacionTipoPlatillos_PDF/',Reportes.CreacionTipoPlatillos_PDF,name="CreacionTipoPlatillos_PDF"),
     path('CancelarOrden/', Ventas.CancelarOrden, name="CancelarOrden"),
     path('GraficaOrdenes/', GraficarOrdenes, name="GraficaOrdenes"),    
-    path('FiltrarOrdenes/', FiltrarOrdenes, name="FiltrarOrdenes")
+    path('FiltrarOrdenes/', FiltrarOrdenes, name="FiltrarOrdenes"),
+    path("CambiarAEnPreparacion/", Ventas.CambiarAEnPreparacion, name="CambiarAEnPreparacion"),
+    path("CambiarAPreparado/", Ventas.CambiarAPreparado, name="CambiarAPreparado"),
 ]
 
 urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
