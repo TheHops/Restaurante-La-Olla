@@ -10,9 +10,14 @@
   </a>
   <select name="" id="listaEstadoOrdenes" onchange="filtrarOrdenes(this.value)">
     <option value="1">Pendientes</option>
+    <option value="4">En preparación</option>
+    <option value="3">Preparadas</option>
     <option value="0">Registradas</option>
     <option value="2">Anuladas</option>
-    <option value="3">Todas</option>
+    <option value="5">Todas</option>
+
+    <!-- TODO: Filtrar solo para cocinero y mesero -->
+    <option value="6">Ambas</option>
   </select>
 </div>
 
@@ -50,12 +55,20 @@
           {% if not forloop.last %} - {% endif %} 
           {% endfor %}
         </h5>
-        <h6 style="color: #555555">{{ Orden.Fecha|date:"j \\d\\e F \\d\\e Y \\a \\l\\a\\s g:i A" }}</h6>
+
+        {% if Orden.Estado == "1" %}
+          <span class="timer" style="color: #555555" id="timer-{{ Orden.Id }}" 
+                data-fecha="{{ Orden.Fecha|date:'Y-m-d H:i:s' }}">
+          </span>
+        {% else %}
+          <h6 style="color: #555555">{{ Orden.Fecha|date:"j \\d\\e F \\d\\e Y \\a \\l\\a\\s g:i A" }}</h6>
+        {% endif %}
       </div>
       <div class="seccionDerecha">
         <!-- Pendiente -->
         {% if Orden.Estado == "1" %}
         
+          <!-- Anular orden -->
           <button
             class="btnCancelarOrden"
             onclick="CancelarOrden('{{Orden.Id}}')"
@@ -63,6 +76,44 @@
             <i class="fa-solid fa-ban"></i> Anular
           </button>
 
+          <!-- Editar la orden -->
+          <button>Editar</button>
+
+          <!-- Cambiar el estado de la orden a 'En preparación' -->
+          <button onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAEnPreparacion' %}', 'Cambiando a En preparación')">Empezar preparación</button>
+
+        <!-- En preparación -->
+        {% elif Orden.Estado == "4" %}
+
+          <!-- Anular orden -->
+          <button
+            class="btnCancelarOrden"
+            onclick="CancelarOrden('{{Orden.Id}}')"
+          >
+            <i class="fa-solid fa-ban"></i> Anular
+          </button>
+
+          <!-- Editar la orden -->
+          <button>Editar</button>
+
+          <!-- Cambiar el estado de la orden a 'Preparada' -->
+          <button onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAPreparado' %}', 'Cambiando a Preparada')">Confirmar preparado</button>
+
+        <!-- Preparado -->
+        {% elif Orden.Estado == "3" %}
+        
+          <!-- Anular orden -->
+          <button
+            class="btnCancelarOrden"
+            onclick="CancelarOrden('{{Orden.Id}}')"
+          >
+            <i class="fa-solid fa-ban"></i> Anular
+          </button>
+
+          <!-- Editar la orden -->
+          <button>Editar</button>
+
+          <!-- Registrar la orden -->
           <button
             class="btnFacturarOrden"
             data-toggle="modal"
@@ -71,12 +122,6 @@
           >
             <i class="fa-solid fa-file-invoice-dollar"></i> Registrar
           </button>
-
-        <!-- Preparado -->
-        {% elif Orden.Estado == "3" %}
-
-        <!-- En preparación -->
-        {% elif Orden.Estado == "4" %}
 
         <!-- Anulada -->
         {% elif Orden.Estado == "2" %}
@@ -417,6 +462,52 @@
     btnFacturar.disabled = true;
   }
 
+  function iniciarTimers() {
+    const timers = document.querySelectorAll(".timer");
+
+    function formatearTiempo(diffMs) {
+        const horas = Math.floor(diffMs / 3600000);
+        const minutos = Math.floor((diffMs % 3600000) / 60000);
+        const segundos = Math.floor((diffMs % 60000) / 1000);
+
+        let texto = "Creada hace ";
+
+        if (horas > 0) texto += `${horas}h `;
+        texto += `${minutos}m ${segundos}s`;
+
+        return texto;
+    }
+
+    function actualizarTimers() {
+      const ahora = new Date();
+
+      timers.forEach(timer => {
+        const fecha = new Date(timer.dataset.fecha);
+        const diff = ahora - fecha;
+
+        // Formato del texto
+        timer.textContent = formatearTiempo(diff);
+
+        // Quitar clases anteriores
+        timer.classList.remove("verde", "naranja", "rojo");
+
+        const minutos = Math.floor(diff / 60000);
+
+        // Colores según tiempo
+        if (minutos >= 20 && minutos < 40) {
+            timer.classList.add("naranja");
+        } else if (minutos >= 40) {
+            timer.classList.add("rojo");
+        }
+      });
+    }
+
+    actualizarTimers();  
+    setInterval(actualizarTimers, 1000);
+  }
+
+  document.addEventListener("DOMContentLoaded", iniciarTimers);
+
   function MP(valor) {
     ReiniciarCampos();
 
@@ -450,7 +541,7 @@
               if (xhr.readyState === 4) {
                   if (xhr.status === 200) {
                       try {
-                          const respuesta = JSON.parse(xhr.responseText);
+                          const respuesta = JSON.parse(xhr.responseText); 
                           resolve(respuesta);
                       } catch (e) {
                           reject("Error al procesar la respuesta del servidor.");
@@ -546,6 +637,87 @@
       }
     };
   }
+
+  async function cambiarEstadoOrden(idOrden, url, textoCarga) {
+    try {
+      // Mostrar modal de carga
+      Swal.fire({
+        title: textoCarga,
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      // Enviar la petición al servidor
+      const respuesta = await enviarCambioEstado(idOrden, url);
+
+      // Cerrar modal de carga
+      Swal.close();
+
+      if (respuesta.status === "ok") {
+        // Mostrar éxito y recargar automáticamente después de 3 segundos
+        await Swal.fire({
+          title: `¡Orden #${idOrden} actualizada correctamente!`,
+          text: respuesta.message,
+          icon: "success",
+          showConfirmButton: false,
+          timer: 2300
+        });
+
+        location.reload();
+      } else {
+        await Swal.fire({
+          title: "Error",
+          text: respuesta.message || "No se pudo actualizar la orden.",
+          icon: "error",
+          confirmButtonColor: "#ff6464"
+        });
+      }
+    } 
+    catch (error) {
+      await Swal.fire({
+        title: "Error",
+        text: error,
+        icon: "error",
+        confirmButtonColor: "#ff6464"
+      });
+    } 
+  }
+
+  function enviarCambioEstado(idOrden, url) {
+    return new Promise((resolve, reject) => {
+      const token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", url, true);
+
+      const datos = new FormData();
+      datos.append("csrfmiddlewaretoken", token);
+      datos.append("ID", idOrden);
+
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            try {
+              console.log(xhr.responseText);
+              const respuesta = JSON.parse(xhr.responseText);
+              resolve(respuesta);
+            } catch (e) {
+              reject("Error al procesar la respuesta del servidor.");
+            }
+          } else {
+            reject("Error de red o servidor: " + xhr.status);
+          }
+        }
+      };
+
+      xhr.onerror = function() {
+          reject("Error al conectar con el servidor.");
+      };
+
+      xhr.send(datos);
+    });
+  }
+
+
 </script>
 
 {% endblock %}

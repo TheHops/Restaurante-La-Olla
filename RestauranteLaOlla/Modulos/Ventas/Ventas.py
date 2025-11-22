@@ -343,3 +343,63 @@ def FacturarOrden(request):
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
 #endregion FacturarOrden
+
+#region CambiarAEnPreparacion
+
+def CambiarAEnPreparacion(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+    
+    if request.method == "POST":
+        try:
+            id = request.POST.get("ID")
+            orden = Orden.objects.get(Id=id)
+
+            if orden.Estado != "1":
+                return JsonResponse({
+                    "status": "error",
+                    "message": "No es una orden pendiente"
+                }, status=400)
+
+            orden.Estado = "4"
+            orden.save()
+
+            return JsonResponse({
+                "status": "ok",
+                "message": "La orden ya se encuentra en preparación"
+            }, status=200)
+        except Exception as ex:
+            print("ERROR:", ex)
+            return HttpResponse(status=500)
+
+#endregion CambiarAEnPreparacion
+
+#region CambiarAPreparado
+
+def CambiarAPreparado(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+    
+    if request.method == "POST":
+        try:
+            id = request.POST.get("ID")
+            orden = Orden.objects.get(Id=id)
+
+            if orden.Estado != "4":
+                return JsonResponse({
+                    "status": "error",
+                    "message": "La orden no está en preparación"
+                }, status=400)
+
+            orden.Estado = "3"
+            orden.save()
+
+            return JsonResponse({
+                "status": "ok",
+                "message": "La orden ya está preparada"
+            }, status=200)
+        except Exception as ex:
+            print("ERROR:", ex)
+            return HttpResponse(status=500)
+
+#endregion CambiarAPreparado

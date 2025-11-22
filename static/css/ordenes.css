@@ -71,6 +71,18 @@
     padding: 5px 15px 0;
 }
 
+.timer {
+    font-weight: bold;
+}
+
+.timer.naranja {
+    color: #ff9800 !important;
+}
+
+.timer.rojo {
+    color: #ff3b30 !important;
+}
+
 .seccionDerecha {
     display: flex;
     /* flex-direction: column; */
