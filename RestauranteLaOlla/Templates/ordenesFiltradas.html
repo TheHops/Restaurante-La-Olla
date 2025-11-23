@@ -7,7 +7,7 @@
       Orden #{{ Orden.Id }} - 
       {% if Orden.Estado == "1" %} Pendiente
       <div class="EstP"></div>
-      {% elif Orden.Estado == "0" %} Facturada
+      {% elif Orden.Estado == "0" %} Registrada
       <div class="EstF"></div>
       {% elif Orden.Estado == "3" %} Preparada
       <div class="EstPre"></div>
@@ -31,26 +31,75 @@
         {% if not forloop.last %} - {% endif %} 
         {% endfor %}
       </h5>
-      <h6>{{Orden.Fecha}}</h6>
+
+      {% if Orden.Estado == "1" %}
+        <span class="timer" style="color: #555555" id="timer-{{ Orden.Id }}" 
+              data-fecha="{{ Orden.Fecha|date:'Y-m-d H:i:s' }}">
+        </span>
+      {% else %}
+        <h6 style="color: #555555">{{ Orden.Fecha|date:"j \\d\\e F \\d\\e Y \\a \\l\\a\\s g:i A" }}</h6>
+      {% endif %}
     </div>
     <div class="seccionDerecha">
+      <!-- Pendiente -->
       {% if Orden.Estado == "1" %}
-      <button
-        class="btnCancelarOrden"
-        onclick="CancelarOrden('{{Orden.Id}}')"
-      >
-        <i class="fa-solid fa-ban"></i> Anular
-      </button>
+      
+        <!-- Anular orden -->
+        <button
+          class="btnCancelarOrden"
+          onclick="CancelarOrden('{{Orden.Id}}')"
+        >
+          <i class="fa-solid fa-ban"></i> Anular
+        </button>
 
-      <button
-        class="btnFacturarOrden"
-        data-toggle="modal"
-        data-target="#FacturarOrden"
-        onclick="rellenarParaFacturar('{{Orden.Id}}', '{{Orden.Total}}')"
-      >
-        <i class="fa-solid fa-file-invoice-dollar"></i> Facturar
-      </button>
+        <!-- Editar la orden -->
+        <button>Editar</button>
 
+        <!-- Cambiar el estado de la orden a 'En preparación' -->
+        <button onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAEnPreparacion' %}', 'Cambiando a En preparación')">Empezar preparación</button>
+
+      <!-- En preparación -->
+      {% elif Orden.Estado == "4" %}
+
+        <!-- Anular orden -->
+        <button
+          class="btnCancelarOrden"
+          onclick="CancelarOrden('{{Orden.Id}}')"
+        >
+          <i class="fa-solid fa-ban"></i> Anular
+        </button>
+
+        <!-- Editar la orden -->
+        <button>Editar</button>
+
+        <!-- Cambiar el estado de la orden a 'Preparada' -->
+        <button onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAPreparado' %}', 'Cambiando a Preparada')">Confirmar preparado</button>
+
+      <!-- Preparado -->
+      {% elif Orden.Estado == "3" %}
+      
+        <!-- Anular orden -->
+        <button
+          class="btnCancelarOrden"
+          onclick="CancelarOrden('{{Orden.Id}}')"
+        >
+          <i class="fa-solid fa-ban"></i> Anular
+        </button>
+
+        <!-- Editar la orden -->
+        <button>Editar</button>
+
+        <!-- Registrar la orden -->
+        <button
+          class="btnFacturarOrden"
+          data-toggle="modal"
+          data-target="#FacturarOrden"
+          onclick="rellenarParaFacturar('{{Orden.Id}}', '{{Orden.Total}}')"
+        >
+          <i class="fa-solid fa-file-invoice-dollar"></i> Registrar
+        </button>
+
+      <!-- Anulada -->
       {% elif Orden.Estado == "2" %}
 
         {% if Orden.Motivo is not none and Orden.Motivo != '' %}
@@ -67,11 +116,11 @@
 <!-- Fin ordenPoFoc -->
 
 <!-- Inicia descripcion (Se agrega si es necesario) -->
-{% if Orden.Descripcion is not none and orden.Descripcion != '' %}
-<div class="descripcionOrden">
-  <!-- TODO: RECORDAR PONER ICONO DE COMENTARIO -->
-  <span>{{ Orden.Descripcion }}</span>
-</div>  
+{% if Orden.Descripcion is not none and Orden.Descripcion != '' %}
+  <div class="descripcionOrden">
+    <!-- TODO: RECORDAR PONER ICONO DE COMENTARIO -->
+    <span>{{ Orden.Descripcion }}</span>
+  </div>  
 {% endif %}
 
 <div class="detalleOrdenPoFoC">

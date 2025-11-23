@@ -366,7 +366,9 @@ def CambiarAEnPreparacion(request):
 
             return JsonResponse({
                 "status": "ok",
-                "message": "La orden ya se encuentra en preparación"
+                "message": "La orden ya se encuentra en preparación",
+                "old_type": "1",
+                "new_type": "4"
             }, status=200)
         except Exception as ex:
             print("ERROR:", ex)
@@ -396,7 +398,9 @@ def CambiarAPreparado(request):
 
             return JsonResponse({
                 "status": "ok",
-                "message": "La orden ya está preparada"
+                "message": "La orden ya está preparada",
+                "old_type": "4",
+                "new_type": "3"
             }, status=200)
         except Exception as ex:
             print("ERROR:", ex)
