@@ -58,7 +58,7 @@
 
         {% if Orden.Estado == "1" %}
           <span class="timer" style="color: #555555" id="timer-{{ Orden.Id }}" 
-                data-fecha="{{ Orden.Fecha|date:'Y-m-d H:i:s' }}">
+                data-fecha="{{ Orden.Fecha|date:'Y-m-d\\TH:i:s' }}">
           </span>
         {% else %}
           <h6 style="color: #555555">{{ Orden.Fecha|date:"j \\d\\e F \\d\\e Y \\a \\l\\a\\s g:i A" }}</h6>
@@ -462,7 +462,14 @@
     btnFacturar.disabled = true;
   }
 
+  let timerIntervalId = null;
+
   function iniciarTimers() {
+    if (timerIntervalId) {
+      clearInterval(timerIntervalId);
+      timerIntervalId = null;
+    }
+
     const timers = document.querySelectorAll(".timer");
 
     function formatearTiempo(diffMs) {
@@ -489,7 +496,7 @@
         timer.textContent = formatearTiempo(diff);
 
         // Quitar clases anteriores
-        timer.classList.remove("verde", "naranja", "rojo");
+        timer.classList.remove("naranja", "rojo");
 
         const minutos = Math.floor(diff / 60000);
 
@@ -502,11 +509,29 @@
       });
     }
 
-    actualizarTimers();  
-    setInterval(actualizarTimers, 1000);
+    actualizarTimers();
+    timerIntervalId = setInterval(actualizarTimers, 1000);
   }
 
-  document.addEventListener("DOMContentLoaded", iniciarTimers);
+  document.addEventListener("DOMContentLoaded", function () {
+    const select = document.getElementById("listaEstadoOrdenes");
+
+    // 1. Recuperar valor guardado
+    const valorGuardado = localStorage.getItem("estadoOrdenSeleccionado");
+
+    if (valorGuardado) {
+        select.value = valorGuardado;
+        filtrarOrdenes(valorGuardado); // 2. Ejecutar automáticamente
+    } else {
+        // Si no hay nada guardado, usar el valor por defecto del select
+        filtrarOrdenes(select.value);
+    }
+
+    // 3. Guardar cada vez que cambie
+    select.addEventListener("change", function () {
+        localStorage.setItem("estadoOrdenSeleccionado", this.value);
+    });
+  });
 
   function MP(valor) {
     ReiniciarCampos();
@@ -622,18 +647,23 @@
   }
 
   function filtrarOrdenes(cadena) {
-    let request = new XMLHttpRequest();
-    // let data = new FormData();
+    const request = new XMLHttpRequest();
 
-    // data.append('InputBuscarPlatillo', cadena);
-    request.open("GET", "/FiltrarOrdenes?SelectFiltrarOrdenes=" + cadena);
+    request.open("GET", "/FiltrarOrdenes?SelectFiltrarOrdenes=" + encodeURIComponent(cadena));
     request.send();
-    request.onreadystatechange = function () {
-      if (this.readyState == 4) {
-        let contenedor = document.getElementById("listaOrdenesPoFoC");
-        contenedor.innerHTML = this.responseText;
 
-        console.log("SI ENTRÓ A LA FUNCIÓN ONREADY");
+    request.onreadystatechange = function () {
+      if (this.readyState === 4) {
+        if (this.status === 200) {
+          const contenedor = document.getElementById("listaOrdenesPoFoC");
+          contenedor.innerHTML = this.responseText;
+
+          // <<-- Aquí: el DOM ya fue actualizado, ahora sí iniciar timers
+          iniciarTimers();
+          console.log("Contenedor actualizado y timers iniciados");
+        } else {
+          console.error("Error al cargar órdenes:", this.status);
+        }
       }
     };
   }
@@ -656,14 +686,14 @@
       if (respuesta.status === "ok") {
         // Mostrar éxito y recargar automáticamente después de 3 segundos
         await Swal.fire({
-          title: `¡Orden #${idOrden} actualizada correctamente!`,
-          text: respuesta.message,
+          title: respuesta.message,
           icon: "success",
-          showConfirmButton: false,
+          confirmButtonColor: "#ff6464",
           timer: 2300
         });
 
-        filtrarOrdenes(respuesta.old_type);
+        var estadoSeleccionado = document.getElementById("listaEstadoOrdenes").value;
+        filtrarOrdenes(estadoSeleccionado);
       } else {
         await Swal.fire({
           title: "Error",
@@ -674,6 +704,8 @@
       }
     } 
     catch (error) {
+      console.log(error);
+
       await Swal.fire({
         title: "Error",
         text: error,

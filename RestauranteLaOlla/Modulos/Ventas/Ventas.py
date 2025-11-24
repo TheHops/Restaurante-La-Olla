@@ -366,7 +366,7 @@ def CambiarAEnPreparacion(request):
 
             return JsonResponse({
                 "status": "ok",
-                "message": "La orden ya se encuentra en preparación",
+                "message": f"La orden #{orden.Id} ahora está en preparación",
                 "old_type": "1",
                 "new_type": "4"
             }, status=200)
@@ -390,7 +390,7 @@ def CambiarAPreparado(request):
             if orden.Estado != "4":
                 return JsonResponse({
                     "status": "error",
-                    "message": "La orden no está en preparación"
+                    "message": f"La orden #{orden.Id} no está en preparación"
                 }, status=400)
 
             orden.Estado = "3"
@@ -398,7 +398,7 @@ def CambiarAPreparado(request):
 
             return JsonResponse({
                 "status": "ok",
-                "message": "La orden ya está preparada",
+                "message": f"La orden #{orden.Id} está preparada",
                 "old_type": "4",
                 "new_type": "3"
             }, status=200)
