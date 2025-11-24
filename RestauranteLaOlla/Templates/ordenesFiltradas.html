@@ -34,7 +34,7 @@
 
       {% if Orden.Estado == "1" %}
         <span class="timer" style="color: #555555" id="timer-{{ Orden.Id }}" 
-              data-fecha="{{ Orden.Fecha|date:'Y-m-d H:i:s' }}">
+              data-fecha="{{ Orden.Fecha|date:'Y-m-d\\TH:i:s' }}">
         </span>
       {% else %}
         <h6 style="color: #555555">{{ Orden.Fecha|date:"j \\d\\e F \\d\\e Y \\a \\l\\a\\s g:i A" }}</h6>
