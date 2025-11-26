@@ -103,7 +103,7 @@
 
     border-radius: 50%;
 
-    background-color: hsl(39, 100%, 55%);
+    background-color: hsl(39, 100%, 100%);
     display: inline-block;
     /* transform: translateY(-4px); */
     margin-left: 6px;

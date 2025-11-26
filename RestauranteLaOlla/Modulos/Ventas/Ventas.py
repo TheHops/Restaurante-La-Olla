@@ -2,6 +2,7 @@ import json
 import traceback
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
+from django.utils import timezone
 
 from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Platillo, MesasPorOrden, TipoPlatillo
 from django.db.models import Q, Prefetch
@@ -283,6 +284,8 @@ def CancelarOrden(request):
         # Actualizar estado y motivo
         orden.Estado = "2"  # Cancelada / Anulada
         orden.Motivo = motivo
+        orden.UltimaModificacion = timezone.now()
+        
         orden.save()
 
         print("====== ORDEN ANULADA ======")
@@ -323,6 +326,8 @@ def FacturarOrden(request):
 
                 # Se obtiene la orden que se va a Ordenr
                 orden = Orden.objects.get(Id=idOrden)
+                orden.UltimaModificacion = timezone.now()
+                
                 print(orden)
 
                 orden.Monto = monto
@@ -362,6 +367,8 @@ def CambiarAEnPreparacion(request):
                 }, status=400)
 
             orden.Estado = "4"
+            orden.UltimaModificacion = timezone.now()
+            
             orden.save()
 
             return JsonResponse({
@@ -394,6 +401,8 @@ def CambiarAPreparado(request):
                 }, status=400)
 
             orden.Estado = "3"
+            orden.UltimaModificacion = timezone.now()
+            
             orden.save()
 
             return JsonResponse({

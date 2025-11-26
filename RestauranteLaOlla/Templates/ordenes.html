@@ -57,11 +57,15 @@
         </h5>
 
         {% if Orden.Estado == "1" %}
-          <span class="timer" style="color: #555555" id="timer-{{ Orden.Id }}" 
+          <span class="timer" style="color: #555555" id="timer-{{ Orden.Id }}-{{Orden.Estado}}" data-estado="{{ Orden.Estado }}"
                 data-fecha="{{ Orden.Fecha|date:'Y-m-d\\TH:i:s' }}">
           </span>
+        {% elif Orden.Estado == "4" %}
+          <span class="timer" style="color: #555555" id="timer-{{ Orden.Id }}" data-estado="{{ Orden.Estado }}" 
+                data-fecha="{{ Orden.UltimaModificacion|date:'Y-m-d\\TH:i:s' }}">
+          </span>
         {% else %}
-          <h6 style="color: #555555">{{ Orden.Fecha|date:"j \\d\\e F \\d\\e Y \\a \\l\\a\\s g:i A" }}</h6>
+          <h6 style="color: #555555">{{ Orden.UltimaModificacion|date:"j \\d\\e F \\d\\e Y \\a \\l\\a\\s g:i A" }}</h6>
         {% endif %}
       </div>
       <div class="seccionDerecha">
@@ -472,12 +476,10 @@
 
     const timers = document.querySelectorAll(".timer");
 
-    function formatearTiempo(diffMs) {
+    function formatearTiempo(diffMs, texto) {
         const horas = Math.floor(diffMs / 3600000);
         const minutos = Math.floor((diffMs % 3600000) / 60000);
         const segundos = Math.floor((diffMs % 60000) / 1000);
-
-        let texto = "Creada hace ";
 
         if (horas > 0) texto += `${horas}h `;
         texto += `${minutos}m ${segundos}s`;
@@ -492,8 +494,16 @@
         const fecha = new Date(timer.dataset.fecha);
         const diff = ahora - fecha;
 
+        let estado = timer.dataset.estado;
+
+        let texto = "";
+
+        if (estado == "1") texto = "Creada hace ";
+        else if (estado == "4") texto = "Preparando hace ";
+        else texto = "";
+
         // Formato del texto
-        timer.textContent = formatearTiempo(diff);
+        timer.textContent = formatearTiempo(diff, texto);
 
         // Quitar clases anteriores
         timer.classList.remove("naranja", "rojo");
