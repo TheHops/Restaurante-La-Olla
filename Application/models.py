@@ -127,6 +127,10 @@ class Orden(models.Model):
     
     Fecha = models.DateTimeField(db_column='fecha', auto_now_add=True)
     
+    UltimaModificacion = models.DateTimeField(db_column='ultima_modificacion', auto_now_add=True)
+    
+    FueEditada = models.BooleanField(db_column="fue_editada", null=True, default=False)
+    
     METODOPAGO = [("1", "Efectivo"), ("2", "Tarjeta"), ("3", "Transferencia")]
     MetodoPago = models.CharField(max_length=10, choices=METODOPAGO, default="1", db_column='metodo_pago')
 
