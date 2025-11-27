@@ -21,7 +21,7 @@
                 </div>
                 
                 <!-- Formulario de log in-->
-                <form action="{% url 'loginUser' %}" class="form" id="login">
+                <form action="{% url 'loginUser' %}" class="form" id="login" method="POST">
                     {% csrf_token %}
                     <!-- Caja de texto 1 (Nombre de usuario) -->
                     <div class="form_in">
