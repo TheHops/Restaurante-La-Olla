@@ -4,7 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
 
-from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Platillo, MesasPorOrden, TipoPlatillo
+from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Platillo, MesasPorOrden, TipoPlatillo, Cargo
 from django.db.models import Q, Prefetch
 
 # region VENTAS
@@ -169,7 +169,7 @@ def OrdenesPendientes(request):
             ordenes =  Orden.objects.select_related('IdUsuario').filter(Q(Estado="1") & Q(EsActivo="1")).order_by('-Id')
             
             platillos = Platillo.objects.all().values()
-
+            
             # Obtener cargo del usuario en sesión
             cargo_usuario = request.user.IdCargo.Nombre if request.user.IdCargo else None
 

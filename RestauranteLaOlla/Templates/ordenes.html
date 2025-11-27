@@ -9,17 +9,29 @@
     </button>
   </a>
   <select name="" id="listaEstadoOrdenes" onchange="filtrarOrdenes(this.value)">
-    <option value="1">Pendientes</option>
-    <option value="4">En preparación</option>
-    <option value="3">Preparadas</option>
-    <option value="0">Registradas</option>
-    <option value="2">Anuladas</option>
-    <option value="5">Todas</option>
+    {% if CargoUsuario != "Cajero" %}
+      <option value="1">Pendientes</option>
+      <option value="4">En preparación</option>
+    {% endif %}
+
+    {% if CargoUsuario == "Cajero" or CargoUsuario == "Administrador" %}
+      <option value="3">Preparadas</option>
+      <option value="0">Registradas</option>
+      <option value="2">Anuladas</option>
+    {% endif %}
+
+    {% if CargoUsuario == "Administrador" %}
+      <option value="5">Todas</option>
+    {% endif %}
 
     <!-- TODO: Filtrar solo para cocinero y mesero -->
-    <option value="6">Ambas</option>
+    {% if CargoUsuario == "Mesero" or CargoUsuario == "Cocinero" %}
+      <option value="6">Ambas</option>
+    {% endif %}
   </select>
 </div>
+
+<input id="CargoUser" type="text" value="{{CargoUsuario}}" style="display: none;">
 
 <div id="listaOrdenesPoFoC">
   {% csrf_token %} 
@@ -523,11 +535,41 @@
     timerIntervalId = setInterval(actualizarTimers, 1000);
   }
 
+  const opcionesDisponibles = {
+    Administrador: ["0", "1", "2", "3", "4", "5"],
+    Mesero: ["1", "4", "6"],
+    Cocinero: ["1", "4", "6"],
+    Cajero: ["0", "2", "3"]
+  };
+
+  const valoresPorDefecto = {
+    Administrador: "5",
+    Mesero: "6",
+    Cocinero: "6",
+    Cajero: "3"
+  };
+
+  function validarFiltroPorCargo(cargo, valorFiltro)
+  {
+    const opciones = opcionesDisponibles[cargo];
+    const valorDefault = valoresPorDefecto[cargo];
+
+    if (opciones.includes(valorFiltro)) {
+      return valorFiltro;
+    }
+
+    return valorDefault;
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     const select = document.getElementById("listaEstadoOrdenes");
 
     // 1. Recuperar valor guardado
-    const valorGuardado = localStorage.getItem("estadoOrdenSeleccionado");
+    let valorGuardado = localStorage.getItem("estadoOrdenSeleccionado");
+
+    let cargo = document.getElementById("CargoUser").value;
+
+    valorGuardado = validarFiltroPorCargo(cargo, valorGuardado);
 
     if (valorGuardado) {
         select.value = valorGuardado;

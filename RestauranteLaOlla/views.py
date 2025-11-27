@@ -20,28 +20,20 @@ def index(request):
 
 def loginUser(request):
 
-    # Se verifica si el método fué de tipo POST
-    if request.method == "GET":
+    if request.method == "POST":
 
-        # Se obtienen los valores de los campos
-        user_name = request.GET.get("txtUsername")
-        pass_word = request.GET.get("txtPassword")
+        user_name = request.POST.get("txtUsername")
+        pass_word = request.POST.get("txtPassword")
 
-        print("USER -----> " + str(user_name))
-        print("PASSWORD --> " + str(pass_word))
-
-        # Se verifica si el usuario existe
         user = authenticate(request, username=user_name, password=pass_word)
-        # Si no existe devolcerá un None
-        
-        print(user)
 
-        # Si el usuario existe se inIcia sesión
         if user is not None and (user.EsActivo == '1' or user.EsActivo.lower() == 'inactivo'):
             login(request, user=user)
             return redirect("/")
 
-    return render(request, 'login.html')
+        return redirect("loginUser")
+
+    return render(request, "login.html")
 
 def logoutUser(request):
     logout(request)

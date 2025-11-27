@@ -107,6 +107,8 @@ class Orden(models.Model):
     
     IdUsuario = models.ForeignKey(Usuario, models.DO_NOTHING, db_column='id_usuario')
     
+    IdAreaDeMesa = models.ForeignKey(AreaMesa, models.DO_NOTHING, db_column='id_area_de_mesa', null=True, blank=True)
+    
     AreaDeMesa = models.CharField(max_length=30, null=True, blank=True, db_column='area_de_mesa')
     
     Descripcion = models.CharField(max_length=100, null=True, blank=True, db_column='descripcion')
