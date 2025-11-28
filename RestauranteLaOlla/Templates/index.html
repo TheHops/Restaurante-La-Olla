@@ -81,19 +81,27 @@
 
         <!-- Se encontrarán todas las opciones para este apartado -->
         <ul class="listaOpciones">
-          <li class="opcion"><a href="{% url 'index' %}">Inicio</a></li>
+          {% if request.user.IdCargo.Nombre == "Administrador" or request.user.IdCargo.Nombre == "Cajero" %}
+            <li class="opcion"><a href="{% url 'index' %}">Inicio</a></li>
+          {% endif %}
 
-          {% if request.user.is_staff %}
-          <li class="opcion"><a href="{% url 'inventario' %}">Menú</a></li>
+          {% if request.user.IdCargo.Nombre == "Administrador" %}
+            <li class="opcion"><a href="{% url 'inventario' %}">Menú</a></li>
           {% endif %}
 
           <!-- <li class="opcion"><a href="">Compra</a></li> -->
 
-          <li class="opcion"><a href="{% url 'venta' %}">Ordenes</a></li>
+          {% if request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Administrador" %}
+            <li class="opcion"><a href="{% url 'venta' %}">Ordenes</a></li>
+          {% else %}
+            <li class="opcion"><a href="{% url 'OrdenesPendientes' %}">Ordenes</a></li>
+          {% endif %}
 
-          {% if request.user.is_staff %}
+          {% if request.user.IdCargo.Nombre == "Administrador" %}
           <li class="opcion"><a href="{% url 'personal' %}">Personal</a></li>
           {% endif %}
+
+          <li class="opcion"><a href="">Mi perfil</a></li>
           <!-- <li class="opcion"><a href="">Configuraciones</a></li> -->
         </ul>
 
