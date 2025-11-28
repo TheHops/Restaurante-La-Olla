@@ -11,7 +11,11 @@ import traceback
 def index(request):
     # Direccion que me llevará al login por defecto
     if request.user.is_authenticated:
-        print("SI ENTRO")
+        if request.user.IdCargo.Nombre == "Cocinero":
+            return redirect("OrdenesPendientes/")
+        elif request.user.IdCargo.Nombre == "Mesero":
+            return redirect("venta/")
+        
         # Si el usuario ya inició sesión entonces entrará directamente al sistema sin necesidad de volver a iniciar sesión
         return render(request, "inicio.html")
     else:
@@ -101,11 +105,40 @@ def GraficarOrdenes(request):
 #endregion GraficarOrdenes
 
 #region FiltrarOrdenes
+
+OPCIONES_DISPONIBLES = {
+    "Administrador": ["0", "1", "2", "3", "4", "5"],
+    "Mesero": ["1", "4", "6"],
+    "Cocinero": ["1", "4", "6"],
+    "Cajero": ["0", "2", "3"]
+}
+
+VALORES_POR_DEFECTO = {
+    "Administrador": "5",
+    "Mesero": "6",
+    "Cocinero": "6",
+    "Cajero": "3"
+}
+
+def validar_filtro_por_cargo(cargo, valor_filtro):
+    opciones = OPCIONES_DISPONIBLES.get(cargo, [])
+    default = VALORES_POR_DEFECTO.get(cargo, None)
+
+    if valor_filtro in opciones:
+        return valor_filtro
+
+    return default
+
 def FiltrarOrdenes(request):
     if request.user.is_authenticated:
         try:
             if request.method == "GET":
                 EstadoOrden = request.GET.get("SelectFiltrarOrdenes")
+                
+                cargo_usuario = request.user.IdCargo.Nombre
+
+                # Validación segura del filtro
+                EstadoOrden = validar_filtro_por_cargo(cargo_usuario, EstadoOrden)
 
                 if EstadoOrden == "5":
                     OrdenesFiltradas = Orden.objects.select_related('IdUsuario').filter(EsActivo="1").order_by(Case(When(Estado='1', then=0), When(Estado='4', then=1), When(Estado='3', then=2), When(Estado='0', then=3), When(Estado='2', then=4)), '-Id')
@@ -123,7 +156,8 @@ def FiltrarOrdenes(request):
                 contexto = {
                     "Ordenes": OrdenesFiltradas,
                     # "MetodoPago": metodoPago,
-                    "Platillos": platillos
+                    "Platillos": platillos,
+                    "CargoUsuario": cargo_usuario
                 }
 
                 # ordenes = Orden.objects.filter(activo="1").order_by(Case(When(estado='1', then=0), When(estado='0', then=1), When(estado='2', then=2)), '-id').values()

@@ -3,11 +3,14 @@
 {% load static %}
 
 <div class="EncabezadoOrdenesList">
-  <a href="{% url 'venta' %}">
-    <button id="btnVolver">
-      <i class="fa-solid fa-arrow-left"></i> Volver
-    </button>
-  </a>
+  {% if request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Administrador" %}
+    <a href="{% url 'venta' %}">
+      <button id="btnVolver">
+        <i class="fa-solid fa-arrow-left"></i> Volver
+      </button>
+    </a>
+  {% endif %}
+
   <select name="" id="listaEstadoOrdenes" onchange="filtrarOrdenes(this.value)">
     {% if CargoUsuario != "Cajero" %}
       <option value="1">Pendientes</option>
@@ -84,36 +87,44 @@
         <!-- Pendiente -->
         {% if Orden.Estado == "1" %}
         
-          <!-- Anular orden -->
-          <button
-            class="btnCancelarOrden"
-            onclick="CancelarOrden('{{Orden.Id}}')"
-          >
-            <i class="fa-solid fa-ban"></i> Anular
-          </button>
+          {% if CargoUsuario == "Mesero" or CargoUsuario == "Administrador" %}
+            <!-- Anular orden -->
+            <button
+              class="btnCancelarOrden"
+              onclick="CancelarOrden('{{Orden.Id}}')"
+            >
+              <i class="fa-solid fa-ban"></i> Anular
+            </button>
 
-          <!-- Editar la orden -->
-          <button>Editar</button>
+            <!-- Editar la orden -->
+            <button>Editar</button>
+          {% endif %}
 
-          <!-- Cambiar el estado de la orden a 'En preparación' -->
-          <button onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAEnPreparacion' %}', 'Cambiando a En preparación')">Empezar preparación</button>
+          {% if CargoUsuario == "Cocinero" or CargoUsuario == "Administrador" %}
+            <!-- Cambiar el estado de la orden a 'En preparación' -->
+            <button onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAEnPreparacion' %}', 'Cambiando a En preparación')">Empezar preparación</button>
+          {% endif %}
 
         <!-- En preparación -->
         {% elif Orden.Estado == "4" %}
+          
+          {% if CargoUsuario == "Mesero" or CargoUsuario == "Administrador" %}
+            <!-- Anular orden -->
+            <button
+              class="btnCancelarOrden"
+              onclick="CancelarOrden('{{Orden.Id}}')"
+            >
+              <i class="fa-solid fa-ban"></i> Anular
+            </button>
 
-          <!-- Anular orden -->
-          <button
-            class="btnCancelarOrden"
-            onclick="CancelarOrden('{{Orden.Id}}')"
-          >
-            <i class="fa-solid fa-ban"></i> Anular
-          </button>
+            <!-- Editar la orden -->
+            <button>Editar</button>
+          {% endif %}
 
-          <!-- Editar la orden -->
-          <button>Editar</button>
-
-          <!-- Cambiar el estado de la orden a 'Preparada' -->
-          <button onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAPreparado' %}', 'Cambiando a Preparada')">Confirmar preparado</button>
+          {% if CargoUsuario == "Cocinero" or CargoUsuario == "Administrador" %}
+            <!-- Cambiar el estado de la orden a 'Preparada' -->
+            <button onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAPreparado' %}', 'Cambiando a Preparada')">Confirmar preparado</button>
+          {% endif %}
 
         <!-- Preparado -->
         {% elif Orden.Estado == "3" %}
