@@ -489,6 +489,31 @@
     btnFacturar.disabled = true;
   }
 
+  let intervaloPolling = null;
+
+  function iniciarPolling() {
+    // Evitar múltiples timers
+    if (intervaloPolling !== null) {
+        clearInterval(intervaloPolling);
+    }
+
+    // Cada 4 segundos se consulta nuevamente
+    intervaloPolling = setInterval(() => {
+        filtrarOrdenes(obtenerValorOrden());
+    }, 7000);
+  }
+
+  function pausarPolling() {
+    if (intervaloPolling !== null) {
+        clearInterval(intervaloPolling);
+        intervaloPolling = null;
+    }
+  }
+
+  function reanudarPolling() {
+    iniciarPolling();
+  }
+
   let timerIntervalId = null;
 
   function iniciarTimers() {
@@ -572,15 +597,22 @@
     return valorDefault;
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const select = document.getElementById("listaEstadoOrdenes");
-
-    // 1. Recuperar valor guardado
+  function obtenerValorOrden ()
+  {
     let valorGuardado = localStorage.getItem("estadoOrdenSeleccionado");
 
     let cargo = document.getElementById("CargoUser").value;
 
     valorGuardado = validarFiltroPorCargo(cargo, valorGuardado);
+
+    return valorGuardado
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const select = document.getElementById("listaEstadoOrdenes");
+
+    // 1. Recuperar valor guardado
+    let valorGuardado = obtenerValorOrden()
 
     if (valorGuardado) {
         select.value = valorGuardado;
@@ -594,6 +626,8 @@
     select.addEventListener("change", function () {
         localStorage.setItem("estadoOrdenSeleccionado", this.value);
     });
+
+    iniciarPolling();
   });
 
   function MP(valor) {
