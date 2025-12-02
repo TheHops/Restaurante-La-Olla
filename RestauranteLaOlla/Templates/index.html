@@ -190,36 +190,33 @@
         false
       );
 
-      /*
-      function aparecerCapa() {
-        var capa = document.querySelector(".modal-overlay");
-
-        // Hacemos aparecer la capa y las opciones
-        capa.style.display = "initial";
-
-        capa.classList.remove("animate__animated", "animate__fadeOut");
-
-        // Se establece la duración de la animación
-        capa.style.setProperty("--animate-duration", "0.3s");
-
-        // Se asigna la clase de animación a la capa
-        capa.classList.add("animate__animated", "animate__fadeIn");
+      async function obtenerCargoUsuario() {
+        try {
+          const response = await fetch("/cargo/consultar", {
+              method: "GET",
+              headers: {
+                  "X-Requested-With": "XMLHttpRequest"
+              }
+          });
+  
+          if (!response.ok) {
+              throw new Error("Error al consultar el cargo (HTTP).");
+          }
+  
+          const data = await response.json();
+  
+          if (data.status !== "ok") {
+              throw new Error("Error al consultar el cargo (JSON).");
+          }
+  
+          return data.CargoUsuario;
+  
+        } catch (error) {
+            console.error("Error al obtener el cargo:", error);
+            return null;
+        }
       }
 
-      function desaparecerCapa() {
-        var capa = document.querySelector(".modal-overlay");
-
-        // Lo mismo para la capa
-        capa.classList.remove("animate__animated", "animate__fadeIn");
-        capa.style.setProperty("--animate-duration", "0.3s");
-        capa.classList.add("animate__animated", "animate__fadeOut");
-
-        // Hacemos aparecer la capa
-        setTimeout(() => {
-          capa.style.display = "none";
-        }, 300);
-      }
-      */
     </script>
 
     <script>
