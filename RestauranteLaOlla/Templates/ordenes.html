@@ -34,8 +34,6 @@
   </select>
 </div>
 
-<input id="CargoUser" type="text" value="{{CargoUsuario}}" style="display: none;">
-
 <div id="listaOrdenesPoFoC">
   {% csrf_token %} 
   {% for Orden in Ordenes %}
@@ -498,8 +496,9 @@
     }
 
     // Cada 4 segundos se consulta nuevamente
-    intervaloPolling = setInterval(() => {
-        filtrarOrdenes(obtenerValorOrden());
+    intervaloPolling = setInterval(async () => {
+      let valorOrden = await obtenerValorOrden();
+      filtrarOrdenes(valorOrden);
     }, 7000);
   }
 
@@ -597,37 +596,32 @@
     return valorDefault;
   }
 
-  function obtenerValorOrden ()
-  {
+  async function obtenerValorOrden() {
     let valorGuardado = localStorage.getItem("estadoOrdenSeleccionado");
-
-    let cargo = document.getElementById("CargoUser").value;
+    const cargo = await obtenerCargoUsuario();
 
     valorGuardado = validarFiltroPorCargo(cargo, valorGuardado);
-
-    return valorGuardado
+    return valorGuardado;
   }
 
   document.addEventListener("DOMContentLoaded", function () {
     const select = document.getElementById("listaEstadoOrdenes");
 
-    // 1. Recuperar valor guardado
-    let valorGuardado = obtenerValorOrden()
+    obtenerValorOrden().then(valorGuardado => {
+      if (valorGuardado) {
+          select.value = valorGuardado;
+          filtrarOrdenes(valorGuardado);
+      } else {
+          filtrarOrdenes(select.value);
+      }
 
-    if (valorGuardado) {
-        select.value = valorGuardado;
-        filtrarOrdenes(valorGuardado); // 2. Ejecutar automáticamente
-    } else {
-        // Si no hay nada guardado, usar el valor por defecto del select
-        filtrarOrdenes(select.value);
-    }
+      // Guardar cambios
+      select.addEventListener("change", function () {
+          localStorage.setItem("estadoOrdenSeleccionado", this.value);
+      });
 
-    // 3. Guardar cada vez que cambie
-    select.addEventListener("change", function () {
-        localStorage.setItem("estadoOrdenSeleccionado", this.value);
+      iniciarPolling();
     });
-
-    iniciarPolling();
   });
 
   function MP(valor) {

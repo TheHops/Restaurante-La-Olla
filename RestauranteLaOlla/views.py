@@ -136,6 +136,8 @@ def FiltrarOrdenes(request):
                 EstadoOrden = request.GET.get("SelectFiltrarOrdenes")
                 
                 cargo_usuario = request.user.IdCargo.Nombre
+                
+                validar_cargo(request, cargo_usuario)
 
                 # Validación segura del filtro
                 EstadoOrden = validar_filtro_por_cargo(cargo_usuario, EstadoOrden)
@@ -176,3 +178,40 @@ def FiltrarOrdenes(request):
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
 #endregion FiltrarOrdenes
+
+#region Cargo
+
+def consultar_cargo(request):
+    usuario = request.user
+
+    if not usuario.is_authenticated:
+        return render(request, "login.html")
+
+    if usuario.IdCargo is None:
+        return render(request, "login.html")
+
+    return JsonResponse({"status": "ok", "CargoUsuario": usuario.IdCargo.Nombre})
+
+def validar_cargo(request, cargo_recibido):
+
+    # Verificar autenticación
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+
+    cargo_usuario = request.user.IdCargo.Nombre if request.user.IdCargo else ""
+
+    # Comparación estricta
+    if cargo_usuario != cargo_recibido:
+        return JsonResponse({
+            "status": "error",
+            "message": "Cargo inválido o manipulado desde el cliente."
+        }, status=403)
+
+    # Si coincide → todo bien
+    return None
+
+#endregion Cargo
+
+
+
+
