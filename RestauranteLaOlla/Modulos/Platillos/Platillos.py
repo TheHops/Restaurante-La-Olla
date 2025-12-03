@@ -136,7 +136,6 @@ def Agregar_Platillo(request):
             nombre = request.POST.get("Nombre")
             precio = request.POST.get("Precio")
             tipo_id = request.POST.get("tipoplatillo")
-            estado = request.POST.get("estado")
             descripcion = request.POST.get("Descripcion")
             imagen = request.FILES.get("Imagen")
 
@@ -159,7 +158,7 @@ def Agregar_Platillo(request):
                 Nombre=nombre,
                 IdTipoPlatillo=tipo,
                 Precio=precio,
-                EsActivo=estado,
+                EsActivo="1",
                 Descripcion=descripcion,
             )
 

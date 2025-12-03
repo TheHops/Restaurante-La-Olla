@@ -227,6 +227,36 @@
 
     icono.classList.toggle("desplegado");
     detallitos.classList.toggle("desplegado");
+
+    guardarEstadoDespliegue(idOrden);
+  }
+
+  function guardarEstadoDespliegue(idOrden) {
+    let estados = JSON.parse(localStorage.getItem("ordenesDesplegadas")) || [];
+
+    const indice = estados.indexOf(idOrden);
+
+    if (document.getElementById("idDetalleOrden" + idOrden).classList.contains("desplegado")) {
+        if (indice === -1) estados.push(idOrden);
+    } else {
+        if (indice !== -1) estados.splice(indice, 1);
+    }
+
+    localStorage.setItem("ordenesDesplegadas", JSON.stringify(estados));
+  }
+
+  function restaurarDespliegues() {
+    const estados = JSON.parse(localStorage.getItem("ordenesDesplegadas")) || [];
+
+    estados.forEach(idOrden => {
+        const detalle = document.getElementById("idDetalleOrden" + idOrden);
+        const icono = document.getElementById("iconoOrden" + idOrden);
+
+        if (detalle && icono) {
+            detalle.classList.add("desplegado");
+            icono.classList.add("desplegado");
+        }
+    });
   }
 </script>
 
@@ -748,6 +778,8 @@
         if (this.status === 200) {
           const contenedor = document.getElementById("listaOrdenesPoFoC");
           contenedor.innerHTML = this.responseText;
+
+          restaurarDespliegues();
 
           // <<-- Aquí: el DOM ya fue actualizado, ahora sí iniciar timers
           iniciarTimers();
