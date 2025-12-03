@@ -333,6 +333,13 @@ function ModificarPersonal() {
 
     if (!ValidacionCamposVacios(2)) return;
 
+    Swal.fire({
+        title: "Procesando...",
+        text: "Por favor espere",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
     $.ajax({
         url: "/ModificarPersonal/",
         type: "POST",

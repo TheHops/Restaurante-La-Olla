@@ -697,7 +697,11 @@
                 confirmButtonText: 'Crear orden',
                 confirmButtonColor: '#ff6464',
                 icon: 'question',
-                iconColor: '#ff964e'
+                iconColor: '#ff964e',
+                didOpen: () => {
+                    const input = Swal.getInput();
+                    if (input) input.blur();   // 👈 Quita el focus
+                }
             });
         
             if (isConfirmed) {

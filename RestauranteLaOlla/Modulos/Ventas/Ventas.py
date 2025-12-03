@@ -4,8 +4,8 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
 
-from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Platillo, MesasPorOrden, TipoPlatillo, Cargo
-from django.db.models import Q, Prefetch
+from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Platillo, MesasPorOrden, TipoPlatillo
+from django.db.models import Q, Prefetch, Count
 
 # region VENTAS
 def venta(request):
@@ -16,11 +16,16 @@ def venta(request):
 
             AreaM = AreaMesa.objects.filter(EsActivo="1").values()
             
-            tipos = TipoPlatillo.objects.filter(EsActivo="1") \
-            .prefetch_related(
-                Prefetch(
-                    'Platillos',
-                    queryset=Platillo.objects.filter(EsActivo="1").order_by('Nombre')
+            tipos = (
+                TipoPlatillo.objects
+                .filter(EsActivo="1")
+                .annotate(cantidad_platillos=Count('Platillos', filter=Q(Platillos__EsActivo="1")))
+                .filter(cantidad_platillos__gt=0)
+                .prefetch_related(
+                    Prefetch(
+                        'Platillos',
+                        queryset=Platillo.objects.filter(EsActivo="1").order_by('Nombre')
+                    )
                 )
             )
 
