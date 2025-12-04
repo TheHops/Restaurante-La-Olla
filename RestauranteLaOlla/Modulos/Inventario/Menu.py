@@ -3,7 +3,9 @@ from django.shortcuts import render
 import traceback
 from django.http import JsonResponse
 
-#region INVENTARIO
+#region Inventario
+
+#region Platillos
 
 def inventario_platillos(request):
     if request.user.is_authenticated:
@@ -27,6 +29,32 @@ def inventario_platillos(request):
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
+    
+def filtrar_platillos(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+
+    ver_eliminados = request.GET.get("verEliminados") == "1"
+
+    if ver_eliminados:
+        platillos = Platillo.objects.select_related("IdTipoPlatillo").order_by("Id")
+    else:
+        platillos = Platillo.objects.select_related("IdTipoPlatillo").filter(EsActivo="1").order_by("Id")
+        
+    print("####################################")
+    print(ver_eliminados)
+    print("####################################")
+
+    contexto = {
+        "Platillos": platillos,
+        "VerEliminados": "1" if ver_eliminados else "0"
+    }
+
+    return render(request, "platillosFiltrados.html", contexto)
+
+#endregion Platillos
+
+#region TipoPlatillo
 
 def inventario_tipoplatillo(request):
     if request.user.is_authenticated:
@@ -43,4 +71,7 @@ def inventario_tipoplatillo(request):
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
-#endregion
+    
+#endregion TipoPlatillo
+
+#endregion Inventario

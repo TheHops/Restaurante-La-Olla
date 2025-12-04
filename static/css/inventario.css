@@ -1,7 +1,12 @@
 #encabezado_inventario {
     display: flex;
+    justify-content: space-between;
     margin-bottom: 25px;
     padding: 25px 40px 0px 40px;
+}
+
+#contenedorDerechoEncabezadoInventario {
+    display: flex;
 }
 
 .btn_confirmation_mi_color {
