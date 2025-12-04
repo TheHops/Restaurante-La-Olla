@@ -5,29 +5,39 @@
 
 
 <div id="encabezado_inventario">
-    <button id="agregar" data-toggle="modal" data-target="#AgregarPlatillo">
-            <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px; margin-right: 10px;" title="Añadir platillo">Agregar consumo
-       
-    </button>
-
-    <!-- <input type="text" id="buscar" placeholder="Buscar"> -->
-
-    <select name="" id="listaInventario">
-        <option value="">Consumos</option>
-        <option value="{% url 'inventario_tipoplatillo' %}">Tipos de consumo</option>
-    </select>
-
-    <div class="exportar">
-        <button class="excel">
-            <a href="{% url 'ExportarPlatillo' %}">
-                <img src="{% static 'img/Export_excel_2.png' %}" alt="Exportar en excel" title="Exportar en excel">
-            </a>
+    <div id="contenedorDerechoEncabezadoInventario">
+        <button id="agregar" data-toggle="modal" data-target="#AgregarPlatillo">
+                <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px; margin-right: 10px;" title="Añadir platillo">Agregar consumo
+           
         </button>
-        <button class="pdf">
-            <a href="{% url 'CreacionPlatillos_PDF' %}">
-                <img src="{% static 'img/Export_pdf_2.png' %}" alt="Exportar en pdf" title="Exportar en pdf">
-            <a>
-        </button> 
+    
+        <!-- <input type="text" id="buscar" placeholder="Buscar"> -->
+    
+        <select name="" id="listaInventario">
+            <option value="">Consumos</option>
+            <option value="{% url 'inventario_tipoplatillo' %}">Tipos de consumo</option>
+        </select>
+    
+        <div class="exportar">
+            <button class="excel">
+                <a href="{% url 'ExportarPlatillo' %}">
+                    <img src="{% static 'img/Export_excel_2.png' %}" alt="Exportar en excel" title="Exportar en excel">
+                </a>
+            </button>
+            <button class="pdf">
+                <a href="{% url 'CreacionPlatillos_PDF' %}">
+                    <img src="{% static 'img/Export_pdf_2.png' %}" alt="Exportar en pdf" title="Exportar en pdf">
+                <a>
+            </button> 
+        </div>
+    </div>
+
+    <div id="contenedorIzquierdoEncabezadoInventario">
+        <!-- Botón para mostrar u ocultar los registros inactivos -->
+        <div class="btnVerInactivos">
+            <label for="checkVerConsumosInactivos">Ver eliminados</label>
+            <input type="checkbox" id="checkVerConsumosInactivos" class="checkVerInactivos">
+        </div>
     </div>
 </div>
 
@@ -41,7 +51,7 @@
                 <th>Consumo</th>
                 <th>Tipo de consumo</th>
                 <th>Precio</th>
-                <th style="text-align: center">Estado</th>
+                <th id="estadoPlatilloColumna" style="text-align: center">Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -55,7 +65,7 @@
                 <td>C${{platillo.Precio}}</td>
 
                 {% comment %} TODO: Agregar un ícono en lugar de un texto {% endcomment %}
-                <td style="text-align: center;">
+                <td class="estadoPlatilloFila" style="text-align: center;">
                     {% if platillo.EsActivo == "1" %} 
                     &#9989;
                     {% else %}
@@ -68,7 +78,6 @@
                     <button class="actionButton btnEditar" data-toggle="modal" data-target="#exampleModal" 
                     onclick='Impresion("{{platillo.Id}}" , "{{platillo.Nombre}}", "{{platillo.IdTipoPlatillo.Nombre}}", "{{platillo.IdTipoPlatillo.Id}}","{{platillo.Precio}}","{{platillo.EsActivo}}", "{{platillo.Descripcion}}" );'  id="Editar{{platillo.Id}}">
                         <a>
-                            <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
                             <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar platillo">
                         </a>
                     </button>
@@ -76,7 +85,6 @@
                     {% if platillo.EsActivo == "1" %}
                         <button class="actionButton btnEliminar" onclick="DarBaja_Platillo({{platillo.Id}});" id="Eliminar{{platillo.Id}}">
                             <a>
-                                <!-- <i class="fa-solid fa-trash-can fa-lg" style="color: #ff6969; padding: 5px 5px;"></i> -->
                                 <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar platillo">
                             </a>
                         </button>
@@ -92,14 +100,6 @@
             </tr>
             {% endfor %}
         </tbody>
-        <!-- <tfoot>
-                <tr>
-                    <th>Insumo</th>
-                    <th>Presentación</th>
-                    <th>Stock</th>
-                    <th>Unidad de medida</th>
-                </tr>
-            </tfoot> -->
     </table>
 </div>
 
@@ -284,6 +284,48 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const check = document.getElementById("checkVerConsumosInactivos");
+        const key = "verEliminadosPlatillos";
+    
+        // Restaurar estado guardado
+        check.checked = localStorage.getItem(key) === "1";
+    
+        // Cargar tabla al inicio
+        cargarPlatillos(check.checked);
+    
+        check.addEventListener("change", () => {
+            localStorage.setItem(key, check.checked ? "1" : "0");
+            cargarPlatillos(check.checked);
+        });
+    });
+    
+    function cargarPlatillos(ver) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "/FiltrarPlatillos?verEliminados=" + (ver ? "1" : "0"));
+        xhr.send();
+    
+        xhr.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) {
+
+                $('.tablaInventario').DataTable().destroy();
+    
+                const tbody = document.querySelector("#cuerpoInventario");
+                tbody.innerHTML = this.responseText;
+
+                $('.tablaInventario').DataTable({
+                    scrollY: "50vh",
+                    scrollCollapse: true,
+                    paging: true,
+                    language: {
+                        url: "https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json",
+                    }
+                });
+            }
+        };
+    }
+</script>
 
 <script>
 

@@ -1,0 +1,64 @@
+{% csrf_token %} {% load static %} 
+
+<table class="display tablaInventario" style="width:100%;">
+    <thead>
+        <!-- Columnas -->
+        <tr>
+            <th>Consumo</th>
+            <th>Tipo de consumo</th>
+            <th>Precio</th>
+            
+            {% if VerEliminados == "1" %}
+                <th id="estadoPlatilloColumna" style="text-align: center">Estado</th>
+            {% endif %}
+            
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <!-- Filas -->
+    <tbody>
+        {% for platillo in Platillos %}
+        <tr>
+            <td style="text-transform: capitalize; ">{{platillo.Nombre|lower}}</td>
+            <td>{{platillo.IdTipoPlatillo.Nombre}}</td>
+            <td>C${{platillo.Precio}}</td>
+
+            {% if VerEliminados == "1" %}
+                <td class="estadoPlatilloFila" style="text-align: center;">
+                    {% if platillo.EsActivo == "1" %} 
+                    &#9989;
+                    {% else %}
+                    &#9940;
+                    {% endif %}
+                </td>
+            {% endif %}
+            
+            <td class="actions">
+
+                <button class="actionButton btnEditar" data-toggle="modal" data-target="#exampleModal" 
+                onclick='Impresion("{{platillo.Id}}" , "{{platillo.Nombre}}", "{{platillo.IdTipoPlatillo.Nombre}}", "{{platillo.IdTipoPlatillo.Id}}","{{platillo.Precio}}","{{platillo.EsActivo}}", "{{platillo.Descripcion}}" );'  id="Editar{{platillo.Id}}">
+                    <a>
+                        <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar platillo">
+                    </a>
+                </button>
+
+                {% if platillo.EsActivo == "1" %}
+                    <button class="actionButton btnEliminar" onclick="DarBaja_Platillo({{platillo.Id}});" id="Eliminar{{platillo.Id}}">
+                        <a>
+                            <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar platillo">
+                        </a>
+                    </button>
+                {% endif %}
+                <!--
+                <button class="actionButton btnDetalles" id=Detalle{{platillos.id}}>
+                    <a href="">
+                        <i class="fa-solid fa-info fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> 
+                        <img src="{% static 'img/info1.png' %}" alt="Más información" title="Más información">
+                    </a>
+                </button>-->
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
