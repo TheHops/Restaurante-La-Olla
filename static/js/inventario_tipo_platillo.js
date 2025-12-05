@@ -188,15 +188,15 @@ document.addEventListener("DOMContentLoaded", () => {
   check.checked = localStorage.getItem(key) === "1";
 
   // Cargar tabla al inicio
-  cargarPlatillos(check.checked);
+  cargarTipoPlatillos(check.checked);
 
   check.addEventListener("change", () => {
     localStorage.setItem(key, check.checked ? "1" : "0");
-    cargarPlatillos(check.checked);
+    cargarTipoPlatillos(check.checked);
   });
 });
 
-function cargarPlatillos(ver) {
+function cargarTipoPlatillos(ver) {
   const xhr = new XMLHttpRequest();
   xhr.open("GET", "/FiltrarTipoPlatillos?verEliminados=" + (ver ? "1" : "0"));
   xhr.send();

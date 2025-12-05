@@ -50,7 +50,7 @@ def filtrar_platillos(request):
         "VerEliminados": "1" if ver_eliminados else "0"
     }
 
-    return render(request, "platillosFiltrados.html", contexto)
+    return render(request, "inventario_platillos_filtrados.html", contexto)
 
 #endregion Platillos
 
@@ -92,7 +92,7 @@ def filtrar_tipo_platillos(request):
         "VerEliminados": "1" if ver_eliminados else "0"
     }
 
-    return render(request, "tipoPlatillosFiltrados.html", contexto)
+    return render(request, "inventario_tipo_platillos_filtrados.html", contexto)
     
 #endregion TipoPlatillo
 

@@ -63,7 +63,8 @@ urlpatterns = [
     path("CambiarAPreparado/", Ventas.CambiarAPreparado, name="CambiarAPreparado"),
     path("cargo/consultar/", consultar_cargo, name="ConsultaCargo"),
     path("FiltrarPlatillos/", Menu.filtrar_platillos, name="FiltrarPlatillos"),
-    path("FiltrarTipoPlatillos/", Menu.filtrar_tipo_platillos, name="FiltrarTipoPlatillos")
+    path("FiltrarTipoPlatillos/", Menu.filtrar_tipo_platillos, name="FiltrarTipoPlatillos"),
+    path("FiltrarPersonal/", Personal.filtrar_personal, name="FiltrarPersonal")
 ]
 
 urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
