@@ -5,8 +5,9 @@
     padding: 25px 40px 0px 40px;
 }
 
-#contenedorDerechoEncabezadoInventario {
+#contenedorIzquierdoEncabezadoInventario {
     display: flex;
+    width: 70%;
 }
 
 .btn_confirmation_mi_color {

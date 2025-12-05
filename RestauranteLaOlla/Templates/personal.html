@@ -4,25 +4,28 @@
 {% load static %}
 
 <div id="encabezado_inventario">
-    <button id="agregar"  data-toggle="modal" data-target="#AgregarPersonal">
-        <img src="{% static 'img/Add_user.png' %}" style="width: 30px; height: 30px; margin-right: 5px;" title="Agregar personal">Agregar personal
-    </button>
-
-    <!-- <select name="" id="listaInventario">
-        <option value="">Personal</option>
-        <option value="{% url 'cargo' %}">Cargos</option>
-    </select> -->
-
-    <!-- <input type="text" id="buscar" placeholder="Buscar"> -->
-
-    <!-- <div class="exportarP">
-        <button class="excel">
-            <img src="{% static 'img/Export_excel_2.png' %}" alt="Exportar en excel" title="Exportar en excel">
+    <div id="contenedorIzquierdoEncabezadoInventario">
+        <button id="agregar"  data-toggle="modal" data-target="#AgregarPersonal">
+            <img src="{% static 'img/Add_user.png' %}" style="width: 30px; height: 30px; margin-right: 5px;" title="Agregar personal">Agregar personal
         </button>
-        <button class="pdf">
-            <img src="{% static 'img/Export_pdf_2.png' %}" alt="Exportar en pdf" title="Exportar en pdf">
-        </button>
-    </div> -->
+    
+        <!-- <div class="exportarP">
+            <button class="excel">
+                <img src="{% static 'img/Export_excel_2.png' %}" alt="Exportar en excel" title="Exportar en excel">
+            </button>
+            <button class="pdf">
+                <img src="{% static 'img/Export_pdf_2.png' %}" alt="Exportar en pdf" title="Exportar en pdf">
+            </button>
+        </div> -->
+    </div>
+
+    <div id="contenedorDerechoEncabezadoInventario">
+        <!-- Botón para mostrar u ocultar los registros inactivos -->
+        <div class="btnVerInactivos">
+            <label for="checkVerPersonalInactivos">Ver eliminados</label>
+            <input type="checkbox" id="checkVerPersonalInactivos" class="checkVerInactivos">
+        </div>
+    </div>
 </div>
 
 <div id="cuerpoInventario">
@@ -247,6 +250,48 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const check = document.getElementById("checkVerPersonalInactivos");
+        const key = "verEliminadosPersonal";
+    
+        // Restaurar estado guardado
+        check.checked = localStorage.getItem(key) === "1";
+    
+        // Cargar tabla al inicio
+        cargarPersonal(check.checked);
+    
+        check.addEventListener("change", () => {
+            localStorage.setItem(key, check.checked ? "1" : "0");
+            cargarPersonal(check.checked);
+        });
+    });
+    
+    function cargarPersonal(ver) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "/FiltrarPersonal?verEliminados=" + (ver ? "1" : "0"));
+        xhr.send();
+    
+        xhr.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) {
+
+                $('.tablaInventario').DataTable().destroy();
+    
+                const tbody = document.querySelector("#cuerpoInventario");
+                tbody.innerHTML = this.responseText;
+
+                $('.tablaInventario').DataTable({
+                    scrollY: "50vh",
+                    scrollCollapse: true,
+                    paging: true,
+                    language: {
+                        url: "https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json",
+                    }
+                });
+            }
+        };
+    }
+</script>
 
 <script>
 

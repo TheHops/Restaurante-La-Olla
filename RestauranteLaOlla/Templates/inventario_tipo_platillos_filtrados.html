@@ -1,0 +1,57 @@
+{% csrf_token %} {% load static %} 
+
+<!-- TABLA CON SU RESPECTIVO CONTENIDO -->
+    <table class="display tablaInventario" style="width:100%;">
+        <thead>
+            <!-- Columnas -->
+            <tr>
+                <th>Tipo de consumo</th>
+
+                {% if VerEliminados == "1" %}
+                    <th style="text-align: center">Estado</th>
+                {% endif %}
+                
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <!-- Filas -->
+        <tbody>
+            {% for tipoplatillo in TypePlatillo%}
+            <tr>
+                <td style="text-transform: capitalize; ">{{tipoplatillo.Nombre}}</td>
+
+                {% if VerEliminados == "1" %}
+                    <td style="text-align: center">
+                    {% if tipoplatillo.EsActivo == "1" %} 
+                        &#9989;
+                    {% else %}
+                        &#9940;
+                    {% endif %}
+                    </td>
+                {% endif %}
+
+                <td class="actions">
+
+                    <button class="actionButton btnEditar" data-toggle="modal" data-target="#exampleModal" onclick="Impresion('{{tipoplatillo.Id}}', '{{tipoplatillo.Nombre}}','{{tipoplatillo.EsActivo}}');" id="Editar{{tipoplatillo.Id}}">
+                        <a >
+                            <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
+                            <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar el tipo de platillo">
+                        </a>
+                    </button>
+
+                    {% if tipoplatillo.EsActivo == "1" %}
+                      <button class="actionButton btnEliminar"
+                      onclick="DarBajaTipoPlatillo('{{ tipoplatillo.Id }}')"
+                      id="Eliminar{{ tipoplatillo.Id }}">
+                        <a>
+                            <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar el tipo de platillo">
+                        </a>
+                    </button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+      
+    </table>

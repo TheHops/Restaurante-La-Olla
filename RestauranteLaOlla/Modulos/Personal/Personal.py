@@ -226,4 +226,30 @@ def DarBajaPersonal(request):
 
 #endregion Eliminar personal
 
+#region Filtrar personal
+
+def filtrar_personal(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+
+    ver_eliminados = request.GET.get("verEliminados") == "1"
+
+    if ver_eliminados:
+        personal = Usuario.objects.order_by("Id")
+    else:
+        personal = Usuario.objects.filter(EsActivo="1").order_by("Id")
+        
+    print("############### PERSONAL #####################")
+    print(ver_eliminados)
+    print("##############################################")
+
+    contexto = {
+        "Personal": personal,
+        "VerEliminados": "1" if ver_eliminados else "0"
+    }
+
+    return render(request, "personal_filtrados.html", contexto)
+
+#endregion Filtrar personal
+
 #endregion CRUD PERSONAL

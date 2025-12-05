@@ -177,3 +177,45 @@ function Agregar_TipoPlatillo() {
     },
   });
 }
+
+////////////////////////////////////////////////
+
+document.addEventListener("DOMContentLoaded", () => {
+  const check = document.getElementById("checkVerTipoConsumosInactivos");
+  const key = "verEliminadosTipoPlatillos";
+
+  // Restaurar estado guardado
+  check.checked = localStorage.getItem(key) === "1";
+
+  // Cargar tabla al inicio
+  cargarTipoPlatillos(check.checked);
+
+  check.addEventListener("change", () => {
+    localStorage.setItem(key, check.checked ? "1" : "0");
+    cargarTipoPlatillos(check.checked);
+  });
+});
+
+function cargarTipoPlatillos(ver) {
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "/FiltrarTipoPlatillos?verEliminados=" + (ver ? "1" : "0"));
+  xhr.send();
+
+  xhr.onreadystatechange = function () {
+    if (this.readyState === 4 && this.status === 200) {
+      $(".tablaInventario").DataTable().destroy();
+
+      const tbody = document.querySelector("#cuerpoInventario");
+      tbody.innerHTML = this.responseText;
+
+      $(".tablaInventario").DataTable({
+        scrollY: "50vh",
+        scrollCollapse: true,
+        paging: true,
+        language: {
+          url: "https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json",
+        },
+      });
+    }
+  };
+}

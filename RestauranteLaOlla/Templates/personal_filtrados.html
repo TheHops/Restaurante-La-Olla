@@ -1,0 +1,82 @@
+{% csrf_token %} {% load static %} 
+
+<!-- TABLA CON SU RESPECTIVO CONTENIDO -->
+    <table class="display tablaInventario" style="width:100%;">
+        <thead>
+            <!-- Columnas -->
+            <tr>
+                <th>Usuario</th>
+                <th>Nombres y apellidos</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Cargo</th>
+                
+                {% if VerEliminados == "1" %}
+                    <th>Estado</th>
+                {% endif %}
+                
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <!-- Filas -->
+        <tbody>
+            {% for personal in Personal %}
+            <tr>
+                <td>{{personal.username}}</td>
+                <td>{{personal.Nombres}} {{personal.Apellidos}}</td>
+                <td>{{personal.email}}</td>
+                <td>
+                    {% if personal.telefonopers != "" %}
+                        <a href="https://wa.me/+505{{personal.Telefono}}" target="_blank" style="color:black;">  {{personal.Telefono}} </a>
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>{{personal.IdCargo.Nombre}}</td>
+
+                {% if VerEliminados == "1" %}
+                    <td class="estadoPersonalFila" style="text-align: center;">
+                        {% if personal.EsActivo == '1'%}
+                            &#9989;
+                        {% else %}
+                            &#9940;
+                        {%endif%}
+                    </td>
+                {% endif %}
+
+                <td class="actions">
+
+                    <button class="actionButton btnEditar" id="{{personal.Id}}" data-toggle="modal"  data-target="#ModificarPersonal" 
+                    onclick="ImpresionPersonal('{{personal.username}}','{{personal.email}}','{{personal.Telefono}}', '{{personal.IdCargo.Nombre}}', {{personal.IdCargo.Id}}, '{{personal.Id}}','{{personal.EsActivo}}','{{personal.Nombres}}','{{personal.Apellidos}}')" >
+                        <a >
+                            <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
+                            <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar Personal">
+                        </a>
+                    </button>
+                    
+                    {% if personal.EsActivo == '1' %}
+                    <button class="actionButton btnEliminar" id="{{personal.Id}}" onclick="ConfirmarBaja('{{personal.Id}}')">
+                        <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Dar Baja Personal">
+                    </button>
+                    {% endif%}
+                    <!-- <button class="actionButton btnDetalles">
+                            <a href="">
+                                <i class="fa-solid fa-info fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
+                    <!-- <img src="{% static 'img/info1.png' %}" alt="Más información">
+                            </a>
+                        </button> -->
+
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <!-- <tfoot>
+                <tr>
+                    <th>Insumo</th>
+                    <th>Presentación</th>
+                    <th>Stock</th>
+                    <th>Unidad de medida</th>
+                </tr>
+            </tfoot> -->
+    </table>
