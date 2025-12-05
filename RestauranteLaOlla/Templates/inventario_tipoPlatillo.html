@@ -4,19 +4,20 @@
 {% load static %}
 
 <div id="encabezado_inventario">
+  <div id="contenedorIzquierdoEncabezadoInventario">
     <button id="agregar" data-toggle="modal" data-target="#AgregarTipoPlatillo" style="font-size: 15px;">
         <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px; margin-right: 10px; transform: translateY(-9px);" title="Añadir el tipo de platillo">
     
         <span style="width: 100px; height: 30px; display: inline-block; line-height: 17px;">Agregar tipo de consumo</span>
     </button>
-
+  
     <!-- <input type="text" id="buscar" placeholder="Buscar"> -->
-
+  
     <select name="" id="listaInventario">
         <option value="">Tipos de consumo</option>
         <option value="{% url 'inventario_platillos' %}">Consumos</option>
     </select>
-
+  
     <div class="exportar">
         <button class="excel">
           <a href="{% url 'ExportarTipoPlatillo' %}">
@@ -29,6 +30,15 @@
           </a>
         </button> 
     </div>
+  </div>
+
+  <div id="contenedorDerechoEncabezadoInventario">
+    <!-- Botón para mostrar u ocultar los registros inactivos -->
+    <div class="btnVerInactivos">
+        <label for="checkVerTipoConsumosInactivos">Ver eliminados</label>
+        <input type="checkbox" id="checkVerTipoConsumosInactivos" class="checkVerInactivos">
+    </div>
+  </div>
 </div>
 
 <div id="cuerpoInventario">

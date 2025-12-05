@@ -72,6 +72,28 @@ def inventario_tipoplatillo(request):
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
     
+def filtrar_tipo_platillos(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+
+    ver_eliminados = request.GET.get("verEliminados") == "1"
+
+    if ver_eliminados:
+        tipoplatillos = TipoPlatillo.objects.order_by("Id")
+    else:
+        tipoplatillos = TipoPlatillo.objects.filter(EsActivo="1").order_by("Id")
+        
+    print("############### TIPO PLATILLOS #####################")
+    print(ver_eliminados)
+    print("####################################################")
+
+    contexto = {
+        "TypePlatillo": tipoplatillos,
+        "VerEliminados": "1" if ver_eliminados else "0"
+    }
+
+    return render(request, "tipoPlatillosFiltrados.html", contexto)
+    
 #endregion TipoPlatillo
 
 #endregion Inventario
