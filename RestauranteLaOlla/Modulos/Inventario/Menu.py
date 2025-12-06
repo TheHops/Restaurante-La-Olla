@@ -37,9 +37,9 @@ def filtrar_platillos(request):
     ver_eliminados = request.GET.get("verEliminados") == "1"
 
     if ver_eliminados:
-        platillos = Platillo.objects.select_related("IdTipoPlatillo").order_by("Id")
+        platillos = Platillo.objects.select_related("IdTipoPlatillo").filter(IdTipoPlatillo__EsActivo="1").order_by("Id")
     else:
-        platillos = Platillo.objects.select_related("IdTipoPlatillo").filter(EsActivo="1").order_by("Id")
+        platillos = Platillo.objects.select_related("IdTipoPlatillo").filter(IdTipoPlatillo__EsActivo="1", EsActivo="1").order_by("Id")
         
     print("####################################")
     print(ver_eliminados)

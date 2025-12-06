@@ -63,7 +63,7 @@ def Actualizar_Platillos(request):
 
             return JsonResponse({
                 'status': 'ok',
-                'message': 'Consumo actualizado correctamente.'
+                'message': '¡Consumo modificado exitosamente!'
             })
 
     except Exception as ex:
@@ -104,7 +104,7 @@ def DarBaja_Platillo(request):
 
             return JsonResponse({
                 'status': 'ok',
-                'message': 'Consumo dado de baja correctamente.'
+                'message': '¡Consumo eliminado exitosamente!'
             })
 
         return JsonResponse({
@@ -171,7 +171,7 @@ def Agregar_Platillo(request):
 
             return JsonResponse({
                 'status': 'ok',
-                'message': 'Consumo agregado correctamente.'
+                'message': '¡Consumo agregado exitosamente!'
             })
 
     except Exception as ex:
