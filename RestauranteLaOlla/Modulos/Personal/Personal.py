@@ -94,7 +94,7 @@ def AgregarPersonal(request):
 
         return JsonResponse({
             'status': 'ok',
-            'message': 'Personal agregado correctamente.'
+            'message': '¡Personal agregado exitosamente!'
         })
 
     except Exception as ex:
@@ -181,7 +181,7 @@ def ModificarPersonal(request):
 
         return JsonResponse({
             'status': 'ok',
-            'message': 'Personal modificado correctamente.'
+            'message': '¡Personal modificado exitosamente!'
         })
 
     except Exception as ex:
@@ -211,7 +211,7 @@ def DarBajaPersonal(request):
             personal.EsActivo = "0"
             personal.save()
 
-            return JsonResponse({'status': 'success', 'message': 'Usuario dado de baja correctamente'})
+            return JsonResponse({'status': 'ok', 'message': '¡Personal dado de baja exitosamente!'})
         
         except Usuario.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Usuario no encontrado'}, status=404)
