@@ -44,7 +44,6 @@ function ImpresionPersonal(
   usuario,
   correo,
   telefono,
-  cargo,
   idCargo,
   idPersonal,
   estado,
@@ -52,8 +51,8 @@ function ImpresionPersonal(
   apellido
 ) {
   $("#NameUsuario").val(usuario);
-  $("#CorreoUsuario").val(correo);
-  $("#NumberUsuario").val(telefono);
+  $("#CorreoUsuario").val(correo == "None" || correo == "" ? null : correo);
+  $("#NumberUsuario").val(telefono == "None" || correo == "" ? null : telefono);
   $("#IdPersonal").val(idPersonal);
   $("#NombreUsuarioMod").val(nombre);
   $("#ApellidosUsuarioMod").val(apellido);
@@ -97,9 +96,6 @@ function Agregar_Personal() {
         }).then(() => location.reload());
         return;
       }
-
-      console.log(response.message);
-      console.log(response);
 
       // cuando es error
       Swal.fire({
@@ -148,14 +144,21 @@ function ModificarPersonal() {
     type: "POST",
     data: data,
     success: function (response) {
-      let icon = response.status === "ok" ? "success" : "warning";
+      if (response.status === "ok") {
+        Swal.fire({
+          confirmButtonColor: "#ff6464",
+          title: response.message,
+          icon: "success",
+        }).then(() => location.reload());
+        return;
+      }
 
+      // cuando es error
       Swal.fire({
         confirmButtonColor: "#ff6464",
-        title: response.message,
-        icon: icon,
-      }).then(() => {
-        if (response.status === "ok") location.reload();
+        title: "Error",
+        text: response.message,
+        icon: "error",
       });
     },
     error: function () {

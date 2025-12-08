@@ -75,7 +75,7 @@ def AgregarPersonal(request):
         if Usuario.objects.filter(username=usuario).exists():
             return JsonResponse({
                 'status': 'error',
-                'message': 'El usuario ya existe'})
+                'message': 'El nombre de usuario ya existe'})
 
         # Obtener cargo
         try:
@@ -121,7 +121,7 @@ def AgregarPersonal(request):
 
         return JsonResponse({
             'status': 'error',
-            'message': 'Error interno en el servidor.'
+            'message': 'Error interno en el servidor'
         }, status=500)
         
 #endregion Agregar personal
@@ -150,8 +150,8 @@ def ModificarPersonal(request):
         except Usuario.DoesNotExist:
             return JsonResponse({
                 'status': 'error',
-                'message': 'El usuario no existe.'
-            }, status=404)
+                'message': 'El usuario no existe'
+            })
             
         # Validar contenido de correo   
         if correo is not None and correo.strip() == "":
@@ -162,14 +162,14 @@ def ModificarPersonal(request):
             if Usuario.objects.filter(email=correo).exists():
                 return JsonResponse({
                 'status': 'error',
-                'message': 'El correo ya está registrado en otra cuenta'}, status=400)
+                'message': 'El correo ya está registrado en otra cuenta'})
 
         # Si cambia el username, validar que no exista otro igual
         if usuario != personal.username:
             if Usuario.objects.filter(username=usuario).exclude(Id=personal_id).exists():
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'El nombre de usuario ya está registrado por otro usuario.'
+                    'message': 'El nombre de usuario ya existe'
                 })
 
         # Obtener cargo
@@ -178,7 +178,7 @@ def ModificarPersonal(request):
         except Cargo.DoesNotExist:
             return JsonResponse({
                 'status': 'error',
-                'message': 'El cargo seleccionado no existe.'
+                'message': 'El cargo seleccionado no existe'
             })
 
         # Aplicar cambios
