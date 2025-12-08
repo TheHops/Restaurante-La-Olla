@@ -40,10 +40,6 @@ def filtrar_platillos(request):
         platillos = Platillo.objects.select_related("IdTipoPlatillo").filter(IdTipoPlatillo__EsActivo="1").order_by("Id")
     else:
         platillos = Platillo.objects.select_related("IdTipoPlatillo").filter(IdTipoPlatillo__EsActivo="1", EsActivo="1").order_by("Id")
-        
-    print("####################################")
-    print(ver_eliminados)
-    print("####################################")
 
     contexto = {
         "Platillos": platillos,
@@ -82,10 +78,6 @@ def filtrar_tipo_platillos(request):
         tipoplatillos = TipoPlatillo.objects.order_by("Id")
     else:
         tipoplatillos = TipoPlatillo.objects.filter(EsActivo="1").order_by("Id")
-        
-    print("############### TIPO PLATILLOS #####################")
-    print(ver_eliminados)
-    print("####################################################")
 
     contexto = {
         "TypePlatillo": tipoplatillos,
