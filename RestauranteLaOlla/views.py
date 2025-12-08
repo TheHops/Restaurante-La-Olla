@@ -1,12 +1,15 @@
 # Se importa la funcion para las respuestas del sitio web
 from django.db.models import Case, When, Count
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
-from Application.models  import DetalleOrden, Orden, Mesa, Platillo 
+from django.contrib.auth import authenticate, login, logout, get_user_model
+from Application.models  import Orden, Platillo
+from django.contrib import messages
 from django.http import JsonResponse
 from datetime import datetime, timedelta
 from django.db.models import Q
 import traceback
+
+User = get_user_model()
 
 def index(request):
     # Direccion que me llevará al login por defecto
@@ -26,16 +29,36 @@ def loginUser(request):
 
     if request.method == "POST":
 
-        user_name = request.POST.get("txtUsername")
+        entrada = request.POST.get("txtUsername")
         pass_word = request.POST.get("txtPassword")
 
-        user = authenticate(request, username=user_name, password=pass_word)
+        # Primero detectamos si escribieron un correo
+        es_correo = "@" in entrada and "." in entrada
 
-        if user is not None and (user.EsActivo == '1' or user.EsActivo.lower() == 'inactivo'):
-            login(request, user=user)
-            return redirect("/")
+        user_obj = None
 
-        return redirect("loginUser")
+        if es_correo:
+            try:
+                user_obj = User.objects.get(email=entrada)
+                username_real = user_obj.username
+            except User.DoesNotExist:
+                messages.error(request, "El correo ingresado no está asociado a ninguna cuenta.")
+                return redirect("loginUser")
+        else:
+            username_real = entrada
+
+        user = authenticate(request, username=username_real, password=pass_word)
+
+        if user is None:
+            messages.error(request, "Credenciales incorrectas.")
+            return redirect("loginUser")
+
+        if user.EsActivo != "1":
+            messages.error(request, "Tu cuenta está inactiva.")
+            return redirect("loginUser")
+
+        login(request, user)
+        return redirect("/")
 
     return render(request, "login.html")
 
@@ -44,6 +67,7 @@ def logoutUser(request):
     return redirect("/")
 
 #region GraficasOrdenes
+
 def GraficarOrdenes(request):
     if request.user.is_authenticated:
         try:
@@ -102,6 +126,7 @@ def GraficarOrdenes(request):
             return JsonResponse({'error': str(ex)}, status=500)
     else:
         return render(request, "login.html")
+
 #endregion GraficarOrdenes
 
 #region FiltrarOrdenes

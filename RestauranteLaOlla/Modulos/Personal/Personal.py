@@ -1,12 +1,13 @@
 #region Personal
 
-import json
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 
 from Application.models import Cargo, Usuario
 from django.views.decorators.http import require_POST
-from django.db import transaction
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 def personal(request):
     if request.user.is_authenticated:
@@ -48,7 +49,7 @@ def AgregarPersonal(request):
         apellido = request.POST.get("Apellido", "").strip()
         usuario = request.POST.get("User", "").strip()
         passw = request.POST.get("Pass", "")
-        correo = request.POST.get("Correo", "")
+        correo = request.POST.get("Correo")
         telefono = request.POST.get("Telefono", "")
         cargo = request.POST.get("Cargo", "")
 
@@ -56,15 +57,25 @@ def AgregarPersonal(request):
         if not (nombre and apellido and usuario and passw and cargo):
             return JsonResponse({
                 'status': 'error',
-                'message': 'Campos obligatorios faltantes.'
-            }, status=400)
+                'message': 'Campos obligatorios faltantes'})
+         
+        # Validar contenido de correo   
+        if correo is not None and correo.strip() == "":
+            correo = None
+
+        # Validar correo único si no es NULL
+        if correo is not None:
+            if Usuario.objects.filter(email=correo).exists():
+                return JsonResponse({
+                'status': 'error',
+                'message': 'El correo ya está registrado en otra cuenta'
+            })
 
         # ¿Existe ya el username?
         if Usuario.objects.filter(username=usuario).exists():
             return JsonResponse({
                 'status': 'error',
-                'message': 'El usuario ya existe.'
-            })
+                'message': 'El usuario ya existe'})
 
         # Obtener cargo
         try:
@@ -72,11 +83,12 @@ def AgregarPersonal(request):
         except Cargo.DoesNotExist:
             return JsonResponse({
                 'status': 'error',
-                'message': 'El cargo seleccionado no existe.'
-            }, status=400)
+                'message': 'El cargo seleccionado no existe'})
+
+        print(correo)
 
         # Crear usuario
-        personal = Usuario.objects.create_user(
+        personal = Usuario.objects.create(
             Nombres=nombre,
             Apellidos=apellido,
             username=usuario,
@@ -85,12 +97,17 @@ def AgregarPersonal(request):
             Telefono=telefono,
             IdCargo=tipoCargo
         )
+        personal.set_password(passw)
+        personal.save()
 
         # Si el cargo es administrador, dar permisos
         if str(cargo) == "1":
             personal.is_staff = True
-            personal.is_superuser = True
             personal.save()
+            
+        # if correo == "" or None:
+        #     personal.email = None
+        #     personal.save()
 
         return JsonResponse({
             'status': 'ok',
@@ -114,10 +131,7 @@ def AgregarPersonal(request):
 @require_POST
 def ModificarPersonal(request):
     if not request.user.is_authenticated:
-        return JsonResponse({
-            'status': 'error',
-            'message': 'No autorizado.'
-        }, status=401)
+        return render(request, "login.html")
 
     try:
         usuario = request.POST.get("User", "").strip()
@@ -138,6 +152,17 @@ def ModificarPersonal(request):
                 'status': 'error',
                 'message': 'El usuario no existe.'
             }, status=404)
+            
+        # Validar contenido de correo   
+        if correo is not None and correo.strip() == "":
+            correo = None
+
+        # Validar correo único si no es NULL
+        if correo is not None:
+            if Usuario.objects.filter(email=correo).exists():
+                return JsonResponse({
+                'status': 'error',
+                'message': 'El correo ya está registrado en otra cuenta'}, status=400)
 
         # Si cambia el username, validar que no exista otro igual
         if usuario != personal.username:
@@ -238,10 +263,6 @@ def filtrar_personal(request):
         personal = Usuario.objects.order_by("Id")
     else:
         personal = Usuario.objects.filter(EsActivo="1").order_by("Id")
-        
-    print("############### PERSONAL #####################")
-    print(ver_eliminados)
-    print("##############################################")
 
     contexto = {
         "Personal": personal,
