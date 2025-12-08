@@ -53,7 +53,7 @@
                 <td>{{personal.Nombres}} {{personal.Apellidos}}</td>
                 <td>{{personal.email}}</td>
                 <td>
-                    {% if personal.telefonopers != "" %}
+                    {% if personal.Telefono %}
                         <a href="https://wa.me/+505{{personal.Telefono}}" target="_blank" style="color:black;">  {{personal.Telefono}} </a>
                     {% else %}
                         N/A

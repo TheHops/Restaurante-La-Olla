@@ -87,6 +87,8 @@ function Agregar_Personal() {
     type: "POST",
     data: data,
     success: function (response) {
+      console.log(response);
+
       if (response.status === "ok") {
         Swal.fire({
           confirmButtonColor: "#ff6464",
@@ -95,6 +97,9 @@ function Agregar_Personal() {
         }).then(() => location.reload());
         return;
       }
+
+      console.log(response.message);
+      console.log(response);
 
       // cuando es error
       Swal.fire({
@@ -108,7 +113,7 @@ function Agregar_Personal() {
       Swal.fire({
         confirmButtonColor: "#ff6464",
         title: "Error de servidor",
-        text: "Hubo un error inesperado.",
+        text: "Hubo un error inesperado",
         icon: "error",
       });
     },
