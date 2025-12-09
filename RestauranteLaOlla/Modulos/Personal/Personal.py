@@ -230,7 +230,7 @@ def DarBajaPersonal(request):
             id_personal = request.POST.get("ID")
 
             if not id_personal:
-                return JsonResponse({'status': 'error', 'message': 'ID no proporcionado'}, status=400)
+                return JsonResponse({'status': 'error', 'message': 'ID no proporcionado'})
 
             personal = Usuario.objects.get(Id=id_personal)
             personal.EsActivo = "0"
@@ -239,17 +239,47 @@ def DarBajaPersonal(request):
             return JsonResponse({'status': 'ok', 'message': '¡Personal dado de baja exitosamente!'})
         
         except Usuario.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Usuario no encontrado'}, status=404)
+            return JsonResponse({'status': 'error', 'message': 'Usuario no encontrado'})
 
         except Exception as ex:
             print("\n#################### EXCEPCIÓN ########################")
             print(ex)
             print("########################################################\n")
-            return JsonResponse({'status': 'error', 'message': 'Error interno del servidor'}, status=500)
+            return JsonResponse({'status': 'error', 'message': 'Error interno del servidor'})
     
-    return JsonResponse({'status': 'error', 'message': 'Método no permitido'}, status=405)
+    return JsonResponse({'status': 'error', 'message': 'Método no permitido'})
 
 #endregion Eliminar personal
+
+#region Restablecer contraseña
+
+def RestablecerPass(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+
+    if request.method == "POST":
+        try:
+            id_personal = request.POST.get("ID")
+
+            if not id_personal:
+                return JsonResponse({'status': 'error', 'message': 'ID no proporcionado'})
+
+            # Código para restablecer la contraseña
+
+            return JsonResponse({'status': 'ok', 'message': '¡Contraseña restablecida exitosamente!', 'new_pass':''})
+        
+        except Usuario.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Usuario no encontrado'})
+
+        except Exception as ex:
+            print("\n#################### EXCEPCIÓN ########################")
+            print(ex)
+            print("########################################################\n")
+            return JsonResponse({'status': 'error', 'message': 'Error interno del servidor'})
+    
+    return JsonResponse({'status': 'error', 'message': 'Método no permitido'})
+
+#endregion Restablecer contraseña
 
 #region Filtrar personal
 

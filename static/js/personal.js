@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function cargarPersonal(ver) {
+  document.getElementById("cuerpoInventario").style.opacity = "0";
+
   const xhr = new XMLHttpRequest();
   xhr.open("GET", "/FiltrarPersonal?verEliminados=" + (ver ? "1" : "0"));
   xhr.send();
@@ -34,6 +36,10 @@ function cargarPersonal(ver) {
           url: "https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json",
         },
       });
+
+      setTimeout(() => {
+        document.getElementById("cuerpoInventario").style.opacity = "100%";
+      }, 500);
     }
   };
 }
@@ -169,6 +175,59 @@ function ModificarPersonal() {
         icon: "error",
       });
     },
+  });
+}
+
+function ConfirmarRestablecer(idPersonal)
+{
+  Swal.fire({
+    title: "¿Realmente desea restablecer la contraseña de este usuario?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#ff6464",
+    cancelButtonColor: "#6c757d",
+    confirmButtonText: "Restablecer",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: "/RestablecerPass/",
+        type: "POST",
+        data: {
+          ID: idPersonal,
+          csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+        },
+        success: function (response) {
+          if (response.status === "ok") {
+            // Levantar modal de bootstrap con la contraseña restablecida
+
+            // Insertar la contraseña nueva en el modal
+            $("#nuevaPass").text(response.nueva_password);
+
+            // Crear instancia y mostrar modal
+            const modal = new bootstrap.Modal(
+              document.getElementById("modalPassRestablecida")
+            );
+            modal.show();
+          } else {
+            Swal.fire({
+              title: "Error",
+              text: response.message,
+              icon: "error",
+              confirmButtonColor: "#343a40",
+            });
+          }
+        },
+        error: function () {
+          Swal.fire({
+            title: "Error",
+            text: "Ocurrió un error en la solicitud.",
+            icon: "error",
+            confirmButtonColor: "#343a40",
+          });
+        },
+      });
+    }
   });
 }
 

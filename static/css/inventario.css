@@ -208,12 +208,21 @@ a .paginate_button .current {
 
 /* Eliminar */
 .btnEliminar {
-    border-color: #ff9696;
+    border-color: hsl(0, 100%, 79%);
 }
 
 .btnEliminar:hover {
-    background-color: rgb(255, 230, 230);
+    background-color: hsl(0, 100%, 95%);
 }
+
+.btnRestablecerPass {
+    border-color: hsl(200, 80%, 70%);
+}
+
+.btnRestablecerPass:hover {
+    background-color: hsl(200, 80%, 95%);
+}
+
 /* -------------------------------------- */
 
 /*
