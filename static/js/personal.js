@@ -190,6 +190,13 @@ function ConfirmarRestablecer(idPersonal)
     cancelButtonText: "Cancelar",
   }).then((result) => {
     if (result.isConfirmed) {
+      Swal.fire({
+        title: "Procesando...",
+        text: "Por favor espere",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
       $.ajax({
         url: "/RestablecerPass/",
         type: "POST",
@@ -198,16 +205,19 @@ function ConfirmarRestablecer(idPersonal)
           csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
         },
         success: function (response) {
-          if (response.status === "ok") {
-            // Levantar modal de bootstrap con la contraseña restablecida
+          Swal.close();
 
+          if (response.status === "ok") {
             // Insertar la contraseña nueva en el modal
-            $("#nuevaPass").text(response.nueva_password);
+            $("#nuevaPassTemporal").val(response.new_pass);
+
+            console.log(response.new_pass);
 
             // Crear instancia y mostrar modal
             const modal = new bootstrap.Modal(
               document.getElementById("modalPassRestablecida")
             );
+
             modal.show();
           } else {
             Swal.fire({
@@ -410,3 +420,37 @@ function soloNumeros(event) {
 function PasoIDBaja(id) {
   $("#IdPersonalBaja").val(id);
 }
+
+document.getElementById("btnCopiarPass").addEventListener("click", function () {
+  const input = document.getElementById("nuevaPassTemporal");
+  const img = document.getElementById("iconoCopiarPass");
+
+  const imgCheck = this.dataset.imgCheck;
+  const imgCopy = this.dataset.imgCopy;
+
+  input.select();
+  input.setSelectionRange(0, 99999); // Para móviles
+
+  navigator.clipboard
+    .writeText(input.value)
+    .then(() => {
+      img.src = imgCheck;
+
+      Swal.fire({
+        icon: "success",
+        title: "¡Contraseña copiada!",
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+      });
+
+      setTimeout(() => {
+        img.src = imgCopy;
+      }, 2000);
+    })
+    .catch(() => {
+      console.error("Ocurrió un error al intentar copiar la contraseña");
+    });
+});

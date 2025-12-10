@@ -2,12 +2,13 @@
 from django.db.models import Case, When, Count
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from Application.models  import Orden, Platillo
+from Application.models  import Orden, Platillo, Usuario
 from django.contrib import messages
 from django.http import JsonResponse
 from datetime import datetime, timedelta
 from django.db.models import Q
 import traceback
+from django.core.mail import send_mail
 
 User = get_user_model()
 
@@ -236,6 +237,30 @@ def validar_cargo(request, cargo_recibido):
     return None
 
 #endregion Cargo
+
+#region Correo
+
+def EnviarCorreo(request):
+    if request.method == "POST":
+        id_personal = request.POST.get("idPersonal")
+        titulo = request.POST.get("tituloCorreo")
+        mensaje = request.POST.get("mensajeCorreo")
+
+        usuario = Usuario.objects.get(Id=id_personal)
+
+        send_mail(
+            subject=titulo,
+            message=mensaje,
+            from_email='tucorreo@tudominio.com',
+            recipient_list=[usuario.email],
+            fail_silently=False,
+        )
+
+        return JsonResponse({'status': 'ok'})
+
+#endregion Correo
+
+
 
 
 

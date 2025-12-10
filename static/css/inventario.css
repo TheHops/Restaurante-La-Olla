@@ -223,6 +223,10 @@ a .paginate_button .current {
     background-color: hsl(200, 80%, 95%);
 }
 
+#iconoCopiarPass {
+    transition: all .5s ease;
+}
+
 /* -------------------------------------- */
 
 /*
