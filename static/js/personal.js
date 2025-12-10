@@ -213,6 +213,8 @@ function ConfirmarRestablecer(idPersonal)
 
             console.log(response.new_pass);
 
+            $("#IdPersonalRestablecerPass").val(idPersonal);
+
             // Crear instancia y mostrar modal
             const modal = new bootstrap.Modal(
               document.getElementById("modalPassRestablecida")
@@ -454,3 +456,43 @@ document.getElementById("btnCopiarPass").addEventListener("click", function () {
       console.error("Ocurrió un error al intentar copiar la contraseña");
     });
 });
+
+function EnviarCorreo() 
+{
+  let idPersonal = $("#IdPersonalRestablecerPass").val();
+  let passTemporal = $("#nuevaPassTemporal").val();
+
+  $.ajax({
+    url: "/EnviarCorreo/",
+    type: "POST",
+    data: {
+      idPersonal: idPersonal,
+      tituloCorreo: "Nueva contraseña temporal",
+      mensajeCorreo: "Su contraseña temporal es: " + passTemporal,
+      csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+    },
+    success: function (response) {
+      if (response.status === "ok") {
+        Swal.fire({
+          icon: "success",
+          title: response.message,
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: response.message,
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+      }
+    },
+  });
+}

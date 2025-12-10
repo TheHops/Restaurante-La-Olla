@@ -241,6 +241,9 @@ def validar_cargo(request, cargo_recibido):
 #region Correo
 
 def EnviarCorreo(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+    
     if request.method == "POST":
         id_personal = request.POST.get("idPersonal")
         titulo = request.POST.get("tituloCorreo")
@@ -248,15 +251,18 @@ def EnviarCorreo(request):
 
         usuario = Usuario.objects.get(Id=id_personal)
 
-        send_mail(
+        enviado = send_mail(
             subject=titulo,
             message=mensaje,
-            from_email='tucorreo@tudominio.com',
+            from_email='jasson2852@gmail.com',
             recipient_list=[usuario.email],
             fail_silently=False,
         )
-
-        return JsonResponse({'status': 'ok'})
+        
+        if enviado > 0:
+            return JsonResponse({'status': 'ok', 'message': '¡Correo enviado con éxito!'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Error al enviar correo'})
 
 #endregion Correo
 

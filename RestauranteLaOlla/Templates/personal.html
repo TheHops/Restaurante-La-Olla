@@ -60,7 +60,8 @@
     </div>
   </div>
 
-<div class="modal fade" id="AgregarPersonal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+  <div class="modal fade" id="AgregarPersonal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -218,6 +219,8 @@
                 <input type="text" id="nuevaPassTemporal" class="form-control" readonly>
             </div>
 
+            <input type="hidden" id="IdPersonalRestablecerPass">
+
             <div class="col-2">
                 <div class="input-group">
                     <button class="actionButton btnCopiarPass" id="btnCopiarPass"
@@ -226,14 +229,13 @@
 
                         <img src="{% static 'img/copy_content.png' %}" 
                         id="iconoCopiarPass" alt="Copiar contraseña" title="Copiar contraseña">
-                    
                     </button>
                 </div>
             </div>
         </div>
 
         <div class="modal-footer">
-            <button type="button" id="btnEnviarPorCorreo" data-bs-dismiss="modal">
+            <button type="button" id="btnEnviarPorCorreo" data-bs-dismiss="modal" onclick="EnviarCorreo()">
                 Enviar por correo
             </button>
         </div>
