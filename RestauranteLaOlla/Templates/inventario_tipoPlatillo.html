@@ -18,18 +18,7 @@
         <option value="{% url 'inventario_platillos' %}">Consumos</option>
     </select>
   
-    <div class="exportar">
-        <button class="excel">
-          <a href="{% url 'ExportarTipoPlatillo' %}">
-                <img src="{% static 'img/Export_excel_2.png' %}" alt="Exportar en excel" title="Exportar en excel">
-          </a>
-          </button>
-         <button class="pdf">
-          <a href="{% url 'CreacionTipoPlatillos_PDF' %}">
-            <img src="{% static 'img/Export_pdf_2.png' %}" alt="Exportar en pdf" title="Exportar en pdf">
-          </a>
-        </button> 
-    </div>
+    <button data-toggle="modal" data-target="#ExportarTipoPlatillo" style="margin-left: 20px;">Exportar</button>
   </div>
 
   <div id="contenedorDerechoEncabezadoInventario">
@@ -42,57 +31,43 @@
 </div>
 
 <div id="cuerpoInventario">
-
-    <!-- TABLA CON SU RESPECTIVO CONTENIDO -->
-    <table class="display tablaInventario" style="width:100%;">
-        <thead>
-            <!-- Columnas -->
-            <tr>
-                <th>Tipo de consumo</th>
-                <th style="text-align: center">Estado</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-
-        <!-- Filas -->
-        <tbody>
-            {% for tipoplatillo in TypePlatillo%}
-            <tr>
-                <td style="text-transform: capitalize; ">{{tipoplatillo.Nombre}}</td>
-                <td style="text-align: center">
-                  {% if tipoplatillo.EsActivo == "1" %} 
-                    &#9989;
-                  {% else %}
-                  &#9940;
-                  {% endif %}
-                </td>
-                <td class="actions">
-
-                    <button class="actionButton btnEditar" data-toggle="modal" data-target="#exampleModal" onclick="Impresion('{{tipoplatillo.Id}}', '{{tipoplatillo.Nombre}}','{{tipoplatillo.EsActivo}}');" id="Editar{{tipoplatillo.Id}}">
-                        <a >
-                            <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
-                            <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar el tipo de platillo">
-                        </a>
-                    </button>
-
-                    {% if tipoplatillo.EsActivo == "1" %}
-                      <button class="actionButton btnEliminar"
-                      onclick="DarBajaTipoPlatillo('{{ tipoplatillo.Id }}')"
-                      id="Eliminar{{ tipoplatillo.Id }}">
-                        <a>
-                            <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar el tipo de platillo">
-                        </a>
-                    </button>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-      
-    </table>
+  <!-- TODO EL CONTENIDO ESTÁ EN LA PLANTILLA 'inventario_tipo_platillos_filtrados' -->
 </div>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="ExportarTipoPlatillo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title " id="exampleModalLabel" >Exportar tipo de consumo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row exportar col-12">
+          <div class="col-6">
+              <button class="excel w-100">
+                  <a href="{% url 'ExportarTipoPlatillo' %}">
+                      <img src="{% static 'img/Export_excel_2.png' %}">
+                  </a>
+              </button>
+          </div>
+  
+          <div class="col-6">
+              <button class="pdf w-100">
+                  <a href="{% url 'CreacionTipoPlatillos_PDF' %}">
+                      <img src="{% static 'img/Export_pdf_2.png' %}">
+                  </a>
+              </button>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ModificarTipoPlatillo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">

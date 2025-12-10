@@ -49,31 +49,28 @@
                             &#9989;
                         {% else %}
                             &#9940;
-                        {%endif%}
+                        {% endif %}
                     </td>
                 {% endif %}
 
                 <td class="actions">
 
                     <button class="actionButton btnEditar" id="{{personal.Id}}" data-toggle="modal"  data-target="#ModificarPersonal" 
-                    onclick="ImpresionPersonal('{{personal.username}}','{{personal.email}}','{{personal.Telefono}}', {{personal.IdCargo.Id}}, '{{personal.Id}}','{{personal.EsActivo}}','{{personal.Nombres}}','{{personal.Apellidos}}')" >
+                    onclick="ImpresionPersonal('{{personal.username}}', '{{personal.email}}', '{{personal.Telefono}}', {{personal.IdCargo.Id}}, '{{personal.Id}}', '{{personal.EsActivo}}', '{{personal.Nombres}}', '{{personal.Apellidos}}')" >
                         <a >
-                            <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
-                            <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar Personal">
+                            <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar personal">
                         </a>
                     </button>
                     
                     {% if personal.EsActivo == '1' %}
-                    <button class="actionButton btnEliminar" id="{{personal.Id}}" onclick="ConfirmarBaja('{{personal.Id}}')">
-                        <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Dar Baja Personal">
-                    </button>
-                    {% endif%}
-                    <!-- <button class="actionButton btnDetalles">
-                            <a href="">
-                                <i class="fa-solid fa-info fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
-                    <!-- <img src="{% static 'img/info1.png' %}" alt="Más información">
-                            </a>
-                        </button> -->
+                        <button class="actionButton btnEliminar" id="{{personal.Id}}" onclick="ConfirmarBaja('{{personal.Id}}')">
+                            <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar personal">
+                        </button>
+                        
+                        <button class="actionButton btnRestablecerPass" id="{{personal.Id}}" onclick="ConfirmarRestablecer('{{personal.Id}}')">
+                            <img src="{% static 'img/restablecer_pass.png' %}" alt="Restablecer contraseña" title="Restablecer contraseña">
+                        </button>
+                    {% endif %}
 
                 </td>
             </tr>

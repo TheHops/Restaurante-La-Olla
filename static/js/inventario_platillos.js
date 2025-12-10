@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function cargarPlatillos(ver) {
+  document.getElementById("cuerpoInventario").style.opacity = "0";
+
   const xhr = new XMLHttpRequest();
   xhr.open("GET", "/FiltrarPlatillos?verEliminados=" + (ver ? "1" : "0"));
   xhr.send();
@@ -34,6 +36,10 @@ function cargarPlatillos(ver) {
           url: "https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json",
         },
       });
+
+      setTimeout(() => {
+        document.getElementById("cuerpoInventario").style.opacity = "100%";
+      }, 500);
     }
   };
 }
@@ -117,13 +123,13 @@ function ActualizarPlatillo() {
       if (response.status === "ok") {
         Swal.fire({
           icon: "success",
-          title: response.message || "¡Cosumo modificado exitosamente!",
+          title: response.message || "¡Consumo modificado exitosamente!",
           confirmButtonColor: "#ff6464",
         }).then(() => location.reload());
       } else {
         Swal.fire({
-          icon: "warning",
-          title: "Advertencia",
+          icon: "error",
+          title: "Error",
           text: response.message,
           confirmButtonColor: "#ff6464",
         });

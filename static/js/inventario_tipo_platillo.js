@@ -197,6 +197,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function cargarTipoPlatillos(ver) {
+  document.getElementById("cuerpoInventario").style.transition = "all 0s ease";
+  document.getElementById("cuerpoInventario").style.opacity = "0";
+
   const xhr = new XMLHttpRequest();
   xhr.open("GET", "/FiltrarTipoPlatillos?verEliminados=" + (ver ? "1" : "0"));
   xhr.send();
@@ -216,6 +219,12 @@ function cargarTipoPlatillos(ver) {
           url: "https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json",
         },
       });
+
+      setTimeout(() => {
+        document.getElementById("cuerpoInventario").style.transition =
+          "all .15s ease";
+        document.getElementById("cuerpoInventario").style.opacity = "100%";
+      }, 500);
     }
   };
 }

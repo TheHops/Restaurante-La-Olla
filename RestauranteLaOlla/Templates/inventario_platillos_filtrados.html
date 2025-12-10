@@ -36,7 +36,7 @@
             
             <td class="actions">
 
-                <button class="actionButton btnEditar" data-toggle="modal" data-target="#exampleModal" 
+                <button class="actionButton btnEditar" data-toggle="modal" data-target="#ModificarPlatillo" 
                 onclick='Impresion("{{platillo.Id}}" , "{{platillo.Nombre}}", "{{platillo.IdTipoPlatillo.Nombre}}", "{{platillo.IdTipoPlatillo.Id}}","{{platillo.Precio}}","{{platillo.EsActivo}}", "{{platillo.Descripcion}}" );'  id="Editar{{platillo.Id}}">
                     <a>
                         <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar platillo">

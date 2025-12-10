@@ -6,6 +6,10 @@ from django.shortcuts import render
 from Application.models import Cargo, Usuario
 from django.views.decorators.http import require_POST
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
+
+import random
+import string
 
 User = get_user_model()
 
@@ -230,7 +234,7 @@ def DarBajaPersonal(request):
             id_personal = request.POST.get("ID")
 
             if not id_personal:
-                return JsonResponse({'status': 'error', 'message': 'ID no proporcionado'}, status=400)
+                return JsonResponse({'status': 'error', 'message': 'ID no proporcionado'})
 
             personal = Usuario.objects.get(Id=id_personal)
             personal.EsActivo = "0"
@@ -239,17 +243,69 @@ def DarBajaPersonal(request):
             return JsonResponse({'status': 'ok', 'message': '¡Personal dado de baja exitosamente!'})
         
         except Usuario.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Usuario no encontrado'}, status=404)
+            return JsonResponse({'status': 'error', 'message': 'Usuario no encontrado'})
 
         except Exception as ex:
             print("\n#################### EXCEPCIÓN ########################")
             print(ex)
             print("########################################################\n")
-            return JsonResponse({'status': 'error', 'message': 'Error interno del servidor'}, status=500)
+            return JsonResponse({'status': 'error', 'message': 'Error interno del servidor'})
     
-    return JsonResponse({'status': 'error', 'message': 'Método no permitido'}, status=405)
+    return JsonResponse({'status': 'error', 'message': 'Método no permitido'})
 
 #endregion Eliminar personal
+
+#region Restablecer contraseña
+
+def generar_pass_temporal():
+    letras = string.ascii_uppercase   # ABCDE...
+    numeros = string.digits           # 0123456789
+    especiales = "!@#$%^&*()_+-=<>?"
+
+    # Construcción en el orden exacto solicitado
+    parte1 = random.choice(letras) + random.choice(letras)    # 2 letras mayúsculas
+    parte2 = random.choice(numeros) + random.choice(numeros)  # 2 números
+    parte3 = random.choice(letras) + random.choice(letras)    # 2 letras mayúsculas
+    parte4 = random.choice(numeros)                            # 1 número
+    parte5 = random.choice(especiales)                         # 1 carácter especial
+
+    return parte1 + parte2 + parte3 + parte4 + parte5
+
+def RestablecerPass(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+
+    if request.method == "POST":
+        try:
+            id_personal = request.POST.get("ID")
+
+            if not id_personal:
+                return JsonResponse({'status': 'error', 'message': 'ID no proporcionado'})
+
+            # Buscar al usuario
+            usuario = Usuario.objects.get(Id=id_personal)
+
+            # Generar contraseña temporal
+            nueva_pass = generar_pass_temporal()
+
+            # Guardarla en el usuario (encriptada)
+            usuario.password = make_password(nueva_pass)
+            usuario.save()
+
+            return JsonResponse({'status': 'ok', 'message': '¡Contraseña restablecida exitosamente!', 'new_pass': nueva_pass})
+        
+        except Usuario.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Usuario no encontrado'})
+
+        except Exception as ex:
+            print("\n#################### EXCEPCIÓN ########################")
+            print(ex)
+            print("########################################################\n")
+            return JsonResponse({'status': 'error', 'message': 'Error interno del servidor'})
+    
+    return JsonResponse({'status': 'error', 'message': 'Método no permitido'})
+
+#endregion Restablecer contraseña
 
 #region Filtrar personal
 

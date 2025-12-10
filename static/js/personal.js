@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function cargarPersonal(ver) {
+  document.getElementById("cuerpoInventario").style.opacity = "0";
+
   const xhr = new XMLHttpRequest();
   xhr.open("GET", "/FiltrarPersonal?verEliminados=" + (ver ? "1" : "0"));
   xhr.send();
@@ -34,6 +36,10 @@ function cargarPersonal(ver) {
           url: "https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json",
         },
       });
+
+      setTimeout(() => {
+        document.getElementById("cuerpoInventario").style.opacity = "100%";
+      }, 500);
     }
   };
 }
@@ -169,6 +175,71 @@ function ModificarPersonal() {
         icon: "error",
       });
     },
+  });
+}
+
+function ConfirmarRestablecer(idPersonal)
+{
+  Swal.fire({
+    title: "¿Realmente desea restablecer la contraseña de este usuario?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#ff6464",
+    cancelButtonColor: "#6c757d",
+    confirmButtonText: "Restablecer",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: "Procesando...",
+        text: "Por favor espere",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      $.ajax({
+        url: "/RestablecerPass/",
+        type: "POST",
+        data: {
+          ID: idPersonal,
+          csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+        },
+        success: function (response) {
+          Swal.close();
+
+          if (response.status === "ok") {
+            // Insertar la contraseña nueva en el modal
+            $("#nuevaPassTemporal").val(response.new_pass);
+
+            console.log(response.new_pass);
+
+            $("#IdPersonalRestablecerPass").val(idPersonal);
+
+            // Crear instancia y mostrar modal
+            const modal = new bootstrap.Modal(
+              document.getElementById("modalPassRestablecida")
+            );
+
+            modal.show();
+          } else {
+            Swal.fire({
+              title: "Error",
+              text: response.message,
+              icon: "error",
+              confirmButtonColor: "#343a40",
+            });
+          }
+        },
+        error: function () {
+          Swal.fire({
+            title: "Error",
+            text: "Ocurrió un error en la solicitud.",
+            icon: "error",
+            confirmButtonColor: "#343a40",
+          });
+        },
+      });
+    }
   });
 }
 
@@ -350,4 +421,78 @@ function soloNumeros(event) {
 
 function PasoIDBaja(id) {
   $("#IdPersonalBaja").val(id);
+}
+
+document.getElementById("btnCopiarPass").addEventListener("click", function () {
+  const input = document.getElementById("nuevaPassTemporal");
+  const img = document.getElementById("iconoCopiarPass");
+
+  const imgCheck = this.dataset.imgCheck;
+  const imgCopy = this.dataset.imgCopy;
+
+  input.select();
+  input.setSelectionRange(0, 99999); // Para móviles
+
+  navigator.clipboard
+    .writeText(input.value)
+    .then(() => {
+      img.src = imgCheck;
+
+      Swal.fire({
+        icon: "success",
+        title: "¡Contraseña copiada!",
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+      });
+
+      setTimeout(() => {
+        img.src = imgCopy;
+      }, 2000);
+    })
+    .catch(() => {
+      console.error("Ocurrió un error al intentar copiar la contraseña");
+    });
+});
+
+function EnviarCorreo() 
+{
+  let idPersonal = $("#IdPersonalRestablecerPass").val();
+  let passTemporal = $("#nuevaPassTemporal").val();
+
+  $.ajax({
+    url: "/EnviarCorreo/",
+    type: "POST",
+    data: {
+      idPersonal: idPersonal,
+      tituloCorreo: "Nueva contraseña temporal",
+      mensajeCorreo: "Su contraseña temporal es: " + passTemporal,
+      csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+    },
+    success: function (response) {
+      if (response.status === "ok") {
+        Swal.fire({
+          icon: "success",
+          title: response.message,
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: response.message,
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+      }
+    },
+  });
 }

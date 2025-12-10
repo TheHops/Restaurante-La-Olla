@@ -9,14 +9,7 @@
             <img src="{% static 'img/Add_user.png' %}" style="width: 30px; height: 30px; margin-right: 5px;" title="Agregar personal">Agregar personal
         </button>
     
-        <!-- <div class="exportarP">
-            <button class="excel">
-                <img src="{% static 'img/Export_excel_2.png' %}" alt="Exportar en excel" title="Exportar en excel">
-            </button>
-            <button class="pdf">
-                <img src="{% static 'img/Export_pdf_2.png' %}" alt="Exportar en pdf" title="Exportar en pdf">
-            </button>
-        </div> -->
+        <button data-toggle="modal" data-target="#ExportarPersonal" style="margin-left: 20px;">Exportar</button>
     </div>
 
     <div id="contenedorDerechoEncabezadoInventario">
@@ -29,82 +22,46 @@
 </div>
 
 <div id="cuerpoInventario">
-
-    <!-- TABLA CON SU RESPECTIVO CONTENIDO -->
-    <table class="display tablaInventario" style="width:100%;">
-        <thead>
-            <!-- Columnas -->
-            <tr>
-                <th>Usuario</th>
-                <th>Nombres y apellidos</th>
-                <th>Correo</th>
-                <th>Teléfono</th>
-                <th>Cargo</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-
-        <!-- Filas -->
-        <tbody>
-            {% for personal in Personal %}
-            <tr>
-                <td>{{personal.username}}</td>
-                <td>{{personal.Nombres}} {{personal.Apellidos}}</td>
-                <td>{{personal.email}}</td>
-                <td>
-                    {% if personal.Telefono %}
-                        <a href="https://wa.me/+505{{personal.Telefono}}" target="_blank" style="color:black;">  {{personal.Telefono}} </a>
-                    {% else %}
-                        N/A
-                    {% endif %}
-                </td>
-                <td>{{personal.IdCargo.Nombre}}</td>
-                {% if personal.EsActivo == '1'%}
-                    <td>Activo</td>
-                {% else %}
-                    <td>Inactivo</td>
-                {%endif%}
-                <td class="actions">
-
-                    <button class="actionButton btnEditar" id="{{personal.Id}}" data-toggle="modal"  data-target="#ModificarPersonal" 
-                    onclick="ImpresionPersonal('{{personal.username}}','{{personal.email}}','{{personal.Telefono}}', {{personal.IdCargo.Id}}, '{{personal.Id}}','{{personal.EsActivo}}','{{personal.Nombres}}','{{personal.Apellidos}}')" >
-                        <a >
-                            <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
-                            <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar Personal">
-                        </a>
-                    </button>
-                    
-                    {% if personal.EsActivo == '1' %}
-                    <button class="actionButton btnEliminar" id="{{personal.Id}}" onclick="ConfirmarBaja('{{personal.Id}}')">
-                        <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Dar Baja Personal">
-                    </button>
-                    {% endif%}
-                    <!-- <button class="actionButton btnDetalles">
-                            <a href="">
-                                <i class="fa-solid fa-info fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
-                    <!-- <img src="{% static 'img/info1.png' %}" alt="Más información">
-                            </a>
-                        </button> -->
-
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-        <!-- <tfoot>
-                <tr>
-                    <th>Insumo</th>
-                    <th>Presentación</th>
-                    <th>Stock</th>
-                    <th>Unidad de medida</th>
-                </tr>
-            </tfoot> -->
-    </table>
+    <!-- TODO EL CONTENIDO ESTÁ EN LA PLANTILLA 'personal_filtrados' -->
 </div>
 
 <div class="modal-overlay"></div>
 
-<div class="modal fade" id="AgregarPersonal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="ExportarPersonal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title " id="exampleModalLabel" >Exportar tipo de consumo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body row exportar col-12">
+            <div class="col-6">
+                <button class="excel w-100">
+                    <a href="">
+                        <img src="{% static 'img/Export_excel_2.png' %}">
+                    </a>
+                </button>
+            </div>
+    
+            <div class="col-6">
+                <button class="pdf w-100">
+                    <a href="">
+                        <img src="{% static 'img/Export_pdf_2.png' %}">
+                    </a>
+                </button>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="AgregarPersonal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -122,38 +79,38 @@
             <form method="POST" action="">
                 {% csrf_token %}
                 <div class="row">
-                    <div class="col-md-6">
-                        <h4 style="font-size: 20px;">Nombres<span class="asterisco">*</span></h4>
+                    <div class="col-6 mb-2">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Nombres<span class="asterisco">*</span></h4>
                         <input type="text" class="form-control" id="Fullname" required>
                     </div>
-                    <div class="col-md-6">
-                        <h4 style="font-size: 20px;">Apellidos<span class="asterisco">*</span></h4>
+
+                    <div class="col-6 mb-2">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Apellidos<span class="asterisco">*</span></h4>
                         <input type="text" class="form-control" id="Apellidos" required>
                     </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <h4 style="font-size: 20px;">Usuario<span class="asterisco">*</span></h4>
+                    
+                    <div class="col-6 mb-2">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Nombre de usuario<span class="asterisco">*</span></h4>
                         <input type="text" class="form-control" id="User" required autocomplete="off">
                     </div>
-                    <div class="col-md-6">
-                        <h4 style="font-size: 20px;">Contraseña<span class="asterisco">*</span></h4>
+                    
+                    <div class="col-6 mb-2">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Contraseña temporal<span class="asterisco">*</span></h4>
                         <input type="Password" class="form-control" id="Pass" required autocomplete="new-password">
                     </div>
-                </div>
-
-                <h4 style="font-size: 20px;">Correo</h4>
-                <input type="email" class="form-control" id="e-mail">
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <h4 style="font-size: 20px;">Telefono</h4>
-                        <input type="text"inputmode="numeric" class="form-control" maxlength="8" id="telefono" onkeypress="return soloNumeros(event)">
-               
+                    
+                    <div class="col-12 mb-2">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Correo</h4>
+                        <input type="email" class="form-control" id="e-mail">
                     </div>
-                    <div class="col-md-6">
-                        <h4 style="font-size: 20px;">Cargo<span class="asterisco">*</span></h4>
+
+                    <div class="col-6 mb-2">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Telefono</h4>
+                        <input type="text"inputmode="numeric" class="form-control" maxlength="8" id="telefono" onkeypress="return soloNumeros(event)">
+                    </div>
+
+                    <div class="col-6 mb-2">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Cargo<span class="asterisco">*</span></h4>
                         <select class="form-control" id="idCargo" required>
                             {% for cargo in Cargos %}
                             <option value="{{cargo.Id}}">{{cargo.Nombre}}</option>
@@ -177,77 +134,113 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title " id="exampleModalLabel" >Modificar Personal</h5>
+          <h5 class="modal-title " id="exampleModalLabel">Modificar Personal</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="alert alert-info alert-dismissible">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
-            <strong>Recuerde!</strong> Campos con <span class="asterisco">*</span> son obligatorios.
+            <strong>¡Recuerde!</strong> Campos con <span class="asterisco">*</span> son obligatorios.
           </div>
         <div class="modal-body">
             <form method="POST">
+                <div class="row">
                 {% csrf_token %}
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <h4 style="font-size: 20px;">Nombres<span class="asterisco">*</span></h4>
+                    <input type="hidden" class="form-control" id="IdPersonal">
+                
+                    <div class="col-6 mb-2">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Nombres<span class="asterisco">*</span></h4>
                         <input type="text" class="form-control" id="NombreUsuarioMod" required>
                     </div>
-                    <div class="col-md-6">
-                        <h4 style="font-size: 20px;">Apellidos<span class="asterisco">*</span></h4>
+
+                    <div class="col-6 mb-2">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Apellidos<span class="asterisco">*</span></h4>
                         <input type="text" class="form-control" id="ApellidosUsuarioMod" required>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <h4 style="font-size: 20px;">Usuario<span class="asterisco">*</span></h4>
+                
+                    <div class="col-6 mb-2">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Usuario<span class="asterisco">*</span></h4>
                         <input type="text" class="form-control" id="NameUsuario" required autocomplete="off">
                     </div>
-                    <div class="col-md-6">
-                        <h4 style="font-size: 20px;">Correo</h4>
+
+                    <div class="col-6 mb-2">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Teléfono</h4>
+                        <input type="text" inputmode="numeric" class="form-control" maxlength="8" id="NumberUsuario" onkeypress="return soloNumeros(event)"  required>
+                    </div>
+                
+                    <div class="col-12 mb-2">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Correo</h4>
                         <input type="email" class="form-control" id="CorreoUsuario"  required>
                     </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <h4 style="font-size: 20px;">Nueva Contraseña</h4>
-                        <input type="password" class="form-control" id="NewPassword" required autocomplete="new-password">
-                    </div>
-                    <div class="col-md-6">
-                        <h4 style="font-size: 20px;">Verificar Contraseña</h4>
-                        <input type="password" class="form-control" id="CheckPassword" required autocomplete="new-password">
-                    </div>
-                </div>
-               
-                <h4 style="font-size: 20px;">Numero de Telefono</h4>
-                <input type="hidden" class="form-control" id="IdPersonal">
-                <input type="text"inputmode="numeric" class="form-control" maxlength="8" id="NumberUsuario" onkeypress="return soloNumeros(event)"  required>
              
-                    <h4 style="font-size: 20px;">Cargo<span class="asterisco">*</span></h4>
-                    <select class="form-control" id="idCargoModificar" required>
-                        {% for cargo in Cargos %}
-                            <option value="{{cargo.Id}}" id="personalCargo{{cargo.Id}}">{{cargo.Nombre}}</option>
-                        {% endfor %}
-                    </select>
+                    <div class="col-6 mb-2">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Cargo<span class="asterisco">*</span></h4>
+                        <select class="form-control" id="idCargoModificar" required>
+                            {% for cargo in Cargos %}
+                                <option value="{{cargo.Id}}" id="personalCargo{{cargo.Id}}">{{cargo.Nombre}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-                    <h4 style="font-size: 20px;">Estado<span class="asterisco">*</span></h4>
-                    <select class="form-control" id="idEstadoModificar" required>
-                        <option value="1">Activo</option>
-                        <option value="0">Inactivo</option>
-                    </select>
-               
+                    <div class="col-6 mb-2">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Estado<span class="asterisco">*</span></h4>
+                        <select class="form-control" id="idEstadoModificar" required>
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
             </form>
                
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn_confirmation_mi_color" onclick="ModificarPersonal();">Actualizar</button>
+          <button type="submit" class="btn btn_confirmation_mi_color" onclick="ModificarPersonal();">Modificar</button>
         </div>
       </div>
     </div>
+</div>
+
+<!-- Modal mostrar contraseña restablecida -->
+<div class="modal fade" id="modalPassRestablecida" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Nueva contraseña temporal</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="modal-body row">
+            <div class="col-10">
+                <input type="text" id="nuevaPassTemporal" class="form-control" readonly>
+            </div>
+
+            <input type="hidden" id="IdPersonalRestablecerPass">
+
+            <div class="col-2">
+                <div class="input-group">
+                    <button class="actionButton btnCopiarPass" id="btnCopiarPass"
+                        data-img-check="{% static 'img/check.png' %}"
+                        data-img-copy="{% static 'img/copy_content.png' %}" >
+
+                        <img src="{% static 'img/copy_content.png' %}" 
+                        id="iconoCopiarPass" alt="Copiar contraseña" title="Copiar contraseña">
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" id="btnEnviarPorCorreo" data-bs-dismiss="modal" onclick="EnviarCorreo()">
+                Enviar por correo
+            </button>
+        </div>
+    </div>
+  </div>
 </div>
 
 <script src="{% static 'js/personal.js' %}"></script>
