@@ -163,7 +163,7 @@ def ModificarPersonal(request):
 
         # Validar correo único si no es NULL
         if correo is not None:
-            if Usuario.objects.filter(email=correo).exists():
+            if Usuario.objects.filter(email=correo).exclude(Id=personal_id).exists():
                 return JsonResponse({
                 'status': 'error',
                 'message': 'El correo ya está registrado en otra cuenta'})
