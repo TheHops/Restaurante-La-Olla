@@ -462,6 +462,16 @@ function EnviarCorreo()
   let idPersonal = $("#IdPersonalRestablecerPass").val();
   let passTemporal = $("#nuevaPassTemporal").val();
 
+  Swal.fire({
+    toast: true,
+    position: "top-end",
+    title: "Procesando...",
+    showConfirmButton: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+
   $.ajax({
     url: "/EnviarCorreo/",
     type: "POST",
@@ -472,6 +482,9 @@ function EnviarCorreo()
       csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
     },
     success: function (response) {
+      
+      Swal.close();
+
       if (response.status === "ok") {
         Swal.fire({
           icon: "success",
