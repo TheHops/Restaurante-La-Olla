@@ -11,7 +11,7 @@
     </a>
   {% endif %}
 
-  <select name="" id="listaEstadoOrdenes" onchange="filtrarOrdenes(this.value)">
+  <select name="" id="listaEstadoOrdenes" onchange="CambioEstadoOrdenes(this.value)">
     {% if CargoUsuario != "Cajero" %}
       <option value="1">Pendientes</option>
       <option value="4">En preparación</option>
@@ -35,188 +35,7 @@
 </div>
 
 <div id="listaOrdenesPoFoC">
-  {% csrf_token %} 
-  {% for Orden in Ordenes %}
-
-  <div class="ordenPoFoC">
-    <div class="encabezadoPoFoC">
-      <h5>
-        Orden #{{ Orden.Id }} - 
-        {% if Orden.Estado == "1" %} Pendiente
-        <div class="EstP"></div>
-        {% elif Orden.Estado == "0" %} Registrada
-        <div class="EstF"></div>
-        {% elif Orden.Estado == "3" %} Preparada
-        <div class="EstPre"></div>
-        {% elif Orden.Estado == "4" %} En preparación
-        <div class="EstEnPre"></div>
-        {% else %} Anulada
-        <div class="EstC"></div>
-        {% endif %}
-      </h5>
-      <h4>Total: C${{Orden.Total}}</h4>
-    </div>
-    <!-- Fin encabezadoPoFoC -->
-
-    <div class="seccionesPoFoC">
-      <div class="seccionIzquierda">
-        <h4 style="margin: 0">Area: {{Orden.AreaDeMesa}}</h4>
-        <h5>
-          Mesas ocupadas: 
-          {% for mesa in Orden.Mesas.all %}
-          #{{mesa.IdMesa.Numero}} 
-          {% if not forloop.last %} - {% endif %} 
-          {% endfor %}
-        </h5>
-
-        {% if Orden.Estado == "1" %}
-          <span class="timer" style="color: #555555" id="timer-{{ Orden.Id }}-{{Orden.Estado}}" data-estado="{{ Orden.Estado }}"
-                data-fecha="{{ Orden.Fecha|date:'Y-m-d\\TH:i:s' }}">
-          </span>
-        {% elif Orden.Estado == "4" %}
-          <span class="timer" style="color: #555555" id="timer-{{ Orden.Id }}" data-estado="{{ Orden.Estado }}" 
-                data-fecha="{{ Orden.UltimaModificacion|date:'Y-m-d\\TH:i:s' }}">
-          </span>
-        {% else %}
-          <h6 style="color: #555555">{{ Orden.UltimaModificacion|date:"j \\d\\e F \\d\\e Y \\a \\l\\a\\s g:i A" }}</h6>
-        {% endif %}
-      </div>
-      <div class="seccionDerecha">
-        <!-- Pendiente -->
-        {% if Orden.Estado == "1" %}
-        
-          {% if CargoUsuario == "Mesero" or CargoUsuario == "Administrador" %}
-            <!-- Anular orden -->
-            <button
-              class="btnCancelarOrden"
-              onclick="CancelarOrden('{{Orden.Id}}')"
-            >
-              <i class="fa-solid fa-ban"></i> Anular
-            </button>
-
-            <!-- Editar la orden -->
-            <button>Editar</button>
-          {% endif %}
-
-          {% if CargoUsuario == "Cocinero" or CargoUsuario == "Administrador" %}
-            <!-- Cambiar el estado de la orden a 'En preparación' -->
-            <button onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAEnPreparacion' %}', 'Cambiando a En preparación')">Empezar preparación</button>
-          {% endif %}
-
-        <!-- En preparación -->
-        {% elif Orden.Estado == "4" %}
-          
-          {% if CargoUsuario == "Mesero" or CargoUsuario == "Administrador" %}
-            <!-- Anular orden -->
-            <button
-              class="btnCancelarOrden"
-              onclick="CancelarOrden('{{Orden.Id}}')"
-            >
-              <i class="fa-solid fa-ban"></i> Anular
-            </button>
-
-            <!-- Editar la orden -->
-            <button>Editar</button>
-          {% endif %}
-
-          {% if CargoUsuario == "Cocinero" or CargoUsuario == "Administrador" %}
-            <!-- Cambiar el estado de la orden a 'Preparada' -->
-            <button onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAPreparado' %}', 'Cambiando a Preparada')">Confirmar preparado</button>
-          {% endif %}
-
-        <!-- Preparado -->
-        {% elif Orden.Estado == "3" %}
-        
-          <!-- Anular orden -->
-          <button
-            class="btnCancelarOrden"
-            onclick="CancelarOrden('{{Orden.Id}}')"
-          >
-            <i class="fa-solid fa-ban"></i> Anular
-          </button>
-
-          <!-- Editar la orden -->
-          <button>Editar</button>
-
-          <!-- Registrar la orden -->
-          <button
-            class="btnFacturarOrden"
-            data-toggle="modal"
-            data-target="#FacturarOrden"
-            onclick="rellenarParaFacturar('{{Orden.Id}}', '{{Orden.Total}}')"
-          >
-            <i class="fa-solid fa-file-invoice-dollar"></i> Registrar
-          </button>
-
-        <!-- Anulada -->
-        {% elif Orden.Estado == "2" %}
-
-          {% if Orden.Motivo is not none and Orden.Motivo != '' %}
-            <div class="motivoOrden">
-              <!-- TODO: RECORDAR PONER ICONO DE COMENTARIO -->
-              <span>{{ Orden.Motivo }}</span>
-            </div>  
-          {% endif %}
-
-        {% endif %}
-      </div>
-    </div>
-  </div>
-  <!-- Fin ordenPoFoc -->
-
-  <!-- Inicia descripcion (Se agrega si es necesario) -->
-  {% if Orden.Descripcion is not none and Orden.Descripcion != '' %}
-  <div class="descripcionOrden">
-    <!-- TODO: RECORDAR PONER ICONO DE COMENTARIO -->
-    <span>{{ Orden.Descripcion }}</span>
-  </div>  
-  {% endif %}
-
-  <div class="detalleOrdenPoFoC">
-    <div class="cuerpoDetalleOrden" id="idDetalleOrden{{Orden.Id}}">
-      <div class="detallitoOrden">
-        <span style="width: 70%">Platillo</span>
-        <span style="width: 15%">Cantidad</span>
-        <span style="width: 10%">Precio</span>
-
-        <hr
-          style="
-            margin-top: 0;
-            margin-bottom: 3px;
-            width: 97%;
-            border-color: #df362d50;
-          "
-        />
-
-        {% for Detalle in Orden.Detalles.all %} 
-        <div class="detalle">
-          <span
-            style="width: 70%"
-            class="detalleTruncar"
-            title="{{ Detalle.IdPlatillo.Nombre }}"
-            >{{ Detalle.IdPlatillo.Nombre }}
-          </span>
-
-          <span style="width: 15%">{{ Detalle.Cantidad }}</span>
-          <span style="width: 10%">C${{ Detalle.PrecioVenta }}</span>
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-    <!-- fin cuerpoDetalleOrden -->
-    <div class="botonDesplazarDetalleOrden">
-      <button onclick="desplegarDetalles('{{Orden.Id}}')">
-        <i
-          class="fa-solid fa-angles-down iconoDesplegarDetalles"
-          id="iconoOrden{{Orden.Id}}"
-        ></i>
-      </button>
-    </div>
-    <!-- fin botonDesplazarDetalleOrden -->
-  </div>
-  <!-- Fin ordenPoFoC -->
-  
-  {% endfor %}
+  <!-- TODO EL CONTENIDO ESTÁ EN LA PLANTILLA 'ordenesFiltradas' -->
 </div>
 <!-- Fin listaOrdenesPoFoC -->
 
@@ -328,6 +147,7 @@
             </div>
             -->
 
+            <!-- VA A CONTENER LOS CAMPOS PARA PROPINA Y DESCUENTO -->
             <div class="col-12">
               <div id="contenedorExtras">
                 <div class="col-6 pl-0" id="contenedorPropina">
@@ -341,15 +161,19 @@
 
                   <div class="col-12 px-0 contenedorPorcentaje" id="inputPorcentajePropina">
                     <div class="input-group mb-0">
-                      <span class="input-group-text">%</span>
-                      <input type="text" class="form-control" aria-label="Porcentaje">
+                      <span class="input-group-text"><b>%</b></span>
+                      <input type="text" class="form-control" aria-label="Porcentaje" id="txtPorcentajePropina">
                     </div>
                     
                     <div class="col-12 px-0 mensajeExtras" id="mensajePorcentajePropina">
                       Debe ser menor a 10%
                     </div>
-                  </div>
 
+                    <div class="input-group mt-2">
+                      <span class="input-group-text">C$</span>
+                      <input type="text" class="form-control" aria-label="ValorPorcentaje" id="txtValorPorcentajePropina" readonly>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="col-6 pr-0" id="contenedorDescuento">
@@ -363,12 +187,17 @@
 
                   <div class="col-12 px-0 contenedorPorcentaje" id="inputPorcentajeDescuento">
                     <div class="input-group mb-0">
-                      <span class="input-group-text">%</span>
-                      <input type="text" class="form-control" aria-label="Porcentaje">
+                      <span class="input-group-text"><b>%</b></span>
+                      <input type="text" class="form-control" aria-label="Porcentaje" id="txtPorcentajeDescuento">
                     </div>
 
                     <div class="col-12 px-0 mensajeExtras" id="mensajePorcentajeDescuento">
                       Debe ser entre 10% y 30%
+                    </div>
+
+                    <div class="input-group mt-2">
+                      <span class="input-group-text">C$</span>
+                      <input type="text" class="form-control" aria-label="ValorPorcentaje" id="txtValorPorcentajeDescuento" readonly>
                     </div>
                   </div>
                 </div>

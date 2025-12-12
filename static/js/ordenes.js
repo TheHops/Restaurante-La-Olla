@@ -405,7 +405,20 @@ async function CancelarOrden(idOrden) {
 
 /////////////////////////////////////////////////////////////////////
 
+function CambioEstadoOrdenes(cadena)
+{
+  const contenedor = document.getElementById("listaOrdenesPoFoC");
+
+  contenedor.style.opacity = "0";
+  
+  setTimeout(() => {
+    filtrarOrdenes(cadena);
+  }, 300);
+}
+
 function filtrarOrdenes(cadena) {
+  const contenedor = document.getElementById("listaOrdenesPoFoC");
+
   const request = new XMLHttpRequest();
 
   request.open(
@@ -417,14 +430,13 @@ function filtrarOrdenes(cadena) {
   request.onreadystatechange = function () {
     if (this.readyState === 4) {
       if (this.status === 200) {
-        const contenedor = document.getElementById("listaOrdenesPoFoC");
         contenedor.innerHTML = this.responseText;
-
+        
         restaurarDespliegues();
-
-        // <<-- Aquí: el DOM ya fue actualizado, ahora sí iniciar timers
+        
         iniciarTimers();
-        console.log("Contenedor actualizado y timers iniciados");
+
+        contenedor.style.opacity = "100%";
       } else {
         console.error("Error al cargar órdenes:", this.status);
       }
@@ -558,3 +570,13 @@ function restaurarDespliegues() {
     }
   });
 }
+
+///////////////////////////////////////////////////////
+
+$("#checkPropina").on("change", function () {
+  $("#inputPorcentajePropina").toggle(this.checked);
+});
+
+$("#checkDescuento").on("change", function () {
+  $("#inputPorcentajeDescuento").toggle(this.checked);
+});

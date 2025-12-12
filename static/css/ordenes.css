@@ -25,6 +25,13 @@
     padding-right: 15%;
     overflow-y: auto;
     padding-bottom: 50px;
+
+    transition: all .3s ease;
+}
+
+#inputPorcentajePropina,
+#inputPorcentajeDescuento {
+    display: none;
 }
 
 .ordenPoFoC {

@@ -27,17 +27,18 @@ function cargarPlatillos(ver) {
 
       const tbody = document.querySelector("#cuerpoInventario");
       tbody.innerHTML = this.responseText;
-
-      $(".tablaInventario").DataTable({
-        scrollY: "50vh",
-        scrollCollapse: true,
-        paging: true,
-        language: {
-          url: "https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json",
-        },
-      });
-
+      
       setTimeout(() => {
+
+        $(".tablaInventario").DataTable({
+          scrollY: "50vh",
+          scrollCollapse: true,
+          paging: true,
+          language: {
+            url: "https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json",
+          },
+        });
+
         document.getElementById("cuerpoInventario").style.opacity = "100%";
       }, 500);
     }
