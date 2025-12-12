@@ -206,21 +206,21 @@ function cargarTipoPlatillos(ver) {
 
   xhr.onreadystatechange = function () {
     if (this.readyState === 4 && this.status === 200) {
-      $(".tablaInventario").DataTable().destroy();
-
-      const tbody = document.querySelector("#cuerpoInventario");
-      tbody.innerHTML = this.responseText;
-
-      $(".tablaInventario").DataTable({
-        scrollY: "50vh",
-        scrollCollapse: true,
-        paging: true,
-        language: {
-          url: "https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json",
-        },
-      });
-
       setTimeout(() => {
+        $(".tablaInventario").DataTable().destroy();
+
+        const tbody = document.querySelector("#cuerpoInventario");
+        tbody.innerHTML = this.responseText;
+
+        $(".tablaInventario").DataTable({
+          scrollY: "50vh",
+          scrollCollapse: true,
+          paging: true,
+          language: {
+            url: "https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json",
+          },
+        });
+
         document.getElementById("cuerpoInventario").style.transition =
           "all .15s ease";
         document.getElementById("cuerpoInventario").style.opacity = "100%";

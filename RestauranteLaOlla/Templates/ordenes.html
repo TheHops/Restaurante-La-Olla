@@ -11,7 +11,7 @@
     </a>
   {% endif %}
 
-  <select name="" id="listaEstadoOrdenes" onchange="filtrarOrdenes(this.value)">
+  <select name="" id="listaEstadoOrdenes" onchange="CambioEstadoOrdenes(this.value)">
     {% if CargoUsuario != "Cajero" %}
       <option value="1">Pendientes</option>
       <option value="4">En preparación</option>
@@ -35,230 +35,9 @@
 </div>
 
 <div id="listaOrdenesPoFoC">
-  {% csrf_token %} 
-  {% for Orden in Ordenes %}
-
-  <div class="ordenPoFoC">
-    <div class="encabezadoPoFoC">
-      <h5>
-        Orden #{{ Orden.Id }} - 
-        {% if Orden.Estado == "1" %} Pendiente
-        <div class="EstP"></div>
-        {% elif Orden.Estado == "0" %} Registrada
-        <div class="EstF"></div>
-        {% elif Orden.Estado == "3" %} Preparada
-        <div class="EstPre"></div>
-        {% elif Orden.Estado == "4" %} En preparación
-        <div class="EstEnPre"></div>
-        {% else %} Anulada
-        <div class="EstC"></div>
-        {% endif %}
-      </h5>
-      <h4>Total: C${{Orden.Total}}</h4>
-    </div>
-    <!-- Fin encabezadoPoFoC -->
-
-    <div class="seccionesPoFoC">
-      <div class="seccionIzquierda">
-        <h4 style="margin: 0">Area: {{Orden.AreaDeMesa}}</h4>
-        <h5>
-          Mesas ocupadas: 
-          {% for mesa in Orden.Mesas.all %}
-          #{{mesa.IdMesa.Numero}} 
-          {% if not forloop.last %} - {% endif %} 
-          {% endfor %}
-        </h5>
-
-        {% if Orden.Estado == "1" %}
-          <span class="timer" style="color: #555555" id="timer-{{ Orden.Id }}-{{Orden.Estado}}" data-estado="{{ Orden.Estado }}"
-                data-fecha="{{ Orden.Fecha|date:'Y-m-d\\TH:i:s' }}">
-          </span>
-        {% elif Orden.Estado == "4" %}
-          <span class="timer" style="color: #555555" id="timer-{{ Orden.Id }}" data-estado="{{ Orden.Estado }}" 
-                data-fecha="{{ Orden.UltimaModificacion|date:'Y-m-d\\TH:i:s' }}">
-          </span>
-        {% else %}
-          <h6 style="color: #555555">{{ Orden.UltimaModificacion|date:"j \\d\\e F \\d\\e Y \\a \\l\\a\\s g:i A" }}</h6>
-        {% endif %}
-      </div>
-      <div class="seccionDerecha">
-        <!-- Pendiente -->
-        {% if Orden.Estado == "1" %}
-        
-          {% if CargoUsuario == "Mesero" or CargoUsuario == "Administrador" %}
-            <!-- Anular orden -->
-            <button
-              class="btnCancelarOrden"
-              onclick="CancelarOrden('{{Orden.Id}}')"
-            >
-              <i class="fa-solid fa-ban"></i> Anular
-            </button>
-
-            <!-- Editar la orden -->
-            <button>Editar</button>
-          {% endif %}
-
-          {% if CargoUsuario == "Cocinero" or CargoUsuario == "Administrador" %}
-            <!-- Cambiar el estado de la orden a 'En preparación' -->
-            <button onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAEnPreparacion' %}', 'Cambiando a En preparación')">Empezar preparación</button>
-          {% endif %}
-
-        <!-- En preparación -->
-        {% elif Orden.Estado == "4" %}
-          
-          {% if CargoUsuario == "Mesero" or CargoUsuario == "Administrador" %}
-            <!-- Anular orden -->
-            <button
-              class="btnCancelarOrden"
-              onclick="CancelarOrden('{{Orden.Id}}')"
-            >
-              <i class="fa-solid fa-ban"></i> Anular
-            </button>
-
-            <!-- Editar la orden -->
-            <button>Editar</button>
-          {% endif %}
-
-          {% if CargoUsuario == "Cocinero" or CargoUsuario == "Administrador" %}
-            <!-- Cambiar el estado de la orden a 'Preparada' -->
-            <button onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAPreparado' %}', 'Cambiando a Preparada')">Confirmar preparado</button>
-          {% endif %}
-
-        <!-- Preparado -->
-        {% elif Orden.Estado == "3" %}
-        
-          <!-- Anular orden -->
-          <button
-            class="btnCancelarOrden"
-            onclick="CancelarOrden('{{Orden.Id}}')"
-          >
-            <i class="fa-solid fa-ban"></i> Anular
-          </button>
-
-          <!-- Editar la orden -->
-          <button>Editar</button>
-
-          <!-- Registrar la orden -->
-          <button
-            class="btnFacturarOrden"
-            data-toggle="modal"
-            data-target="#FacturarOrden"
-            onclick="rellenarParaFacturar('{{Orden.Id}}', '{{Orden.Total}}')"
-          >
-            <i class="fa-solid fa-file-invoice-dollar"></i> Registrar
-          </button>
-
-        <!-- Anulada -->
-        {% elif Orden.Estado == "2" %}
-
-          {% if Orden.Motivo is not none and Orden.Motivo != '' %}
-            <div class="motivoOrden">
-              <!-- TODO: RECORDAR PONER ICONO DE COMENTARIO -->
-              <span>{{ Orden.Motivo }}</span>
-            </div>  
-          {% endif %}
-
-        {% endif %}
-      </div>
-    </div>
-  </div>
-  <!-- Fin ordenPoFoc -->
-
-  <!-- Inicia descripcion (Se agrega si es necesario) -->
-  {% if Orden.Descripcion is not none and Orden.Descripcion != '' %}
-  <div class="descripcionOrden">
-    <!-- TODO: RECORDAR PONER ICONO DE COMENTARIO -->
-    <span>{{ Orden.Descripcion }}</span>
-  </div>  
-  {% endif %}
-
-  <div class="detalleOrdenPoFoC">
-    <div class="cuerpoDetalleOrden" id="idDetalleOrden{{Orden.Id}}">
-      <div class="detallitoOrden">
-        <span style="width: 70%">Platillo</span>
-        <span style="width: 15%">Cantidad</span>
-        <span style="width: 10%">Precio</span>
-
-        <hr
-          style="
-            margin-top: 0;
-            margin-bottom: 3px;
-            width: 97%;
-            border-color: #df362d50;
-          "
-        />
-
-        {% for Detalle in Orden.Detalles.all %} 
-        <div class="detalle">
-          <span
-            style="width: 70%"
-            class="detalleTruncar"
-            title="{{ Detalle.IdPlatillo.Nombre }}"
-            >{{ Detalle.IdPlatillo.Nombre }}
-          </span>
-
-          <span style="width: 15%">{{ Detalle.Cantidad }}</span>
-          <span style="width: 10%">C${{ Detalle.PrecioVenta }}</span>
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-    <!-- fin cuerpoDetalleOrden -->
-    <div class="botonDesplazarDetalleOrden">
-      <button onclick="desplegarDetalles('{{Orden.Id}}')">
-        <i
-          class="fa-solid fa-angles-down iconoDesplegarDetalles"
-          id="iconoOrden{{Orden.Id}}"
-        ></i>
-      </button>
-    </div>
-    <!-- fin botonDesplazarDetalleOrden -->
-  </div>
-  <!-- Fin ordenPoFoC -->
-  
-  {% endfor %}
+  <!-- TODO EL CONTENIDO ESTÁ EN LA PLANTILLA 'ordenesFiltradas' -->
 </div>
 <!-- Fin listaOrdenesPoFoC -->
-
-<script>
-  function desplegarDetalles(idOrden) {
-    let detallitos = document.getElementById("idDetalleOrden" + idOrden);
-    let icono = document.getElementById("iconoOrden" + idOrden);
-
-    icono.classList.toggle("desplegado");
-    detallitos.classList.toggle("desplegado");
-
-    guardarEstadoDespliegue(idOrden);
-  }
-
-  function guardarEstadoDespliegue(idOrden) {
-    let estados = JSON.parse(localStorage.getItem("ordenesDesplegadas")) || [];
-
-    const indice = estados.indexOf(idOrden);
-
-    if (document.getElementById("idDetalleOrden" + idOrden).classList.contains("desplegado")) {
-        if (indice === -1) estados.push(idOrden);
-    } else {
-        if (indice !== -1) estados.splice(indice, 1);
-    }
-
-    localStorage.setItem("ordenesDesplegadas", JSON.stringify(estados));
-  }
-
-  function restaurarDespliegues() {
-    const estados = JSON.parse(localStorage.getItem("ordenesDesplegadas")) || [];
-
-    estados.forEach(idOrden => {
-        const detalle = document.getElementById("idDetalleOrden" + idOrden);
-        const icono = document.getElementById("iconoOrden" + idOrden);
-
-        if (detalle && icono) {
-            detalle.classList.add("desplegado");
-            icono.classList.add("desplegado");
-        }
-    });
-  }
-</script>
 
 <!-- ------------------------------------------------------------------------ -->
 
@@ -344,7 +123,7 @@
             <div class="col-6 mb-2" id="numRef">
               <div class="numReftxt">
                 <h4 style="font-size: 20px; margin-bottom: 3px;">
-                  Número de referencia<span class="asterisco">*</span>
+                  Número de referencia
                 </h4>
               </div>
 
@@ -367,6 +146,63 @@
               />
             </div>
             -->
+
+            <!-- VA A CONTENER LOS CAMPOS PARA PROPINA Y DESCUENTO -->
+            <div class="col-12">
+              <div id="contenedorExtras">
+                <div class="col-6 pl-0" id="contenedorPropina">
+                  <div class="col-12 px-0" id="contenedorCheckPropina">
+                    <label for="checkPropina" style="font-size: 20px;">
+                      Propina
+                    </label>
+                    
+                    <input type="checkbox" name="inputCheckPropina" id="checkPropina">
+                  </div>
+
+                  <div class="col-12 px-0 contenedorPorcentaje" id="inputPorcentajePropina">
+                    <div class="input-group mb-0">
+                      <span class="input-group-text"><b>%</b></span>
+                      <input type="text" class="form-control" aria-label="Porcentaje" id="txtPorcentajePropina">
+                    </div>
+                    
+                    <div class="col-12 px-0 mensajeExtras" id="mensajePorcentajePropina">
+                      Debe ser menor a 10%
+                    </div>
+
+                    <div class="input-group mt-2">
+                      <span class="input-group-text">C$</span>
+                      <input type="text" class="form-control" aria-label="ValorPorcentaje" id="txtValorPorcentajePropina" readonly>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-6 pr-0" id="contenedorDescuento">
+                  <div class="col-12 px-0">
+                    <label for="checkDescuento" style="font-size: 20px;">
+                      Descuento
+                    </label>
+  
+                    <input type="checkbox" name="inputCheckDescuento" id="checkDescuento">
+                  </div>
+
+                  <div class="col-12 px-0 contenedorPorcentaje" id="inputPorcentajeDescuento">
+                    <div class="input-group mb-0">
+                      <span class="input-group-text"><b>%</b></span>
+                      <input type="text" class="form-control" aria-label="Porcentaje" id="txtPorcentajeDescuento">
+                    </div>
+
+                    <div class="col-12 px-0 mensajeExtras" id="mensajePorcentajeDescuento">
+                      Debe ser entre 10% y 30%
+                    </div>
+
+                    <div class="input-group mt-2">
+                      <span class="input-group-text">C$</span>
+                      <input type="text" class="form-control" aria-label="ValorPorcentaje" id="txtValorPorcentajeDescuento" readonly>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             
           </div>
           <input
@@ -377,6 +213,7 @@
           />
         </form>
       </div>
+
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">
           Cancelar
@@ -396,520 +233,6 @@
   </div>
 </div>
 
-<!-- --------------------------------------------------------------------- -->
-
-<script>
-
-  function FacturarOrden() {
-    let idOrdenF = document.getElementById("idOrdenFactura");
-    let CambioOrden = document.getElementById("CambioOrden");
-    let MontoOrden = document.getElementById("MontoOrden");
-    let PropinaOrden = document.getElementById("PropinaOrden");
-
-    let Propina = PropinaOrden.value;
-
-    if (PropinaOrden.value == "") {
-      Propina = 0;
-    }
-
-    console.log(
-      "ID: " +
-        idOrdenF.value +
-        " Cambio: " +
-        CambioOrden.value +
-        " Monto: " +
-        MontoOrden.value +
-        " Propina: " +
-        Propina
-    );
-
-    /***********************************************/
-
-    let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
-    console.log(token);
-
-    let xhr = new XMLHttpRequest();
-    xhr.open("POST", "/FacturarOrden/", true);
-
-    // xhr.setRequestHeader('Content-Type', 'application/json');
-    // Abrir la conexión, y especificamos el método
-
-    let datos = new FormData(); // Es un formulario de JS para leer el codigo
-
-    datos.append("csrfmiddlewaretoken", token);
-    datos.append("monto", MontoOrden.value);
-    datos.append("cambio", CambioOrden.value);
-    datos.append("idOrden", idOrdenF.value);
-    datos.append("propinaOrden", Propina);
-
-    xhr.onreadystatechange = function () {
-      if (this.readyState == 4) {
-        console.log("SI ENTRÓ A LA FUNCIÓN ONREADY (FACTURAR ORDEN)");
-      }
-    };
-    // Se envían los datos
-    xhr.send(datos);
-
-    /************************************************/
-
-    Swal.fire({
-      confirmButtonColor: "#ff6464", //'#ff964e',
-      title: "¡Orden #" + idOrdenF.value + " registrada correctamente!",
-      icon: "success",
-    }).then((resultado) => {
-      if (resultado.isConfirmed) {
-        location.reload();
-      } else {
-        location.reload();
-      }
-    });
-  }
-
-  // Se guarda el total de forma global
-  var TotalGlobal;
-
-  function rellenarParaFacturar(id, total) {
-
-    // El total declarado de forma global se le asigna un valor del total según la orden
-    TotalGlobal = parseInt(total);
-    console.log(TotalGlobal);
-
-    let idOrdenF = document.getElementById("idOrdenFactura");
-    idOrdenF.value = id;
-    console.log("ID Orden: " + id);
-
-    // Se vacían los campos
-    ReiniciarCampos();
-
-    // Se coloca el total para mostrarlo y que el usuario ingrese un buen monto
-    let Monto = document.getElementById("totalOrdenMonto");
-    Monto.innerHTML = "Total: C$" + total;
-  }
-
-  document.getElementById("MontoOrden").addEventListener("input", function () {
-    // Se obtiene el valor de lo que se ingresa cada vez que se escribe algo
-    let MontoIngresado = document.getElementById("MontoOrden").value;
-    console.log(MontoIngresado);
-
-    let MensajeMonto = document.getElementById("MensajeMonto");
-    let CambioOrden = document.getElementById("CambioOrden");
-    let btnFacturar = document.getElementById("btnFacturar");
-
-    try {
-      // Se realiza el cálculo del monto
-      let Cambio = parseInt(MontoIngresado) - TotalGlobal;
-      console.log("Cambio = " + Cambio);
-
-      // Se verifica si el monto está bien ingresado
-      if (MontoIngresado < TotalGlobal) {
-        MensajeMonto.style.display = "initial";
-
-        CambioOrden.value = "";
-
-        btnFacturar.disabled = true;
-      } else {
-        MensajeMonto.style.display = "none";
-
-        CambioOrden.value = Cambio;
-
-        btnFacturar.disabled = false;
-      }
-    } catch (error) {
-      MensajeMonto.style.display = "initial";
-
-      CambioOrden.value = "";
-
-      btnFacturar.disabled = true;
-    }
-  });
-
-  function ReiniciarCampos() {
-    let CambioOrden = document.getElementById("CambioOrden");
-    let MontoOrden = document.getElementById("MontoOrden");
-    let MensajeMonto = document.getElementById("MensajeMonto");
-    let btnFacturar = document.getElementById("btnFacturar");
-
-    CambioOrden.value = "";
-    MontoOrden.value = "";
-    MensajeMonto.style.display = "none";
-    btnFacturar.disabled = true;
-  }
-
-  let intervaloPolling = null;
-
-  function iniciarPolling() {
-    // Evitar múltiples timers
-    if (intervaloPolling !== null) {
-        clearInterval(intervaloPolling);
-    }
-
-    // Cada 4 segundos se consulta nuevamente
-    intervaloPolling = setInterval(async () => {
-      let valorOrden = await obtenerValorOrden();
-      filtrarOrdenes(valorOrden);
-    }, 7000);
-  }
-
-  function pausarPolling() {
-    if (intervaloPolling !== null) {
-        clearInterval(intervaloPolling);
-        intervaloPolling = null;
-    }
-  }
-
-  function reanudarPolling() {
-    iniciarPolling();
-  }
-
-  let timerIntervalId = null;
-
-  function iniciarTimers() {
-    if (timerIntervalId) {
-      clearInterval(timerIntervalId);
-      timerIntervalId = null;
-    }
-
-    const timers = document.querySelectorAll(".timer");
-
-    function formatearTiempo(diffMs, texto) {
-        const horas = Math.floor(diffMs / 3600000);
-        const minutos = Math.floor((diffMs % 3600000) / 60000);
-        const segundos = Math.floor((diffMs % 60000) / 1000);
-
-        if (horas > 0) texto += `${horas}h `;
-        texto += `${minutos}m ${segundos}s`;
-
-        return texto;
-    }
-
-    function actualizarTimers() {
-      const ahora = new Date();
-
-      timers.forEach(timer => {
-        const fecha = new Date(timer.dataset.fecha);
-        const diff = ahora - fecha;
-
-        let estado = timer.dataset.estado;
-
-        let texto = "";
-
-        if (estado == "1") texto = "Creada hace ";
-        else if (estado == "4") texto = "Preparando hace ";
-        else texto = "";
-
-        // Formato del texto
-        timer.textContent = formatearTiempo(diff, texto);
-
-        // Quitar clases anteriores
-        timer.classList.remove("naranja", "rojo");
-
-        const minutos = Math.floor(diff / 60000);
-
-        // Colores según tiempo
-        if (minutos >= 20 && minutos < 40) {
-            timer.classList.add("naranja");
-        } else if (minutos >= 40) {
-            timer.classList.add("rojo");
-        }
-      });
-    }
-
-    actualizarTimers();
-    timerIntervalId = setInterval(actualizarTimers, 1000);
-  }
-
-  const opcionesDisponibles = {
-    Administrador: ["0", "1", "2", "3", "4", "5"],
-    Mesero: ["1", "4", "6"],
-    Cocinero: ["1", "4", "6"],
-    Cajero: ["0", "2", "3"]
-  };
-
-  const valoresPorDefecto = {
-    Administrador: "5",
-    Mesero: "6",
-    Cocinero: "6",
-    Cajero: "3"
-  };
-
-  function validarFiltroPorCargo(cargo, valorFiltro)
-  {
-    const opciones = opcionesDisponibles[cargo];
-    const valorDefault = valoresPorDefecto[cargo];
-
-    if (opciones.includes(valorFiltro)) {
-      return valorFiltro;
-    }
-
-    return valorDefault;
-  }
-
-  async function obtenerValorOrden() {
-    let valorGuardado = localStorage.getItem("estadoOrdenSeleccionado");
-    const cargo = await obtenerCargoUsuario();
-
-    valorGuardado = validarFiltroPorCargo(cargo, valorGuardado);
-    return valorGuardado;
-  }
-
-  document.addEventListener("DOMContentLoaded", function () {
-    const select = document.getElementById("listaEstadoOrdenes");
-
-    MP(1);
-
-    obtenerValorOrden().then(valorGuardado => {
-      if (valorGuardado) {
-          select.value = valorGuardado;
-          filtrarOrdenes(valorGuardado);
-      } else {
-          filtrarOrdenes(select.value);
-      }
-
-      // Guardar cambios
-      select.addEventListener("change", function () {
-          localStorage.setItem("estadoOrdenSeleccionado", this.value);
-      });
-
-      iniciarPolling();
-    });
-  });
-
-  function MP(valor) {
-    ReiniciarCampos();
-
-    let CambioOrden = document.getElementById("cambio");
-    let MontoOrden = document.getElementById("monto");
-    let NumRefOrden = document.getElementById("numRef");
-
-    console.log(valor);
-
-    if (valor == 1) {
-      CambioOrden.style.display = "initial";
-      MontoOrden.style.display = "initial";
-      NumRefOrden.style.display = "none";
-    } else if (valor == 2) {
-      CambioOrden.style.display = "none";
-      MontoOrden.style.display = "none";
-      NumRefOrden.style.display = "initial";
-    } else {
-      CambioOrden.style.display = "none";
-      MontoOrden.style.display = "none";
-      NumRefOrden.style.display = "none";
-    }
-  }
-
-  // --- Enviar solicitud al servidor (retorna una promesa) ---
-  function enviarCancelacion(idOrden, motivo) {
-      return new Promise((resolve, reject) => {
-          const token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
-          const xhr = new XMLHttpRequest();
-          xhr.open("POST", "/CancelarOrden/", true);
-
-          const datos = new FormData();
-          datos.append("csrfmiddlewaretoken", token);
-          datos.append("idOrden", idOrden);
-          datos.append("motivo", motivo);
-
-          xhr.onreadystatechange = function() {
-              if (xhr.readyState === 4) {
-                  if (xhr.status === 200) {
-                      try {
-                          const respuesta = JSON.parse(xhr.responseText); 
-                          resolve(respuesta);
-                      } catch (e) {
-                          reject("Error al procesar la respuesta del servidor.");
-                      }
-                  } else {
-                      reject("Error de red o servidor: " + xhr.status);
-                  }
-              }
-          };
-
-          xhr.onerror = function() {
-              reject("Error al conectar con el servidor.");
-          };
-
-          xhr.send(datos);
-      });
-  }
-
-  // --- Mostrar SweetAlert para confirmar la anulación ---
-  async function CancelarOrden(idOrden) {
-    const { value: motivo } = await Swal.fire({
-      title: "¿Realmente desea anular la orden?",
-      html: `
-        <input id="motivo" class="swal2-input" placeholder="Escribe el motivo de la anulación (opcional)" maxlength="70" style="
-        width: 100%;
-        margin-left: 0px;
-        margin-right: 0px;
-        ">
-      `,
-      focusConfirm: false,
-      showCancelButton: true,
-      cancelButtonText: "Cancelar",
-      confirmButtonText: "Anular",
-      confirmButtonColor: "#ff6464",
-      icon: "question",
-      iconColor: "#ff964e",
-      preConfirm: () => document.getElementById("motivo").value.trim(),
-    });
-  
-    // Si el usuario cancela, salimos
-    if (motivo === undefined) return;
-  
-    try {
-      // Mostrar animación de carga
-      Swal.fire({
-        title: "Anulando orden...",
-        text: "Por favor espere",
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading(),
-      });
-  
-      // Enviar al servidor
-      const respuesta = await enviarCancelacion(idOrden, motivo || "");
-  
-      if (respuesta.status === "ok") {
-        await Swal.fire({
-          title: `¡Orden #${idOrden} anulada correctamente!`,
-          icon: "success",
-          confirmButtonColor: "#ff6464",
-        });
-        location.reload();
-      } else {
-        await Swal.fire({
-          title: "Error",
-          text: respuesta.message || "No se pudo anular la orden.",
-          icon: "error",
-          confirmButtonColor: "#ff6464",
-        });
-      }
-    } catch (error) {
-      await Swal.fire({
-        title: "Error",
-        text: error,
-        icon: "error",
-        confirmButtonColor: "#ff6464",
-      });
-    }
-  }
-
-  function filtrarOrdenes(cadena) {
-    const request = new XMLHttpRequest();
-
-    request.open("GET", "/FiltrarOrdenes?SelectFiltrarOrdenes=" + encodeURIComponent(cadena));
-    request.send();
-
-    request.onreadystatechange = function () {
-      if (this.readyState === 4) {
-        if (this.status === 200) {
-          const contenedor = document.getElementById("listaOrdenesPoFoC");
-          contenedor.innerHTML = this.responseText;
-
-          restaurarDespliegues();
-
-          // <<-- Aquí: el DOM ya fue actualizado, ahora sí iniciar timers
-          iniciarTimers();
-          console.log("Contenedor actualizado y timers iniciados");
-        } else {
-          console.error("Error al cargar órdenes:", this.status);
-        }
-      }
-    };
-  }
-
-  async function cambiarEstadoOrden(idOrden, url, textoCarga) {
-    try {
-      // Mostrar modal de carga
-      Swal.fire({
-        title: textoCarga,
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-      });
-
-      // Enviar la petición al servidor
-      const respuesta = await enviarCambioEstado(idOrden, url);
-
-      // Cerrar modal de carga
-      Swal.close();
-
-      if (respuesta.status === "ok") {
-        // Mostrar éxito y recargar automáticamente después de 3 segundos
-        await Swal.fire({
-          title: respuesta.message,
-          icon: "success",
-          confirmButtonColor: "#ff6464",
-          timer: 2300
-        });
-
-        var estadoSeleccionado = document.getElementById("listaEstadoOrdenes").value;
-        filtrarOrdenes(estadoSeleccionado);
-      } else {
-        await Swal.fire({
-          title: "Error",
-          text: respuesta.message || "No se pudo actualizar la orden.",
-          icon: "error",
-          confirmButtonColor: "#ff6464"
-        });
-      }
-    } 
-    catch (error) {
-      console.log(error);
-
-      await Swal.fire({
-        title: "Error",
-        text: error,
-        icon: "error",
-        confirmButtonColor: "#ff6464"
-      });
-    } 
-  }
-
-  function enviarCambioEstado(idOrden, url) {
-    return new Promise((resolve, reject) => {
-      const token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
-      const xhr = new XMLHttpRequest();
-      xhr.open("POST", url, true);
-
-      const datos = new FormData();
-      datos.append("csrfmiddlewaretoken", token);
-      datos.append("ID", idOrden);
-
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            try {
-              console.log(xhr.responseText);
-              const respuesta = JSON.parse(xhr.responseText);
-              resolve(respuesta);
-            } catch (e) {
-              reject("Error al procesar la respuesta del servidor.");
-            }
-          } else {
-            reject("Error de red o servidor: " + xhr.status);
-          }
-        }
-      };
-
-      xhr.onerror = function() {
-          reject("Error al conectar con el servidor.");
-      };
-
-      xhr.send(datos);
-    });
-  }
-
-
-</script>
+<script src="{% static 'js/ordenes.js' %}"></script>
 
 {% endblock %}
-
-<!-- {% block scripts %}
-<script>
-    $(document).ready(function () {
-        $('#FacturarOrden').on('shown.bs.modal', function () {
-            $('body').css('padding-right', '0');
-        });
-    });
-</script>
-{% endblock %} -->
