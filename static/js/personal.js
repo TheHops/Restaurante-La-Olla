@@ -492,7 +492,7 @@ function EnviarCorreo()
           toast: true,
           position: "top-end",
           showConfirmButton: false,
-          timer: 2000,
+          timer: 4000,
           timerProgressBar: true,
         });
       } else {
@@ -502,7 +502,7 @@ function EnviarCorreo()
           toast: true,
           position: "top-end",
           showConfirmButton: false,
-          timer: 2000,
+          timer: 4000,
           timerProgressBar: true,
         });
       }
