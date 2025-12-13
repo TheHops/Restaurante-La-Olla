@@ -86,11 +86,6 @@
                 <h4 style="font-size: 20px; margin-bottom: 3px;">
                   Monto<span class="asterisco">*</span>
                 </h4>
-                <span
-                  style="font-size: 15px; color: rgb(105, 105, 105)"
-                  id="totalOrdenMonto"
-                  >Total: C$</span
-                >
               </div>
 
               <input
@@ -162,16 +157,16 @@
                   <div class="col-12 px-0 contenedorPorcentaje" id="inputPorcentajePropina">
                     <div class="input-group mb-0">
                       <span class="input-group-text"><b>%</b></span>
-                      <input type="text" class="form-control" aria-label="Porcentaje" id="txtPorcentajePropina">
+                      <input type="number" class="form-control" aria-label="Porcentaje" id="txtPorcentajePropina" min="0" max="10" step="1">
                     </div>
                     
                     <div class="col-12 px-0 mensajeExtras" id="mensajePorcentajePropina">
-                      Debe ser menor a 10%
+                      Debe ser menor o igual a 10%
                     </div>
 
                     <div class="input-group mt-2">
                       <span class="input-group-text">C$</span>
-                      <input type="text" class="form-control" aria-label="ValorPorcentaje" id="txtValorPorcentajePropina" readonly>
+                      <input type="number" class="form-control" aria-label="ValorPorcentaje" id="txtValorPorcentajePropina" readonly>
                     </div>
                   </div>
                 </div>
@@ -188,7 +183,7 @@
                   <div class="col-12 px-0 contenedorPorcentaje" id="inputPorcentajeDescuento">
                     <div class="input-group mb-0">
                       <span class="input-group-text"><b>%</b></span>
-                      <input type="text" class="form-control" aria-label="Porcentaje" id="txtPorcentajeDescuento">
+                      <input type="number" class="form-control" aria-label="Porcentaje" id="txtPorcentajeDescuento" min="10" max="30" step="1">
                     </div>
 
                     <div class="col-12 px-0 mensajeExtras" id="mensajePorcentajeDescuento">
@@ -197,7 +192,7 @@
 
                     <div class="input-group mt-2">
                       <span class="input-group-text">C$</span>
-                      <input type="text" class="form-control" aria-label="ValorPorcentaje" id="txtValorPorcentajeDescuento" readonly>
+                      <input type="number" class="form-control" aria-label="ValorPorcentaje" id="txtValorPorcentajeDescuento" readonly>
                     </div>
                   </div>
                 </div>
@@ -205,29 +200,33 @@
             </div>
             
           </div>
-          <input
-            type="text"
-            value=""
-            id="idOrdenFactura"
-            style="display: none"
-          />
+          
+          <input type="hidden" id="idOrdenFactura"/>
+          <input type="hidden" id="totalOrdenFactura"/>
         </form>
       </div>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-          Cancelar
-        </button>
-
-        <button
-          type="button"
-          class="btn btn-danger"
-          id="btnFacturar"
-          onclick="FacturarOrden()"
-          disabled
+      <div class="modal-footer" style="justify-content: space-between;">
+        <span
+          style="font-size: 22px; color: #E87D7D"
+          id="totalOrdenMonto"
+          >Total: C$</span
         >
-          Registrar
-        </button>
+
+        <div class="contFooterRegistrarOrden">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Cancelar
+          </button>
+  
+          <button
+            type="button"
+            class="btn btn-danger"
+            id="btnFacturar"
+            onclick="FacturarOrden()"
+            disabled
+          >
+            Registrar
+          </button>        </div>
       </div>
     </div>
   </div>
