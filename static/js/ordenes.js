@@ -1,23 +1,29 @@
 document.addEventListener("DOMContentLoaded", function () {
   const select = document.getElementById("listaEstadoOrdenes");
+  
+  const contenedor = document.getElementById("listaOrdenesPoFoC");
+  contenedor.style.opacity = "0";
 
-  MP(1);
-
-  obtenerValorOrden().then((valorGuardado) => {
-    if (valorGuardado) {
-      select.value = valorGuardado;
-      filtrarOrdenes(valorGuardado);
-    } else {
-      filtrarOrdenes(select.value);
-    }
-
-    // Guardar cambios
-    select.addEventListener("change", function () {
-      localStorage.setItem("estadoOrdenSeleccionado", this.value);
+  setTimeout(() => {
+    MP(1);
+  
+    obtenerValorOrden().then((valorGuardado) => {
+      if (valorGuardado) {
+        select.value = valorGuardado;
+        filtrarOrdenes(valorGuardado);
+      } else {
+        filtrarOrdenes(select.value);
+      }
+  
+      // Guardar cambios
+      select.addEventListener("change", function () {
+        localStorage.setItem("estadoOrdenSeleccionado", this.value);
+      });
+  
+      iniciarPolling();
     });
+  }, 300);
 
-    iniciarPolling();
-  });
 });
 
 /////////////////////////////////////////////////////////////////////
@@ -26,7 +32,8 @@ function FacturarOrden() {
   let idOrdenF = document.getElementById("idOrdenFactura");
   let CambioOrden = document.getElementById("CambioOrden");
   let MontoOrden = document.getElementById("MontoOrden");
-  let PropinaOrden = document.getElementById("PropinaOrden");
+  let PropinaOrden = document.getElementById("txtValorPorcentajePropina");
+  let DescuentoOrden = document.getElementById("txtValorPorcentajeDescuento");
 
   let Propina = PropinaOrden.value;
 
@@ -103,17 +110,72 @@ function MP(valor) {
   } else if (valor == 2) {
     CambioOrden.style.display = "none";
     MontoOrden.style.display = "none";
-    NumRefOrden.style.display = "initial";
+    NumRefOrden.style.display = "none";
     
-    BtnRegistrar.disabled = true;
+    BtnRegistrar.disabled = false;
   } else {
     CambioOrden.style.display = "none";
     MontoOrden.style.display = "none";
-    NumRefOrden.style.display = "none";
-
-    BtnRegistrar.disabled = false;
+    NumRefOrden.style.display = "initial";
+    
+    BtnRegistrar.disabled = true;
   }
 }
+
+///////////////////////////// EXTRAS /////////////////////////////////////
+
+document.getElementById("txtPorcentajePropina").addEventListener("input", function () {
+  validarCampoNumero(this, 0, 10);
+  
+  let total = parseFloat($("#totalOrdenFactura").val().replace(",", ".")) || 0;
+  let porcentaje = parseFloat(this.value) || 0;
+
+  let resultado = (total * porcentaje) / 100;
+
+  $("#txtValorPorcentajePropina").val(resultado);
+});
+
+let debounceDescuentos = null;
+
+document.getElementById("txtPorcentajeDescuento").addEventListener("input", function () {
+  clearTimeout(debounceDescuentos);
+
+  let total = parseFloat($("#totalOrdenFactura").val().replace(",", ".")) || 0;
+  
+  debounceDescuentos = setTimeout(() => {
+    validarCampoNumero(this, 10, 30);
+    
+    calculosDescuento(this, total);
+  }, 1000);
+  
+  calculosDescuento(this, total);
+});
+    
+function calculosDescuento(input, total)
+{
+  let porcentaje = parseFloat(input.value) || 0;
+  let resultado = (total * porcentaje) / 100;
+
+  resultado *= -1;
+
+  $("#txtValorPorcentajeDescuento").val(resultado);
+}
+
+function validarCampoNumero (input, minimo, maximo){
+  let dato = parseFloat(input.value);
+
+  if (isNaN(dato)) {
+    input.value = "";
+    return;
+  }
+
+  if (dato < minimo) dato = minimo;
+  if (dato > maximo) dato = maximo;
+
+  input.value = dato;
+}
+
+//////////////////////////////////////////////////////////////
 
 function rellenarParaFacturar(id, total) {
   // El total declarado de forma global se le asigna un valor del total según la orden
@@ -121,8 +183,10 @@ function rellenarParaFacturar(id, total) {
   console.log(TotalGlobal);
 
   let idOrdenF = document.getElementById("idOrdenFactura");
+  let totalOrdenF = document.getElementById("totalOrdenFactura");
+
   idOrdenF.value = id;
-  console.log("ID Orden: " + id);
+  totalOrdenF.value = total;
 
   // Se vacían los campos
   ReiniciarCampos();
