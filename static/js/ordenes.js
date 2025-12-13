@@ -122,6 +122,8 @@ function MP(valor) {
   }
 }
 
+///////////////////////////// EXTRAS /////////////////////////////////////
+
 document.getElementById("txtPorcentajePropina").addEventListener("input", function () {
   validarCampoNumero(this, 0, 10);
   
@@ -130,28 +132,34 @@ document.getElementById("txtPorcentajePropina").addEventListener("input", functi
 
   let resultado = (total * porcentaje) / 100;
 
-  console.log("Resultado - total - porcentaje");
-  console.log(resultado);
-  console.log(total);
-  console.log(porcentaje);
-
   $("#txtValorPorcentajePropina").val(resultado);
 });
 
-document.getElementById("txtPorcentajeDescuento")
-  .addEventListener("input", function () {
-    validarDescuentoDebounce.call(this);
+let debounceDescuentos = null;
 
-    let total =
-      parseFloat($("#totalOrdenFactura").val().replace(",", ".")) || 0;
-    let porcentaje = parseFloat(this.value) || 0;
+document.getElementById("txtPorcentajeDescuento").addEventListener("input", function () {
+  clearTimeout(debounceDescuentos);
 
-    let resultado = (total * porcentaje) / 100;
+  let total = parseFloat($("#totalOrdenFactura").val().replace(",", ".")) || 0;
+  
+  debounceDescuentos = setTimeout(() => {
+    validarCampoNumero(this, 10, 30);
+    
+    calculosDescuento(this, total);
+  }, 1000);
+  
+  calculosDescuento(this, total);
+});
+    
+function calculosDescuento(input, total)
+{
+  let porcentaje = parseFloat(input.value) || 0;
+  let resultado = (total * porcentaje) / 100;
 
-    resultado *= -1;
+  resultado *= -1;
 
-    $("#txtValorPorcentajeDescuento").val(resultado);
-  });
+  $("#txtValorPorcentajeDescuento").val(resultado);
+}
 
 function validarCampoNumero (input, minimo, maximo){
   let dato = parseFloat(input.value);
@@ -167,17 +175,7 @@ function validarCampoNumero (input, minimo, maximo){
   input.value = dato;
 }
 
-const validarDescuentoDebounce = debounce(function () {
-  validarCampoNumero(this, 10, 30);
-}, 500);
-
-function debounce(fn, delay = 400) {
-  let timeout;
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => fn.apply(this, args), delay);
-  };
-}
+//////////////////////////////////////////////////////////////
 
 function rellenarParaFacturar(id, total) {
   // El total declarado de forma global se le asigna un valor del total según la orden
