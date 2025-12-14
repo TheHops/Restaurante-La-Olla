@@ -313,45 +313,109 @@ def CancelarOrden(request):
 #endregion AnularOrden
 
 #region FacturarOrden
+def to_float(valor):
+    if valor is None:
+        return 0.0
+    return float(valor.replace(".", "").replace(",", "."))
+
 def FacturarOrden(request):
-    if request.user.is_authenticated:
-        try:
-            if request.method == "POST":
-                idOrden = request.POST.get('idOrden')
-                monto = request.POST.get('monto')
-                cambio = request.POST.get('cambio')
-                propina = request.POST.get('propinaOrden')
-
-                print("""
-                ID Orden: {},
-                Monto: {},
-                Cambio: {},
-                Propina {}
-                """.format(idOrden, monto, cambio, propina))
-
-                # Se obtiene la orden que se va a Ordenr
-                orden = Orden.objects.get(Id=idOrden)
-                orden.UltimaModificacion = timezone.now()
-                
-                print(orden)
-
-                orden.Monto = monto
-                orden.Cambio = cambio
-                orden.Estado = "0"
-                orden.Propina = propina
-
-                # Se guardan los cambios
-                orden.save()
-
-                return HttpResponse(request, "Hola")
-        except Exception as ex:
-            print("\n############### EXCEPCIÓN ###############")
-            print(traceback.format_exc())
-            print("#########################################\n")
-            return JsonResponse({'error': str(ex)}, status=500)
-    else:
-        # Si no lo ha hecho entonces deberá iniciar sesión
+    if not request.user.is_authenticated:
         return render(request, "login.html")
+
+    try:
+        if request.method != "POST":
+            return JsonResponse({
+                "status": "error",
+                "message": "Método no permitido"
+            }, status=405)
+
+        # ===============================
+        # Obtener datos
+        # ===============================
+        idOrden     = request.POST.get('idOrden')
+        monto       = to_float(request.POST.get('monto', 0))
+        cambio      = to_float(request.POST.get('cambio', 0))
+        propina     = to_float(request.POST.get('propinaOrden', 0))
+        descuento   = to_float(request.POST.get('descuentoOrden', 0))
+        total       = to_float(request.POST.get('totalOrden', 0))
+        metodoPago  = int(request.POST.get('metodoPago'))
+        numRef      = request.POST.get('numRef')
+
+        # ===============================
+        # Obtener orden
+        # ===============================
+        orden = Orden.objects.get(Id=idOrden)
+        orden.UltimaModificacion = timezone.now()
+
+        # ===============================
+        # Validaciones por método de pago
+        # ===============================
+        if metodoPago == 1:  # EFECTIVO
+            if monto < total:
+                return JsonResponse({
+                    "status": "error",
+                    "message": "El monto en efectivo no puede ser menor al total."
+                })
+
+            cambio_calculado = round(monto - total, 2)
+
+            if round(cambio, 2) != cambio_calculado:
+                return JsonResponse({
+                    "status": "error",
+                    "message": "El cambio no coincide con el monto entregado."
+                })
+
+            orden.NumReferencia = None
+
+        elif metodoPago in (2, 3):  # TARJETA o TRANSFERENCIA
+            monto = total
+
+            cambio = 0
+
+            if metodoPago == 3:
+                orden.NumReferencia = numRef
+            else:
+                orden.NumReferencia = None
+
+        else:
+            return JsonResponse({
+                "status": "error",
+                "message": "Método de pago inválido."
+            })
+
+        # ===============================
+        # Guardar datos
+        # ===============================
+        orden.Monto        = monto
+        orden.Cambio       = cambio
+        orden.Propina      = propina
+        orden.Descuento    = descuento
+        orden.Total        = total
+        orden.MetodoPago   = metodoPago
+        orden.Estado       = "0"  # Facturada
+
+        orden.save()
+
+        return JsonResponse({
+            "status": "ok",
+            "message": f"La orden #{orden.Id} fue registrada correctamente."
+        })
+
+    except Orden.DoesNotExist:
+        return JsonResponse({
+            "status": "error",
+            "message": "La orden no existe."
+        })
+
+    except Exception as ex:
+        print("\n############### EXCEPCIÓN ###############")
+        print(traceback.format_exc())
+        print("#########################################\n")
+
+        return JsonResponse({
+            "status": "error",
+            "message": "Ocurrió un error al facturar la orden."
+        })
 #endregion FacturarOrden
 
 #region CambiarAEnPreparacion
