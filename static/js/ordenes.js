@@ -34,61 +34,57 @@ function FacturarOrden() {
   let MontoOrden = document.getElementById("MontoOrden");
   let PropinaOrden = document.getElementById("txtValorPorcentajePropina");
   let DescuentoOrden = document.getElementById("txtValorPorcentajeDescuento");
+  let Total = document.getElementById("totalOrdenFactura");
+  let MetodoDePago = document.getElementById("SelectMetodoPago");
+  let numRef = document.getElementById("numRefOrden");
 
-  let Propina = PropinaOrden.value;
-
-  if (PropinaOrden.value == "") {
-    Propina = 0;
-  }
-
-  console.log(
-    "ID: " +
-      idOrdenF.value +
-      " Cambio: " +
-      CambioOrden.value +
-      " Monto: " +
-      MontoOrden.value +
-      " Propina: " +
-      Propina
-  );
+  let Monto = MontoOrden.value || 0;
+  let Cambio = CambioOrden.value || 0;
+  let Propina = PropinaOrden.value || 0;
+  let Descuento = DescuentoOrden.value || 0;
 
   let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
-  console.log(token);
 
   let xhr = new XMLHttpRequest();
   xhr.open("POST", "/FacturarOrden/", true);
 
-  // xhr.setRequestHeader('Content-Type', 'application/json');
-  // Abrir la conexión, y especificamos el método
-
-  let datos = new FormData(); // Es un formulario de JS para leer el codigo
-
+  let datos = new FormData();
   datos.append("csrfmiddlewaretoken", token);
-  datos.append("monto", MontoOrden.value);
-  datos.append("cambio", CambioOrden.value);
   datos.append("idOrden", idOrdenF.value);
+  datos.append("monto", Monto);
+  datos.append("cambio", Cambio);
   datos.append("propinaOrden", Propina);
+  datos.append("descuentoOrden", Descuento);
+  datos.append("totalOrden", Total.value);
+  datos.append("metodoPago", MetodoDePago.value);
+  datos.append("numRef", numRef.value);
+
+  console.log(MontoOrden.value);
 
   xhr.onreadystatechange = function () {
-    if (this.readyState == 4) {
-      console.log("SI ENTRÓ A LA FUNCIÓN ONREADY (FACTURAR ORDEN)");
+    if (this.readyState === 4) {
+      let response = JSON.parse(this.responseText);
+
+      if (this.status === 200 && response.status === "ok") {
+        Swal.fire({
+          confirmButtonColor: "#ff6464",
+          title: response.message,
+          icon: "success",
+        }).then(() => location.reload());
+      } else {
+        Swal.fire({
+          confirmButtonColor: "#ff6464",
+          title: "Error",
+          text: response.message || "Ocurrió un error al facturar.",
+          icon: "error",
+        });
+      }
     }
   };
-  // Se envían los datos
-  xhr.send(datos);
 
-  Swal.fire({
-    confirmButtonColor: "#ff6464", //'#ff964e',
-    title: "¡Orden #" + idOrdenF.value + " registrada correctamente!",
-    icon: "success",
-  }).then((resultado) => {
-    if (resultado.isConfirmed) {
-      location.reload();
-    } else {
-      location.reload();
-    }
-  });
+  xhr.send(datos);
 }
+
 
 function MP(valor) {
   ReiniciarCampos();
@@ -98,8 +94,6 @@ function MP(valor) {
   let NumRefOrden = document.getElementById("numRef");
 
   let BtnRegistrar = document.getElementById("btnFacturar");
-
-  console.log(valor);
 
   if (valor == 1) {
     CambioOrden.style.display = "initial";
@@ -118,7 +112,7 @@ function MP(valor) {
     MontoOrden.style.display = "none";
     NumRefOrden.style.display = "initial";
     
-    BtnRegistrar.disabled = true;
+    BtnRegistrar.disabled = false;
   }
 }
 
@@ -180,7 +174,6 @@ function validarCampoNumero (input, minimo, maximo){
 function rellenarParaFacturar(id, total) {
   // El total declarado de forma global se le asigna un valor del total según la orden
   TotalGlobal = parseInt(total);
-  console.log(TotalGlobal);
 
   let idOrdenF = document.getElementById("idOrdenFactura");
   let totalOrdenF = document.getElementById("totalOrdenFactura");
@@ -199,7 +192,6 @@ function rellenarParaFacturar(id, total) {
 document.getElementById("MontoOrden").addEventListener("input", function () {
   // Se obtiene el valor de lo que se ingresa cada vez que se escribe algo
   let MontoIngresado = document.getElementById("MontoOrden").value;
-  console.log(MontoIngresado);
 
   let MensajeMonto = document.getElementById("MensajeMonto");
   let CambioOrden = document.getElementById("CambioOrden");
@@ -208,7 +200,6 @@ document.getElementById("MontoOrden").addEventListener("input", function () {
   try {
     // Se realiza el cálculo del monto
     let Cambio = parseInt(MontoIngresado) - TotalGlobal;
-    console.log("Cambio = " + Cambio);
 
     // Se verifica si el monto está bien ingresado
     if (MontoIngresado < TotalGlobal) {
@@ -546,8 +537,6 @@ async function cambiarEstadoOrden(idOrden, url, textoCarga) {
       });
     }
   } catch (error) {
-    console.log(error);
-
     await Swal.fire({
       title: "Error",
       text: error,
@@ -571,7 +560,6 @@ function enviarCambioEstado(idOrden, url) {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
           try {
-            console.log(xhr.responseText);
             const respuesta = JSON.parse(xhr.responseText);
             resolve(respuesta);
           } catch (e) {
