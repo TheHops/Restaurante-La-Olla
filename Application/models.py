@@ -137,7 +137,7 @@ class Orden(models.Model):
     ESTADO = [("0", "Facturado"), ("1", "Pendiente"), ("2", "Anulado"), ("3", "Preparado"), ("4", "EnPreparacion")]
     Estado = models.CharField(max_length=10, choices=ESTADO, default="1", db_column='estado')
     
-    BANCOS = [("0", "Lafise"), ("1", "Banpro"), ("2", "BAC"), ("3", "Ficohsa"), ("4", "Avanz"), ("5", "Banco Atlántida"), ("6", "BFP"), ("7", "FDL")]
+    BANCOS = [("1", "Lafise"), ("2", "Banpro"), ("3", "BAC"), ("4", "Ficohsa"), ("5", "Avanz"), ("6", "Banco Atlántida"), ("7", "BFP"), ("8", "FDL")]
     Banco = models.CharField(max_length=10, choices=BANCOS, null=True, blank=True, db_column='banco')
 
     ACTIVO = [("1", "Activo"), ("0", "Eliminado")]
