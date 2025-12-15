@@ -36,6 +36,7 @@ function FacturarOrden() {
   let DescuentoOrden = document.getElementById("txtValorPorcentajeDescuento");
   let Total = document.getElementById("totalOrdenFactura");
   let MetodoDePago = document.getElementById("SelectMetodoPago");
+  let Banco = document.getElementById("SelectBanco");
   let numRef = document.getElementById("numRefOrden");
 
   let Monto = MontoOrden.value || 0;
@@ -57,6 +58,7 @@ function FacturarOrden() {
   datos.append("descuentoOrden", Descuento);
   datos.append("totalOrden", Total.value);
   datos.append("metodoPago", MetodoDePago.value);
+  datos.append("banco", Banco.value);
   datos.append("numRef", numRef.value);
 
   console.log(MontoOrden.value);
@@ -94,23 +96,27 @@ function MP(valor) {
   let NumRefOrden = document.getElementById("numRef");
 
   let BtnRegistrar = document.getElementById("btnFacturar");
+  let Banco = document.getElementById("banco");
 
   if (valor == 1) {
     CambioOrden.style.display = "initial";
     MontoOrden.style.display = "initial";
     NumRefOrden.style.display = "none";
+    Banco.style.display = "none";
     
     BtnRegistrar.disabled = true;
   } else if (valor == 2) {
     CambioOrden.style.display = "none";
     MontoOrden.style.display = "none";
     NumRefOrden.style.display = "none";
+    Banco.style.display = "initial";
     
     BtnRegistrar.disabled = false;
   } else {
     CambioOrden.style.display = "none";
     MontoOrden.style.display = "none";
     NumRefOrden.style.display = "initial";
+    Banco.style.display = "initial";
     
     BtnRegistrar.disabled = false;
   }

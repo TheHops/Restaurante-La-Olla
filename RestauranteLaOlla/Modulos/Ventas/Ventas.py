@@ -339,6 +339,7 @@ def FacturarOrden(request):
         descuento   = to_float(request.POST.get('descuentoOrden', 0))
         total       = to_float(request.POST.get('totalOrden', 0))
         metodoPago  = int(request.POST.get('metodoPago'))
+        banco  = request.POST.get('banco')
         numRef      = request.POST.get('numRef')
 
         # ===============================
@@ -346,6 +347,9 @@ def FacturarOrden(request):
         # ===============================
         orden = Orden.objects.get(Id=idOrden)
         orden.UltimaModificacion = timezone.now()
+        
+        if banco is not None and banco.strip() == "":
+            banco = None
 
         # ===============================
         # Validaciones por método de pago
@@ -392,6 +396,7 @@ def FacturarOrden(request):
         orden.Descuento    = descuento
         orden.Total        = total
         orden.MetodoPago   = metodoPago
+        orden.Banco        = banco
         orden.Estado       = "0"  # Facturada
 
         orden.save()

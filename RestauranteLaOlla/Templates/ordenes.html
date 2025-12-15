@@ -130,17 +130,26 @@
               />
             </div>
 
-            <!--
-            <div class="col-6" id="cambio">
-              <h4 style="font-size: 20px; margin-bottom: 3px;">Propina</h4>
-              <input
-                type="number"
+            <div class="col-6" id="banco">
+              <h4 style="font-size: 20px; margin-bottom: 3px;">
+                Banco
+              </h4>
+              <select
                 class="form-control"
-                id="PropinaOrden"
-                required
-              />
+                id="SelectBanco"
+              >
+                <option value="" selected disabled style="color: #AAAAAA; weight: 0;">Seleccione un banco</option>
+                
+                <option value="1">Lafise</option>
+                <option value="2">Banpro</option>
+                <option value="3">BAC</option>
+                <option value="4">Ficohsa</option>
+                <option value="5">Avanz</option>
+                <option value="6">Atlántida</option>
+                <option value="7">BFP</option>
+                <option value="8">FDL</option>
+              </select>
             </div>
-            -->
 
             <!-- VA A CONTENER LOS CAMPOS PARA PROPINA Y DESCUENTO -->
             <div class="col-12">
@@ -226,7 +235,58 @@
             disabled
           >
             Registrar
-          </button>        </div>
+          </button>        
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="EditarOrden"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Editar orden</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="POST">
+          {% csrf_token %}
+          
+          <input type="hidden" id="idOrdenFactura"/>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <div class="contFooterEditarOrden">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Cancelar
+          </button>
+  
+          <button
+            type="button"
+            class="btn btn-danger"
+            id="btnEditarOrden"
+            onclick="EditarOrden()"
+            disabled
+          >
+            Editar
+          </button>        
+        </div>
       </div>
     </div>
   </div>
