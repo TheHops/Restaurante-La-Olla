@@ -1,0 +1,89 @@
+{% load static %}
+
+<div class="modal-header">
+  <h5 class="modal-title" id="exampleModalLabel">Editar orden</h5>
+  <button
+    type="button"
+    class="close"
+    data-dismiss="modal"
+    aria-label="Close"
+  >
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<div class="modal-body">
+    <form method="POST">
+      {% csrf_token %}
+      <div class="col-md-12">
+        <!-- Descripción -->
+        <h4 style="font-size: 20px; margin-bottom: 3px;">Descripción</h4>
+        <textarea class="form-control mb-2" id="DescripcionPlatilloAgregar" placeholder="Ingrese una descripción">{{ Orden.Descripcion }}</textarea>
+      </div>
+
+      <!-- Detalle de la orden a editar -->
+      <div class="col-12">
+        <table class="display" style="width:100%;">
+          <thead>
+              <!-- Columnas -->
+              <tr>
+                  <th>Consumo</th>
+                  <th>Precio</th>
+                  <th>Cantidad</th>
+      
+                  {% if Modo == "Editar" %}
+                      <th>Acciones</th>
+                  {% else %}
+                      <th>Subtotal</th>
+                  {% endif %}
+              </tr>
+          </thead>
+      
+          <!-- Filas -->
+          <tbody class="cuerpoDetalleOrdenTabla">
+              {% for detalle in Orden.Detalles.all %}
+                {% if detalle.EsActivo %}
+                    <tr>
+                        <td style="text-transform: capitalize; ">{{detalle.IdPlatillo.Nombre|lower}}</td>
+                        <td>C${{detalle.IdPlatillo.Precio}}</td>
+                        <td style="text-align: center;">{{detalle.Cantidad}}</td>
+                        
+                        <td class="actions">
+                            <div class='botonQuitar' onclick='quitarOrdenDetalle()'><button class='btnQuitar'>Quitar</button>
+                            </div>
+                        </td>
+            
+                        <input type="hidden" id="idDetalleOrdenFactura{{detalle.Id}}" value="{{detalle.Id}}"/>
+                    </tr>
+                {% endif %}
+              {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <input type="hidden" id="idOrdenFactura"/>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <div class="contFooterEditarOrden">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">
+        {% if Mode == "Editar" %}
+        Cancelar
+        {% else %}
+        Volver
+        {% endif %}
+      </button>
+
+      {% if Modo == "Editar" %}
+        <button
+            type="button"
+            class="btn btn-danger"
+            id="btnEditarOrden"
+            onclick="EditarOrden()"
+            disabled>
+            Editar
+        </button> 
+      {% endif %}       
+    </div>
+  </div>

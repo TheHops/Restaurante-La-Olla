@@ -175,7 +175,7 @@ function validarCampoNumero (input, minimo, maximo){
   input.value = dato;
 }
 
-//////////////////////////////////////////////////////////////
+////////////////////////// RELLENAR ////////////////////////////////////
 
 function rellenarParaFacturar(id, total) {
   // El total declarado de forma global se le asigna un valor del total según la orden
