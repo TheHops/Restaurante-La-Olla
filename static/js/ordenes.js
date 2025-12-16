@@ -421,6 +421,10 @@ async function CancelarOrden(idOrden) {
     confirmButtonColor: "#ff6464",
     icon: "question",
     iconColor: "#ff964e",
+    didOpen: () => {
+      const input = document.getElementById("motivo");
+      if (input) input.blur(); // 👈 Quita el focus
+    },
     preConfirm: () => document.getElementById("motivo").value.trim(),
   });
 

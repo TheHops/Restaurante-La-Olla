@@ -27,14 +27,14 @@
           <thead>
               <!-- Columnas -->
               <tr>
-                  <th>Consumo</th>
-                  <th>Precio</th>
-                  <th>Cantidad</th>
+                  <th><h5>Consumo</h5></th>
+                  <th><h5>Precio</h5></th>
+                  <th style="text-align: center; min-width: 100px;">Cantidad</th>
       
                   {% if Modo == "Editar" %}
-                      <th>Acciones</th>
+                      <th style="text-align: center;"><h5>Acciones</h5></th>
                   {% else %}
-                      <th>Subtotal</th>
+                      <th><h5>Subtotal</h5></th>
                   {% endif %}
               </tr>
           </thead>
@@ -48,7 +48,7 @@
                         <td>C${{detalle.IdPlatillo.Precio}}</td>
                         <td style="text-align: center;">{{detalle.Cantidad}}</td>
                         
-                        <td class="actions">
+                        <td class="actions btnQuitarEditar">
                             <div class='botonQuitar' onclick='quitarOrdenDetalle()'><button class='btnQuitar'>Quitar</button>
                             </div>
                         </td>

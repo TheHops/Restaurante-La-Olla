@@ -263,6 +263,14 @@
     transition: .4s grid-template-rows;
 }
 
+.btnQuitarEditar{
+    justify-content: center;
+}
+
+.modal-editar-orden {
+    max-width: 95% !important;
+  }
+
 .cuerpoDetalleOrden.desplegado {
     grid-template-rows: 1fr;
 }

@@ -318,6 +318,11 @@ html {
     transition: opacity .2s linear !important;
 }
 
+/* ::placeholder {
+    color: #9ca3af !important;
+    opacity: 1;
+} */
+
 /* .modal-backdrop {
     display: none;
 } */
