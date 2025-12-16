@@ -175,7 +175,7 @@ function validarCampoNumero (input, minimo, maximo){
   input.value = dato;
 }
 
-//////////////////////////////////////////////////////////////
+////////////////////////// RELLENAR ////////////////////////////////////
 
 function rellenarParaFacturar(id, total) {
   // El total declarado de forma global se le asigna un valor del total según la orden
@@ -421,6 +421,10 @@ async function CancelarOrden(idOrden) {
     confirmButtonColor: "#ff6464",
     icon: "question",
     iconColor: "#ff964e",
+    didOpen: () => {
+      const input = document.getElementById("motivo");
+      if (input) input.blur(); // 👈 Quita el focus
+    },
     preConfirm: () => document.getElementById("motivo").value.trim(),
   });
 

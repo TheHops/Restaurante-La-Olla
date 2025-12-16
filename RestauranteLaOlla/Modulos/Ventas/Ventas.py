@@ -490,3 +490,25 @@ def CambiarAPreparado(request):
             return HttpResponse(status=500)
 
 #endregion CambiarAPreparado
+
+#region EditarOrden
+
+def InicioEditar(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+    
+    idOrden = request.GET.get("IdOrden")
+    
+    if not idOrden:
+        return JsonResponse({"message": "Orden no válida"})
+
+    orden = Orden.objects.get(Id=idOrden)
+
+    contexto = {
+        "Orden": orden,
+        "Modo": "Editar"
+    }
+
+    return render(request, "detalle_orden_editar.html", contexto)
+
+#endregion EditarOrden
