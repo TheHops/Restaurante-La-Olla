@@ -7,62 +7,28 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-    />
-    <link rel="icon" href="../static/img/Logo la olla 2.png" />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-    />
-    <!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.jqueryui.min.css"> -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"
-    />
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.8/semantic.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.semanticui.min.css" /> -->
-    <script
-      src="https://code.jquery.com/jquery-3.6.1.js"
-      integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
-      crossorigin="anonymous"
-    ></script>
+    <!-- Iconos y fuentes -->
+    
 
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-      integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
-      crossorigin="anonymous"
-    />
-    <script
-      src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
-      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" href="{% static 'img/Logo la olla 2.png' %}" />
 
+    <!-- Animaciones -->
+    <link rel="stylesheet" href="{% static 'css/lib/animate.min.css' %}"/>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="{% static 'css/lib/datatables.min.css' %}"/>
+
+    <!-- Bootstrap CSS (local recomendado) -->
+    <link rel="stylesheet" href="{% static 'css/lib/bootstrap.min.css' %}" />
+
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="{% static 'css/lib/sweetalert2.min.css' %}" />
+
+    <!-- Estilos propios -->
     <link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
     <link rel="stylesheet" href="{% static 'css/inventario.css' %}" />
     <link rel="stylesheet" href="{% static 'css/venta.css' %}" />
     <link rel="stylesheet" href="{% static 'css/ordenes.css' %}" />
-
-    <script src="{% static 'js/opciones.js' %}"></script>
-    <script src="{% static 'js/cantidad.js' %}"></script>
-    <script src="{% static 'js/toggle.js' %}"></script>
 
     <title>Inicio</title>
   </head>
@@ -150,19 +116,25 @@
       <!-- <img src="/Restaurante_La_Olla/Static/img/waveTest3.svg" alt="Onda de fondo" style="transform: translateY(-25px);"> -->
     </header>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-    <script src="https://kit.fontawesome.com/4e21b7fd9a.js"></script>
-    <script src="/path/to/cdn/jquery.slim.min.js"></script>
-    <script src="/path/to/toggle.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="sweetalert2.all.min.js"></script>
-    <script src="sweetalert2.min.js"></script>
-    <link rel="stylesheet" href="sweetalert2.min.css" />
-    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+    <!-- jQuery completo -->
+    <script src="{% static 'js/lib/jquery-3.7.1.min.js' %}"></script>
 
-    <!-- <script src="https://cdn.datatables.net/1.12.1/js/dataTables.semanticui.min.js"></script> -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.8/semantic.min.js"></script> -->
+    <!-- Popper.js necesario para Bootstrap -->
+    <script src="{% static 'js/lib/popper.min.js' %}"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="{% static 'js/lib/bootstrap.min.js' %}"></script>
+
+    <!-- DataTables -->
+    <script src="{% static 'js/lib/dataTables.min.js' %}"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="{% static 'js/lib/sweetalert2.all.min.js' %}"></script>
+
+    <!-- Tus scripts -->
+    <script src="{% static 'js/opciones.js' %}"></script>
+    <script src="{% static 'js/cantidad.js' %}"></script>
+    <script src="{% static 'js/toggle.js' %}"></script>
 
     <script>
       // $(document).ready(function () {
