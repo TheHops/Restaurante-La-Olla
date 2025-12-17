@@ -1,7 +1,12 @@
 {% load static %}
 
 <div class="modal-header">
-  <h5 class="modal-title" id="exampleModalLabel">Editar orden</h5>
+  {% if Modo == "Editar" %}
+    <h5 class="modal-title" id="exampleModalLabel">Modificar orden</h5>
+  {% else %}
+  <h5 class="modal-title" id="exampleModalLabel">Detalles de la orden</h5>
+  {% endif %}
+
   <button
     type="button"
     class="close"
@@ -13,12 +18,15 @@
 </div>
 
 <div class="modal-body">
-    <form method="POST">
-      {% csrf_token %}
       <div class="col-md-12">
         <!-- Descripción -->
         <h4 style="font-size: 20px; margin-bottom: 3px;">Descripción</h4>
-        <textarea class="form-control mb-2" id="DescripcionPlatilloAgregar" placeholder="Ingrese una descripción">{{ Orden.Descripcion }}</textarea>
+        
+        {% if Modo == "Editar" %}
+          <textarea class="form-control mb-2" id="DescripcionPlatilloAgregar" placeholder="Ingrese una descripción">{{ Orden.Descripcion }}</textarea>
+        {% else %}
+          <textarea class="form-control mb-2" id="DescripcionPlatilloAgregar" placeholder="Ingrese una descripción" readonly>{{ Orden.Descripcion }}</textarea>
+        {% endif %}
       </div>
 
       <!-- Detalle de la orden a editar -->
@@ -28,8 +36,8 @@
               <!-- Columnas -->
               <tr>
                   <th><h5>Consumo</h5></th>
-                  <th><h5>Precio</h5></th>
-                  <th style="text-align: center; min-width: 100px;">Cantidad</th>
+                  <th><h5>Precio unitario</h5></th>
+                  <th style="text-align: center; min-width: 100px;"><h5>Cantidad</h5></th>
       
                   {% if Modo == "Editar" %}
                       <th style="text-align: center;"><h5>Acciones</h5></th>
@@ -45,13 +53,35 @@
                 {% if detalle.EsActivo %}
                     <tr>
                         <td style="text-transform: capitalize; ">{{detalle.IdPlatillo.Nombre|lower}}</td>
-                        <td>C${{detalle.IdPlatillo.Precio}}</td>
-                        <td style="text-align: center;">{{detalle.Cantidad}}</td>
+                        <td>C${{detalle.PrecioVenta}}</td>
                         
-                        <td class="actions btnQuitarEditar">
-                            <div class='botonQuitar' onclick='quitarOrdenDetalle()'><button class='btnQuitar'>Quitar</button>
+                        {% if Modo == "Editar" %}
+
+                          <td style="text-align: center;">
+                            <button style="min-width: 30px;" class="btnControlCantidad" onclick="bajarCantidad('{{detalle.Id}}')">-</button>
+
+                            <span id="cantidadDetalle-{{detalle.Id}}">{{detalle.Cantidad}}</span>
+                            
+                            <button style="min-width: 30px;" class="btnControlCantidad" onclick="subirCantidad('{{detalle.Id}}')">+</button>
+                          </td>
+
+                          <td class="actions btnQuitarEditar">
+                            <div class='botonQuitar'>
+                              <button type="button" class="btnQuitar" 
+                                data-id-detalle="{{detalle.Id}}"
+                                onclick="mostrarPopover(this)">
+                                Quitar
+                              </button>
                             </div>
-                        </td>
+                          </td>
+                        
+                        {% else %}
+                          
+                          <td style="text-align: center;">{{detalle.Cantidad}}</td>
+                          
+                          <td>{{detalle.SubTotal}}</td>
+                        
+                        {% endif %}
             
                         <input type="hidden" id="idDetalleOrdenFactura{{detalle.Id}}" value="{{detalle.Id}}"/>
                     </tr>
@@ -62,7 +92,6 @@
       </div>
 
       <input type="hidden" id="idOrdenFactura"/>
-    </form>
   </div>
 
   <div class="modal-footer">
@@ -82,7 +111,7 @@
             id="btnEditarOrden"
             onclick="EditarOrden()"
             disabled>
-            Editar
+            Confirmar cambios
         </button> 
       {% endif %}       
     </div>
