@@ -18,16 +18,14 @@ function rellenarParaEditarOrden(idOrden) {
   };
 }
 
-$("#EditarOrden").on("hidden.bs.modal", function () {
-  destruirPopovers();
-});
-
 function subirCantidad(idDetalle) {
   const span = document.getElementById(`cantidadDetalle-${idDetalle}`);
   if (!span) return;
 
   let cantidad = parseInt(span.textContent) || 1;
   cantidad++;
+
+  $("#EditarOrden").trigger("input");
 
   span.textContent = cantidad;
 }
@@ -42,8 +40,16 @@ function bajarCantidad(idDetalle) {
     cantidad--;
   }
 
+  $("#EditarOrden").trigger("input");
+
   span.textContent = cantidad;
 }
+
+/*///////////////////////////// POPOVER /////////////////////////////////*/
+
+$("#EditarOrden").on("hidden.bs.modal", function () {
+  destruirPopovers();
+});
 
 function mostrarPopover(btn, e) {
   if (e) e.stopPropagation();
@@ -54,7 +60,7 @@ function mostrarPopover(btn, e) {
 
   if (!$btn.data("bs.popover")) {
     $btn.popover({
-      container: "body",
+      container: "#EditarOrden",
       html: true,
       trigger: "manual",
       placement: "top",
@@ -62,7 +68,7 @@ function mostrarPopover(btn, e) {
       content: `
         <div class="text-center">
           <p class="mb-2">¿Quitar consumo?</p>
-          <button type="button" class="btn btn-sm btn-secondary mr-1" onclick="cerrarPopover()">No</button>
+          <button type="button" class="btn btn-sm btn-secondary mr-1">No</button>
           <button type="button" class="btn btn-sm btn-danger" onclick="confirmarQuitar(${btn.dataset.idDetalle})">Sí</button>
         </div>
       `,
@@ -84,18 +90,29 @@ function destruirPopovers() {
   $(".btn-popover").popover("dispose");
 }
 
-$(document).on("click", ".popover", function (e) {
-  e.stopPropagation();
+/*//////////////////////////////////////////////////////////////*/
+
+let cambiosDetectados = false;
+
+$("#EditarOrden").on("input change", "input, textarea, select", function () {
+  if (!cambiosDetectados) {
+    $("#btnConfirmarCambiosOrden").prop("disabled", false);
+    cambiosDetectados = true;
+  }
 });
 
-$(document).on("keydown", function (e) {
-  if (e.key === "Escape") {
-    cerrarPopover();
-  }
+$("#EditarOrden").on("hidden.bs.modal", function () {
+  var btnModificarOrden = document.getElementById("#btnConfirmarCambiosOrden");
+  btnModificarOrden.disabled = false;
+  
+  $("#btnConfirmarCambiosOrden").prop("disabled", true);
+  cambiosDetectados = false;
 });
 
 function confirmarQuitar(idDetalle) {
   console.log("Quitar detalle:", idDetalle);
+
+  $("#EditarOrden").trigger("input");
 
   // aquí tu lógica real:
   // - eliminar fila
