@@ -60,16 +60,16 @@
                           <td style="text-align: center;">
                             <button style="min-width: 30px;" class="btnControlCantidad" onclick="bajarCantidad('{{detalle.Id}}')">-</button>
 
-                            <span id="cantidadDetalle-{{detalle.Id}}">{{detalle.Cantidad}}</span>
+                            <span id="cantidadDetalle-{{detalle.Id}}" class="cantidadConsumoEditar">{{detalle.Cantidad}}</span>
                             
                             <button style="min-width: 30px;" class="btnControlCantidad" onclick="subirCantidad('{{detalle.Id}}')">+</button>
                           </td>
 
                           <td class="actions btnQuitarEditar">
                             <div class='botonQuitar'>
-                              <button type="button" class="btnQuitar" 
+                              <button type="button" class="btnQuitar btn-popover" 
                                 data-id-detalle="{{detalle.Id}}"
-                                onclick="mostrarPopover(this)">
+                                onclick="mostrarPopover(this, event)">
                                 Quitar
                               </button>
                             </div>
@@ -108,7 +108,7 @@
         <button
             type="button"
             class="btn btn-danger"
-            id="btnEditarOrden"
+            id="btnConfirmarCambiosOrden"
             onclick="EditarOrden()"
             disabled>
             Confirmar cambios

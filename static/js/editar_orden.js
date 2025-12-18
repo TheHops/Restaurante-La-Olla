@@ -11,22 +11,11 @@ function rellenarParaEditarOrden(idOrden) {
       let contenedor = document.getElementById("contenidoDetalleOrden");
 
       if (contenedor) {
+        destruirPopovers();
         contenedor.innerHTML = this.responseText;
       }
     }
   };
-}
-
-$("#EditarOrden").on("shown.bs.modal", function () {
-  inicializarPopovers();
-});
-
-function inicializarPopovers() {
-  $('[data-toggle="popover"]').popover({
-    container: "body",
-    html: true,
-    trigger: "focus",
-  });
 }
 
 function subirCantidad(idDetalle) {
@@ -35,6 +24,8 @@ function subirCantidad(idDetalle) {
 
   let cantidad = parseInt(span.textContent) || 1;
   cantidad++;
+
+  $("#EditarOrden").trigger("input");
 
   span.textContent = cantidad;
 }
@@ -49,40 +40,79 @@ function bajarCantidad(idDetalle) {
     cantidad--;
   }
 
+  $("#EditarOrden").trigger("input");
+
   span.textContent = cantidad;
 }
 
-function mostrarPopover(btn) {
-  // 1️⃣ Inicializar popover si no está inicializado
-  let $btn = $(btn);
+/*///////////////////////////// POPOVER /////////////////////////////////*/
+
+$("#EditarOrden").on("hidden.bs.modal", function () {
+  destruirPopovers();
+});
+
+function mostrarPopover(btn, e) {
+  if (e) e.stopPropagation();
+
+  $(".btn-popover").popover("hide");
+
+  const $btn = $(btn);
 
   if (!$btn.data("bs.popover")) {
-    // Bootstrap 4
     $btn.popover({
-      container: "body",
+      container: "#EditarOrden",
       html: true,
-      trigger: "manual", // importante: manual para controlar con JS
+      trigger: "manual",
       placement: "top",
+      sanitize: false,
       content: `
         <div class="text-center">
           <p class="mb-2">¿Quitar consumo?</p>
-          <button type="button" class="btn btn-sm btn-secondary mr-1" onclick="cerrarPopover(this)">No</button>
+          <button type="button" class="btn btn-sm btn-secondary mr-1">No</button>
           <button type="button" class="btn btn-sm btn-danger" onclick="confirmarQuitar(${btn.dataset.idDetalle})">Sí</button>
         </div>
       `,
     });
   }
 
-  // 2️⃣ Mostrar el popover manualmente
   $btn.popover("show");
 }
 
-function cerrarPopover(btn) {
-  $(btn).closest(".popover").prev().popover("hide");
+$(document).on("mousedown", ".modal-backdrop", function () {
+  $(".btn-popover").popover("hide");
+});
+
+function cerrarPopover() {
+  $(".btn-popover").popover("hide");
 }
+
+function destruirPopovers() {
+  $(".btn-popover").popover("dispose");
+}
+
+/*//////////////////////////////////////////////////////////////*/
+
+let cambiosDetectados = false;
+
+$("#EditarOrden").on("input change", "input, textarea, select", function () {
+  if (!cambiosDetectados) {
+    $("#btnConfirmarCambiosOrden").prop("disabled", false);
+    cambiosDetectados = true;
+  }
+});
+
+$("#EditarOrden").on("hidden.bs.modal", function () {
+  var btnModificarOrden = document.getElementById("#btnConfirmarCambiosOrden");
+  btnModificarOrden.disabled = false;
+  
+  $("#btnConfirmarCambiosOrden").prop("disabled", true);
+  cambiosDetectados = false;
+});
 
 function confirmarQuitar(idDetalle) {
   console.log("Quitar detalle:", idDetalle);
+
+  $("#EditarOrden").trigger("input");
 
   // aquí tu lógica real:
   // - eliminar fila
