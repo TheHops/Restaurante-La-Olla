@@ -74,7 +74,7 @@
         <img src="/static/img/Logo la olla 2.png" alt="" id="logodeco" />
       </div>
 
-      <nav>
+      <nav id="navSistema">
         <ul class="menu">
           <li>
             <div id="btnopciones1" onclick="abrir()">
@@ -137,22 +137,6 @@
     <script src="{% static 'js/toggle.js' %}"></script>
 
     <script>
-      // $(document).ready(function () {
-      //         $('#tablaInsumos').DataTable({
-
-      //         });
-      //     });
-
-      $(document).ready(function () {
-        $(".tablaInventario").DataTable({
-          scrollY: "45vh",
-          scrollCollapse: true,
-          paging: true,
-          language: {
-            url: "https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json",
-          },
-        });
-      });
 
       document.getElementById("listaInventario").addEventListener(
         "change",

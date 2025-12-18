@@ -29,11 +29,11 @@ function cargarPersonal(ver) {
       tbody.innerHTML = this.responseText;
 
       $(".tablaInventario").DataTable({
-        scrollY: "50vh",
+        scrollY: "43vh",
         scrollCollapse: true,
         paging: true,
         language: {
-          url: "https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json",
+          url: "/static/json/es-ES.json",
         },
       });
 

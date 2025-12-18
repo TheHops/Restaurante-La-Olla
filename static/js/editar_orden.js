@@ -11,23 +11,16 @@ function rellenarParaEditarOrden(idOrden) {
       let contenedor = document.getElementById("contenidoDetalleOrden");
 
       if (contenedor) {
+        destruirPopovers();
         contenedor.innerHTML = this.responseText;
       }
     }
   };
 }
 
-$("#EditarOrden").on("shown.bs.modal", function () {
-  inicializarPopovers();
+$("#EditarOrden").on("hidden.bs.modal", function () {
+  destruirPopovers();
 });
-
-function inicializarPopovers() {
-  $('[data-toggle="popover"]').popover({
-    container: "body",
-    html: true,
-    trigger: "focus",
-  });
-}
 
 function subirCantidad(idDetalle) {
   const span = document.getElementById(`cantidadDetalle-${idDetalle}`);
@@ -52,34 +45,54 @@ function bajarCantidad(idDetalle) {
   span.textContent = cantidad;
 }
 
-function mostrarPopover(btn) {
-  // 1️⃣ Inicializar popover si no está inicializado
-  let $btn = $(btn);
+function mostrarPopover(btn, e) {
+  if (e) e.stopPropagation();
+
+  $(".btn-popover").popover("hide");
+
+  const $btn = $(btn);
 
   if (!$btn.data("bs.popover")) {
-    // Bootstrap 4
     $btn.popover({
       container: "body",
       html: true,
-      trigger: "manual", // importante: manual para controlar con JS
+      trigger: "manual",
       placement: "top",
+      sanitize: false,
       content: `
         <div class="text-center">
           <p class="mb-2">¿Quitar consumo?</p>
-          <button type="button" class="btn btn-sm btn-secondary mr-1" onclick="cerrarPopover(this)">No</button>
+          <button type="button" class="btn btn-sm btn-secondary mr-1" onclick="cerrarPopover()">No</button>
           <button type="button" class="btn btn-sm btn-danger" onclick="confirmarQuitar(${btn.dataset.idDetalle})">Sí</button>
         </div>
       `,
     });
   }
 
-  // 2️⃣ Mostrar el popover manualmente
   $btn.popover("show");
 }
 
-function cerrarPopover(btn) {
-  $(btn).closest(".popover").prev().popover("hide");
+$(document).on("mousedown", ".modal-backdrop", function () {
+  $(".btn-popover").popover("hide");
+});
+
+function cerrarPopover() {
+  $(".btn-popover").popover("hide");
 }
+
+function destruirPopovers() {
+  $(".btn-popover").popover("dispose");
+}
+
+$(document).on("click", ".popover", function (e) {
+  e.stopPropagation();
+});
+
+$(document).on("keydown", function (e) {
+  if (e.key === "Escape") {
+    cerrarPopover();
+  }
+});
 
 function confirmarQuitar(idDetalle) {
   console.log("Quitar detalle:", idDetalle);
