@@ -481,7 +481,7 @@ async function agregarOrden() {
 
       if (respuesta.status === "ok") {
         await Swal.fire({
-          title: "¡Orden creada correctamente!",
+          title: respuesta.message,
           icon: "success",
           confirmButtonColor: "#ff6464",
         });

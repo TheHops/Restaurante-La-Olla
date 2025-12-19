@@ -215,6 +215,9 @@ def CrearOrden(request):
 
         datos = json.loads(datos_json)
         mesas = json.loads(mesas_json)
+        
+        if descripcion is not None and descripcion.strip() == "":
+            descripcion = None
 
         print("---------------------------- ORDEN CREADA -----------------------")
         print("Mesas:", mesas)
@@ -241,6 +244,7 @@ def CrearOrden(request):
         # Establecer el área según la primera mesa seleccionada
         if mesas_objetos.exists():
             orden.AreaDeMesa = mesas_objetos[0].IdAreaMesa.Nombre
+            orden.IdAreaDeMesa = mesas_objetos[0].IdAreaMesa
             orden.save()
 
         # Crear los detalles de la orden
@@ -261,7 +265,7 @@ def CrearOrden(request):
         # Respuesta final esperada por el frontend
         return JsonResponse({
             "status": "ok",
-            "message": "Orden creada exitosamente",
+            "message": f"¡Orden #{orden.Id} creada exitosamente!",
             "orden_id": orden.Id
         })
     except Exception as ex:
@@ -299,7 +303,7 @@ def CancelarOrden(request):
 
         return JsonResponse({
             "status": "ok",
-            "message": f"La orden #{orden.Id} fue anulada correctamente."
+            "message": f"¡La orden #{orden.Id} fue anulada exitosamente!"
         })
 
     except Orden.DoesNotExist:
@@ -397,13 +401,14 @@ def FacturarOrden(request):
         orden.Total        = total
         orden.MetodoPago   = metodoPago
         orden.Banco        = banco
+        orden.NumRef       = numRef
         orden.Estado       = "0"  # Facturada
 
         orden.save()
 
         return JsonResponse({
             "status": "ok",
-            "message": f"La orden #{orden.Id} fue registrada correctamente."
+            "message": f"¡La orden #{orden.Id} fue registrada exitosamente!"
         })
 
     except Orden.DoesNotExist:
