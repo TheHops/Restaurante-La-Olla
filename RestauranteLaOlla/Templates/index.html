@@ -29,11 +29,34 @@
     <link rel="stylesheet" href="{% static 'css/inventario.css' %}" />
     <link rel="stylesheet" href="{% static 'css/venta.css' %}" />
     <link rel="stylesheet" href="{% static 'css/ordenes.css' %}" />
-
+    
     <title>Inicio</title>
   </head>
   <body>
     <div id="capa" onclick="cerrar()"></div>
+    
+    <!-- jQuery completo -->
+    <script src="{% static 'js/lib/jquery-3.7.1.min.js' %}"></script>
+
+    <!-- Popper.js necesario para Bootstrap -->
+    <script src="{% static 'js/lib/popper.min.js' %}"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="{% static 'js/lib/bootstrap.min.js' %}"></script>
+
+    <!-- DataTables -->
+    <script src="{% static 'js/lib/dataTables.min.js' %}"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="{% static 'js/lib/sweetalert2.all.min.js' %}"></script>
+    
+    <!-- ChartJs -->
+    <script src="{% static 'js/lib/chart.umd.min.js' %}"></script>
+
+    <!-- Tus scripts -->
+    <script src="{% static 'js/opciones.js' %}"></script>
+    <script src="{% static 'js/cantidad.js' %}"></script>
+    <script src="{% static 'js/toggle.js' %}"></script>
 
     <header>
       <div id="opciones">
@@ -116,37 +139,8 @@
       <!-- <img src="/Restaurante_La_Olla/Static/img/waveTest3.svg" alt="Onda de fondo" style="transform: translateY(-25px);"> -->
     </header>
 
-    <!-- jQuery completo -->
-    <script src="{% static 'js/lib/jquery-3.7.1.min.js' %}"></script>
-
-    <!-- Popper.js necesario para Bootstrap -->
-    <script src="{% static 'js/lib/popper.min.js' %}"></script>
-
-    <!-- Bootstrap JS -->
-    <script src="{% static 'js/lib/bootstrap.min.js' %}"></script>
-
-    <!-- DataTables -->
-    <script src="{% static 'js/lib/dataTables.min.js' %}"></script>
-
-    <!-- SweetAlert2 -->
-    <script src="{% static 'js/lib/sweetalert2.all.min.js' %}"></script>
-
-    <!-- Tus scripts -->
-    <script src="{% static 'js/opciones.js' %}"></script>
-    <script src="{% static 'js/cantidad.js' %}"></script>
-    <script src="{% static 'js/toggle.js' %}"></script>
-
     <script>
-
-      document.getElementById("listaInventario").addEventListener(
-        "change",
-        function () {
-          window.location = this.value;
-        },
-        false
-      );
-
-      async function obtenerCargoUsuario() {
+     async function obtenerCargoUsuario() {
         try {
           const response = await fetch("/cargo/consultar", {
               method: "GET",

@@ -1,4 +1,4 @@
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
   $.ajax({
     url: "/GraficaOrdenes/",
     dataType: "json",
@@ -10,18 +10,12 @@ $(document).ready(function () {
       gradient.addColorStop(0, "rgba(184,109,62,1)");
       gradient.addColorStop(1, "rgba(254,218,162, 0.3)");
 
+      console.log(data);
+
       var myChart = new Chart(ctx, {
         type: "bar",
         data: {
-          labels: [
-            "Lunes",
-            "Martes",
-            "Miércoles",
-            "Jueves",
-            "Viernes",
-            "Sábado",
-            "Domingo",
-          ],
+          labels: data.dias_semana,
           datasets: [
             {
               label: "Facturas por día de la semana",
