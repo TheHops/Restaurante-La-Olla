@@ -14,6 +14,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+document.getElementById("listaInventario").addEventListener(
+  "change",
+  function () {
+    window.location = this.value;
+  },
+  false
+);
+
 function cargarPlatillos(ver) {
   document.getElementById("cuerpoInventario").style.opacity = "0";
 

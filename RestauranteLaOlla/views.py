@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from django.db.models import Q
 import traceback
 from django.core.mail import send_mail
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -70,63 +71,74 @@ def logoutUser(request):
 #region GraficasOrdenes
 
 def GraficarOrdenes(request):
-    if request.user.is_authenticated:
-        try:
-            # Filtrar órdenes facturadas
-            facturas_por_dia = Orden.objects.filter(Estado='0')
-
-            # Fecha actual y semana actual
-            fecha_actual = datetime.today().date()
-            num_semana_actual = fecha_actual.isocalendar()[1]
-            inicio_semana_actual = fecha_actual - timedelta(days=fecha_actual.weekday())
-            fin_semana_actual = inicio_semana_actual + timedelta(days=6)
-
-            # Filtrar facturas dentro de la semana actual
-            facturas_semana_actual = facturas_por_dia.filter(Fecha__date__range=[inicio_semana_actual, fin_semana_actual])
-
-            # Contar facturas por día de la semana (0 = lunes, 6 = domingo)
-            facturas_dict = {}
-            for factura in facturas_semana_actual:
-                if factura.Fecha:
-                    dia_semana = factura.Fecha.weekday()
-                    facturas_dict[dia_semana] = facturas_dict.get(dia_semana, 0) + 1
-
-            # Construir listas de datos
-            dias_semana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
-            num_facturas = [facturas_dict.get(dia, 0) for dia in range(7)]
-
-            # Reordenar según el día actual
-            dia_actual = fecha_actual.weekday()
-            dias_semana = dias_semana[dia_actual:] + dias_semana[:dia_actual]
-            num_facturas = num_facturas[dia_actual:] + num_facturas[:dia_actual]
-
-            # Llevar el último al inicio (rotación visual)
-            
-            ultimo_valor = num_facturas.pop()
-            num_facturas.insert(0, ultimo_valor)
-
-            # Obtener los 5 platillos más vendidos
-            platillos_mas_vendidos = Platillo.objects.annotate(num_ventas=Count('detalleorden')).order_by('-num_ventas')[:5]
-            platillos_nombres = [platillo.Nombre for platillo in platillos_mas_vendidos]
-            num_ventas_platillos = [platillo.num_ventas for platillo in platillos_mas_vendidos]
-
-            # Retornar datos JSON
-            data = {
-                'dias_semana': dias_semana,
-                'num_facturas': num_facturas,
-                'platillos_nombres': platillos_nombres,
-                'num_ventas_platillos': num_ventas_platillos
-            }
-
-            return JsonResponse(data)
-
-        except Exception as ex:
-            print("\n############### EXCEPCIÓN ###############")
-            print(traceback.format_exc())
-            print("#########################################\n")
-            return JsonResponse({'error': str(ex)}, status=500)
-    else:
+    if not request.user.is_authenticated:
         return render(request, "login.html")
+
+    try:
+        hoy_local = timezone.localdate()  # 18/12/2025
+        hace_7_dias_local = hoy_local - timedelta(days=6)
+
+        # Convertir a datetime al inicio y fin del día
+        inicio_rango = timezone.make_aware(
+            datetime.combine(hace_7_dias_local, datetime.min.time()), timezone.get_current_timezone()
+        )
+        fin_rango = timezone.make_aware(
+            datetime.combine(hoy_local, datetime.max.time()), timezone.get_current_timezone()
+        )
+        
+        print() 
+        print("Hace 7 días - Hoy") 
+        print(hace_7_dias_local)
+        print(hoy_local)
+
+        # Órdenes facturadas en los últimos 7 días
+        facturas_7_dias = Orden.objects.filter(
+            Estado="0",
+            UltimaModificacion__range=(inicio_rango, fin_rango)
+        )
+        
+        print() 
+        print("Facturas 7 días") 
+        print(facturas_7_dias)
+
+        # Inicializar diccionario con los últimos 7 días
+        dias = [(hoy_local - timedelta(days=i)) for i in range(6, -1, -1)]
+        
+        print() 
+        print("Días") 
+        print(dias)
+        
+        conteo_por_dia = {dia: 0 for dia in dias}
+
+        for factura in facturas_7_dias:
+            fecha = factura.UltimaModificacion.astimezone(
+                timezone.get_current_timezone()
+            ).date()
+            if fecha in conteo_por_dia:
+                conteo_por_dia[fecha] += 1
+
+        dias_labels = [dia.strftime("%d/%m") for dia in dias]
+        num_facturas = list(conteo_por_dia.values())
+
+        # Top 5 platillos
+        platillos_mas_vendidos = (
+            Platillo.objects
+            .annotate(num_ventas=Count('detalleorden'))
+            .order_by('-num_ventas')[:5]
+        )
+
+        data = {
+            "dias_semana": dias_labels,
+            "num_facturas": num_facturas,
+            "platillos_nombres": [p.Nombre for p in platillos_mas_vendidos],
+            "num_ventas_platillos": [p.num_ventas for p in platillos_mas_vendidos],
+        }
+
+        return JsonResponse(data)
+
+    except Exception as ex:
+        print(traceback.format_exc())
+        return JsonResponse({"error": str(ex)}, status=500)
 
 #endregion GraficarOrdenes
 

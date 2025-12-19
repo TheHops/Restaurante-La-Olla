@@ -4,6 +4,14 @@ function Impresion(id, nombre, estado) {
   $("#IDTipoPlatillo").val(id);
 }
 
+document.getElementById("listaInventario").addEventListener(
+  "change",
+  function () {
+    window.location = this.value;
+  },
+  false
+);
+
 function ActualizarTipoPlatillo() {
   const nombre = $("#NameTipoPlatillo").val();
   const estado = $("#EstadoTipoPlatillo").val();
