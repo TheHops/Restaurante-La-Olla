@@ -184,7 +184,7 @@ function addCarrito(id, nombre, precio) {
 
   // Se verifica si ya existe o no
   if (existeOrden) {
-    console.log("ENTRÓ A LA FUNCION SI EXISTE");
+    console.log("ENTRÓ A LA FUNCION SI EXISTE EL PLATILLO EN LA ORDEN");
 
     // Se obtiene la orden
     ordenExistente = document.getElementById("ordenP" + id);

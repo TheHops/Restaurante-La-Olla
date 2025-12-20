@@ -263,13 +263,21 @@
     transition: .4s grid-template-rows;
 }
 
+/********************* EDITAR ***********************/
+
+.filaDetalleOrden {
+    transition: opacity 0.3s ease-in;
+}
+
 .btnQuitarEditar{
     justify-content: center;
 }
 
 .modal-editar-orden {
     max-width: 95% !important;
-  }
+}
+
+/****************************************************/
 
 .cuerpoDetalleOrden.desplegado {
     grid-template-rows: 1fr;

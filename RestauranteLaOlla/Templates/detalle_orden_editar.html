@@ -51,7 +51,7 @@
           <tbody class="cuerpoDetalleOrdenTabla">
               {% for detalle in Orden.Detalles.all %}
                 {% if detalle.EsActivo %}
-                    <tr>
+                    <tr id="detalleOrdenEditar{{detalle.Id}}" class="filaDetalleOrden">
                         <td style="text-transform: capitalize; ">{{detalle.IdPlatillo.Nombre|lower}}</td>
                         <td>C${{detalle.PrecioVenta}}</td>
                         
