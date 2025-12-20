@@ -112,7 +112,12 @@ $("#EditarOrden").on("hidden.bs.modal", function () {
 function confirmarQuitar(idDetalle) {
   console.log("Quitar detalle:", idDetalle);
 
-  $("#EditarOrden").trigger("input");
+  let detalle = $("#detalleOrdenEditar" + idDetalle);
+
+  console.log(detalle);
+  // $("#EditarOrden").trigger("input");
+  
+  detalle.hide(); 
 
   // aquí tu lógica real:
   // - eliminar fila
