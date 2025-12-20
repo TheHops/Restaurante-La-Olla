@@ -67,7 +67,7 @@
 
                           <td class="actions btnQuitarEditar">
                             <div class='botonQuitar'>
-                              <button type="button" class="btnQuitar btn-popover" 
+                              <button type="button" class="btnQuitar2 btn-popover" 
                                 data-id-detalle="{{detalle.Id}}"
                                 onclick="mostrarPopover(this, event)">
                                 Quitar
@@ -83,7 +83,9 @@
                         
                         {% endif %}
             
-                        <input type="hidden" id="idDetalleOrdenFactura{{detalle.Id}}" value="{{detalle.Id}}"/>
+                        <input type="hidden" id="idDetalleOrdenEditar{{detalle.Id}}" value="{{detalle.Id}}"/>
+                        <input type="hidden" id="esActivoDetalleOrdenEditar{{detalle.Id}}" value="{{detalle.EsActivo}}"/>
+                        <input type="hidden" id="cantidadDetalleOrdenEditar{{detalle.Id}}" value="{{detalle.Cantidad}}"/>
                     </tr>
                 {% endif %}
               {% endfor %}

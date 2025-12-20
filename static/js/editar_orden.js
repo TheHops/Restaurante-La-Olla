@@ -116,8 +116,13 @@ function confirmarQuitar(idDetalle) {
 
   console.log(detalle);
   // $("#EditarOrden").trigger("input");
+
+  detalle.addClass("quitar");
+
+  setTimeout(() => {
+    detalle.hide(); 
+  }, 500);
   
-  detalle.hide(); 
 
   // aquí tu lógica real:
   // - eliminar fila
