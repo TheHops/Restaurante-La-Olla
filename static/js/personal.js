@@ -188,6 +188,7 @@ function ConfirmarRestablecer(idPersonal)
     cancelButtonColor: "#6c757d",
     confirmButtonText: "Restablecer",
     cancelButtonText: "Cancelar",
+    reverseButtons: true
   }).then((result) => {
     if (result.isConfirmed) {
       Swal.fire({
@@ -252,6 +253,7 @@ function ConfirmarBaja(idPersonal) {
     cancelButtonColor: "#6c757d",
     confirmButtonText: "Dar de baja",
     cancelButtonText: "Cancelar",
+    reverseButtons: true
   }).then((result) => {
     if (result.isConfirmed) {
       $.ajax({

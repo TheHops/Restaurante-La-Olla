@@ -15,7 +15,7 @@
     <div id="contenedorDerechoEncabezadoInventario">
         <!-- Botón para mostrar u ocultar los registros inactivos -->
         <div class="btnVerInactivos">
-            <label for="checkVerPersonalInactivos">Ver eliminados</label>
+            <label for="checkVerPersonalInactivos">Ver dados de baja</label>
             <input type="checkbox" id="checkVerPersonalInactivos" class="checkVerInactivos">
         </div>
     </div>
@@ -81,39 +81,43 @@
                 <div class="row">
                     <div class="col-6 mb-2">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Nombres<span class="asterisco">*</span></h4>
-                        <input type="text" class="form-control" id="Fullname" placeholder="Nombres del personal" required>
+                        <input type="text" class="form-control" id="Fullname" placeholder="Ej: Juan Carlos" required>
                     </div>
 
                     <div class="col-6 mb-2">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Apellidos<span class="asterisco">*</span></h4>
-                        <input type="text" class="form-control" id="Apellidos" placeholder="Apellidos del personal" required>
+                        <input type="text" class="form-control" id="Apellidos" placeholder="Ej: Perez Lopez" required>
                     </div>
                     
                     <div class="col-6 mb-2">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Nombre de usuario<span class="asterisco">*</span></h4>
-                        <input type="text" class="form-control" id="User" placeholder="Nombre de usuario" required autocomplete="off">
+                        <input type="text" class="form-control" id="User" placeholder="Ej: JCLopez" required autocomplete="off">
                     </div>
                     
                     <div class="col-6 mb-2">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Contraseña temporal<span class="asterisco">*</span></h4>
-                        <input type="Password" class="form-control" id="Pass" placeholder="Contraseña temporal" required autocomplete="new-password">
+                        <input type="Password" class="form-control" id="Pass" placeholder="Ej: JC123*" required autocomplete="new-password">
                     </div>
                     
                     <div class="col-12 mb-2">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Correo</h4>
-                        <input type="email" class="form-control" placeholder="Correo electrónico" id="e-mail">
+                        <input type="email" class="form-control" placeholder="Ej: juanpl@gmail.om" id="e-mail">
                     </div>
 
                     <div class="col-6 mb-2">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Telefono</h4>
-                        <input type="text"inputmode="numeric" class="form-control" maxlength="8" id="telefono" onkeypress="return soloNumeros(event)" placeholder="Número de teléfono">
+                        <input type="text"inputmode="numeric" class="form-control" maxlength="8" id="telefono" onkeypress="return soloNumeros(event)" placeholder="Ej: 88888888">
                     </div>
 
                     <div class="col-6 mb-2">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Cargo<span class="asterisco">*</span></h4>
                         <select class="form-control" id="idCargo" required>
                             {% for cargo in Cargos %}
-                            <option value="{{cargo.Id}}">{{cargo.Nombre}}</option>
+                                {% if cargo.Nombre == "Mesero" %}
+                                    <option value="{{cargo.Id}}" selected>{{cargo.Nombre}}</option>
+                                {% else %}
+                                    <option value="{{cargo.Id}}">{{cargo.Nombre}}</option>
+                                {% endif %}
                             {% endfor %}
                         </select>
                     </div>
@@ -152,27 +156,27 @@
                 
                     <div class="col-6 mb-2">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Nombres<span class="asterisco">*</span></h4>
-                        <input type="text" class="form-control" id="NombreUsuarioMod" placeholder="Nombres del personal" required>
+                        <input type="text" class="form-control" id="NombreUsuarioMod" placeholder="Ej: Juan Carlos" required>
                     </div>
 
                     <div class="col-6 mb-2">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Apellidos<span class="asterisco">*</span></h4>
-                        <input type="text" class="form-control" id="ApellidosUsuarioMod" placeholder="Apellidos del personal" required>
+                        <input type="text" class="form-control" id="ApellidosUsuarioMod" placeholder="Ej: Perez Lopez" required>
                     </div>
                 
                     <div class="col-6 mb-2">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Usuario<span class="asterisco">*</span></h4>
-                        <input type="text" class="form-control" id="NameUsuario" placeholder="Nombre de usuario" required autocomplete="off">
+                        <input type="text" class="form-control" id="NameUsuario" placeholder="Ej: JCLopez" required autocomplete="off">
                     </div>
 
                     <div class="col-6 mb-2">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Teléfono</h4>
-                        <input type="text" inputmode="numeric" class="form-control" placeholder="Número de teléfono" maxlength="8" id="NumberUsuario" onkeypress="return soloNumeros(event)"  required>
+                        <input type="text" inputmode="numeric" class="form-control" placeholder="Ej: 88888888" maxlength="8" id="NumberUsuario" onkeypress="return soloNumeros(event)"  required>
                     </div>
                 
                     <div class="col-12 mb-2">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Correo</h4>
-                        <input type="email" class="form-control" id="CorreoUsuario" placeholder="Correo electrónico" required>
+                        <input type="email" class="form-control" id="CorreoUsuario" placeholder="Ej: juanpl@gmail.com" required>
                     </div>
              
                     <div class="col-6 mb-2">

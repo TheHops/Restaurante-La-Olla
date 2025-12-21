@@ -18,8 +18,12 @@ function rellenarParaEditarOrden(idOrden) {
   };
 }
 
+
 function subirCantidad(idDetalle) {
   const span = document.getElementById(`cantidadDetalle-${idDetalle}`);
+  const cantidadFinal = document.getElementById(`cantidadDetalleOrdenEditar${idDetalle}`);
+  const btnConfirmar = document.getElementById(`btnConfirmarCambiosEditarOrden`);
+  
   if (!span) return;
 
   let cantidad = parseInt(span.textContent) || 1;
@@ -27,11 +31,16 @@ function subirCantidad(idDetalle) {
 
   $("#EditarOrden").trigger("input");
 
+  btnConfirmar.disabled = false;
+  cantidadFinal.value = cantidad;
   span.textContent = cantidad;
 }
 
 function bajarCantidad(idDetalle) {
   const span = document.getElementById(`cantidadDetalle-${idDetalle}`);
+  const cantidadFinal = document.getElementById(`cantidadDetalleOrdenEditar${idDetalle}`);
+  const btnConfirmar = document.getElementById(`btnConfirmarCambiosEditarOrden`);
+
   if (!span) return;
 
   let cantidad = parseInt(span.textContent) || 1;
@@ -42,6 +51,8 @@ function bajarCantidad(idDetalle) {
 
   $("#EditarOrden").trigger("input");
 
+  btnConfirmar.disabled = false;
+  cantidadFinal.value = cantidad;
   span.textContent = cantidad;
 }
 
@@ -113,19 +124,72 @@ function confirmarQuitar(idDetalle) {
   console.log("Quitar detalle:", idDetalle);
 
   let detalle = $("#detalleOrdenEditar" + idDetalle);
+  let estadoFinal = $("#esActivoDetalleOrdenEditar" + idDetalle);
+  let btnConfirmar = $("#btnConfirmarCambiosEditarOrden");
 
-  console.log(detalle);
-  // $("#EditarOrden").trigger("input");
+  btnConfirmar.prop("disabled", false);
 
   detalle.addClass("quitar");
+  estadoFinal.val("0");
 
   setTimeout(() => {
-    detalle.hide(); 
+    detalle.hide();
   }, 500);
-  
+}
 
-  // aquí tu lógica real:
-  // - eliminar fila
-  // - enviar AJAX
-  // - marcar como inactivo
+async function ConfirmarEditarOrden() {
+  const { value: isConfirmed } = await Swal.fire({
+    title: "¿Los cambios están correctos?",
+    showCancelButton: true,
+    cancelButtonText: "Cancelar",
+    confirmButtonText: "Confirmar",
+    confirmButtonColor: "#ff6464",
+    icon: "question",
+    iconColor: "#ff964e",
+    reverseButtons: true,
+  });
+
+  if (isConfirmed) {
+    try {
+      // Muestra un modal de carga mientras se envían los datos
+      Swal.fire({
+        title: "Editando orden...",
+        text: "Por favor espere",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      const respuesta = await enviarDatosEditar();
+
+      // Supongamos que Django responde con algo como:
+      // { "status": "ok", "message": "Orden creada exitosamente" }
+
+      if (respuesta.status === "ok") {
+        await Swal.fire({
+          title: respuesta.message,
+          icon: "success",
+          confirmButtonColor: "#ff6464",
+        });
+        location.reload();
+      } else {
+        await Swal.fire({
+          title: "Error",
+          text: respuesta.message || "No se pudo editar la orden.",
+          icon: "error",
+          confirmButtonColor: "#ff6464",
+        });
+      }
+    } catch (error) {
+      await Swal.fire({
+        title: "Error",
+        text: error,
+        icon: "error",
+        confirmButtonColor: "#ff6464",
+      });
+    }
+  }
+}
+
+function enviarDatosEditar() {
+  console.log("ENTRA A CONFIRMAR EDITAR");
 }

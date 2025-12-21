@@ -84,7 +84,7 @@
                     
                     <div class="col-md-12 mb-2">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Nombre</h4>
-                        <input type="text" class="form-control" id="NombrePlatillo" required>
+                        <input type="text" class="form-control" id="NombrePlatillo" placeholder="Ej: Frijoles" required>
                     </div>
                     <div class="col-md-6 mb-2">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Tipo de consumo</h4>
@@ -100,7 +100,7 @@
                     </div>
                     <div class="col-md-6 mb-2">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Precio (C$)</h4>
-                        <input type="text" inputmode="numeric" class="form-control" id="PrecioPlatillo"  onkeypress="return soloNumeros(event)" required>
+                        <input type="text" inputmode="numeric" class="form-control" id="PrecioPlatillo" placeholder="Ej: 150" onkeypress="return soloNumeros(event)" required>
                     </div>
 
                     <div class="col-md-6 mb-2">
@@ -130,7 +130,7 @@
                     
                     <div class="col-md-12 mb-2">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Descripción</h4>
-                        <textarea class="form-control" id="DescripcionPlatillo" ></textarea>
+                        <textarea class="form-control" id="DescripcionPlatillo" placeholder="Ej: Acompañado con salsa ranch. (Opcional)"></textarea>
                     </div>
                 </div>
             </form>
@@ -157,7 +157,7 @@
             <form method="POST">
                 {% csrf_token %}
                 <h4 style="font-size: 20px; margin-bottom: 3px;">Nombre<span class="asterisco">*</span></h4>
-                <input type="text" placeholder="Nombre del consumo" class="form-control mb-2" id="NombrePlatilloAgregar" required>
+                <input type="text" placeholder="Ej: Frijoles" class="form-control mb-2" id="NombrePlatilloAgregar" required>
 
                 <div class="row">
                     <div class="col-md-6">
@@ -175,7 +175,7 @@
 
                     <div class="col-md-6">
                         <h4 style="font-size: 20px; margin-bottom: 3px;" >Precio (C$)<span class="asterisco">*</span></h4>
-                        <input type="number" class="form-control mb-2" placeholder="Precio del consumo" id="PrecioPlatilloAgregar" required>
+                        <input type="number" class="form-control mb-2" placeholder="Ej: 150" id="PrecioPlatilloAgregar" required>
                     </div>
 
                     <div class="col-md-12 mb-2">
@@ -196,7 +196,7 @@
 
                     <div class="col-md-12">
                       <h4 style="font-size: 20px; margin-bottom: 3px;">Descripción</h4>
-                      <textarea class="form-control mb-2" placeholder="Descripción del consumo (opcional)" id="DescripcionPlatilloAgregar" ></textarea>
+                      <textarea class="form-control mb-2" placeholder="Ej: Acompañado con salsa ranch. (Opcional)" id="DescripcionPlatilloAgregar" ></textarea>
                     </div>
                 </div>
             </form>

@@ -23,9 +23,9 @@
         <h4 style="font-size: 20px; margin-bottom: 3px;">Descripción</h4>
         
         {% if Modo == "Editar" %}
-          <textarea class="form-control mb-2" id="DescripcionPlatilloAgregar" placeholder="Ingrese una descripción">{{ Orden.Descripcion }}</textarea>
+          <textarea class="form-control mb-2" id="descripcionOrdenEditar" placeholder="Ingrese una descripción">{{ Orden.Descripcion }}</textarea>
         {% else %}
-          <textarea class="form-control mb-2" id="DescripcionPlatilloAgregar" placeholder="Ingrese una descripción" readonly>{{ Orden.Descripcion }}</textarea>
+          <textarea class="form-control mb-2" id="descripcionOrdenInfo" placeholder="Ingrese una descripción" readonly>{{ Orden.Descripcion }}</textarea>
         {% endif %}
       </div>
 
@@ -83,9 +83,11 @@
                         
                         {% endif %}
             
-                        <input type="hidden" id="idDetalleOrdenEditar{{detalle.Id}}" value="{{detalle.Id}}"/>
-                        <input type="hidden" id="esActivoDetalleOrdenEditar{{detalle.Id}}" value="{{detalle.EsActivo}}"/>
-                        <input type="hidden" id="cantidadDetalleOrdenEditar{{detalle.Id}}" value="{{detalle.Cantidad}}"/>
+                        <input type="hidden" id="idDetalleOrdenEditar{{detalle.Id}}" class="idDetallesOrden{{Orden.Id}}" value="{{detalle.Id}}"/>
+
+                        <input type="hidden" id="esActivoDetalleOrdenEditar{{detalle.Id}}" class="esActivoDetallesOrden{{Orden.Id}}" value="{{detalle.EsActivo}}"/>
+                        
+                        <input type="hidden" id="cantidadDetalleOrdenEditar{{detalle.Id}}" class="cantidadDetallesOrden{{Orden.Id}}" value="{{detalle.Cantidad}}"/>
                     </tr>
                 {% endif %}
               {% endfor %}
@@ -93,7 +95,7 @@
         </table>
       </div>
 
-      <input type="hidden" id="idOrdenFactura"/>
+      <input type="hidden" id="idOrdenEditar" value="{{Orden.Id}}"/>
   </div>
 
   <div class="modal-footer">
@@ -110,8 +112,8 @@
         <button
             type="button"
             class="btn btn-danger"
-            id="btnConfirmarCambiosOrden"
-            onclick="EditarOrden()"
+            id="btnConfirmarCambiosEditarOrden"
+            onclick="ConfirmarEditarOrden()"
             disabled>
             Confirmar cambios
         </button> 

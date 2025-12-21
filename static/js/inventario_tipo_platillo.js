@@ -81,6 +81,7 @@ async function DarBajaTipoPlatillo(idTipo) {
     cancelButtonText: "Cancelar",
     confirmButtonText: "Eliminar",
     confirmButtonColor: "#ff6464",
+    reverseButtons: true
   });
 
   if (!confirmacion.isConfirmed) return;
