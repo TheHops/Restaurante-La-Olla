@@ -70,6 +70,16 @@ def logoutUser(request):
 
 #region GraficasOrdenes
 
+dias_semana_es = {
+    0: "Lunes",
+    1: "Martes",
+    2: "Miércoles",
+    3: "Jueves",
+    4: "Viernes",
+    5: "Sábado",
+    6: "Domingo",
+}
+
 def GraficarOrdenes(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
@@ -117,7 +127,7 @@ def GraficarOrdenes(request):
             if fecha in conteo_por_dia:
                 conteo_por_dia[fecha] += 1
 
-        dias_labels = [dia.strftime("%d/%m") for dia in dias]
+        dias_labels = [dias_semana_es[dia.weekday()] for dia in dias]
         num_facturas = list(conteo_por_dia.values())
 
         # Top 5 platillos

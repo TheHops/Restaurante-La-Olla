@@ -23,9 +23,9 @@
         <h4 style="font-size: 20px; margin-bottom: 3px;">Descripción</h4>
         
         {% if Modo == "Editar" %}
-          <textarea class="form-control mb-2" id="DescripcionPlatilloAgregar" placeholder="Ingrese una descripción">{{ Orden.Descripcion }}</textarea>
+          <textarea class="form-control mb-2" id="descripcionOrdenEditar" placeholder="Ingrese una descripción">{{ Orden.Descripcion }}</textarea>
         {% else %}
-          <textarea class="form-control mb-2" id="DescripcionPlatilloAgregar" placeholder="Ingrese una descripción" readonly>{{ Orden.Descripcion }}</textarea>
+          <textarea class="form-control mb-2" id="descripcionOrdenInfo" placeholder="Ingrese una descripción" readonly>{{ Orden.Descripcion }}</textarea>
         {% endif %}
       </div>
 
@@ -51,7 +51,7 @@
           <tbody class="cuerpoDetalleOrdenTabla">
               {% for detalle in Orden.Detalles.all %}
                 {% if detalle.EsActivo %}
-                    <tr id="detalleOrdenEditar{{detalle.Id}}" class="filaDetalleOrden">
+                    <tr id="filaDetalleOrdenEditar{{detalle.Id}}" class="filaDetalleOrden">
                         <td style="text-transform: capitalize; ">{{detalle.IdPlatillo.Nombre|lower}}</td>
                         <td>C${{detalle.PrecioVenta}}</td>
                         
@@ -67,7 +67,7 @@
 
                           <td class="actions btnQuitarEditar">
                             <div class='botonQuitar'>
-                              <button type="button" class="btnQuitar btn-popover" 
+                              <button type="button" class="btnQuitar2 btn-popover" 
                                 data-id-detalle="{{detalle.Id}}"
                                 onclick="mostrarPopover(this, event)">
                                 Quitar
@@ -82,8 +82,14 @@
                           <td>{{detalle.SubTotal}}</td>
                         
                         {% endif %}
-            
-                        <input type="hidden" id="idDetalleOrdenFactura{{detalle.Id}}" value="{{detalle.Id}}"/>
+                        
+                        <input type="hidden" id="detalleOrdenEditarData{{detalle.Id}}"
+                        class="detalleOrdenData{{Orden.Id}}"
+                        data-is-new="0"
+                        data-id-detalle="{{detalle.Id}}"
+                        data-cantidad="{{detalle.Cantidad}}"
+                        data-es-activo="{{detalle.EsActivo}}">
+                        
                     </tr>
                 {% endif %}
               {% endfor %}
@@ -91,7 +97,7 @@
         </table>
       </div>
 
-      <input type="hidden" id="idOrdenFactura"/>
+      <input type="hidden" id="idOrdenEditar" value="{{Orden.Id}}"/>
   </div>
 
   <div class="modal-footer">
@@ -108,8 +114,8 @@
         <button
             type="button"
             class="btn btn-danger"
-            id="btnConfirmarCambiosOrden"
-            onclick="EditarOrden()"
+            id="btnConfirmarCambiosEditarOrden"
+            onclick="ConfirmarEditarOrden({{Orden.Id}})"
             disabled>
             Confirmar cambios
         </button> 

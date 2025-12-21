@@ -170,6 +170,7 @@ async function DarBaja_Platillo(idPlatillo) {
     cancelButtonText: "Cancelar",
     confirmButtonText: "Eliminar",
     confirmButtonColor: "#ff6464",
+    reverseButtons: true
   });
 
   if (!confirmacion.isConfirmed) return;

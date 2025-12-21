@@ -18,8 +18,12 @@ function rellenarParaEditarOrden(idOrden) {
   };
 }
 
+
 function subirCantidad(idDetalle) {
   const span = document.getElementById(`cantidadDetalle-${idDetalle}`);
+  const dataFinal = document.getElementById(`detalleOrdenEditarData${idDetalle}`);
+  const btnConfirmar = document.getElementById(`btnConfirmarCambiosEditarOrden`);
+  
   if (!span) return;
 
   let cantidad = parseInt(span.textContent) || 1;
@@ -27,11 +31,18 @@ function subirCantidad(idDetalle) {
 
   $("#EditarOrden").trigger("input");
 
+  btnConfirmar.disabled = false;
+
+  dataFinal.dataset.cantidad = cantidad;
+
   span.textContent = cantidad;
 }
 
 function bajarCantidad(idDetalle) {
   const span = document.getElementById(`cantidadDetalle-${idDetalle}`);
+  const dataFinal = document.getElementById(`detalleOrdenEditarData${idDetalle}`);
+  const btnConfirmar = document.getElementById(`btnConfirmarCambiosEditarOrden`);
+
   if (!span) return;
 
   let cantidad = parseInt(span.textContent) || 1;
@@ -41,6 +52,10 @@ function bajarCantidad(idDetalle) {
   }
 
   $("#EditarOrden").trigger("input");
+
+  btnConfirmar.disabled = false;
+
+  dataFinal.dataset.cantidad = cantidad;
 
   span.textContent = cantidad;
 }
@@ -112,15 +127,104 @@ $("#EditarOrden").on("hidden.bs.modal", function () {
 function confirmarQuitar(idDetalle) {
   console.log("Quitar detalle:", idDetalle);
 
-  let detalle = $("#detalleOrdenEditar" + idDetalle);
+  let detalle = $("#filaDetalleOrdenEditar" + idDetalle);
+  const dataFinal = $("#detalleOrdenEditarData" + idDetalle);
+  let btnConfirmar = $("#btnConfirmarCambiosEditarOrden");
 
-  console.log(detalle);
-  // $("#EditarOrden").trigger("input");
-  
-  detalle.hide(); 
+  btnConfirmar.prop("disabled", false);
 
-  // aquí tu lógica real:
-  // - eliminar fila
-  // - enviar AJAX
-  // - marcar como inactivo
+  detalle.addClass("quitar");
+
+  dataFinal.attr("data-es-activo", "0");
+
+  setTimeout(() => {
+    detalle.hide();
+  }, 500);
+}
+
+async function ConfirmarEditarOrden(idOrden) {
+  const { value: isConfirmed } = await Swal.fire({
+    title: "¿Los cambios están correctos?",
+    showCancelButton: true,
+    cancelButtonText: "Cancelar",
+    confirmButtonText: "Confirmar",
+    confirmButtonColor: "#ff6464",
+    icon: "question",
+    iconColor: "#ff964e",
+    reverseButtons: true,
+  });
+
+  if (isConfirmed) {
+    try {
+      // Muestra un modal de carga mientras se envían los datos
+      Swal.fire({
+        title: "Editando orden...",
+        text: "Por favor espere",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      const respuesta = await enviarDatosEditar(idOrden);
+
+      // Supongamos que Django responde con algo como:
+      // { "status": "ok", "message": "Orden creada exitosamente" }
+
+      if (respuesta.status === "ok") {
+        await Swal.fire({
+          title: respuesta.message,
+          icon: "success",
+          confirmButtonColor: "#ff6464",
+        });
+        location.reload();
+      } else {
+        await Swal.fire({
+          title: "Error",
+          text: respuesta.message || "No se pudo editar la orden.",
+          icon: "error",
+          confirmButtonColor: "#ff6464",
+        });
+      }
+    } catch (error) {
+      await Swal.fire({
+        title: "Error",
+        text: error,
+        icon: "error",
+        confirmButtonColor: "#ff6464",
+      });
+    }
+  }
+}
+
+function enviarDatosEditar(idOrden) {
+  console.log("ENTRA A CONFIRMAR EDITAR");
+
+  let descripcionElement = document.getElementById("descripcionOrdenEditar");
+
+  let detalles = document.querySelectorAll(".detalleOrdenData" + idOrden);
+
+  console.log(descripcionElement);
+
+  console.log(detalles);
+
+  // Estructura base
+  const payload = {
+    idOrden: parseInt(idOrden),
+    descripcion: descripcionElement.value,
+    detalles: [],
+  };
+
+  detalles.forEach((el) => {
+    const isNew = el.dataset.isNew === "1";
+
+    const detalle = {
+      idDetalle: el.dataset.idDetalle || null,
+      cantidad: parseInt(el.dataset.cantidad),
+      estado: el.dataset.esActivo,
+      isNew: isNew,
+    };
+
+    payload.detalles.push(detalle);
+  });
+
+  console.log("PAYLOAD FINAL:", payload);
 }

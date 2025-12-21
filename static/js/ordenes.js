@@ -426,6 +426,7 @@ async function CancelarOrden(idOrden) {
       if (input) input.blur(); // 👈 Quita el focus
     },
     preConfirm: () => document.getElementById("motivo").value.trim(),
+    reverseButtons: true,
   });
 
   // Si el usuario cancela, salimos
