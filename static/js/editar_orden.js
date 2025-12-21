@@ -21,7 +21,7 @@ function rellenarParaEditarOrden(idOrden) {
 
 function subirCantidad(idDetalle) {
   const span = document.getElementById(`cantidadDetalle-${idDetalle}`);
-  const cantidadFinal = document.getElementById(`cantidadDetalleOrdenEditar${idDetalle}`);
+  const dataFinal = document.getElementById(`detalleOrdenEditarData${idDetalle}`);
   const btnConfirmar = document.getElementById(`btnConfirmarCambiosEditarOrden`);
   
   if (!span) return;
@@ -32,13 +32,15 @@ function subirCantidad(idDetalle) {
   $("#EditarOrden").trigger("input");
 
   btnConfirmar.disabled = false;
-  cantidadFinal.value = cantidad;
+
+  dataFinal.dataset.cantidad = cantidad;
+
   span.textContent = cantidad;
 }
 
 function bajarCantidad(idDetalle) {
   const span = document.getElementById(`cantidadDetalle-${idDetalle}`);
-  const cantidadFinal = document.getElementById(`cantidadDetalleOrdenEditar${idDetalle}`);
+  const dataFinal = document.getElementById(`detalleOrdenEditarData${idDetalle}`);
   const btnConfirmar = document.getElementById(`btnConfirmarCambiosEditarOrden`);
 
   if (!span) return;
@@ -52,7 +54,9 @@ function bajarCantidad(idDetalle) {
   $("#EditarOrden").trigger("input");
 
   btnConfirmar.disabled = false;
-  cantidadFinal.value = cantidad;
+
+  dataFinal.dataset.cantidad = cantidad;
+
   span.textContent = cantidad;
 }
 
@@ -123,21 +127,22 @@ $("#EditarOrden").on("hidden.bs.modal", function () {
 function confirmarQuitar(idDetalle) {
   console.log("Quitar detalle:", idDetalle);
 
-  let detalle = $("#detalleOrdenEditar" + idDetalle);
-  let estadoFinal = $("#esActivoDetalleOrdenEditar" + idDetalle);
+  let detalle = $("#filaDetalleOrdenEditar" + idDetalle);
+  const dataFinal = $("#detalleOrdenEditarData" + idDetalle);
   let btnConfirmar = $("#btnConfirmarCambiosEditarOrden");
 
   btnConfirmar.prop("disabled", false);
 
   detalle.addClass("quitar");
-  estadoFinal.val("0");
+
+  dataFinal.attr("data-es-activo", "0");
 
   setTimeout(() => {
     detalle.hide();
   }, 500);
 }
 
-async function ConfirmarEditarOrden() {
+async function ConfirmarEditarOrden(idOrden) {
   const { value: isConfirmed } = await Swal.fire({
     title: "¿Los cambios están correctos?",
     showCancelButton: true,
@@ -159,7 +164,7 @@ async function ConfirmarEditarOrden() {
         didOpen: () => Swal.showLoading(),
       });
 
-      const respuesta = await enviarDatosEditar();
+      const respuesta = await enviarDatosEditar(idOrden);
 
       // Supongamos que Django responde con algo como:
       // { "status": "ok", "message": "Orden creada exitosamente" }
@@ -190,6 +195,36 @@ async function ConfirmarEditarOrden() {
   }
 }
 
-function enviarDatosEditar() {
+function enviarDatosEditar(idOrden) {
   console.log("ENTRA A CONFIRMAR EDITAR");
+
+  let descripcionElement = document.getElementById("descripcionOrdenEditar");
+
+  let detalles = document.querySelectorAll(".detalleOrdenData" + idOrden);
+
+  console.log(descripcionElement);
+
+  console.log(detalles);
+
+  // Estructura base
+  const payload = {
+    idOrden: parseInt(idOrden),
+    descripcion: descripcionElement.value,
+    detalles: [],
+  };
+
+  detalles.forEach((el) => {
+    const isNew = el.dataset.isNew === "1";
+
+    const detalle = {
+      idDetalle: el.dataset.idDetalle || null,
+      cantidad: parseInt(el.dataset.cantidad),
+      estado: el.dataset.esActivo,
+      isNew: isNew,
+    };
+
+    payload.detalles.push(detalle);
+  });
+
+  console.log("PAYLOAD FINAL:", payload);
 }

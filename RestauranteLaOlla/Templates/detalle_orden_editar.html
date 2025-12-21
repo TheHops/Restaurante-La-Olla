@@ -51,7 +51,7 @@
           <tbody class="cuerpoDetalleOrdenTabla">
               {% for detalle in Orden.Detalles.all %}
                 {% if detalle.EsActivo %}
-                    <tr id="detalleOrdenEditar{{detalle.Id}}" class="filaDetalleOrden">
+                    <tr id="filaDetalleOrdenEditar{{detalle.Id}}" class="filaDetalleOrden">
                         <td style="text-transform: capitalize; ">{{detalle.IdPlatillo.Nombre|lower}}</td>
                         <td>C${{detalle.PrecioVenta}}</td>
                         
@@ -82,12 +82,14 @@
                           <td>{{detalle.SubTotal}}</td>
                         
                         {% endif %}
-            
-                        <input type="hidden" id="idDetalleOrdenEditar{{detalle.Id}}" class="idDetallesOrden{{Orden.Id}}" value="{{detalle.Id}}"/>
-
-                        <input type="hidden" id="esActivoDetalleOrdenEditar{{detalle.Id}}" class="esActivoDetallesOrden{{Orden.Id}}" value="{{detalle.EsActivo}}"/>
                         
-                        <input type="hidden" id="cantidadDetalleOrdenEditar{{detalle.Id}}" class="cantidadDetallesOrden{{Orden.Id}}" value="{{detalle.Cantidad}}"/>
+                        <input type="hidden" id="detalleOrdenEditarData{{detalle.Id}}"
+                        class="detalleOrdenData{{Orden.Id}}"
+                        data-is-new="0"
+                        data-id-detalle="{{detalle.Id}}"
+                        data-cantidad="{{detalle.Cantidad}}"
+                        data-es-activo="{{detalle.EsActivo}}">
+                        
                     </tr>
                 {% endif %}
               {% endfor %}
@@ -113,7 +115,7 @@
             type="button"
             class="btn btn-danger"
             id="btnConfirmarCambiosEditarOrden"
-            onclick="ConfirmarEditarOrden()"
+            onclick="ConfirmarEditarOrden({{Orden.Id}})"
             disabled>
             Confirmar cambios
         </button> 
