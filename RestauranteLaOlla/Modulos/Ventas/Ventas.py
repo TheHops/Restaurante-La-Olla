@@ -526,6 +526,6 @@ def EditarOrden (request):
         data = json.loads(request.body)
         
         print(data)
-        return JsonResponse({"status": "ok", "message": "Orden editada con éxito"})
+        return JsonResponse({"status": "ok", "message": "¡Orden editada con éxito!"})
 
 #endregion EditarOrden

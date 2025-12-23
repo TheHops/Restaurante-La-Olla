@@ -130,8 +130,9 @@ class Orden(models.Model):
     UltimaModificacion = models.DateTimeField(db_column='ultima_modificacion', auto_now_add=True)
     
     FueEditada = models.BooleanField(db_column="fue_editada", null=True, default=False)
+    DescripcionEdicion = models.CharField(max_length=100, null=True, blank=True, db_column='descripcion_edicion')
     
-    METODOPAGO = [("1", "Efectivo"), ("2", "Tarjeta"), ("3", "Transferencia")]
+    METODOPAGO = [("1", "Efectivo"), ("2", "Tarjeta"), ("3", "Transferencia"), ("4", "EfectivoYTarjeta")]
     MetodoPago = models.CharField(max_length=10, choices=METODOPAGO, default="1", db_column='metodo_pago')
 
     ESTADO = [("0", "Facturado"), ("1", "Pendiente"), ("2", "Anulado"), ("3", "Preparado"), ("4", "EnPreparacion")]
@@ -240,6 +241,9 @@ class DetalleOrden(models.Model):
     PrecioVenta = models.DecimalField(db_column='precio_venta', max_digits=8, decimal_places=2)
 
     SubTotal = models.DecimalField(db_column='sub_total', max_digits=8, decimal_places=2)
+    
+    # Sirve para indicar si fué editado o creado en una edición
+    DesdeEdicion = models.BooleanField(db_column="desde_edicion", null=True, default=False)
 
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
