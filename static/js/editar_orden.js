@@ -18,12 +18,15 @@ function rellenarParaEditarOrden(idOrden) {
   };
 }
 
+function subirCantidad(id) {
+  const span = document.getElementById(`cantidadDetalle-${id}`);
+  const dataFinal = document.getElementById(
+    `detalleOrdenEditarData${id}`
+  );
+  const btnConfirmar = document.getElementById(
+    `btnConfirmarCambiosEditarOrden`
+  );
 
-function subirCantidad(idDetalle) {
-  const span = document.getElementById(`cantidadDetalle-${idDetalle}`);
-  const dataFinal = document.getElementById(`detalleOrdenEditarData${idDetalle}`);
-  const btnConfirmar = document.getElementById(`btnConfirmarCambiosEditarOrden`);
-  
   if (!span) return;
 
   let cantidad = parseInt(span.textContent) || 1;
@@ -38,10 +41,14 @@ function subirCantidad(idDetalle) {
   span.textContent = cantidad;
 }
 
-function bajarCantidad(idDetalle) {
-  const span = document.getElementById(`cantidadDetalle-${idDetalle}`);
-  const dataFinal = document.getElementById(`detalleOrdenEditarData${idDetalle}`);
-  const btnConfirmar = document.getElementById(`btnConfirmarCambiosEditarOrden`);
+function bajarCantidad(id) {
+  console.log("Subir cantidad detalle existente");
+
+  const span = document.getElementById(`cantidadDetalle-${id}`);
+  const dataFinal = document.getElementById(`detalleOrdenEditarData${id}`);
+  const btnConfirmar = document.getElementById(
+    `btnConfirmarCambiosEditarOrden`
+  );
 
   if (!span) return;
 
@@ -66,6 +73,8 @@ $("#EditarOrden").on("hidden.bs.modal", function () {
   destruirPopovers();
 });
 
+/* Mostrar popovers */
+
 function mostrarPopover(btn, e) {
   if (e) e.stopPropagation();
 
@@ -84,7 +93,7 @@ function mostrarPopover(btn, e) {
         <div class="text-center">
           <p class="mb-2">¿Quitar consumo?</p>
           <button type="button" class="btn btn-sm btn-secondary mr-1">No</button>
-          <button type="button" class="btn btn-sm btn-danger" onclick="confirmarQuitar(${btn.dataset.idDetalle})">Sí</button>
+          <button type="button" class="btn btn-sm btn-danger" onclick="confirmarQuitar(${btn.dataset.idPlatillo})">Sí</button>
         </div>
       `,
     });
@@ -111,7 +120,7 @@ let cambiosDetectados = false;
 
 $("#EditarOrden").on("input change", "input, textarea, select", function () {
   if (!cambiosDetectados) {
-    $("#btnConfirmarCambiosOrden").prop("disabled", false);
+    $("#btnConfirmarCambiosEditarOrden").prop("disabled", false);
     cambiosDetectados = true;
   }
 });
@@ -218,8 +227,9 @@ function enviarDatosEditar(idOrden) {
 
     const detalle = {
       idDetalle: el.dataset.idDetalle || null,
+      idPlatillo: el.dataset.idPlatillo,
       cantidad: parseInt(el.dataset.cantidad),
-      estado: el.dataset.esActivo,
+      esActivo: el.dataset.esActivo,
       isNew: isNew,
     };
 
@@ -227,4 +237,37 @@ function enviarDatosEditar(idOrden) {
   });
 
   console.log("PAYLOAD FINAL:", payload);
+
+  /* Se realiza la petición al backend */
+
+  return new Promise((resolve, reject) => {
+    let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "/EditarOrden/", true);
+
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.setRequestHeader("X-CSRFToken", token);
+
+    // Manejamos la respuesta del servidor
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          try {
+            let respuesta = JSON.parse(xhr.responseText);
+            resolve(respuesta); // se devuelve el resultado al .then()
+          } catch (e) {
+            reject("Error al procesar la respuesta del servidor.");
+          }
+        } else {
+          reject("Error de red o servidor: " + xhr.status);
+        }
+      }
+    };
+
+    xhr.onerror = function () {
+      reject("Error al conectar con el servidor.");
+    };
+
+    xhr.send(JSON.stringify(payload));
+  });
 }

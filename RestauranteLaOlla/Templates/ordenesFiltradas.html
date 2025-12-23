@@ -58,7 +58,13 @@
           </button>
 
           <!-- Editar la orden -->
-          <button>Editar</button>
+          <button
+          class="btnEditarOrden"
+          data-toggle="modal"
+          data-target="#EditarOrden"
+          onclick="rellenarParaEditarOrden('{{Orden.Id}}')"
+          >Editar
+        </button>
         {% endif %}
 
         {% if CargoUsuario == "Cocinero" or CargoUsuario == "Administrador" %}
@@ -79,7 +85,13 @@
           </button>
 
           <!-- Editar la orden -->
-          <button>Editar</button>
+          <button
+          class="btnEditarOrden"
+          data-toggle="modal"
+          data-target="#EditarOrden"
+          onclick="rellenarParaEditarOrden('{{Orden.Id}}')"
+          >Editar
+        </button>
         {% endif %}
 
         {% if CargoUsuario == "Cocinero" or CargoUsuario == "Administrador" %}
