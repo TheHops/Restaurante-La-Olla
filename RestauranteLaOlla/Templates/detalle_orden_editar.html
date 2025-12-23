@@ -18,107 +18,113 @@
 </div>
 
 <div class="modal-body">
-      <div class="col-md-12">
-        <!-- Descripción -->
-        <h4 style="font-size: 20px; margin-bottom: 3px;">Descripción</h4>
-        
-        {% if Modo == "Editar" %}
-          <textarea class="form-control mb-2" id="descripcionOrdenEditar" placeholder="Ingrese una descripción">{{ Orden.Descripcion }}</textarea>
-        {% else %}
-          <textarea class="form-control mb-2" id="descripcionOrdenInfo" placeholder="Ingrese una descripción" readonly>{{ Orden.Descripcion }}</textarea>
-        {% endif %}
-      </div>
+  <form action="">
+    {% csrf_token %}
+  </form>
+  
+  <div class="col-md-12">
+    <!-- Descripción -->
+    <h4 style="font-size: 20px; margin-bottom: 3px;">Descripción</h4>
+    
+    {% if Modo == "Editar" %}
+      <textarea class="form-control mb-2" id="descripcionOrdenEditar" placeholder="Ingrese una descripción">{{ Orden.Descripcion }}</textarea>
+    {% else %}
+      <textarea class="form-control mb-2" id="descripcionOrdenInfo" placeholder="Ingrese una descripción" readonly>{{ Orden.Descripcion }}</textarea>
+    {% endif %}
+  </div>
 
-      <!-- Detalle de la orden a editar -->
-      <div class="col-12">
-        <table class="display" style="width:100%;">
-          <thead>
-              <!-- Columnas -->
-              <tr>
-                  <th><h5>Consumo</h5></th>
-                  <th><h5>Precio unitario</h5></th>
-                  <th style="text-align: center; min-width: 100px;"><h5>Cantidad</h5></th>
-      
-                  {% if Modo == "Editar" %}
-                      <th style="text-align: center;"><h5>Acciones</h5></th>
-                  {% else %}
-                      <th><h5>Subtotal</h5></th>
-                  {% endif %}
-              </tr>
-          </thead>
-      
-          <!-- Filas -->
-          <tbody class="cuerpoDetalleOrdenTabla">
-              {% for detalle in Orden.Detalles.all %}
-                {% if detalle.EsActivo %}
-                    <tr id="filaDetalleOrdenEditar{{detalle.Id}}" class="filaDetalleOrden">
-                        <td style="text-transform: capitalize; ">{{detalle.IdPlatillo.Nombre|lower}}</td>
-                        <td>C${{detalle.PrecioVenta}}</td>
-                        
-                        {% if Modo == "Editar" %}
+  <!-- Detalle de la orden a editar -->
+  <div class="col-12">
+    <table class="display" style="width:100%;">
+      <thead>
+        <!-- Columnas -->
+        <tr>
+            <th><h5>Consumo</h5></th>
+            <th><h5>Precio unitario</h5></th>
+            <th style="text-align: center; min-width: 100px;"><h5>Cantidad</h5></th>
 
-                          <td style="text-align: center;">
-                            <button style="min-width: 30px;" class="btnControlCantidad" onclick="bajarCantidad('{{detalle.Id}}')">-</button>
+            {% if Modo == "Editar" %}
+                <th style="text-align: center;"><h5>Acciones</h5></th>
+            {% else %}
+                <th><h5>Subtotal</h5></th>
+            {% endif %}
+        </tr>
+      </thead>
+  
+      <!-- Filas -->
+      <tbody class="cuerpoDetalleOrdenTabla">
+        {% for detalle in Orden.Detalles.all %}
+          {% if detalle.EsActivo %}
+            <tr id="filaDetalleOrdenEditar{{detalle.IdPlatillo.Id}}" class="filaDetalleOrden">
+                <td style="text-transform: capitalize; ">{{detalle.IdPlatillo.Nombre|lower}}</td>
+                <td>C${{detalle.PrecioVenta}}</td>
+                
+                {% if Modo == "Editar" %}
 
-                            <span id="cantidadDetalle-{{detalle.Id}}" class="cantidadConsumoEditar">{{detalle.Cantidad}}</span>
-                            
-                            <button style="min-width: 30px;" class="btnControlCantidad" onclick="subirCantidad('{{detalle.Id}}')">+</button>
-                          </td>
+                  <td style="text-align: center;">
+                    <button style="min-width: 30px;" class="btnControlCantidad" onclick="bajarCantidad('{{detalle.IdPlatillo.Id}}')">-</button>
 
-                          <td class="actions btnQuitarEditar">
-                            <div class='botonQuitar'>
-                              <button type="button" class="btnQuitar2 btn-popover" 
-                                data-id-detalle="{{detalle.Id}}"
-                                onclick="mostrarPopover(this, event)">
-                                Quitar
-                              </button>
-                            </div>
-                          </td>
-                        
-                        {% else %}
-                          
-                          <td style="text-align: center;">{{detalle.Cantidad}}</td>
-                          
-                          <td>{{detalle.SubTotal}}</td>
-                        
-                        {% endif %}
-                        
-                        <input type="hidden" id="detalleOrdenEditarData{{detalle.Id}}"
-                        class="detalleOrdenData{{Orden.Id}}"
-                        data-is-new="0"
+                    <span id="cantidadDetalle-{{detalle.IdPlatillo.Id}}" class="cantidadConsumoEditar">{{detalle.Cantidad}}</span>
+                    
+                    <button style="min-width: 30px;" class="btnControlCantidad" onclick="subirCantidad('{{detalle.IdPlatillo.Id}}')">+</button>
+                  </td>
+
+                  <td class="actions btnQuitarEditar">
+                    <div class='botonQuitar'>
+                      <button type="button" class="btnQuitar2 btn-popover" 
                         data-id-detalle="{{detalle.Id}}"
-                        data-cantidad="{{detalle.Cantidad}}"
-                        data-es-activo="{{detalle.EsActivo}}">
-                        
-                    </tr>
+                        data-id-platillo="{{detalle.IdPlatillo.Id}}"
+                        onclick="mostrarPopover(this, event)">
+                        Quitar
+                      </button>
+                    </div>
+                  </td>
+                
+                {% else %}
+                  
+                  <td style="text-align: center;">{{detalle.Cantidad}}</td>
+                  
+                  <td>{{detalle.SubTotal}}</td>
+                
                 {% endif %}
-              {% endfor %}
-          </tbody>
-        </table>
-      </div>
-
-      <input type="hidden" id="idOrdenEditar" value="{{Orden.Id}}"/>
+                
+                <input type="hidden" id="detalleOrdenEditarData{{detalle.IdPlatillo.Id}}"
+                class="detalleOrdenData{{Orden.Id}}"
+                data-is-new="0"
+                data-id-detalle="{{detalle.Id}}"
+                data-id-platillo="{{detalle.IdPlatillo.Id}}"
+                data-cantidad="{{detalle.Cantidad}}"
+                data-es-activo="{{detalle.EsActivo}}">
+                
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 
-  <div class="modal-footer">
-    <div class="contFooterEditarOrden">
-      <button type="button" class="btn btn-secondary" data-dismiss="modal">
-        {% if Mode == "Editar" %}
-        Cancelar
-        {% else %}
-        Volver
-        {% endif %}
-      </button>
+  <input type="hidden" id="idOrdenEditar" value="{{Orden.Id}}"/>
+</div>
 
-      {% if Modo == "Editar" %}
-        <button
-            type="button"
-            class="btn btn-danger"
-            id="btnConfirmarCambiosEditarOrden"
-            onclick="ConfirmarEditarOrden({{Orden.Id}})"
-            disabled>
-            Confirmar cambios
-        </button> 
-      {% endif %}       
-    </div>
+<div class="modal-footer">
+  <div class="contFooterEditarOrden">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+      {% if Mode == "Editar" %}
+      Cancelar
+      {% else %}
+      Volver
+      {% endif %}
+    </button>
+
+    {% if Modo == "Editar" %}
+      <button
+          type="button"
+          class="btn btn-danger"
+          id="btnConfirmarCambiosEditarOrden"
+          onclick="ConfirmarEditarOrden({{Orden.Id}})"
+          disabled>
+          Confirmar cambios
+      </button> 
+    {% endif %}       
   </div>
+</div>

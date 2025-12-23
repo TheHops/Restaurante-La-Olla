@@ -508,12 +508,24 @@ def InicioEditar(request):
         return JsonResponse({"message": "Orden no válida"})
 
     orden = Orden.objects.get(Id=idOrden)
+    platillos = Platillo.objects.all()
 
     contexto = {
+        "Platillos": platillos,
         "Orden": orden,
         "Modo": "Editar"
     }
 
     return render(request, "detalle_orden_editar.html", contexto)
+
+def EditarOrden (request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+    
+    if request.method == "POST":
+        data = json.loads(request.body)
+        
+        print(data)
+        return JsonResponse({"status": "ok", "message": "Orden editada con éxito"})
 
 #endregion EditarOrden
