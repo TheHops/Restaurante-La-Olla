@@ -569,9 +569,9 @@ def EditarOrden (request):
             precio = platillo.Precio
             subtotal = precio * cantidad
             
-            print("Cantidad: " + cantidad)
-            print("Precio: " + precio)
-            print("Subtotal: " + subtotal)
+            print("Cantidad: " + str(cantidad))
+            print("Precio: " + str(precio))
+            print("Subtotal: " + str(subtotal))
             print("Es activo: " + es_activo)
 
             if is_new:
@@ -607,6 +607,8 @@ def EditarOrden (request):
         # Se actualiza el total de la orden
         orden.Total = total_orden
         orden.save()
+        
+        orden.recalcular_estado()
 
     return JsonResponse({
         "status": "ok",
