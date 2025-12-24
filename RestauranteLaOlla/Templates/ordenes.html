@@ -245,6 +245,8 @@
 <div
   class="modal fade"
   id="EditarOrden"
+  data-backdrop="static"
+  data-keyboard="false"
   tabindex="-1"
   role="dialog"
   aria-labelledby="exampleModalLabel"
@@ -254,6 +256,59 @@
   <div class="modal-dialog modal-editar-orden" role="document">
     <div class="modal-content"  id="contenidoDetalleOrden">
       <!-- modal-body y modal-footer se encuentran en detalle_orden_editar.html -->
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="IncluirDetalle"
+  data-backdrop="static"
+  data-keyboard="false"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-incluir-detalle" role="document">
+    <div class="modal-content" id="contenidoIncluirDetalle">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Incluir consumo a orden</h5>
+      
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>  
+      
+      </div>
+      
+      <div class="alert alert-info alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        Puedes seleccionar uno o más consumos
+      </div>
+
+      <div class="modal-body">
+        
+      </div>
+      
+      <div class="modal-footer">
+        <div class="contFooterIncluirDetalle">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Cancelar
+          </button>
+      
+          <button
+              type="button"
+              class="btn btn-danger"
+              id="btnConfirmarIncluirDetalles"
+              disabled>
+              Incluir
+          </button> 
+        </div>
+      </div>
     </div>
   </div>
 </div>

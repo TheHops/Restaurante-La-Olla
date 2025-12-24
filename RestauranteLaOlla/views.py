@@ -2,11 +2,11 @@
 from django.db.models import Case, When, Count
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from Application.models  import Orden, Platillo, Usuario
+from Application.models  import Orden, Platillo, Usuario, DetalleOrden
 from django.contrib import messages
 from django.http import JsonResponse
 from datetime import datetime, timedelta
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 import traceback
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -191,11 +191,11 @@ def FiltrarOrdenes(request):
                 EstadoOrden = validar_filtro_por_cargo(cargo_usuario, EstadoOrden)
 
                 if EstadoOrden == "5":
-                    OrdenesFiltradas = Orden.objects.select_related('IdUsuario').filter(EsActivo="1").order_by(Case(When(Estado='1', then=0), When(Estado='4', then=1), When(Estado='3', then=2), When(Estado='0', then=3), When(Estado='2', then=4)), '-Id')
+                    OrdenesFiltradas = Orden.objects.select_related('IdUsuario').prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1"))).filter(EsActivo="1").order_by(Case(When(Estado='1', then=0), When(Estado='4', then=1), When(Estado='3', then=2), When(Estado='0', then=3), When(Estado='2', then=4)), '-Id')
                 elif EstadoOrden == "6":
-                    OrdenesFiltradas = Orden.objects.select_related('IdUsuario').filter(EsActivo="1", Estado__in=["1", "4"]).order_by(Case(When(Estado='1', then=0), When(Estado='4', then=1)), '-Id')
+                    OrdenesFiltradas = Orden.objects.select_related('IdUsuario').prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1"))).filter(EsActivo="1", Estado__in=["1", "4"]).order_by(Case(When(Estado='1', then=0), When(Estado='4', then=1)), '-Id')
                 else:
-                    OrdenesFiltradas = Orden.objects.select_related('IdUsuario').filter(Q(Estado=EstadoOrden) & Q(EsActivo="1")).order_by('-Id')
+                    OrdenesFiltradas = Orden.objects.select_related('IdUsuario').prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1"))).filter(Q(Estado=EstadoOrden) & Q(EsActivo="1")).order_by('-Id')
                 
                 # metodoPago = ''
                 # asignar el metodo de pago desde el request

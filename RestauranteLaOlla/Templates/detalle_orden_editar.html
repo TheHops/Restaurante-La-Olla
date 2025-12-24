@@ -22,7 +22,7 @@
     {% csrf_token %}
   </form>
   
-  <div class="col-md-12">
+  <div class="col-12">
     <!-- Descripción -->
     <h4 style="font-size: 20px; margin-bottom: 3px;">Descripción</h4>
     
@@ -32,6 +32,14 @@
       <textarea class="form-control mb-2" id="descripcionOrdenInfo" placeholder="Ingrese una descripción" readonly>{{ Orden.Descripcion }}</textarea>
     {% endif %}
   </div>
+
+  <hr>
+
+  <div class="col-12" data-toggle="modal" data-target="#IncluirDetalle">
+    <button>Incluir consumo</button>
+  </div>
+
+  <hr>
 
   <!-- Detalle de la orden a editar -->
   <div class="col-12">
@@ -109,7 +117,7 @@
 <div class="modal-footer">
   <div class="contFooterEditarOrden">
     <button type="button" class="btn btn-secondary" data-dismiss="modal">
-      {% if Mode == "Editar" %}
+      {% if Modo == "Editar" %}
       Cancelar
       {% else %}
       Volver

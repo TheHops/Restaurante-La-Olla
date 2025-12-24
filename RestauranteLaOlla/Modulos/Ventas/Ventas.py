@@ -1,11 +1,16 @@
 import json
 import traceback
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+
+from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
+from django.db import transaction
+from django.db.models import Q, Prefetch, Count
+
+from decimal import Decimal
 
 from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Platillo, MesasPorOrden, TipoPlatillo
-from django.db.models import Q, Prefetch, Count
+
 
 # region VENTAS
 def venta(request):
@@ -458,7 +463,10 @@ def CambiarAEnPreparacion(request):
             }, status=200)
         except Exception as ex:
             print("ERROR:", ex)
-            return HttpResponse(status=500)
+            return JsonResponse({
+                "status": "error",
+                "message": "Ocurrió un error cambiar el estado la orden."
+            })
 
 #endregion CambiarAEnPreparacion
 
@@ -492,7 +500,10 @@ def CambiarAPreparado(request):
             }, status=200)
         except Exception as ex:
             print("ERROR:", ex)
-            return HttpResponse(status=500)
+            return JsonResponse({
+                "status": "error",
+                "message": "Ocurrió un error cambiar el estado la orden."
+            })
 
 #endregion CambiarAPreparado
 
@@ -507,7 +518,8 @@ def InicioEditar(request):
     if not idOrden:
         return JsonResponse({"message": "Orden no válida"})
 
-    orden = Orden.objects.get(Id=idOrden)
+    orden = Orden.objects.prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1"))).get(Id=idOrden)
+    
     platillos = Platillo.objects.all()
 
     contexto = {
@@ -522,10 +534,87 @@ def EditarOrden (request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
-    if request.method == "POST":
+    if request.method != "POST":
+        return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
+
+    try:
         data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"status": "error", "message": "JSON inválido"}, status=400)
+    
+    # Se hace todo mediante una transacción para evitar inconsistencias
+    with transaction.atomic():
+        # Se obtiene la orden
+        orden = get_object_or_404(Orden, Id=data["idOrden"], EsActivo="1")
+
+        # Se actualiza la información de la orden
+        orden.Descripcion = data.get("descripcion", orden.Descripcion)
+        orden.FueEditada = True
+        orden.UltimaModificacion = timezone.now()
+        orden.save()
+
+        total_orden = Decimal("0.00")
+
+        # 3️⃣ Procesar detalles
+        for item in data["detalles"]:
+            
+            # Se guarda lo primero que ya tenemos a mano
+            cantidad = int(item["cantidad"])
+            es_activo = item["esActivo"]
+            is_new = item["isNew"]
+
+            # Obtener platillo
+            platillo = get_object_or_404(Platillo, Id=item["idPlatillo"], EsActivo="1")
+            
+            # Se guarda el precio y subtotal para el detalle
+            precio = platillo.Precio
+            subtotal = precio * cantidad
+            
+            print("Cantidad: " + str(cantidad))
+            print("Precio: " + str(precio))
+            print("Subtotal: " + str(subtotal))
+            print("Es activo: " + es_activo)
+
+            if is_new:
+                # Si es nuevo, se crea
+                detalle = DetalleOrden.objects.create(
+                    IdOrden=orden,
+                    IdPlatillo=platillo,
+                    Cantidad=cantidad,
+                    PrecioVenta=precio,
+                    SubTotal=subtotal,
+                    EsActivo=es_activo,
+                    DesdeEdicion=True
+                )
+            else:
+                # Si no es nuevo, es porque ya existe y solo se modifica
+                detalle = get_object_or_404(
+                    DetalleOrden,
+                    Id=item["idDetalle"],
+                    IdOrden=orden
+                )
+
+                detalle.Cantidad = cantidad
+                detalle.PrecioVenta = precio
+                detalle.SubTotal = subtotal
+                detalle.EsActivo = es_activo
+                detalle.DesdeEdicion = True
+                detalle.save()
+
+            # Se acumula el total para luego guardarlo en la orden
+            if es_activo == "1":
+                total_orden += subtotal
+
+        # Se actualiza el total de la orden
+        orden.Total = total_orden
+        orden.save()
         
-        print(data)
-        return JsonResponse({"status": "ok", "message": "¡Orden editada con éxito!"})
+        orden.recalcular_estado()
+
+    return JsonResponse({
+        "status": "ok",
+        "message": f"¡Orden #{orden.Id} editada con éxito!",
+        "total": str(total_orden)
+    })
 
 #endregion EditarOrden

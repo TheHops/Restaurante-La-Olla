@@ -148,6 +148,11 @@ class Orden(models.Model):
     class Meta:
         verbose_name_plural = 'Orden'
         db_table = 'orden'
+        
+    def recalcular_estado(self):
+        activos = self.Detalles.filter(EsActivo="1").count()
+        self.EsActivo = "1" if activos > 0 else "0"
+        self.save()
 
     def __str__(self):
         return f"ID = {self.Id} | Usuario = {self.IdUsuario.username} | Fecha = {self.Fecha} | Estado = {self.Estado} | Area = {self.AreaDeMesa}"
