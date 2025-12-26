@@ -315,6 +315,23 @@
     background: hsl(3, 74%, 45%);
 }
 
+.modal-backdrop.show {
+    z-index: 1040 !important;
+}
+
+/* Si hay 2 backdrops consecutivos, el segundo quedará encima del primer modal */
+.modal-backdrop.show + .modal-backdrop.show {
+    z-index: 1055 !important;
+}
+
+#EditarOrden.modal.show {
+    z-index: 1050 !important;
+}
+
+#IncluirDetalle.modal.show {
+    z-index: 1060 !important;
+}
+
 /****************************************************/
 
 .cuerpoDetalleOrden.desplegado {
