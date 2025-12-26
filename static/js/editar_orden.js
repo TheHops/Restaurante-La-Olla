@@ -18,6 +18,28 @@ function rellenarParaEditarOrden(idOrden) {
   };
 }
 
+function agregarPlatillosIncluir(idOrden)
+{
+  let request = new XMLHttpRequest();
+
+  const url = `/InicioIncluir?IdOrden=${idOrden}`;
+
+  // data.append('InputBuscarPlatillo', cadena);
+  request.open("GET", url);
+  request.send();
+  request.onreadystatechange = function () {
+    if (this.readyState == 4) {
+      let contenedor = document.getElementById(
+        "contenidoModalBodyIncluirPlatillosEditar"
+      );
+
+      if (contenedor) {
+        contenedor.innerHTML = this.responseText;
+      }
+    }
+  };
+}
+
 function subirCantidad(id) {
   const span = document.getElementById(`cantidadDetalle-${id}`);
   const dataFinal = document.getElementById(

@@ -332,6 +332,15 @@
     z-index: 1060 !important;
 }
 
+#contenidoIncluirPlatillosEditar {
+    max-height: 50vh;
+    overflow: auto;
+}
+
+#contenidoIncluirPlatillosEditar::-webkit-scrollbar {
+    width: 0;
+  }
+
 /****************************************************/
 
 .cuerpoDetalleOrden.desplegado {

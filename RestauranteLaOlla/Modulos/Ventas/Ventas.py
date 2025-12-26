@@ -520,15 +520,31 @@ def InicioEditar(request):
 
     orden = Orden.objects.prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1"))).get(Id=idOrden)
     
-    platillos = Platillo.objects.all()
-
     contexto = {
-        "Platillos": platillos,
         "Orden": orden,
         "Modo": "Editar"
     }
 
     return render(request, "detalle_orden_editar.html", contexto)
+
+def InicioIncluir(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+    
+    idOrden = request.GET.get("IdOrden")
+    
+    if not idOrden:
+        return JsonResponse({"message": "Orden no válida"})
+
+    platillo = Platillo.objects.all()
+    
+    print(platillo)
+    
+    contexto = {
+        "Platillos": platillo
+    }
+
+    return render(request, "incluir_platillos_editar.html", contexto)
 
 def EditarOrden (request):
     if not request.user.is_authenticated:

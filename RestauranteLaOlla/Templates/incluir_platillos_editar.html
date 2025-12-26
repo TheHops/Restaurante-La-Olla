@@ -1,0 +1,15 @@
+{% load static %}
+
+<div class="col-12">
+    <input class="form-control mb-2" type="text" name="" id="" placeholder="Buscar consumo">
+</div>
+
+<div id="contenidoIncluirPlatillosEditar" class="col-12 list-group pr-0">
+    {% for platillo in Platillos %}
+    
+    <div class="nombreConsumoIncluir list-group-item list-group-item-action">
+        <span>{{ platillo.Nombre }}</span>
+    </div>
+    
+    {% endfor %}
+</div>
