@@ -148,9 +148,6 @@ $("#EditarOrden").on("input change", "input, textarea, select", function () {
 });
 
 $("#EditarOrden").on("hidden.bs.modal", function () {
-  var btnModificarOrden = document.getElementById("#btnConfirmarCambiosOrden");
-  btnModificarOrden.disabled = false;
-  
   $("#btnConfirmarCambiosOrden").prop("disabled", true);
   cambiosDetectados = false;
 });
@@ -293,3 +290,73 @@ function enviarDatosEditar(idOrden) {
     xhr.send(JSON.stringify(payload));
   });
 }
+
+/* * * * * * * * *  INCLUIR CONSUMO  * * * * * * * * * * */
+
+// Selecciona o deselecciona un platillo
+$(document).on("keyup", "#buscarPlatilloEditar", function () {
+  const texto = $(this).val().toLowerCase().trim();
+
+  $("#contenidoIncluirPlatillosEditar .nombreConsumoIncluir").each(function () {
+    const nombre = $(this).find(".chkPlatilloEditar").data("nombre");
+
+    if (texto === "" || nombre.includes(texto)) {
+      $(this).show();
+    } else {
+      $(this).hide();
+    }
+  });
+});
+
+// Se obtienen los platillos seleccionados
+function obtenerPlatillosSeleccionadosEditar() {
+  let seleccionados = [];
+
+  $(".chkPlatilloEditar:checked").each(function () {
+    const $chk = $(this);
+
+    seleccionados.push({
+      id: $chk.val(),
+      nombre: $chk.data("nombre"),
+      precio: parseFloat($chk.data("precio")),
+    });
+  });
+
+  return seleccionados;
+}
+
+// Verifica si hay consumos seleccionados
+$(document).on("change", ".chkPlatilloEditar", function () {
+  const haySeleccionados = $(".chkPlatilloEditar:checked").length > 0;
+
+  $("#btnConfirmarIncluirDetalles").prop("disabled", !haySeleccionados);
+});
+
+$("#IncluirDetalle").on("hidden.bs.modal", function () {
+  $(".chkPlatilloEditar").prop("checked", false);
+  $("#btnConfirmarIncluirDetalles").prop("disabled", true);
+  $("#buscarPlatilloEditar").val("");
+  $(".nombreConsumoIncluir").show();
+});
+
+$("#IncluirDetalle").on("hide.bs.modal", function () {
+  document.getElementById("focusSink").focus();
+});
+
+$("#EditarOrden").on("hide.bs.modal", function () {
+  var focusSink = document.getElementById("focusSink");
+
+  focusSink.focus();
+});
+
+// Se ejecuta cuando da click al botón 'incluir'
+$("#btnConfirmarIncluirDetalles").on("click", function () {
+  const platillosSeleccionados = obtenerPlatillosSeleccionadosEditar();
+
+  console.log("Platillos seleccionados:", platillosSeleccionados);
+
+  // Aquí continúas con:
+  // - AJAX
+  // - agregar al DOM
+  // - cerrar modal
+});

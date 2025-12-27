@@ -339,7 +339,28 @@
 
 #contenidoIncluirPlatillosEditar::-webkit-scrollbar {
     width: 0;
-  }
+}
+
+.nombreConsumoIncluir {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
+}
+
+.nombreConsumoIncluir input:checked + span,
+.nombreConsumoIncluir input:checked ~ span {
+    font-weight: 600;
+}
+
+/* Fondo verde cuando está seleccionado */
+.nombreConsumoIncluir input:checked {
+    display: none;
+}
+
+.nombreConsumoIncluir:has(input:checked) {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
 
 /****************************************************/
 

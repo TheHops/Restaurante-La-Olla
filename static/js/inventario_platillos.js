@@ -58,7 +58,7 @@ var btnAgregar = document.getElementById("agregar");
 
 // Agrega el event listener al elemento
 btnAgregar.addEventListener("click", function () {
-  let campoArchivo = document.getElementById("archivoModal");
+  let campoArchivo = document.getElementById("iconoCargarImagen");
   let spanArchivo = document.getElementById("SpanLabel");
 
   campoArchivo.value = "";
@@ -233,7 +233,7 @@ function AgregarPlatillo() {
   formData.append("Precio", $("#PrecioPlatilloAgregar").val());
   formData.append("estado", $("#EstadoPlatilloAgregar").val());
   formData.append("Descripcion", $("#DescripcionPlatilloAgregar").val());
-  formData.append("Imagen", $("#archivoModal")[0].files[0]);
+  formData.append("Imagen", $("#iconoCargarImagen")[0].files[0]);
   formData.append(
     "csrfmiddlewaretoken",
     $("input[name=csrfmiddlewaretoken]").val()
@@ -283,6 +283,12 @@ function VerificarArchivo(campoArchivo) {
   let iconocargar = document.getElementById("iconoCargarImagen");
   let labelArchivo = document.getElementById("LabelArchivo");
   let spanlabel = document.getElementById("SpanLabel");
+
+  if (!iconocargar || !spanlabel) {
+    console.warn("No se encontraron los elementos necesarios.");
+    return false;
+  }
+
   if (campoArchivo.files.length > 0) {
     iconocargar.style.display = "initial";
 
@@ -294,10 +300,10 @@ function VerificarArchivo(campoArchivo) {
     return true;
   } else {
     iconocargar.style.display = "none";
-
     return false;
   }
 }
+
 function VerificarArchivo_dos(campoArchivo) {
   let iconocargar = document.getElementById("iconoCargarImagen_dos");
   let labelArchivo = document.getElementById("LabelArchivo_dos");
