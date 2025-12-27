@@ -1,0 +1,25 @@
+{% load static %}
+
+<div class="col-12">
+    <input
+        class="form-control mb-2"
+        type="text"
+        id="buscarPlatilloEditar"
+        placeholder="Buscar consumo"
+    >
+</div>
+
+<div id="contenidoIncluirPlatillosEditar" class="col-12 list-group pr-0">
+    {% for platillo in Platillos %}
+        <label class="nombreConsumoIncluir list-group-item list-group-item-action mb-0">
+            <input
+                type="checkbox"
+                class="chkPlatilloEditar d-none"
+                value="{{ platillo.Id }}"
+                data-nombre="{{ platillo.Nombre|lower }}"
+                data-precio="{{ platillo.Precio }}"
+            >
+            <span>{{ platillo.Nombre }}</span>
+        </label>
+    {% endfor %}
+</div>

@@ -249,13 +249,23 @@
     </div>
 
     <div
-      class="modal fade"
-      id="IncluirDetalle"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
+    class="modal fade"
+    id="EditarOrden"
+    data-backdrop="static"
+    data-keyboard="false"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+    onclick="cerrarPopover()">
+      <div class="modal-dialog modal-editar-orden" role="document">
+        <div class="modal-content"  id="contenidoDetalleOrden">
+          <!-- modal-header, modal-body y modal-footer se encuentran en detalle_orden_editar.html -->
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="IncluirDetalle" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-incluir-detalle" role="document">
         <div class="modal-content" id="contenidoIncluirDetalle">
           <div class="modal-header">
@@ -271,13 +281,13 @@
           
           </div>
           
-          <div class="alert alert-info alert-dismissible">
+          <div class="alert alert-info alert-dismissible mb-0">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
             Puedes seleccionar uno o más consumos
           </div>
 
-          <div class="modal-body">
-            
+          <div class="modal-body" id="contenidoModalBodyIncluirPlatillosEditar">
+            <!-- EL CONTENIDO DE ESTE CONTENEDOR SE ENCUENTRA EN 'incluir_platillos_editar.html' -->
           </div>
           
           <div class="modal-footer">
@@ -298,5 +308,7 @@
         </div>
       </div>
     </div>
+
+    <button id="focusSink" style="position:absolute; left:-9999px; top:-9999px;"></button>
   </body>
 </html>

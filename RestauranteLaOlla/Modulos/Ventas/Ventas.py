@@ -520,15 +520,45 @@ def InicioEditar(request):
 
     orden = Orden.objects.prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1"))).get(Id=idOrden)
     
-    platillos = Platillo.objects.all()
-
     contexto = {
-        "Platillos": platillos,
         "Orden": orden,
         "Modo": "Editar"
     }
 
     return render(request, "detalle_orden_editar.html", contexto)
+
+def InicioIncluir(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+
+    idOrden = request.GET.get("IdOrden")
+
+    if not idOrden:
+        return JsonResponse({"message": "Orden no válida"}, status=400)
+
+    # Obtener la orden
+    orden = get_object_or_404(Orden, Id=idOrden)
+
+    # IDs de platillos ya incluidos en la orden
+    platillos_en_orden = (
+        DetalleOrden.objects
+        .filter(IdOrden=orden, EsActivo="1")
+        .values_list("IdPlatillo_id", flat=True)
+    )
+
+    # Platillos activos que NO estén en la orden
+    platillos_disponibles = (
+        Platillo.objects
+        .filter(EsActivo="1")
+        .exclude(Id__in=platillos_en_orden)
+        .order_by("Nombre")
+    )
+
+    contexto = {
+        "Platillos": platillos_disponibles
+    }
+
+    return render(request, "incluir_platillos_editar.html", contexto)
 
 def EditarOrden (request):
     if not request.user.is_authenticated:
