@@ -37,6 +37,8 @@
 
   <div class="col-12">
     <button data-toggle="modal" data-target="#IncluirDetalle" onclick="agregarPlatillosIncluir('{{Orden.Id}}')" id="btnIncluirConsumo">Incluir consumo</button>
+
+    <button onclick="rellenarParaEditarOrden('{{Orden.Id}}')">Reiniciar</button>
   </div>
 
   <hr>
@@ -60,7 +62,7 @@
       </thead>
   
       <!-- Filas -->
-      <tbody class="cuerpoDetalleOrdenTabla">
+      <tbody class="cuerpoDetalleOrdenTabla" id="cuerpoTablaEditarOrdenDetalles">
         {% for detalle in Orden.Detalles.all %}
           {% if detalle.EsActivo %}
             <tr id="filaDetalleOrdenEditar{{detalle.IdPlatillo.Id}}" class="filaDetalleOrden">

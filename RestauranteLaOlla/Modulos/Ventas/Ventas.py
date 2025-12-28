@@ -581,6 +581,7 @@ def EditarOrden (request):
         orden.Descripcion = data.get("descripcion", orden.Descripcion)
         orden.FueEditada = True
         orden.UltimaModificacion = timezone.now()
+        orden.Detalles.update(DesdeEdicion=False)
         orden.save()
 
         total_orden = Decimal("0.00")
@@ -623,12 +624,19 @@ def EditarOrden (request):
                     Id=item["idDetalle"],
                     IdOrden=orden
                 )
+                
+                fue_editado = (
+                    detalle.Cantidad != cantidad or
+                    detalle.PrecioVenta != precio or
+                    detalle.SubTotal != subtotal or
+                    detalle.EsActivo != es_activo
+                )
 
                 detalle.Cantidad = cantidad
                 detalle.PrecioVenta = precio
                 detalle.SubTotal = subtotal
                 detalle.EsActivo = es_activo
-                detalle.DesdeEdicion = True
+                detalle.DesdeEdicion = fue_editado
                 detalle.save()
 
             # Se acumula el total para luego guardarlo en la orden
