@@ -152,22 +152,36 @@ $("#EditarOrden").on("hidden.bs.modal", function () {
   cambiosDetectados = false;
 });
 
-function confirmarQuitar(idDetalle) {
-  console.log("Quitar detalle:", idDetalle);
+function confirmarQuitar(idPlatillo) {
+  console.log("Quitar detalle:", idPlatillo);
 
-  let detalle = $("#filaDetalleOrdenEditar" + idDetalle);
-  const dataFinal = $("#detalleOrdenEditarData" + idDetalle);
+  let fila = $("#filaDetalleOrdenEditar" + idPlatillo);
+  let dataFinal = $("#detalleOrdenEditarData" + idPlatillo);
   let btnConfirmar = $("#btnConfirmarCambiosEditarOrden");
 
   btnConfirmar.prop("disabled", false);
 
-  detalle.addClass("quitar");
+  let esNuevo = dataFinal.data("is-new") == 1;
 
+  if (esNuevo) {
+    // Nunca existió → eliminar del DOM
+    fila.addClass("quitar");
+    
+    setTimeout(() => {
+      fila.remove();
+
+      cerrarPopover();
+    }, 500);
+    return;
+  }
+  
   dataFinal.attr("data-es-activo", "0");
-
+  
   setTimeout(() => {
-    detalle.hide();
+    fila.hide();
   }, 500);
+  
+  cerrarPopover();
 }
 
 async function ConfirmarEditarOrden(idOrden) {
@@ -355,8 +369,63 @@ $("#btnConfirmarIncluirDetalles").on("click", function () {
 
   console.log("Platillos seleccionados:", platillosSeleccionados);
 
-  // Aquí continúas con:
-  // - AJAX
-  // - agregar al DOM
-  // - cerrar modal
+  platillosSeleccionados.forEach((p) => {
+    // Evitar duplicados
+    if ($("#filaDetalleOrdenEditar" + p.id).length === 0) {
+      agregarFilaDetalleEditar(p);
+    }
+  });
+
+  // Cerrar modal
+  $("#IncluirDetalle").modal("hide");
+
+  // Habilitar botón de confirmar cambios
+  $("#btnConfirmarCambiosEditarOrden").prop("disabled", false);
 });
+
+function agregarFilaDetalleEditar(platillo) {
+  const idOrden = $("#idOrdenEditar").val();
+
+  const fila = `
+    <tr id="filaDetalleOrdenEditar${platillo.id}" class="filaDetalleOrden">
+      <td style="text-transform: capitalize;">
+        ${platillo.nombre.toLowerCase()}
+      </td>
+      <td>C$${platillo.precio.toFixed(2)}</td>
+
+      <td style="text-align: center;">
+        <button class="btnControlCantidad" style="min-width: 30px;"
+          onclick="bajarCantidad('${platillo.id}')">-</button>
+
+        <span id="cantidadDetalle-${platillo.id}"
+              class="cantidadConsumoEditar">1</span>
+
+        <button class="btnControlCantidad" style="min-width: 30px;"
+          onclick="subirCantidad('${platillo.id}')">+</button>
+      </td>
+
+      <td class="actions btnQuitarEditar">
+        <div class="botonQuitar">
+          <button type="button"
+            class="btnQuitar2 btn-popover"
+            data-id-detalle=""
+            data-id-platillo="${platillo.id}"
+            onclick="mostrarPopover(this, event)">
+            Quitar
+          </button>
+        </div>
+      </td>
+
+      <input type="hidden"
+        id="detalleOrdenEditarData${platillo.id}"
+        class="detalleOrdenData${idOrden}"
+        data-is-new="1"
+        data-id-detalle=""
+        data-id-platillo="${platillo.id}"
+        data-cantidad="1"
+        data-es-activo="1">
+    </tr>
+  `;
+
+  $("#cuerpoTablaEditarOrdenDetalles").append(fila);
+}

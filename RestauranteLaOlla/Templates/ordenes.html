@@ -242,6 +242,93 @@
   </div>
 </div>
 
+<div class="modal fade" id="InfoCrearOrden" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title ">Información adicional</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column;">
+          <h5 class="subTItuloInfoCrearOrden">Crear orden</h5>
+          <h6 class="textoInfoCrearOrden">Realiza el proceso de creación de la orden una vez haya agregado al menos un consumo</h6>
+          <hr>
+          <h5 class="subTItuloInfoCrearOrden">Limpiar</h5>
+          <h6 class="textoInfoCrearOrden">Elimina todos los consumos que han sido agregados a la orden, volviendo a dejarla vacía para poder agregar nuevos consumos</h6>
+          <hr>
+          <h5 class="subTItuloInfoCrearOrden">Quitar</h5>
+          <h6 class="textoInfoCrearOrden">Es similar al anterior pero elimina la orden de forma individual por consumo</h6>
+          <hr>
+          <h5 class="subTItuloInfoCrearOrden">Al crear la orden</h5>
+          <h6 class="textoInfoCrearOrden">Podrá ser capaz de escribir alguna información adicional que podrá ver el personal de cocina cuando se genere la orden</h6>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+class="modal fade"
+id="EditarOrden"
+data-backdrop="static"
+data-keyboard="false"
+tabindex="-1"
+role="dialog"
+aria-labelledby="exampleModalLabel"
+aria-hidden="true"
+onclick="cerrarPopover()">
+  <div class="modal-dialog modal-editar-orden" role="document">
+    <div class="modal-content"  id="contenidoDetalleOrden">
+      <!-- modal-header, modal-body y modal-footer se encuentran en detalle_orden_editar.html -->
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="IncluirDetalle" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-incluir-detalle" role="document">
+    <div class="modal-content" id="contenidoIncluirDetalle">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Incluir consumo a orden</h5>
+      
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>  
+      
+      </div>
+      
+      <div class="alert alert-info alert-dismissible mb-0">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        Puedes seleccionar uno o más consumos
+      </div>
+
+      <div class="modal-body" id="contenidoModalBodyIncluirPlatillosEditar">
+        <!-- EL CONTENIDO DE ESTE CONTENEDOR SE ENCUENTRA EN 'incluir_platillos_editar.html' -->
+      </div>
+      
+      <div class="modal-footer">
+        <div class="contFooterIncluirDetalle">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Cancelar
+          </button>
+      
+          <button
+              type="button"
+              class="btn btn-danger"
+              id="btnConfirmarIncluirDetalles"
+              disabled>
+              Incluir
+          </button> 
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="{% static 'js/ordenes.js' %}"></script>
 <script src="{% static 'js/editar_orden.js' %}"></script>
 
