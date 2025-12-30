@@ -350,6 +350,7 @@ def FacturarOrden(request):
         metodoPago  = int(request.POST.get('metodoPago'))
         banco  = request.POST.get('banco')
         numRef      = request.POST.get('numRef')
+        montoRestante = 0
 
         # ===============================
         # Obtener orden
@@ -390,6 +391,16 @@ def FacturarOrden(request):
             else:
                 orden.NumReferencia = None
 
+        elif metodoPago == 4:
+            montoRestante = total - monto
+            
+            if montoRestante < 0:
+                cambio = monto - total
+                montoRestante = 0
+            else:
+                cambio = 0
+
+            orden.NumReferencia = None
         else:
             return JsonResponse({
                 "status": "error",
@@ -399,15 +410,16 @@ def FacturarOrden(request):
         # ===============================
         # Guardar datos
         # ===============================
-        orden.Monto        = monto
-        orden.Cambio       = cambio
-        orden.Propina      = propina
-        orden.Descuento    = descuento
-        orden.Total        = total
-        orden.MetodoPago   = metodoPago
-        orden.Banco        = banco
-        orden.NumRef       = numRef
-        orden.Estado       = "0"  # Facturada
+        orden.Monto         = monto
+        orden.Cambio        = cambio
+        orden.Propina       = propina
+        orden.Descuento     = descuento
+        orden.Total         = total
+        orden.MetodoPago    = metodoPago
+        orden.Banco         = banco
+        orden.NumRef        = numRef
+        orden.MontoRestante = montoRestante
+        orden.Estado        = "0"  # Facturada
 
         orden.save()
 

@@ -94,31 +94,64 @@ function MP(valor) {
   let CambioOrden = document.getElementById("cambio");
   let MontoOrden = document.getElementById("monto");
   let NumRefOrden = document.getElementById("numRef");
+  let infoMetodoMixto = document.getElementById("infoMetodoPagoMixto");
+  let h4 = document.querySelector("#monto h4");
+  let bancoh4 = document.querySelector("#banco h4");
+  let contMonto = document.querySelector("#monto");
 
   let BtnRegistrar = document.getElementById("btnFacturar");
   let Banco = document.getElementById("banco");
 
+  console.log(h4);
+
   if (valor == 1) {
+    // EFECTIVO
     CambioOrden.style.display = "initial";
     MontoOrden.style.display = "initial";
     NumRefOrden.style.display = "none";
     Banco.style.display = "none";
+    infoMetodoMixto.style.display = "none";
+
+    contMonto.classList.remove("mb-2");
+    h4.innerHTML = 'Monto<span class="asterisco">*</span>';
     
     BtnRegistrar.disabled = true;
   } else if (valor == 2) {
+    // TARJETA
     CambioOrden.style.display = "none";
     MontoOrden.style.display = "none";
     NumRefOrden.style.display = "none";
     Banco.style.display = "initial";
+    infoMetodoMixto.style.display = "none";
+
+    bancoh4.innerHTML = "Banco";
     
     BtnRegistrar.disabled = false;
-  } else {
+  } else if (valor == 3) {
+    // TRANSFERENCIA
     CambioOrden.style.display = "none";
     MontoOrden.style.display = "none";
     NumRefOrden.style.display = "initial";
     Banco.style.display = "initial";
+    infoMetodoMixto.style.display = "none";
+
+    bancoh4.innerHTML = "Banco";
     
     BtnRegistrar.disabled = false;
+  }
+  else {
+    // EFECTIVO Y TARJETA    
+    CambioOrden.style.display = "none";
+    MontoOrden.style.display = "initial";
+    NumRefOrden.style.display = "none";
+    Banco.style.display = "initial";
+    infoMetodoMixto.style.display = "initial";
+    
+    contMonto.classList.add("mb-2");
+    h4.innerHTML = "Monto en efectivo<span class='asterisco'>*</span>";
+    bancoh4.innerHTML = "Banco de la tarjeta";
+
+    BtnRegistrar.disabled = true;
   }
 }
 
@@ -196,6 +229,8 @@ function rellenarParaFacturar(id, total) {
 }
 
 document.getElementById("MontoOrden").addEventListener("input", function () {
+  let MetodoPago = document.getElementById("SelectMetodoPago");
+
   // Se obtiene el valor de lo que se ingresa cada vez que se escribe algo
   let MontoIngresado = document.getElementById("MontoOrden").value;
 
@@ -205,10 +240,16 @@ document.getElementById("MontoOrden").addEventListener("input", function () {
 
   try {
     // Se realiza el cálculo del monto
-    let Cambio = parseInt(MontoIngresado) - TotalGlobal;
+    let MontoNumero = parseInt(MontoIngresado);
+
+    if (Number.isNaN(MontoNumero)) {
+      throw new Error("El valor no se puede convertir a un número entero");
+    }
+
+    let Cambio = MontoNumero - TotalGlobal;
 
     // Se verifica si el monto está bien ingresado
-    if (MontoIngresado < TotalGlobal) {
+    if (MontoIngresado < TotalGlobal && MetodoPago.value == "1") {
       MensajeMonto.style.display = "initial";
 
       CambioOrden.value = "";
@@ -222,7 +263,8 @@ document.getElementById("MontoOrden").addEventListener("input", function () {
       btnFacturar.disabled = false;
     }
   } catch (error) {
-    MensajeMonto.style.display = "initial";
+    if (MetodoPago.value == "1")
+      MensajeMonto.style.display = "initial";
 
     CambioOrden.value = "";
 

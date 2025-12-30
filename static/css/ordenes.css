@@ -95,11 +95,6 @@
     /* flex-direction: column; */
 }
 
-.Montotxt {
-    display: flex;
-    justify-content: space-between;
-}
-
 #MensajeMonto {
     display: none;
 }
@@ -264,6 +259,11 @@
 }
 
 /********************* EDITAR ***********************/
+
+#contenedorTablaEditarOrden {
+    max-height: 40vh;
+    overflow: auto;
+}
 
 #btnConfirmarCambiosEditarOrden {
     transition: all .3s ease;

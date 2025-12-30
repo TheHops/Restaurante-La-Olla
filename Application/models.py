@@ -119,6 +119,8 @@ class Orden(models.Model):
     
     Monto = models.DecimalField(db_column='monto', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     
+    MontoRestante = models.DecimalField(db_column='monto_restante', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
+    
     Cambio = models.DecimalField(db_column='cambio', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     
     Propina = models.DecimalField(db_column='propina', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
