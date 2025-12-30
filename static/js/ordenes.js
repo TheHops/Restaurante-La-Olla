@@ -29,62 +29,77 @@ document.addEventListener("DOMContentLoaded", function () {
 /////////////////////////////////////////////////////////////////////
 
 function FacturarOrden() {
-  let idOrdenF = document.getElementById("idOrdenFactura");
-  let CambioOrden = document.getElementById("CambioOrden");
-  let MontoOrden = document.getElementById("MontoOrden");
-  let PropinaOrden = document.getElementById("txtValorPorcentajePropina");
-  let DescuentoOrden = document.getElementById("txtValorPorcentajeDescuento");
-  let Total = document.getElementById("totalOrdenFactura");
-  let MetodoDePago = document.getElementById("SelectMetodoPago");
-  let Banco = document.getElementById("SelectBanco");
-  let numRef = document.getElementById("numRefOrden");
+  const { value: isConfirmed } = Swal.fire({
+    title: "¿Los datos están correctos?",
+    showCancelButton: true,
+    cancelButtonText: "Cancelar",
+    confirmButtonText: "Confirmar",
+    confirmButtonColor: "#ff6464",
+    icon: "question",
+    iconColor: "#ff964e",
+    reverseButtons: true,
+  });
 
-  let Monto = MontoOrden.value || 0;
-  let Cambio = CambioOrden.value || 0;
-  let Propina = PropinaOrden.value || 0;
-  let Descuento = DescuentoOrden.value || 0;
+  if (isConfirmed)
+  {
 
-  let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
-
-  let xhr = new XMLHttpRequest();
-  xhr.open("POST", "/FacturarOrden/", true);
-
-  let datos = new FormData();
-  datos.append("csrfmiddlewaretoken", token);
-  datos.append("idOrden", idOrdenF.value);
-  datos.append("monto", Monto);
-  datos.append("cambio", Cambio);
-  datos.append("propinaOrden", Propina);
-  datos.append("descuentoOrden", Descuento);
-  datos.append("totalOrden", Total.value);
-  datos.append("metodoPago", MetodoDePago.value);
-  datos.append("banco", Banco.value);
-  datos.append("numRef", numRef.value);
-
-  console.log(MontoOrden.value);
-
-  xhr.onreadystatechange = function () {
-    if (this.readyState === 4) {
-      let response = JSON.parse(this.responseText);
-
-      if (this.status === 200 && response.status === "ok") {
-        Swal.fire({
-          confirmButtonColor: "#ff6464",
-          title: response.message,
-          icon: "success",
-        }).then(() => location.reload());
-      } else {
-        Swal.fire({
-          confirmButtonColor: "#ff6464",
-          title: "Error",
-          text: response.message || "Ocurrió un error al facturar.",
-          icon: "error",
-        });
+    let idOrdenF = document.getElementById("idOrdenFactura");
+    let CambioOrden = document.getElementById("CambioOrden");
+    let MontoOrden = document.getElementById("MontoOrden");
+    let PropinaOrden = document.getElementById("txtValorPorcentajePropina");
+    let DescuentoOrden = document.getElementById("txtValorPorcentajeDescuento");
+    let Total = document.getElementById("totalOrdenFactura");
+    let MetodoDePago = document.getElementById("SelectMetodoPago");
+    let Banco = document.getElementById("SelectBanco");
+    let numRef = document.getElementById("numRefOrden");
+  
+    let Monto = MontoOrden.value || 0;
+    let Cambio = CambioOrden.value || 0;
+    let Propina = PropinaOrden.value || 0;
+    let Descuento = DescuentoOrden.value || 0;
+  
+    let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+  
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "/FacturarOrden/", true);
+  
+    let datos = new FormData();
+    datos.append("csrfmiddlewaretoken", token);
+    datos.append("idOrden", idOrdenF.value);
+    datos.append("monto", Monto);
+    datos.append("cambio", Cambio);
+    datos.append("propinaOrden", Propina);
+    datos.append("descuentoOrden", Descuento);
+    datos.append("totalOrden", Total.value);
+    datos.append("metodoPago", MetodoDePago.value);
+    datos.append("banco", Banco.value);
+    datos.append("numRef", numRef.value);
+  
+    console.log(MontoOrden.value);
+  
+    xhr.onreadystatechange = function () {
+      if (this.readyState === 4) {
+        let response = JSON.parse(this.responseText);
+  
+        if (this.status === 200 && response.status === "ok") {
+          Swal.fire({
+            confirmButtonColor: "#ff6464",
+            title: response.message,
+            icon: "success",
+          }).then(() => location.reload());
+        } else {
+          Swal.fire({
+            confirmButtonColor: "#ff6464",
+            title: "Error",
+            text: response.message || "Ocurrió un error al facturar.",
+            icon: "error",
+          });
+        }
       }
-    }
-  };
-
-  xhr.send(datos);
+    };
+  
+    xhr.send(datos);
+  }
 }
 
 

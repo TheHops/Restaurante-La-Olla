@@ -3,6 +3,14 @@
 
 <div class="ordenPoFoC">
   <div class="encabezadoPoFoC">
+
+    {% if Orden.Estado == "1" or Orden.Estado == "4" or Orden.Estado == "3" %}
+      {% if Orden.FueEditada %}
+        <img src="{% static 'img/white_alert.png' %}" style="top: -22px; left: -37px" alt="Orden editada" class="iconoOrdenEditada">
+        <img src="{% static 'img/red_alert_fill.png' %}" alt="Orden editada" class="iconoOrdenEditada">
+      {% endif %}
+    {% endif %}
+    
     <h5>
       Orden #{{ Orden.Id }} - 
       {% if Orden.Estado == "1" %} Pendiente
