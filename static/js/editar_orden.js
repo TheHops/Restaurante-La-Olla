@@ -387,8 +387,10 @@ function agregarFilaDetalleEditar(platillo) {
   const idOrden = $("#idOrdenEditar").val();
 
   const fila = `
-    <tr id="filaDetalleOrdenEditar${platillo.id}" class="filaDetalleOrden">
-      <td style="text-transform: capitalize;">
+    <tr id="filaDetalleOrdenEditar${
+      platillo.id
+    }" class="filaDetalleOrden filaDetalleOrdenNuevo">
+      <td style="text-transform: capitalize; padding-left: 10px;">
         ${platillo.nombre.toLowerCase()}
       </td>
       <td>C$${platillo.precio.toFixed(2)}</td>

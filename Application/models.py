@@ -119,6 +119,8 @@ class Orden(models.Model):
     
     Monto = models.DecimalField(db_column='monto', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     
+    MontoRestante = models.DecimalField(db_column='monto_restante', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
+    
     Cambio = models.DecimalField(db_column='cambio', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     
     Propina = models.DecimalField(db_column='propina', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
@@ -130,7 +132,7 @@ class Orden(models.Model):
     UltimaModificacion = models.DateTimeField(db_column='ultima_modificacion', auto_now_add=True)
     
     FueEditada = models.BooleanField(db_column="fue_editada", null=True, default=False)
-    DescripcionEdicion = models.CharField(max_length=100, null=True, blank=True, db_column='descripcion_edicion')
+    DescripcionEdicion = models.CharField(max_length=200, null=True, blank=True, db_column='descripcion_edicion')
     
     METODOPAGO = [("1", "Efectivo"), ("2", "Tarjeta"), ("3", "Transferencia"), ("4", "EfectivoYTarjeta")]
     MetodoPago = models.CharField(max_length=10, choices=METODOPAGO, default="1", db_column='metodo_pago')

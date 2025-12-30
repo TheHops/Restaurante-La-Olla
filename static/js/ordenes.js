@@ -29,62 +29,77 @@ document.addEventListener("DOMContentLoaded", function () {
 /////////////////////////////////////////////////////////////////////
 
 function FacturarOrden() {
-  let idOrdenF = document.getElementById("idOrdenFactura");
-  let CambioOrden = document.getElementById("CambioOrden");
-  let MontoOrden = document.getElementById("MontoOrden");
-  let PropinaOrden = document.getElementById("txtValorPorcentajePropina");
-  let DescuentoOrden = document.getElementById("txtValorPorcentajeDescuento");
-  let Total = document.getElementById("totalOrdenFactura");
-  let MetodoDePago = document.getElementById("SelectMetodoPago");
-  let Banco = document.getElementById("SelectBanco");
-  let numRef = document.getElementById("numRefOrden");
+  const { value: isConfirmed } = Swal.fire({
+    title: "¿Los datos están correctos?",
+    showCancelButton: true,
+    cancelButtonText: "Cancelar",
+    confirmButtonText: "Confirmar",
+    confirmButtonColor: "#ff6464",
+    icon: "question",
+    iconColor: "#ff964e",
+    reverseButtons: true,
+  });
 
-  let Monto = MontoOrden.value || 0;
-  let Cambio = CambioOrden.value || 0;
-  let Propina = PropinaOrden.value || 0;
-  let Descuento = DescuentoOrden.value || 0;
+  if (isConfirmed)
+  {
 
-  let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
-
-  let xhr = new XMLHttpRequest();
-  xhr.open("POST", "/FacturarOrden/", true);
-
-  let datos = new FormData();
-  datos.append("csrfmiddlewaretoken", token);
-  datos.append("idOrden", idOrdenF.value);
-  datos.append("monto", Monto);
-  datos.append("cambio", Cambio);
-  datos.append("propinaOrden", Propina);
-  datos.append("descuentoOrden", Descuento);
-  datos.append("totalOrden", Total.value);
-  datos.append("metodoPago", MetodoDePago.value);
-  datos.append("banco", Banco.value);
-  datos.append("numRef", numRef.value);
-
-  console.log(MontoOrden.value);
-
-  xhr.onreadystatechange = function () {
-    if (this.readyState === 4) {
-      let response = JSON.parse(this.responseText);
-
-      if (this.status === 200 && response.status === "ok") {
-        Swal.fire({
-          confirmButtonColor: "#ff6464",
-          title: response.message,
-          icon: "success",
-        }).then(() => location.reload());
-      } else {
-        Swal.fire({
-          confirmButtonColor: "#ff6464",
-          title: "Error",
-          text: response.message || "Ocurrió un error al facturar.",
-          icon: "error",
-        });
+    let idOrdenF = document.getElementById("idOrdenFactura");
+    let CambioOrden = document.getElementById("CambioOrden");
+    let MontoOrden = document.getElementById("MontoOrden");
+    let PropinaOrden = document.getElementById("txtValorPorcentajePropina");
+    let DescuentoOrden = document.getElementById("txtValorPorcentajeDescuento");
+    let Total = document.getElementById("totalOrdenFactura");
+    let MetodoDePago = document.getElementById("SelectMetodoPago");
+    let Banco = document.getElementById("SelectBanco");
+    let numRef = document.getElementById("numRefOrden");
+  
+    let Monto = MontoOrden.value || 0;
+    let Cambio = CambioOrden.value || 0;
+    let Propina = PropinaOrden.value || 0;
+    let Descuento = DescuentoOrden.value || 0;
+  
+    let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+  
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "/FacturarOrden/", true);
+  
+    let datos = new FormData();
+    datos.append("csrfmiddlewaretoken", token);
+    datos.append("idOrden", idOrdenF.value);
+    datos.append("monto", Monto);
+    datos.append("cambio", Cambio);
+    datos.append("propinaOrden", Propina);
+    datos.append("descuentoOrden", Descuento);
+    datos.append("totalOrden", Total.value);
+    datos.append("metodoPago", MetodoDePago.value);
+    datos.append("banco", Banco.value);
+    datos.append("numRef", numRef.value);
+  
+    console.log(MontoOrden.value);
+  
+    xhr.onreadystatechange = function () {
+      if (this.readyState === 4) {
+        let response = JSON.parse(this.responseText);
+  
+        if (this.status === 200 && response.status === "ok") {
+          Swal.fire({
+            confirmButtonColor: "#ff6464",
+            title: response.message,
+            icon: "success",
+          }).then(() => location.reload());
+        } else {
+          Swal.fire({
+            confirmButtonColor: "#ff6464",
+            title: "Error",
+            text: response.message || "Ocurrió un error al facturar.",
+            icon: "error",
+          });
+        }
       }
-    }
-  };
-
-  xhr.send(datos);
+    };
+  
+    xhr.send(datos);
+  }
 }
 
 
@@ -94,31 +109,64 @@ function MP(valor) {
   let CambioOrden = document.getElementById("cambio");
   let MontoOrden = document.getElementById("monto");
   let NumRefOrden = document.getElementById("numRef");
+  let infoMetodoMixto = document.getElementById("infoMetodoPagoMixto");
+  let h4 = document.querySelector("#monto h4");
+  let bancoh4 = document.querySelector("#banco h4");
+  let contMonto = document.querySelector("#monto");
 
   let BtnRegistrar = document.getElementById("btnFacturar");
   let Banco = document.getElementById("banco");
 
+  console.log(h4);
+
   if (valor == 1) {
+    // EFECTIVO
     CambioOrden.style.display = "initial";
     MontoOrden.style.display = "initial";
     NumRefOrden.style.display = "none";
     Banco.style.display = "none";
+    infoMetodoMixto.style.display = "none";
+
+    contMonto.classList.remove("mb-2");
+    h4.innerHTML = 'Monto<span class="asterisco">*</span>';
     
     BtnRegistrar.disabled = true;
   } else if (valor == 2) {
+    // TARJETA
     CambioOrden.style.display = "none";
     MontoOrden.style.display = "none";
     NumRefOrden.style.display = "none";
     Banco.style.display = "initial";
+    infoMetodoMixto.style.display = "none";
+
+    bancoh4.innerHTML = "Banco";
     
     BtnRegistrar.disabled = false;
-  } else {
+  } else if (valor == 3) {
+    // TRANSFERENCIA
     CambioOrden.style.display = "none";
     MontoOrden.style.display = "none";
     NumRefOrden.style.display = "initial";
     Banco.style.display = "initial";
+    infoMetodoMixto.style.display = "none";
+
+    bancoh4.innerHTML = "Banco";
     
     BtnRegistrar.disabled = false;
+  }
+  else {
+    // EFECTIVO Y TARJETA    
+    CambioOrden.style.display = "none";
+    MontoOrden.style.display = "initial";
+    NumRefOrden.style.display = "none";
+    Banco.style.display = "initial";
+    infoMetodoMixto.style.display = "initial";
+    
+    contMonto.classList.add("mb-2");
+    h4.innerHTML = "Monto en efectivo<span class='asterisco'>*</span>";
+    bancoh4.innerHTML = "Banco de la tarjeta";
+
+    BtnRegistrar.disabled = true;
   }
 }
 
@@ -196,6 +244,8 @@ function rellenarParaFacturar(id, total) {
 }
 
 document.getElementById("MontoOrden").addEventListener("input", function () {
+  let MetodoPago = document.getElementById("SelectMetodoPago");
+
   // Se obtiene el valor de lo que se ingresa cada vez que se escribe algo
   let MontoIngresado = document.getElementById("MontoOrden").value;
 
@@ -205,10 +255,16 @@ document.getElementById("MontoOrden").addEventListener("input", function () {
 
   try {
     // Se realiza el cálculo del monto
-    let Cambio = parseInt(MontoIngresado) - TotalGlobal;
+    let MontoNumero = parseInt(MontoIngresado);
+
+    if (Number.isNaN(MontoNumero)) {
+      throw new Error("El valor no se puede convertir a un número entero");
+    }
+
+    let Cambio = MontoNumero - TotalGlobal;
 
     // Se verifica si el monto está bien ingresado
-    if (MontoIngresado < TotalGlobal) {
+    if (MontoIngresado < TotalGlobal && MetodoPago.value == "1") {
       MensajeMonto.style.display = "initial";
 
       CambioOrden.value = "";
@@ -222,7 +278,8 @@ document.getElementById("MontoOrden").addEventListener("input", function () {
       btnFacturar.disabled = false;
     }
   } catch (error) {
-    MensajeMonto.style.display = "initial";
+    if (MetodoPago.value == "1")
+      MensajeMonto.style.display = "initial";
 
     CambioOrden.value = "";
 

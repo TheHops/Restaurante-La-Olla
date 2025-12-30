@@ -27,9 +27,9 @@
     <h4 style="font-size: 20px; margin-bottom: 3px;">Descripción</h4>
     
     {% if Modo == "Editar" %}
-      <textarea class="form-control mb-2" id="descripcionOrdenEditar" placeholder="Ingrese una descripción">{{ Orden.Descripcion }}</textarea>
+      <textarea class="form-control mb-2" id="descripcionOrdenEditar" placeholder="Ingrese una descripción">{% if Orden.Descripcion %}{{ Orden.Descripcion }}{% endif %}</textarea>
     {% else %}
-      <textarea class="form-control mb-2" id="descripcionOrdenInfo" placeholder="Ingrese una descripción" readonly>{{ Orden.Descripcion }}</textarea>
+      <textarea class="form-control mb-2" id="descripcionOrdenInfo" placeholder="Ingrese una descripción" readonly>{% if Orden.Descripcion %}{{ Orden.Descripcion }}{% endif %}</textarea>
     {% endif %}
   </div>
 
@@ -44,7 +44,7 @@
   <hr>
 
   <!-- Detalle de la orden a editar -->
-  <div class="col-12">
+  <div class="col-12" id="contenedorTablaEditarOrden">
     <table class="display" style="width:100%;">
       <thead>
         <!-- Columnas -->
@@ -66,7 +66,7 @@
         {% for detalle in Orden.Detalles.all %}
           {% if detalle.EsActivo %}
             <tr id="filaDetalleOrdenEditar{{detalle.IdPlatillo.Id}}" class="filaDetalleOrden">
-                <td style="text-transform: capitalize; ">{{detalle.IdPlatillo.Nombre|lower}}</td>
+                <td style="text-transform: capitalize; padding-left: 10px;">{{detalle.IdPlatillo.Nombre|lower}}</td>
                 <td>C${{detalle.PrecioVenta}}</td>
                 
                 {% if Modo == "Editar" %}

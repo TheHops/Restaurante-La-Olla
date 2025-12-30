@@ -350,6 +350,7 @@ def FacturarOrden(request):
         metodoPago  = int(request.POST.get('metodoPago'))
         banco  = request.POST.get('banco')
         numRef      = request.POST.get('numRef')
+        montoRestante = 0
 
         # ===============================
         # Obtener orden
@@ -390,6 +391,16 @@ def FacturarOrden(request):
             else:
                 orden.NumReferencia = None
 
+        elif metodoPago == 4:
+            montoRestante = total - monto
+            
+            if montoRestante < 0:
+                cambio = monto - total
+                montoRestante = 0
+            else:
+                cambio = 0
+
+            orden.NumReferencia = None
         else:
             return JsonResponse({
                 "status": "error",
@@ -399,15 +410,16 @@ def FacturarOrden(request):
         # ===============================
         # Guardar datos
         # ===============================
-        orden.Monto        = monto
-        orden.Cambio       = cambio
-        orden.Propina      = propina
-        orden.Descuento    = descuento
-        orden.Total        = total
-        orden.MetodoPago   = metodoPago
-        orden.Banco        = banco
-        orden.NumRef       = numRef
-        orden.Estado       = "0"  # Facturada
+        orden.Monto         = monto
+        orden.Cambio        = cambio
+        orden.Propina       = propina
+        orden.Descuento     = descuento
+        orden.Total         = total
+        orden.MetodoPago    = metodoPago
+        orden.Banco         = banco
+        orden.NumRef        = numRef
+        orden.MontoRestante = montoRestante
+        orden.Estado        = "0"  # Facturada
 
         orden.save()
 
@@ -561,6 +573,14 @@ def InicioIncluir(request):
     return render(request, "incluir_platillos_editar.html", contexto)
 
 def EditarOrden (request):
+    descripcionFueEditada = False
+    detalleNuevo = False
+    detalleEditado = False
+    detalleEliminado = False
+    cantidadEliminados = 0
+    cantidadEditados = 0
+    cantidadNuevos = 0
+    
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
@@ -578,10 +598,19 @@ def EditarOrden (request):
         orden = get_object_or_404(Orden, Id=data["idOrden"], EsActivo="1")
 
         # Se actualiza la información de la orden
-        orden.Descripcion = data.get("descripcion", orden.Descripcion)
+        descripcionOrden = data.get("descripcion", orden.Descripcion)
+        
+        if descripcionOrden is not None and descripcionOrden.strip() == "":
+            descripcionOrden = None
+            
+        if orden.Descripcion != descripcionOrden:
+            descripcionFueEditada = True
+        
+        orden.Descripcion = descripcionOrden
         orden.FueEditada = True
         orden.UltimaModificacion = timezone.now()
         orden.Detalles.update(DesdeEdicion=False)
+        orden.DescripcionEdicion = None
         orden.save()
 
         total_orden = Decimal("0.00")
@@ -617,6 +646,9 @@ def EditarOrden (request):
                     EsActivo=es_activo,
                     DesdeEdicion=True
                 )
+                
+                detalleNuevo = True
+                cantidadNuevos += 1
             else:
                 # Si no es nuevo, es porque ya existe y solo se modifica
                 detalle = get_object_or_404(
@@ -631,6 +663,14 @@ def EditarOrden (request):
                     detalle.SubTotal != subtotal or
                     detalle.EsActivo != es_activo
                 )
+                
+                if fue_editado:
+                    if es_activo == "0":
+                        detalleEliminado = True
+                        cantidadEliminados += 1
+                    else:
+                        detalleEditado = True
+                        cantidadEditados += 1
 
                 detalle.Cantidad = cantidad
                 detalle.PrecioVenta = precio
@@ -645,6 +685,7 @@ def EditarOrden (request):
 
         # Se actualiza el total de la orden
         orden.Total = total_orden
+        orden.DescripcionEdicion = obtenerMensajeEdicion(descripcionFueEditada, detalleNuevo, detalleEditado, detalleEliminado, cantidadEliminados, cantidadEditados, cantidadNuevos)
         orden.save()
         
         orden.recalcular_estado()
@@ -655,4 +696,100 @@ def EditarOrden (request):
         "total": str(total_orden)
     })
 
+def obtenerMensajeEdicion (edicionDescripcion, detalleNuevo, detalleEditado, detalleEliminado, cantidadEliminados, cantidadEditados, cantidadNuevos):
+    if edicionDescripcion and detalleNuevo and detalleEditado and detalleEliminado:
+        mensajeEliminados = "una eliminación" if cantidadEliminados == 1 else f"{cantidadEliminados} eliminaciones"
+        
+        mensajeEditados = "hubo una modificación" if cantidadEditados == 1 else f"hubieron {cantidadEditados} modificaciones"
+        
+        mensajeNuevos = "se agregó un nuevo consumo" if cantidadNuevos == 1 else f"se agregaron {cantidadNuevos} nuevos consumos"
+        
+        return f"Se editó la descripción de la orden, {mensajeNuevos} a la orden y {mensajeEditados} junto con {mensajeEliminados} de los detalles ya existentes"
+    
+    elif edicionDescripcion and detalleNuevo and detalleEliminado:
+        mensajeEliminados = "hubo una eliminación" if cantidadEliminados == 1 else f"hubieron {cantidadEliminados} eliminaciones"
+        
+        mensajeNuevos = "se agregó un nuevo consumo" if cantidadNuevos == 1 else f"se agregaron {cantidadNuevos} nuevos consumos"
+        
+        return f"Se editó la descripción de la orden, {mensajeNuevos} a la orden y {mensajeEliminados} de los detalles ya existentes"
+    
+    elif edicionDescripcion and detalleNuevo and detalleEditado:
+        mensajeEditados = "hubo una modificación" if cantidadEditados == 1 else f"hubieron {cantidadEditados} modificaciones"
+        
+        mensajeNuevos = "se agregó un nuevo consumo" if cantidadNuevos == 1 else f"se agregaron {cantidadNuevos} nuevos consumos"
+        
+        return f"Se editó la descripción de la orden, {mensajeNuevos} a la orden y {mensajeEditados} de los detalles ya existentes"
+    
+    elif edicionDescripcion and detalleEditado and detalleEliminado:
+        mensajeEliminados = "una eliminación" if cantidadEliminados == 1 else f"{cantidadEliminados} eliminaciones"
+        
+        mensajeEditados = "hubo una modificación" if cantidadEditados == 1 else f"hubieron {cantidadEditados} modificaciones"
+        
+        return f"Se editó la descripción de la orden y {mensajeEditados} junto con {mensajeEliminados} de los detalles ya existentes"
+    
+    elif edicionDescripcion and detalleNuevo:
+        mensajeNuevos = "se agregó un nuevo consumo" if cantidadNuevos == 1 else f"se agregaron {cantidadNuevos} nuevos consumos"
+        
+        return f"Se editó la descripción de la orden y {mensajeNuevos} a la orden"
+    
+    elif edicionDescripcion and detalleEliminado:
+        mensajeEliminados = "hubo una eliminación" if cantidadEliminados == 1 else f"hubieron {cantidadEliminados} eliminaciones"
+        
+        return f"Se editó la descripción de la orden y {mensajeEliminados} en los detalles ya existentes"
+    
+    elif edicionDescripcion and detalleEditado:
+        mensajeEditados = "hubo una modificación" if cantidadEditados == 1 else f"hubieron {cantidadEditados} modificaciones"
+        
+        return f"Se editó la descripción de la orden y {mensajeEditados} en los detalles ya existentes"
+    
+    elif edicionDescripcion:
+        return "Se editó la descripción de la orden"
+    
+    elif detalleNuevo and detalleEditado and detalleEliminado:
+        mensajeEliminados = "una eliminación" if cantidadEliminados == 1 else f"{cantidadEliminados} eliminaciones"
+        
+        mensajeEditados = "hubo una modificación" if cantidadEditados == 1 else f"hubieron {cantidadEditados} modificaciones"
+        
+        mensajeNuevos = "Se agregó un nuevo consumo" if cantidadNuevos == 1 else f"Se agregaron {cantidadNuevos} nuevos consumos"
+        
+        return f"{mensajeNuevos} a la orden y {mensajeEditados} junto con {mensajeEliminados} de los detalles ya existentes"
+        
+    elif detalleNuevo and detalleEliminado:
+        mensajeEliminados = "hubo una eliminación" if cantidadEliminados == 1 else f"hubieron {cantidadEliminados} eliminaciones"
+        
+        mensajeNuevos = "Se agregó un nuevo consumo" if cantidadNuevos == 1 else f"Se agregaron {cantidadNuevos} nuevos consumos"
+        
+        return f"{mensajeNuevos} a la orden y {mensajeEliminados} de los detalles ya existentes"
+    
+    elif detalleNuevo and detalleEditado:
+        mensajeEditados = "hubo una modificación" if cantidadEditados == 1 else f"hubieron {cantidadEditados} modificaciones"
+        
+        mensajeNuevos = "Se agregó un nuevo consumo" if cantidadNuevos == 1 else f"Se agregaron {cantidadNuevos} nuevos consumos"
+        
+        return f"{mensajeNuevos} a la orden y {mensajeEditados} de los detalles ya existentes"
+    
+    elif detalleEditado and detalleEliminado:
+        mensajeEliminados = "una eliminación" if cantidadEliminados == 1 else f"{cantidadEliminados} eliminaciones"
+        
+        mensajeEditados = "Hubo una modificación" if cantidadEditados == 1 else f"Hubieron {cantidadEditados} modificaciones"
+        
+        return f"{mensajeEditados} junto con {mensajeEliminados} de los detalles ya existentes"
+    
+    elif detalleNuevo:
+        mensajeNuevos = "Se agregó un nuevo consumo" if cantidadNuevos == 1 else f"Se agregaron {cantidadNuevos} nuevos consumos"
+        
+        return f"{mensajeNuevos} a la orden"
+    
+    elif detalleEliminado:
+        mensajeEliminados = "Hubo una eliminación" if cantidadEliminados == 1 else f"Hubieron {cantidadEliminados} eliminaciones"
+        
+        return f"{mensajeEliminados} en los detalles ya existentes"
+    
+    elif detalleEditado:
+        mensajeEditados = "Hubo una modificación" if cantidadEditados == 1 else f"Hubieron {cantidadEditados} modificaciones"
+        
+        return f"{mensajeEditados} en los detalles ya existentes"
+    
+    else:
+        return None
 #endregion EditarOrden
