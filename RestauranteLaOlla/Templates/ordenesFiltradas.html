@@ -153,6 +153,13 @@
   </div>  
 {% endif %}
 
+{% if Orden.DescripcionEdicion is not none and Orden.DescripcionEdicion != '' %}
+  <div class="descripcionEdicionOrden">
+    <!-- TODO: RECORDAR PONER ICONO DE ALERTA -->
+    <span>{{ Orden.DescripcionEdicion }}</span>
+  </div>  
+{% endif %}
+
 <div class="detalleOrdenPoFoC">
   <div class="cuerpoDetalleOrden" id="idDetalleOrden{{Orden.Id}}">
     <div class="detallitoOrden">

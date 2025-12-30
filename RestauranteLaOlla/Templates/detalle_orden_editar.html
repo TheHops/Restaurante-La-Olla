@@ -27,9 +27,9 @@
     <h4 style="font-size: 20px; margin-bottom: 3px;">Descripción</h4>
     
     {% if Modo == "Editar" %}
-      <textarea class="form-control mb-2" id="descripcionOrdenEditar" placeholder="Ingrese una descripción">{{ Orden.Descripcion }}</textarea>
+      <textarea class="form-control mb-2" id="descripcionOrdenEditar" placeholder="Ingrese una descripción">{% if Orden.Descripcion %}{{ Orden.Descripcion }}{% endif %}</textarea>
     {% else %}
-      <textarea class="form-control mb-2" id="descripcionOrdenInfo" placeholder="Ingrese una descripción" readonly>{{ Orden.Descripcion }}</textarea>
+      <textarea class="form-control mb-2" id="descripcionOrdenInfo" placeholder="Ingrese una descripción" readonly>{% if Orden.Descripcion %}{{ Orden.Descripcion }}{% endif %}</textarea>
     {% endif %}
   </div>
 
