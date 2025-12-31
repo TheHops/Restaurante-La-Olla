@@ -3,6 +3,85 @@
 {% block content %}
 {% load static %}
 
+<div id="contenidoMiPerfil">
+    <div id="cuadroEditarPerfil">
+        <!-- IZQUIERDA -->
+        <div id="izquierdaEditarPerfil">
+            <form action="" method="post">
+                {% csrf_token %}
 
+                <div id="seccionesEditarPerfil" class="row mx-0">
+                    <!-- DATOS DE PERFIL -->
+                    <div id="seccionDatosDePerfil" class="col-12 pr-0">
+                        <div class="row ml-0">
+                            <div class="col-12 mt-3">
+                                <h4>Datos de perfil</h4>
+                            </div>
+                
+                            <div class="col-12 mb-2 form-cont-edit-profile">
+                                <h5>Nombre</h5>
+                                <input type="text" class="form-control" id="FullNameEditarPerfil" readonly>
+                            </div>
+                
+                            <div class="col-6">
+                                <h5>Correo</h5>
+                                <input type="email" class="form-control" id="CorreoEditarPerfil">
+                            </div>
+                
+                            <div class="col-6">
+                                <h5>Teléfono</h5>
+                                <input type="text"
+                                       inputmode="numeric"
+                                       class="form-control"
+                                       maxlength="8"
+                                       id="telefono"
+                                       onkeypress="return soloNumeros(event)">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- FIN DATOS DE PERFIL -->
+
+                    <hr>
+
+                    <!-- DATOS DE USUARIO -->
+                    <div id="seccionDatosDeUsuario" class="col-12 pr-0">
+                        <div class="row ml-0">
+                            <div class="col-12 mt-3">
+                                <h4>Datos de usuario</h4>
+                            </div>
+                
+                            <div class="col-6 mb-2">
+                                <h5>Nombre de usuario</h5>
+                                <input type="text" class="form-control" id="UserNameEditarPerfil">
+                            </div>
+                
+                            <div class="col-6 mb-2">
+                                <h5>Cargo</h5>
+                                <input type="text" class="form-control" id="CargoEditarPerfil" readonly>
+                            </div>
+                
+                            <div class="col-6 mb-2">
+                                <h5>Contraseña</h5>
+                                <input type="Password" class="form-control" id="PassEditarPerfil" readonly>
+                            </div>
+
+                            <div class="col-6 mb-2">
+                                <input type="Submit" value="Confirmar cambios" class="btn btn-danger">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- FIN DATOS DE USUARIO -->
+                </div>
+            </form>
+        </div>
+
+        <!-- DERECHA -->
+        <div id="derechaEditarPerfil">
+            <img id="imagenEditarPerfil" src="{% static 'img/edit_user_ilustration.png' %}" alt="Editar perfil">
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/mi_perfil.js' %}"></script>
 
 {% endblock %}
