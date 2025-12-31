@@ -21,6 +21,7 @@ from RestauranteLaOlla.settings import MEDIA_URL, MEDIA_ROOT
 from RestauranteLaOlla.views import *
 from RestauranteLaOlla.Modulos.Inventario import Menu
 from RestauranteLaOlla.Modulos.Personal import Personal
+from RestauranteLaOlla.Modulos.Personal import MiPerfil
 from RestauranteLaOlla.Modulos.Reportes import Reportes
 from RestauranteLaOlla.Modulos.Platillos import Platillos
 from RestauranteLaOlla.Modulos.TipoPlatillos import TipoPlatillos
@@ -69,7 +70,8 @@ urlpatterns = [
     path("EnviarCorreo/", EnviarCorreo, name="EnviarCorreo"),
     path("InicioEditar/", Ventas.InicioEditar, name="InicioEditar"),
     path('EditarOrden/', Ventas.EditarOrden, name="EditarOrden"),
-    path("InicioIncluir/", Ventas.InicioIncluir, name="InicioIncluir")
+    path("InicioIncluir/", Ventas.InicioIncluir, name="InicioIncluir"),
+    path("MiPerfil/", MiPerfil.MiPerfil, name="MiPerfil")
 ]
 
 urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
