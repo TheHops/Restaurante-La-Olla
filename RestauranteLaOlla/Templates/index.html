@@ -30,6 +30,7 @@
     <link rel="stylesheet" href="{% static 'css/inventario.css' %}" />
     <link rel="stylesheet" href="{% static 'css/venta.css' %}" />
     <link rel="stylesheet" href="{% static 'css/ordenes.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/mi_perfil.css' %}" />
     
     <title>Inicio</title>
   </head>
@@ -84,9 +85,10 @@
 
           {% if request.user.IdCargo.Nombre == "Administrador" %}
           <li class="opcion"><a href="{% url 'personal' %}">Personal</a></li>
+          <li class="opcion"><a href="">Reportes</a></li>
           {% endif %}
 
-          <li class="opcion"><a href="">Mi perfil</a></li>
+          <li class="opcion"><a href="{% url 'MiPerfil' %}">Mi perfil</a></li>
           <!-- <li class="opcion"><a href="">Configuraciones</a></li> -->
         </ul>
 

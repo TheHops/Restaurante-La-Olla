@@ -191,11 +191,11 @@ def FiltrarOrdenes(request):
                 EstadoOrden = validar_filtro_por_cargo(cargo_usuario, EstadoOrden)
 
                 if EstadoOrden == "5":
-                    OrdenesFiltradas = Orden.objects.select_related('IdUsuario').prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1"))).filter(EsActivo="1").order_by(Case(When(Estado='1', then=0), When(Estado='4', then=1), When(Estado='3', then=2), When(Estado='0', then=3), When(Estado='2', then=4)), '-UltimaModificacion')
+                    OrdenesFiltradas = Orden.objects.select_related('IdUsuario').prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.order_by('-EsActivo'))).filter(EsActivo="1").order_by(Case(When(Estado='1', then=0), When(Estado='4', then=1), When(Estado='3', then=2), When(Estado='0', then=3), When(Estado='2', then=4)), '-UltimaModificacion')
                 elif EstadoOrden == "6":
-                    OrdenesFiltradas = Orden.objects.select_related('IdUsuario').prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1"))).filter(EsActivo="1", Estado__in=["1", "4"]).order_by(Case(When(Estado='1', then=0), When(Estado='4', then=1)), '-UltimaModificacion')
+                    OrdenesFiltradas = Orden.objects.select_related('IdUsuario').prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.order_by('-EsActivo'))).filter(EsActivo="1", Estado__in=["1", "4"]).order_by(Case(When(Estado='1', then=0), When(Estado='4', then=1)), '-UltimaModificacion')
                 else:
-                    OrdenesFiltradas = Orden.objects.select_related('IdUsuario').prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1"))).filter(Q(Estado=EstadoOrden) & Q(EsActivo="1")).order_by('-UltimaModificacion')
+                    OrdenesFiltradas = Orden.objects.select_related('IdUsuario').prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.order_by('-EsActivo'))).filter(Q(Estado=EstadoOrden) & Q(EsActivo="1")).order_by('-UltimaModificacion')
                 
                 # metodoPago = ''
                 # asignar el metodo de pago desde el request
