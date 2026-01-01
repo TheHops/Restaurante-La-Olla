@@ -40,11 +40,37 @@
 
 #imagenEditarPerfil {
     width: 80%;
-    max-height: 400px;
+    height: auto;
+    max-height: 500px;
 }
 
-#seccionesEditarPerfil h4,
-#seccionesEditarPerfil h5{
+#seccionesEditarPerfil h5,
+#seccionesEditarPerfil label{
     color: #6D6F72;
     font-family: Arial, Helvetica, sans-serif;
+    font-weight: 700;
+}
+
+#seccionesEditarPerfil input {
+    border-radius: 15px;
+}
+
+#btnCambiarPassEditarPerfil {
+    background-color: #FF964E;
+    color: white;
+}
+
+#btnCambiarPassEditarPerfil:hover {
+    background-color: hsl(24, 100%, 55%);
+}
+
+@media (max-width : 850px) {
+    #derechaEditarPerfil {
+        display: none;
+    }
+
+    #izquierdaEditarPerfil {
+        width: 100%;
+        padding-right: 30px;
+    }
 }
