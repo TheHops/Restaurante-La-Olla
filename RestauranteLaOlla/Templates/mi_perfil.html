@@ -7,14 +7,14 @@
     <div id="cuadroEditarPerfil">
         <!-- IZQUIERDA -->
         <div id="izquierdaEditarPerfil">
-            <form action="" method="post">
+            <form id="formEditarPerfil" action="{% url 'EditarMiPerfil' %}" method="post">
                 {% csrf_token %}
 
                 <div id="seccionesEditarPerfil" class="row mx-0">
                     <!-- DATOS DE PERFIL -->
                     <div id="seccionDatosDePerfil" class="col-12 pr-0">
                         <div class="row ml-0">
-                            <div class="col-12 mt-3">
+                            <div class="col-12 mt-0">
                                 <h5>Datos de perfil</h5>
                             </div>
                 
@@ -25,19 +25,20 @@
                 
                             <div class="col-6 d-flex flex-column">
                                 <label>Correo</label>
-                                <input type="email" class="form-control mt-auto" id="CorreoEditarPerfil" value="{{ Usuario.email }}">
+                                <input type="email" name="txtCorreoEditarPerfil" class="form-control mt-auto" id="CorreoEditarPerfil" value="{{ Usuario.email }}">
                             </div>
                 
                             <div class="col-6 d-flex flex-column">
                                 <label>Teléfono</label>
                                 <input type="text"
-                                       inputmode="numeric"
-                                       class="form-control mt-auto"
-                                       maxlength="8"
-                                       id="telefono"
-                                       value="{{ Usuario.Telefono|default_if_none:'' }}"
-                                       placeholder="Ej: 88888888"
-                                       onkeypress="return soloNumeros(event)">
+                                    name = "txtTelefonoEditarPerfil"
+                                    inputmode="numeric"
+                                    class="form-control mt-auto"
+                                    maxlength="8"
+                                    id="telefono"
+                                    value="{{ Usuario.Telefono|default_if_none:'' }}"
+                                    placeholder="Ej: 88888888"
+                                    onkeypress="return soloNumeros(event)">
                             </div>
                         </div>
                     </div>
@@ -56,7 +57,7 @@
                 
                             <div class="col-6 mb-2 d-flex flex-column">
                                 <label>Nombre de usuario</label>
-                                <input type="text" class="form-control mt-auto" id="UserNameEditarPerfil" value="{{ Usuario.username }}">
+                                <input type="text" name="txtUserNameEditarPerfil" class="form-control mt-auto" id="UserNameEditarPerfil" value="{{ Usuario.username }}">
                             </div>
                 
                             <div class="col-6 mb-2 d-flex flex-column">
@@ -64,20 +65,43 @@
                                 <input type="text" class="form-control mt-auto" id="CargoEditarPerfil" value="{{ Usuario.IdCargo.Nombre }}" readonly>
                             </div>
                 
+                            <!--
                             <div class="col-6 mb-2 d-flex flex-column">
                                 <label>Contraseña</label>
                                 <input type="Password" class="form-control mt-auto" id="PassEditarPerfil" value="********" readonly>
                             </div>
+                        -->
+                        
+                        <div class="col-6 mb-2 d-flex flex-column">
+                                <label>Contraseña</label>
+
+                                <div class="input-group">
+                                    <input type="password" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2"
+                                    readonly
+                                    style="border-radius: 15px 0 0 15px"
+                                    value="*********"
+                                    >
+                                    <div class="input-group-append">
+                                      <button id="btnCambiarPassEditarPerfil" class="btn" type="button" title="Cambiar contraseña"><img style="width: 20px; height: 20px;" src="{% static 'img/Edit2.png' %}" alt=""></button>
+                                    </div>
+                                </div>
+                            </div>
+
 
                             <div class="col-6 mb-2 d-flex flex-column">
                                 <span class="invisible">.</span>
 
-                                <input type="Submit" value="Confirmar cambios" class="btn btn-danger mt-auto">
+                                <button type="submit" style="border-radius: 15px; height: 38px;" class="btn btn-danger mt-auto d-flex align-items-center justify-content-center gap-2" id="btnConfirmarCambiosEditarPerfil">
+                                    <img src="{% static 'img/user_check_fill.png' %}" alt="">
+                                    Confirmar cambios
+                                </button>
                             </div>
 
+                            <!--
                             <div class="col-6 mb-2 d-flex flex-column">
                                 <input type="Submit" id="btnCambiarPassEditarPerfil" value="Cambiar contraseña" class="btn mt-auto">
                             </div>
+                            -->
                         </div>
                     </div>
                     <!-- FIN DATOS DE USUARIO -->
