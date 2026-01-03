@@ -182,13 +182,14 @@ function ConfirmarRestablecer(idPersonal)
 {
   Swal.fire({
     title: "¿Realmente desea restablecer la contraseña de este usuario?",
-    icon: "warning",
+    icon: "question",
     showCancelButton: true,
     confirmButtonColor: "#ff6464",
     cancelButtonColor: "#6c757d",
+    iconColor: "#ff964e",
     confirmButtonText: "Restablecer",
     cancelButtonText: "Cancelar",
-    reverseButtons: true
+    reverseButtons: true,
   }).then((result) => {
     if (result.isConfirmed) {
       Swal.fire({
@@ -247,13 +248,14 @@ function ConfirmarRestablecer(idPersonal)
 function ConfirmarBaja(idPersonal) {
   Swal.fire({
     title: "¿Realmente desea dar de baja a este usuario?",
-    icon: "warning",
+    icon: "question",
     showCancelButton: true,
     confirmButtonColor: "#ff6464",
     cancelButtonColor: "#6c757d",
+    iconColor: "#ff964e",
     confirmButtonText: "Dar de baja",
     cancelButtonText: "Cancelar",
-    reverseButtons: true
+    reverseButtons: true,
   }).then((result) => {
     if (result.isConfirmed) {
       $.ajax({

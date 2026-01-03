@@ -42,8 +42,18 @@ def venta(request):
             else:
                 mesa = []
 
-            ordenesPendientes = Orden.objects.filter(
-                Q(Estado="1") & Q(EsActivo="1")).count()
+            cargo_usuario = request.user.IdCargo.Nombre
+
+            ordenes_query = Orden.objects.filter(
+                Estado="1",
+                EsActivo="1"
+            )
+
+            # 🔒 Si es mesero, solo contar sus órdenes
+            if cargo_usuario == "Mesero":
+                ordenes_query = ordenes_query.filter(IdUsuario=request.user)
+
+            ordenesPendientes = ordenes_query.count()
 
             contexto = {
                 'Tipos': tipos,

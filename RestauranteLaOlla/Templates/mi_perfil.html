@@ -81,8 +81,8 @@
                                     style="border-radius: 15px 0 0 15px"
                                     value="*********"
                                     >
-                                    <div class="input-group-append">
-                                      <button id="btnCambiarPassEditarPerfil" class="btn" type="button" title="Cambiar contraseña"><img style="width: 20px; height: 20px;" src="{% static 'img/Edit2.png' %}" alt=""></button>
+                                    <div class="input-group-append" data-toggle="modal" data-target="#CambiarPass">
+                                      <button id="btnCambiarPassEditarPerfil" class="btn" type="button" title="Cambiar contraseña"><img style="width: 20px; height: 20px;" src="{% static 'img/Edit2.png' %}" alt="Cambiar contraseña"></button>
                                     </div>
                                 </div>
                             </div>
@@ -111,7 +111,53 @@
 
         <!-- DERECHA -->
         <div id="derechaEditarPerfil">
-            <img id="imagenEditarPerfil" src="{% static 'img/edit_user_ilustration.png' %}" alt="Editar perfil">
+            <img id="imagenEditarPerfil" src="{% static 'img/edit_user_ilustration.webp' %}" alt="Editar perfil" loading="lazy">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="CambiarPass" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title " id="exampleModalLabel" >Cambiar contraseña</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="alert alert-info alert-dismissible mb-0">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                Los cambios de contraseña son independientes a los otros datos del perfil
+            </div>
+
+            <div class="modal-body">
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-12 mb-2">
+                            <h4 style="font-size: 20px; margin-bottom: 3px;">Nueva contraseña<span class="asterisco">*</span></h4>
+                            <input type="Password" name="NuevaPassEditarPerfil" class="form-control" id="NuevaPassEditarPerfil" placeholder="Ej: JC123*" required autocomplete="new-password">
+                        </div>
+
+                        <div class="mb-3 ml-4" id="requisitosPass">
+                            <small id="req-length" class="req neutral">• Mínimo 8 caracteres</small><br>
+                            <small id="req-number" class="req neutral">• Al menos un número</small><br>
+                            <small id="req-special" class="req neutral">• Al menos un carácter especial</small>
+                        </div>
+
+                        <div class="col-12 mb-2">
+                            <h4 style="font-size: 20px; margin-bottom: 3px;">Verificar contraseña<span class="asterisco">*</span></h4>
+                            <input type="Password" name="VerificarPassEditarPerfil" class="form-control" id="VerificarPassEditarPerfil" placeholder="Ej: JC123*" required autocomplete="new-password">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="btnCambiarPassword" class="btn btn_confirmation_mi_color" onclick="cambiarPass()" disabled>Cambiar contraseña</button>
+            </div>
         </div>
     </div>
 </div>

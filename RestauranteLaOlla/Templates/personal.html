@@ -62,76 +62,76 @@
 
 
   <div class="modal fade" id="AgregarPersonal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-
     <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title " id="exampleModalLabel" >Agregar Personal</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="alert alert-info alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-            <strong>Recuerde!</strong> Campos con <span class="asterisco">*</span> son obligatorios.
-          </div>
-        <div class="modal-body">
-            <form method="POST" action="">
-                {% csrf_token %}
-                <div class="row">
-                    <div class="col-6 mb-2">
-                        <h4 style="font-size: 20px; margin-bottom: 3px;">Nombres<span class="asterisco">*</span></h4>
-                        <input type="text" class="form-control" id="Fullname" placeholder="Ej: Juan Carlos" required>
-                    </div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title " id="exampleModalLabel" >Agregar Personal</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="alert alert-info alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>Recuerde!</strong> Campos con <span class="asterisco">*</span> son obligatorios.
+            </div>
 
-                    <div class="col-6 mb-2">
-                        <h4 style="font-size: 20px; margin-bottom: 3px;">Apellidos<span class="asterisco">*</span></h4>
-                        <input type="text" class="form-control" id="Apellidos" placeholder="Ej: Perez Lopez" required>
-                    </div>
-                    
-                    <div class="col-6 mb-2">
-                        <h4 style="font-size: 20px; margin-bottom: 3px;">Nombre de usuario<span class="asterisco">*</span></h4>
-                        <input type="text" class="form-control" id="User" placeholder="Ej: JCLopez" required autocomplete="off">
-                    </div>
-                    
-                    <div class="col-6 mb-2">
-                        <h4 style="font-size: 20px; margin-bottom: 3px;">Contraseña temporal<span class="asterisco">*</span></h4>
-                        <input type="Password" class="form-control" id="Pass" placeholder="Ej: JC123*" required autocomplete="new-password">
-                    </div>
-                    
-                    <div class="col-12 mb-2">
-                        <h4 style="font-size: 20px; margin-bottom: 3px;">Correo</h4>
-                        <input type="email" class="form-control" placeholder="Ej: juanpl@gmail.om" id="e-mail">
-                    </div>
+            <div class="modal-body">
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-6 mb-2">
+                            <h4 style="font-size: 20px; margin-bottom: 3px;">Nombres<span class="asterisco">*</span></h4>
+                            <input type="text" class="form-control" id="Fullname" placeholder="Ej: Juan Carlos" required>
+                        </div>
 
-                    <div class="col-6 mb-2">
-                        <h4 style="font-size: 20px; margin-bottom: 3px;">Teléfono</h4>
-                        <input type="text"inputmode="numeric" class="form-control" maxlength="8" id="telefono" onkeypress="return soloNumeros(event)" placeholder="Ej: 88888888">
-                    </div>
+                        <div class="col-6 mb-2">
+                            <h4 style="font-size: 20px; margin-bottom: 3px;">Apellidos<span class="asterisco">*</span></h4>
+                            <input type="text" class="form-control" id="Apellidos" placeholder="Ej: Perez Lopez" required>
+                        </div>
+                        
+                        <div class="col-6 mb-2">
+                            <h4 style="font-size: 20px; margin-bottom: 3px;">Nombre de usuario<span class="asterisco">*</span></h4>
+                            <input type="text" class="form-control" id="User" placeholder="Ej: JCLopez" required autocomplete="off">
+                        </div>
+                        
+                        <div class="col-6 mb-2">
+                            <h4 style="font-size: 20px; margin-bottom: 3px;">Contraseña temporal<span class="asterisco">*</span></h4>
+                            <input type="Password" class="form-control" id="Pass" placeholder="Ej: JC123*" required autocomplete="new-password">
+                        </div>
+                        
+                        <div class="col-12 mb-2">
+                            <h4 style="font-size: 20px; margin-bottom: 3px;">Correo</h4>
+                            <input type="email" class="form-control" placeholder="Ej: juanpl@gmail.om" id="e-mail">
+                        </div>
 
-                    <div class="col-6 mb-2">
-                        <h4 style="font-size: 20px; margin-bottom: 3px;">Cargo<span class="asterisco">*</span></h4>
-                        <select class="form-control" id="idCargo" required>
-                            {% for cargo in Cargos %}
-                                {% if cargo.Nombre == "Mesero" %}
-                                    <option value="{{cargo.Id}}" selected>{{cargo.Nombre}}</option>
-                                {% else %}
-                                    <option value="{{cargo.Id}}">{{cargo.Nombre}}</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select>
+                        <div class="col-6 mb-2">
+                            <h4 style="font-size: 20px; margin-bottom: 3px;">Teléfono</h4>
+                            <input type="text"inputmode="numeric" class="form-control" maxlength="8" id="telefono" onkeypress="return soloNumeros(event)" placeholder="Ej: 88888888">
+                        </div>
+
+                        <div class="col-6 mb-2">
+                            <h4 style="font-size: 20px; margin-bottom: 3px;">Cargo<span class="asterisco">*</span></h4>
+                            <select class="form-control" id="idCargo" required>
+                                {% for cargo in Cargos %}
+                                    {% if cargo.Nombre == "Mesero" %}
+                                        <option value="{{cargo.Id}}" selected>{{cargo.Nombre}}</option>
+                                    {% else %}
+                                        <option value="{{cargo.Id}}">{{cargo.Nombre}}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
-                </div>
-            </form>
-               
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn_confirmation_mi_color" onclick="Agregar_Personal();">Agregar</button>
+            </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn_confirmation_mi_color" onclick="Agregar_Personal();">Agregar</button>
-        </div>
-      </div>
     </div>
-
 </div>
 
 <div class="modal fade" id="ModificarPersonal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

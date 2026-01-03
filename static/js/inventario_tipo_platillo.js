@@ -75,13 +75,13 @@ async function DarBajaTipoPlatillo(idTipo) {
   // Confirmación inicial
   const confirmacion = await Swal.fire({
     title: "¿Realmente desea eliminar este tipo de consumo?",
-    icon: "warning",
+    icon: "question",
     iconColor: "#ff964e",
     showCancelButton: true,
     cancelButtonText: "Cancelar",
     confirmButtonText: "Eliminar",
     confirmButtonColor: "#ff6464",
-    reverseButtons: true
+    reverseButtons: true,
   });
 
   if (!confirmacion.isConfirmed) return;
