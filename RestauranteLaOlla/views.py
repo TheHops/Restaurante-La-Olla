@@ -178,53 +178,77 @@ def validar_filtro_por_cargo(cargo, valor_filtro):
     return default
 
 def FiltrarOrdenes(request):
-    if request.user.is_authenticated:
-        try:
-            if request.method == "GET":
-                EstadoOrden = request.GET.get("SelectFiltrarOrdenes")
-                
-                cargo_usuario = request.user.IdCargo.Nombre
-                
-                validar_cargo(request, cargo_usuario)
-
-                # Validación segura del filtro
-                EstadoOrden = validar_filtro_por_cargo(cargo_usuario, EstadoOrden)
-
-                if EstadoOrden == "5":
-                    OrdenesFiltradas = Orden.objects.select_related('IdUsuario').prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.order_by('-EsActivo'))).filter(EsActivo="1").order_by(Case(When(Estado='1', then=0), When(Estado='4', then=1), When(Estado='3', then=2), When(Estado='0', then=3), When(Estado='2', then=4)), '-UltimaModificacion')
-                elif EstadoOrden == "6":
-                    OrdenesFiltradas = Orden.objects.select_related('IdUsuario').prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.order_by('-EsActivo'))).filter(EsActivo="1", Estado__in=["1", "4"]).order_by(Case(When(Estado='1', then=0), When(Estado='4', then=1)), '-UltimaModificacion')
-                else:
-                    OrdenesFiltradas = Orden.objects.select_related('IdUsuario').prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.order_by('-EsActivo'))).filter(Q(Estado=EstadoOrden) & Q(EsActivo="1")).order_by('-UltimaModificacion')
-                
-                # metodoPago = ''
-                # asignar el metodo de pago desde el request
-                
-                platillos = Platillo.objects.all().values()
-
-                # print(ordenes)
-                contexto = {
-                    "Ordenes": OrdenesFiltradas,
-                    # "MetodoPago": metodoPago,
-                    "Platillos": platillos,
-                    "CargoUsuario": cargo_usuario
-                }
-
-                # ordenes = Orden.objects.filter(activo="1").order_by(Case(When(estado='1', then=0), When(estado='0', then=1), When(estado='2', then=2)), '-id').values()
-
-                # MesasObtenidas = Mesa.objects.filter(
-                #     Q(idareamesa=areamesaSeleccionada) & Q(activo="1")).values()
-                # No será sensible a las mayusculas con la i antes de contains
-
-                return render(request, "ordenesFiltradas.html", contexto)
-        except Exception as ex:
-            print("\n############### EXCEPCIÓN ###############")
-            print(traceback.format_exc())
-            print("#########################################\n")
-            return JsonResponse({'error': str(ex)}, status=500)
-    else:
-        # Si no lo ha hecho entonces deberá iniciar sesión
+    if not request.user.is_authenticated:
         return render(request, "login.html")
+
+    if request.method != "GET":
+        return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
+
+    try:
+        EstadoOrden = request.GET.get("SelectFiltrarOrdenes")
+        cargo_usuario = request.user.IdCargo.Nombre
+
+        validar_cargo(request, cargo_usuario)
+
+        # Validación segura del filtro
+        EstadoOrden = validar_filtro_por_cargo(cargo_usuario, EstadoOrden)
+
+        # Query base
+        ordenes = Orden.objects.select_related(
+            'IdUsuario'
+        ).prefetch_related(
+            Prefetch('Detalles', queryset=DetalleOrden.objects.order_by('-EsActivo'))
+        ).filter(EsActivo="1")
+
+        # FILTRO ADICIONAL PARA MESERO
+        if cargo_usuario == "Mesero":
+            ordenes = ordenes.filter(IdUsuario=request.user)
+
+        # FILTROS POR ESTADO
+        if EstadoOrden == "5":
+            ordenes = ordenes.order_by(
+                Case(
+                    When(Estado='1', then=0),
+                    When(Estado='4', then=1),
+                    When(Estado='3', then=2),
+                    When(Estado='0', then=3),
+                    When(Estado='2', then=4),
+                ),
+                '-UltimaModificacion'
+            )
+
+        elif EstadoOrden == "6":
+            ordenes = ordenes.filter(
+                Estado__in=["1", "4"]
+            ).order_by(
+                Case(
+                    When(Estado='1', then=0),
+                    When(Estado='4', then=1),
+                ),
+                '-UltimaModificacion'
+            )
+
+        else:
+            ordenes = ordenes.filter(
+                Estado=EstadoOrden
+            ).order_by('-UltimaModificacion')
+
+        platillos = Platillo.objects.all().values()
+
+        contexto = {
+            "Ordenes": ordenes,
+            "Platillos": platillos,
+            "CargoUsuario": cargo_usuario
+        }
+
+        return render(request, "ordenesFiltradas.html", contexto)
+
+    except Exception as ex:
+        print("\n############### EXCEPCIÓN ###############")
+        print(traceback.format_exc())
+        print("#########################################\n")
+        return JsonResponse({'error': str(ex)}, status=500)
+
 #endregion FiltrarOrdenes
 
 #region Cargo

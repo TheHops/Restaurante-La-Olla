@@ -480,7 +480,7 @@ async function CancelarOrden(idOrden) {
     iconColor: "#ff964e",
     didOpen: () => {
       const input = document.getElementById("motivo");
-      if (input) input.blur(); // 👈 Quita el focus
+      if (input) input.blur(); 
     },
     preConfirm: () => document.getElementById("motivo").value.trim(),
     reverseButtons: true,

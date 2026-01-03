@@ -252,6 +252,8 @@ class DetalleOrden(models.Model):
     
     # Sirve para indicar si fué editado o creado en una edición
     DesdeEdicion = models.BooleanField(db_column="desde_edicion", null=True, default=False)
+    
+    EsNuevo = models.BooleanField(db_column="es_nuevo", null=True, default=False)
 
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 

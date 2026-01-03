@@ -5,6 +5,10 @@ from Application.models import Cargo, Usuario
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+
 User = get_user_model()
 
 def MiPerfil(request):
@@ -79,6 +83,63 @@ def EditarDatosPerfil (request):
             usuario.save()
             
             return JsonResponse({"status": "ok", "message": "Los datos de su perfil fueron modificados con éxito"})
+        except Exception as ex:
+            print()
+            print("#################### E X C E P C I O N ########################")
+            print(ex)
+            print("########################################################")
+            print()
+    else:
+        # Si no lo ha hecho entonces deberá iniciar sesión
+        return render(request, "login.html")
+    
+def CambiarPass (request):
+    if request.user.is_authenticated:
+        if request.method != "POST":
+            return JsonResponse({
+                "status": "error",
+                "message": "Método no permitido"
+            })
+        
+        try:
+            new_pass = request.POST.get("NewPass")
+            verify_pass = request.POST.get("VerifyPass")
+
+            # 🔹 Verificar que vengan datos
+            if not new_pass or not verify_pass:
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Debe completar todos los campos"
+                })
+
+            # 🔹 Verificar coincidencia
+            if new_pass != verify_pass:
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Las contraseñas no coinciden"
+                })
+
+            # 🔹 Validar contraseña con Django
+            try:
+                validate_password(new_pass, user=request.user)
+            except ValidationError as e:
+                return JsonResponse({
+                    "status": "error",
+                    "message": " ".join(e.messages)
+                })
+
+            # 🔹 Cambiar contraseña
+            user = request.user
+            user.set_password(new_pass)
+            user.save()
+
+            # 🔹 Mantener sesión activa
+            update_session_auth_hash(request, user)
+
+            return JsonResponse({
+                "status": "ok",
+                "message": "La contraseña fué cambiada con éxito"
+            })
         except Exception as ex:
             print()
             print("#################### E X C E P C I O N ########################")

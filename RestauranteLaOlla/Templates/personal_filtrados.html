@@ -64,7 +64,7 @@
                     
                     {% if personal.EsActivo == '1' %}
                         <button class="actionButton btnEliminar" id="{{personal.Id}}" onclick="ConfirmarBaja('{{personal.Id}}')">
-                            <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar personal">
+                            <img src="{% static 'img/delete1.png' %}" alt="Dar baja" title="Dar baja personal">
                         </button>
                         
                         <button class="actionButton btnRestablecerPass" id="{{personal.Id}}" onclick="ConfirmarRestablecer('{{personal.Id}}')">
