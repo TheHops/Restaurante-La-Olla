@@ -201,13 +201,13 @@
         
         {% if Detalle.EsActivo == "1" %}
           {% if Detalle.DesdeEdicion %}
-            <div class="iconoOrdenEditada" style="
-            left: -10px;
-            width: 25px;
-            height: 25px;
-            ">
-              <img src="{% static 'img/Edit_alert_png.png' %}" style="width: 10px; height: 10px; z-index: 3;" alt="El detalle fué editado" title="El detalle fué editado">
-            </div>
+            {% if Detalle.EsNuevo %}
+              <div class="signalDetalleNuevo signalDetalle">
+              </div>
+            {% else %}
+              <div class="signalDetalleEditado signalDetalle">
+              </div>
+            {% endif %}
           {% endif %}
           
           <span
@@ -220,6 +220,12 @@
           <span style="width: 15%">{{ Detalle.Cantidad }}</span>
           <span style="width: 10%">C${{ Detalle.PrecioVenta }}</span>
         {% else %}
+        
+          {% if Detalle.EsEliminado %}
+            <div class="signalDetalleEliminado signalDetalle">
+            </div>
+          {% endif %}
+
           <span
             style="width: 70%"
             class="detalleTruncar tachado"

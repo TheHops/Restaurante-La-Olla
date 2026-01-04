@@ -2,36 +2,44 @@
 {% block content %} 
 {% load static %}
 
-<div class="EncabezadoOrdenesList">
-  {% if request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Administrador" %}
-    <a href="{% url 'venta' %}">
-      <button id="btnVolver">
-        <i class="fa-solid fa-arrow-left"></i> Volver
-      </button>
-    </a>
-  {% endif %}
-
-  <select name="" id="listaEstadoOrdenes" onchange="CambioEstadoOrdenes(this.value)">
-    {% if CargoUsuario != "Cajero" %}
-      <option value="1">Pendientes</option>
-      <option value="4">En preparación</option>
+<div class="EncabezadoOrdenesList py-2 px-3">
+  <div class="EncabezadoOrdenesListIzquierda">
+    {% if request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Administrador" %}
+      <a href="{% url 'venta' %}">
+        <button id="btnVolver">
+          <i class="fa-solid fa-arrow-left"></i> Volver
+        </button>
+      </a>
     {% endif %}
+  
+    <select name="" id="listaEstadoOrdenes" onchange="CambioEstadoOrdenes(this.value)">
+      {% if CargoUsuario != "Cajero" %}
+        <option value="1">Pendientes</option>
+        <option value="4">En preparación</option>
+      {% endif %}
+  
+      {% if CargoUsuario == "Cajero" or CargoUsuario == "Administrador" %}
+        <option value="3">Preparadas</option>
+        <option value="0">Registradas</option>
+        <option value="2">Anuladas</option>
+      {% endif %}
+  
+      {% if CargoUsuario == "Administrador" %}
+        <option value="5">Todas</option>
+      {% endif %}
+  
+      <!-- TODO: Filtrar solo para cocinero y mesero -->
+      {% if CargoUsuario == "Mesero" or CargoUsuario == "Cocinero" %}
+        <option value="6">Ambas</option>
+      {% endif %}
+    </select>
+  </div>
 
-    {% if CargoUsuario == "Cajero" or CargoUsuario == "Administrador" %}
-      <option value="3">Preparadas</option>
-      <option value="0">Registradas</option>
-      <option value="2">Anuladas</option>
-    {% endif %}
-
-    {% if CargoUsuario == "Administrador" %}
-      <option value="5">Todas</option>
-    {% endif %}
-
-    <!-- TODO: Filtrar solo para cocinero y mesero -->
-    {% if CargoUsuario == "Mesero" or CargoUsuario == "Cocinero" %}
-      <option value="6">Ambas</option>
-    {% endif %}
-  </select>
+  <div class="EncabezadoOrdenesListDerecha">
+    <button id="btnInfoOrdenes" data-toggle="modal" data-target="#InfoDetalleOrden">
+      <img src="{% static 'img/info2.png' %}" alt="Información de los íconos que se presentan">
+    </button>
+  </div>
 </div>
 
 <div id="listaOrdenesPoFoC">
@@ -244,32 +252,6 @@
             Registrar
           </button>        
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="InfoCrearOrden" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title ">Información adicional</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" style="display: flex; flex-direction: column;">
-          <h5 class="subTItuloInfoCrearOrden">Crear orden</h5>
-          <h6 class="textoInfoCrearOrden">Realiza el proceso de creación de la orden una vez haya agregado al menos un consumo</h6>
-          <hr>
-          <h5 class="subTItuloInfoCrearOrden">Limpiar</h5>
-          <h6 class="textoInfoCrearOrden">Elimina todos los consumos que han sido agregados a la orden, volviendo a dejarla vacía para poder agregar nuevos consumos</h6>
-          <hr>
-          <h5 class="subTItuloInfoCrearOrden">Quitar</h5>
-          <h6 class="textoInfoCrearOrden">Es similar al anterior pero elimina la orden de forma individual por consumo</h6>
-          <hr>
-          <h5 class="subTItuloInfoCrearOrden">Al crear la orden</h5>
-          <h6 class="textoInfoCrearOrden">Podrá ser capaz de escribir alguna información adicional que podrá ver el personal de cocina cuando se genere la orden</h6>
       </div>
     </div>
   </div>

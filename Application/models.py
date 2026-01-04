@@ -250,10 +250,12 @@ class DetalleOrden(models.Model):
 
     SubTotal = models.DecimalField(db_column='sub_total', max_digits=8, decimal_places=2)
     
-    # Sirve para indicar si fué editado o creado en una edición
+    # Sirve para indicar si fué recién editado
     DesdeEdicion = models.BooleanField(db_column="desde_edicion", null=True, default=False)
     
+    # Estos van a estar en True solo si fueron recién agregados o eliminados
     EsNuevo = models.BooleanField(db_column="es_nuevo", null=True, default=False)
+    EsEliminado = models.BooleanField(db_column="es_eliminado", null=True, default=False)
 
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 

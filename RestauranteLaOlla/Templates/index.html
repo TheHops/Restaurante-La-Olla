@@ -224,6 +224,92 @@
       </div>
     </div>
 
+    <div class="modal fade" id="InfoCrearOrden" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title ">Información adicional</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" style="display: flex; flex-direction: column;">
+              <h5 class="subTItuloInfoCrearOrden">Crear orden</h5>
+              <h6 class="textoInfoCrearOrden">Realiza el proceso de creación de la orden una vez haya agregado al menos un consumo</h6>
+              <hr>
+              <h5 class="subTItuloInfoCrearOrden">Limpiar</h5>
+              <h6 class="textoInfoCrearOrden">Elimina todos los consumos que han sido agregados a la orden, volviendo a dejarla vacía para poder agregar nuevos consumos</h6>
+              <hr>
+              <h5 class="subTItuloInfoCrearOrden">Quitar</h5>
+              <h6 class="textoInfoCrearOrden">Es similar al anterior pero elimina la orden de forma individual por consumo</h6>
+              <hr>
+              <h5 class="subTItuloInfoCrearOrden">Al crear la orden</h5>
+              <h6 class="textoInfoCrearOrden">Podrá ser capaz de escribir alguna información adicional que podrá ver el personal de cocina cuando se genere la orden</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="InfoDetalleOrden" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title ">Detalles de íconos en las ordenes</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="modal-body" style="display: flex; flex-direction: column;">
+            <div class="contInfoSignals mb-2">
+              <div class="iconoOrdenEditada" style="
+                width: 40px;
+                height: 40px;
+                position: initial;
+                ">
+                  <img src="{% static 'img/Edit_alert_png.png' %}" style="width: 20px; height: 20px; z-index: 3;" alt="La orden fué editada" title="La orden fué editada">
+              </div>
+              
+              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Indica que la orden fué editada</h6>
+            </div>
+
+            <hr>
+            
+            <div class="contInfoSignals">
+              <div style="width: 40px; min-width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                <div class="signalDetalleEditado signalDetalle" style="position: initial;">
+                </div>
+              </div>
+              
+              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Indica que el detalle fué editado</h6>
+            </div>
+
+            <hr>
+
+            <div class="contInfoSignals">
+              <div style="width: 40px; min-width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                <div class="signalDetalleNuevo signalDetalle" style="position: initial;">
+                </div>
+              </div>
+              
+              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Indica que el detalle es nuevo porque fué agregado en la edición de la orden</h6>
+            </div>
+
+            <hr>
+
+            <div class="contInfoSignals">
+              <div style="width: 40px; min-width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                <div class="signalDetalleEliminado signalDetalle" style="position: initial;">
+                </div>
+              </div>
+              
+              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Indica que el detalle fué eliminado en la última edición de la orden</h6>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <button id="focusSink" style="position:absolute; left:-9999px; top:-9999px;"></button>
   </body>
 </html>
