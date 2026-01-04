@@ -620,6 +620,8 @@ def EditarOrden (request):
         orden.FueEditada = True
         orden.UltimaModificacion = timezone.now()
         orden.Detalles.update(DesdeEdicion=False)
+        orden.Detalles.update(EsNuevo=False)
+        orden.Detalles.update(EsEliminado=False)
         orden.DescripcionEdicion = None
         orden.save()
 
@@ -654,7 +656,8 @@ def EditarOrden (request):
                     PrecioVenta=precio,
                     SubTotal=subtotal,
                     EsActivo=es_activo,
-                    DesdeEdicion=True
+                    DesdeEdicion=True,
+                    EsNuevo=True
                 )
                 
                 detalleNuevo = True
@@ -678,6 +681,7 @@ def EditarOrden (request):
                     if es_activo == "0":
                         detalleEliminado = True
                         cantidadEliminados += 1
+                        detalle.EsEliminado = True
                     else:
                         detalleEditado = True
                         cantidadEditados += 1

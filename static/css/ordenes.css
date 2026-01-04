@@ -61,6 +61,16 @@
     animation: pulsoIcono 1.4s ease-in-out infinite;
 }
 
+.contInfoSignals {
+    display: flex;
+    align-items: center;
+}
+
+#InfoDetalleOrden hr {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 /* El borde (estrella blanca de fondo) */
 .iconoOrdenEditada::before {
     content: "";
@@ -448,6 +458,34 @@
 
 .filaDetalleOrdenNuevo:hover {
     background-color: hsl(134, 41%, 90%) !important;
+}
+
+.signalDetalle
+{
+    left: -5px;
+    top: 5px;
+    width: 15px;
+    height: 15px;
+
+    position: absolute;
+    border-radius: 50%;
+
+    animation: pulsoIcono 1.4s ease-in-out infinite;
+}
+
+.signalDetalleEditado
+{
+    background-color: hsl(30, 100%, 50%);
+}
+
+.signalDetalleNuevo
+{
+    background-color: hsl(200, 80%, 50%);
+}
+
+.signalDetalleEliminado
+{
+    background-color: hsl(0, 74%, 50%);
 }
 
 /****************************************************/

@@ -261,9 +261,50 @@
           </div>
 
           <div class="modal-body" style="display: flex; flex-direction: column;">
-              <h5 class="subTItuloInfoCrearOrden">Crear orden</h5>
-              <h6 class="textoInfoCrearOrden">Realiza el proceso de creación de la orden una vez haya agregado al menos un consumo</h6>
-              <hr>
+            <div class="contInfoSignals mb-2">
+              <div class="iconoOrdenEditada" style="
+                width: 40px;
+                height: 40px;
+                position: initial;
+                ">
+                  <img src="{% static 'img/Edit_alert_png.png' %}" style="width: 20px; height: 20px; z-index: 3;" alt="La orden fué editada" title="La orden fué editada">
+              </div>
+              
+              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Indica que la orden fué editada</h6>
+            </div>
+
+            <hr>
+            
+            <div class="contInfoSignals">
+              <div style="width: 40px; min-width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                <div class="signalDetalleEditado signalDetalle" style="position: initial;">
+                </div>
+              </div>
+              
+              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Indica que el detalle fué editado</h6>
+            </div>
+
+            <hr>
+
+            <div class="contInfoSignals">
+              <div style="width: 40px; min-width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                <div class="signalDetalleNuevo signalDetalle" style="position: initial;">
+                </div>
+              </div>
+              
+              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Indica que el detalle es nuevo porque fué agregado en la edición de la orden</h6>
+            </div>
+
+            <hr>
+
+            <div class="contInfoSignals">
+              <div style="width: 40px; min-width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                <div class="signalDetalleEliminado signalDetalle" style="position: initial;">
+                </div>
+              </div>
+              
+              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Indica que el detalle fué eliminado en la última edición de la orden</h6>
+            </div>
           </div>
         </div>
       </div>

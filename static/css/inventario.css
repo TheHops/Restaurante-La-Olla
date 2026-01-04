@@ -227,7 +227,7 @@ a .paginate_button .current {
 }
 
 .btnRestablecerPass {
-    border-color: hsl(200, 80%, 70%);
+    border-color: #75c7f0;
 }
 
 .btnRestablecerPass:hover {
