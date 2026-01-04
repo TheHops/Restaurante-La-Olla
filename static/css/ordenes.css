@@ -2,9 +2,15 @@
 .EncabezadoOrdenesList {
     background-color: white;
     height: auto;
-    padding-bottom: 10px;
     border: #DF362D solid 1px;
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.EncabezadoOrdenesListIzquierda {
+    display: flex;
+    justify-content: center;
 }
 
 #listaOrdenesPoFoC::-webkit-scrollbar {
@@ -14,6 +20,18 @@
 #listaOrdenesPoFoC::-webkit-scrollbar-thumb {
     background: rgba(200, 100, 100, .5);
     border-radius: 10px;
+}
+
+#btnInfoOrdenes {
+    width: 40px;
+    height: 40px;
+    background: hsl(0, 0%, 50%);
+    border-color: hsl(350, 0%, 55%);
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
 }
 
 #listaOrdenesPoFoC {
@@ -276,8 +294,6 @@
     box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
     display: inline-block;
     cursor: pointer;
-
-    margin: 10px 0 0 10px;
 }
 
 .detallitoOrden {
@@ -477,8 +493,8 @@
 }
 
 #listaEstadoOrdenes {
+    margin-left: 10px;
     width: 300px;
-    margin: 10px 0 0 15px;
     min-width: 155px;
     height: 40px;
     border-color: rgb(200, 50, 50) rgb(255, 100, 100) rgb(255, 100, 100) rgb(200, 50, 50);
