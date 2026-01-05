@@ -1,0 +1,28 @@
+.titulo-fecha {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #555;
+}
+
+.input-fecha-oculto {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.label-fecha {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: 1px dashed #aaa;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.label-fecha:hover {
+    background-color: #f5f5f5;
+}
