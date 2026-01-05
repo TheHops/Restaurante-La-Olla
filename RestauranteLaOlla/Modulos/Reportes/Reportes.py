@@ -14,6 +14,12 @@ from openpyxl.utils import get_column_letter
 from Application.models import Platillo, TipoPlatillo
 from RestauranteLaOlla import settings
 
+def Reportes (request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+    
+    return render(request, "reportes.html")
+
 #region EXPORTACIONES
 def Exportar_ExcelPlatillo(request):
     if not request.user.is_authenticated:

@@ -1,0 +1,111 @@
+{% extends 'index.html' %}
+
+{% block content %}
+{% load static %}
+
+<div id="encabezado_inventario">
+    <div id="contenedorIzquierdoEncabezadoInventario">
+        <div class="contenedorFechasReportes">
+            <span class="titulo-fecha">Desde</span>
+
+            <label for="fechaDesde" id="labelDesde" class="label-fecha">
+                - - - -
+            </label>
+
+            <input
+                type="datetime-local"
+                id="fechaDesde"
+                name="fecha_desde"
+                class="input-fecha-oculto">
+        </div>
+        
+        <div class="contenedorFechasReportes">
+            <span class="titulo-fecha">Hasta</span>
+
+            <label for="fechaHasta" id="labelHasta" class="label-fecha">
+                - - - -
+            </label>
+
+            <input
+                type="datetime-local"
+                id="fechaHasta"
+                name="fecha_hasta"
+                class="input-fecha-oculto">
+        </div>
+
+        <div>
+            <button data-toggle="modal" data-target="#FiltrarOrdenes">
+                Más filtros
+            </button>
+        </div>
+    </div>
+
+    <div id="contenedorDerechoEncabezadoInventario">
+        <!-- Botón para mostrar u ocultar los registros inactivos -->
+        <button data-toggle="modal" data-target="#ExportarOrdenes" style="margin-left: 20px;">Exportar</button>
+    </div>
+</div>
+
+<div id="cuerpoInventario">
+    <!-- TODO EL CONTENIDO ESTÁ EN LA PLANTILLA 'personal_filtrados' -->
+</div>
+
+<div class="modal-overlay"></div>
+
+<div class="modal fade" id="ExportarOrdenes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title " id="exampleModalLabel" >Exportar ordenes</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body row exportar col-12">
+                <div class="col-6">
+                    <button class="excel w-100">
+                        <a href="">
+                            <img src="{% static 'img/Export_excel_2.png' %}">
+                        </a>
+                    </button>
+                </div>
+        
+                <div class="col-6">
+                    <button class="pdf w-100">
+                        <a href="">
+                            <img src="{% static 'img/Export_pdf_2.png' %}">
+                        </a>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="FiltrarOrdenes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title " id="exampleModalLabel" >Filtrar ordenes</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body row exportar col-12">
+                
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/reportes.js' %}"></script>
+
+{% endblock %}
