@@ -6,32 +6,16 @@
 <div id="encabezado_inventario">
     <div id="contenedorIzquierdoEncabezadoInventario">
         <div class="contenedorFechasReportes">
-            <span class="titulo-fecha">Desde</span>
-
-            <label for="fechaDesde" id="labelDesde" class="label-fecha">
-                - - - -
-            </label>
-
-            <input
-                type="datetime-local"
-                id="fechaDesde"
-                name="fecha_desde"
-                class="input-fecha-oculto">
+            <input type="date" id="fechaDesde" name="fecha_desde">
         </div>
         
         <div class="contenedorFechasReportes">
-            <span class="titulo-fecha">Hasta</span>
-
-            <label for="fechaHasta" id="labelHasta" class="label-fecha">
-                - - - -
-            </label>
-
-            <input
-                type="datetime-local"
-                id="fechaHasta"
-                name="fecha_hasta"
-                class="input-fecha-oculto">
+            <input type="date" id="fechaHasta" name="fecha_hasta">
         </div>
+
+        <small id="errorFechas" style="color:#dc3545; display:none;">
+            La fecha <strong>de inicio</strong> no puede ser mayor que la<strong> fecha fin</strong>
+        </small>
 
         <div>
             <button data-toggle="modal" data-target="#FiltrarOrdenes">

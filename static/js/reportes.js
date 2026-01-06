@@ -1,23 +1,34 @@
-document.getElementById("fechaDesde").addEventListener("change", function () {
-  document.getElementById("labelDesde").textContent = this.value
-    ? formatearFecha(this.value)
-    : "- - - -";
+const fechaDesde = document.getElementById("fechaDesde");
+const fechaHasta = document.getElementById("fechaHasta");
+const errorFechas = document.getElementById("errorFechas");
+
+function validarFechas() {
+  if (!fechaDesde.value || !fechaHasta.value) {
+    errorFechas.style.display = "none";
+    return false;
+  }
+
+  const desde = new Date(fechaDesde.value);
+  const hasta = new Date(fechaHasta.value);
+
+  if (desde > hasta) {
+    errorFechas.style.display = "block";
+    fechaHasta.setCustomValidity("Fecha inválida");
+    return false;
+  }
+
+  errorFechas.style.display = "none";
+  fechaHasta.setCustomValidity("");
+  return true;
+}
+
+fechaDesde.addEventListener("change", () => {
+  if(validarFechas()) filtrarOrdenesFecha();
+});
+fechaHasta.addEventListener("change", () => {
+  if (validarFechas()) filtrarOrdenesFecha();
 });
 
-document.getElementById("fechaHasta").addEventListener("change", function () {
-  document.getElementById("labelHasta").textContent = this.value
-    ? formatearFecha(this.value)
-    : "- - - -";
-});
-
-function formatearFecha(valor) {
-  const fecha = new Date(valor);
-
-  return fecha.toLocaleString("es-NI", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+function filtrarOrdenesFecha(){
+  console.log("FECHA VALIDA");
 }
