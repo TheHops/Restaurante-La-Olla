@@ -1,0 +1,60 @@
+{% csrf_token %} {% load static %} 
+
+<!-- TABLA CON SU RESPECTIVO CONTENIDO -->
+    <table class="display tablaInventario" style="width:100%;">
+        <thead>
+            <!-- Columnas -->
+            <tr>
+                <th>Nº orden</th>
+                <th>Fecha y hora</th>
+                <th>Mesas</th>
+                <th>Área</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <!-- Filas -->
+        <tbody>
+            {% for Orden in Ordenes %}
+            <tr>
+                <!-- N orden -->
+                <td>#{{Orden.Id}}</td>
+
+                <!-- Fecha y hora -->
+                <td>{{Orden.UltimaModificacion}}</td>
+                
+                <!-- Mesas -->
+                <td>
+                    {% for mesa in Orden.Mesas.all %}
+                        #{{mesa.IdMesa.Numero}} 
+                    {% if not forloop.last %} - {% endif %} 
+                    {% endfor %}
+                </td>
+                
+                <!-- Area -->
+                <td>{{Orden.AreaDeMesa}}</td>
+
+                <!-- Acciones -->
+                <td class="actions">
+
+                    <button
+                        class="btnEditarOrden"
+                        data-toggle="modal"
+                        data-target="#EditarOrden"
+                        onclick="rellenarParaEditarOrden('{{Orden.Id}}')"
+                        >Editar
+                    </button>
+                
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <!-- <tfoot>
+                <tr>
+                    <th>Insumo</th>
+                    <th>Presentación</th>
+                    <th>Stock</th>
+                    <th>Unidad de medida</th>
+                </tr>
+            </tfoot> -->
+    </table>

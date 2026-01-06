@@ -29,6 +29,29 @@ fechaHasta.addEventListener("change", () => {
   if (validarFechas()) filtrarOrdenesFecha();
 });
 
+function rellenarParaMostrarOrden(idOrden) {
+  let request = new XMLHttpRequest();
+
+  const url = `/InicioMostrar?IdOrden=${idOrden}`;
+
+  // data.append('InputBuscarPlatillo', cadena);
+  request.open("GET", url);
+  request.send();
+  request.onreadystatechange = function () {
+    if (this.readyState == 4) {
+      let contenedor = document.getElementById("contenidoDetalleOrden");
+
+      if (contenedor) {
+        destruirPopovers();
+        contenedor.innerHTML = this.responseText;
+      }
+    }
+  };
+}
+
 function filtrarOrdenesFecha(){
   console.log("FECHA VALIDA");
+
+  console.log("Desde " + fechaDesde.value);
+  console.log("Hasta " + fechaHasta.value);
 }

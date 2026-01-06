@@ -8,10 +8,11 @@ from django.shortcuts import render
 from jinja2 import Environment, FileSystemLoader
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
-import pdfkit, xlwt
+import pdfkit
 from openpyxl.utils import get_column_letter
+from django.db.models import Prefetch
 
-from Application.models import Platillo, TipoPlatillo
+from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden
 from RestauranteLaOlla import settings
 
 def Reportes (request):
@@ -19,6 +20,27 @@ def Reportes (request):
         return render(request, "login.html")
     
     return render(request, "reportes.html")
+
+def ReportesOrdenesFiltradas (request):
+    return render(request, "reportes_ordenes_filtradas.html")
+
+def InicioMostrar(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+    
+    idOrden = request.GET.get("IdOrden")
+    
+    if not idOrden:
+        return JsonResponse({"message": "Orden no válida"})
+
+    orden = Orden.objects.prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1"))).get(Id=idOrden)
+    
+    contexto = {
+        "Orden": orden,
+        "Modo": "Mostrar"
+    }
+
+    return render(request, "detalle_orden_editar.html", contexto)
 
 #region EXPORTACIONES
 def Exportar_ExcelPlatillo(request):
