@@ -200,13 +200,15 @@
       <div class="detalle">
         
         {% if Detalle.EsActivo == "1" %}
-          {% if Detalle.DesdeEdicion %}
-            {% if Detalle.EsNuevo %}
-              <div class="signalDetalleNuevo signalDetalle">
-              </div>
-            {% else %}
-              <div class="signalDetalleEditado signalDetalle">
-              </div>
+          {% if Orden.Estado != "0" and Orden.Estado != "2" %}
+            {% if Detalle.DesdeEdicion %}
+              {% if Detalle.EsNuevo %}
+                <div class="signalDetalleNuevo signalDetalle">
+                </div>
+              {% else %}
+                <div class="signalDetalleEditado signalDetalle">
+                </div>
+              {% endif %}
             {% endif %}
           {% endif %}
           
@@ -221,9 +223,11 @@
           <span style="width: 10%">C${{ Detalle.PrecioVenta }}</span>
         {% else %}
         
-          {% if Detalle.EsEliminado %}
-            <div class="signalDetalleEliminado signalDetalle">
-            </div>
+          {% if Orden.Estado != "0" and Orden.Estado != "2" %}
+            {% if Detalle.EsEliminado %}
+              <div class="signalDetalleEliminado signalDetalle">
+              </div>
+            {% endif %}
           {% endif %}
 
           <span
