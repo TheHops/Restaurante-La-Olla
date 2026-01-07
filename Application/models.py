@@ -32,7 +32,7 @@ class Usuario(AbstractUser):
     IdCargo = models.ForeignKey(Cargo, on_delete=models.SET_NULL, null=True, verbose_name="Cargo", db_column='id_cargo', related_name='Usuarios')
     Nombres = models.CharField(max_length=15, default="", db_column='nombres')
     Apellidos = models.CharField(max_length=15, default="", db_column='apellidos')
-    Direccion = models.CharField(max_length=120, blank=True, null=True, default="", db_column='direccion')
+    Direccion = models.CharField(max_length=200, blank=True, null=True, default="", db_column='direccion')
     Telefono = models.CharField(max_length=20, blank=True, null=True, db_column='telefono')
     
     email = models.EmailField(unique=True, null=True, default=None, db_column="email")

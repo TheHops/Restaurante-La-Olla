@@ -5,7 +5,7 @@
 
 <div id="encabezado_inventario">
     <div id="contenedorIzquierdoEncabezadoInventario">
-        <button id="agregar"  data-toggle="modal" data-target="#AgregarPersonal">
+        <button id="agregar"  data-toggle="modal" data-target="#AgregarPersonal" onclick="resetFormAgregarPersonal();">
             <img src="{% static 'img/Add_user.png' %}" style="width: 30px; height: 30px; margin-right: 5px;" title="Agregar personal">Agregar personal
         </button>
     
@@ -77,7 +77,7 @@
             </div>
 
             <div class="modal-body">
-                <form method="POST" action="">
+                <form method="POST" action="" id="formAgregarPersonal">
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-6 mb-2">
@@ -97,7 +97,7 @@
                         
                         <div class="col-6 mb-2">
                             <h4 style="font-size: 20px; margin-bottom: 3px;">Contraseña temporal<span class="asterisco">*</span></h4>
-                            <input type="Password" class="form-control" id="Pass" placeholder="Ej: JC123*" required autocomplete="new-password">
+                            <input type="Password" class="form-control" id="Pass" placeholder="Ej: JC123*" required autocomplete="off">
                         </div>
                         
                         <div class="col-12 mb-2">
