@@ -83,11 +83,11 @@
                 <div class="row">
                     
                     <div class="col-md-12 mb-2">
-                        <h4 style="font-size: 20px; margin-bottom: 3px;">Nombre</h4>
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Nombre<span class="asterisco">*</span></h4>
                         <input type="text" class="form-control" id="NombrePlatillo" placeholder="Ej: Frijoles" required>
                     </div>
                     <div class="col-md-6 mb-2">
-                        <h4 style="font-size: 20px; margin-bottom: 3px;">Tipo de consumo</h4>
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Tipo de consumo<span class="asterisco">*</span></h4>
                         <select class="form-control" id="TipoPlatillo">
                             {% for tipoplatillo in TypePlatillo %}
                             {% if tipoplatillo.EsActivo == "1" %}
@@ -99,7 +99,7 @@
                         </select>
                     </div>
                     <div class="col-md-6 mb-2">
-                        <h4 style="font-size: 20px; margin-bottom: 3px;">Precio (C$)</h4>
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Precio (C$)<span class="asterisco">*</span></h4>
                         <input type="text" inputmode="numeric" class="form-control" id="PrecioPlatillo" placeholder="Ej: 150" onkeypress="return soloNumeros(event)" required>
                     </div>
 

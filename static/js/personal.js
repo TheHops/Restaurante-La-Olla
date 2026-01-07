@@ -309,8 +309,9 @@ function ValidacionCamposVacios(banderaFormulario) {
     if (!fullname) {
       Swal.fire({
         title: "Nombre vacío",
-        text: "Debe ingresar los nombres del personal.",
-        icon: "warning",
+        text: "Debe ingresar los nombres del personal",
+        icon: "error",
+        confirmButtonColor: "#ff6464",
       });
       $("#Fullname").focus();
       return false;
@@ -319,8 +320,9 @@ function ValidacionCamposVacios(banderaFormulario) {
     if (!lastName) {
       Swal.fire({
         title: "Apellido vacío",
-        text: "Debe ingresar los apellidos del personal.",
-        icon: "warning",
+        text: "Debe ingresar los apellidos del personal",
+        icon: "error",
+        confirmButtonColor: "#ff6464",
       });
       $("#Apellidos").focus();
       return false;
@@ -328,9 +330,10 @@ function ValidacionCamposVacios(banderaFormulario) {
 
     if (!usuario) {
       Swal.fire({
-        title: "Usuario vacío",
-        text: "Debe ingresar el nombre de usuario.",
-        icon: "warning",
+        title: "Nombre de usuario vacío",
+        text: "Debe ingresar el nombre de usuario",
+        icon: "error",
+        confirmButtonColor: "#ff6464",
       });
       $("#User").focus();
       return false;
@@ -339,8 +342,9 @@ function ValidacionCamposVacios(banderaFormulario) {
     if (!pass) {
       Swal.fire({
         title: "Contraseña vacía",
-        text: "Debe ingresar la contraseña.",
-        icon: "warning",
+        text: "Debe ingresar la contraseña temporal del usuario",
+        icon: "error",
+        confirmButtonColor: "#ff6464",
       });
       $("#Pass").focus();
       return false;
@@ -356,9 +360,10 @@ function ValidacionCamposVacios(banderaFormulario) {
     // Validar campos obligatorios
     if (!usuario.trim()) {
       Swal.fire({
-        title: "Campo Usuario Vacío",
-        text: "Debe ingresar un usuario.",
-        icon: "warning",
+        title: "Nombre de usuario vacío",
+        text: "Debe ingresar el nombre de usuario",
+        icon: "error",
+        confirmButtonColor: "#ff6464",
       });
       $("#NameUsuario").focus();
       return false;
@@ -366,18 +371,20 @@ function ValidacionCamposVacios(banderaFormulario) {
 
     if (!nombre.trim()) {
       Swal.fire({
-        title: "Nombre Vacío",
-        text: "Debe ingresar el nombre del usuario.",
-        icon: "warning",
+        title: "Nombre vacío",
+        text: "Debe ingresar el nombre del usuario",
+        icon: "error",
+        confirmButtonColor: "#ff6464",
       });
       return false;
     }
 
     if (!apellido.trim()) {
       Swal.fire({
-        title: "Apellido Vacío",
-        text: "Debe ingresar el apellido del usuario.",
-        icon: "warning",
+        title: "Apellido vacío",
+        text: "Debe ingresar el apellido del usuario",
+        icon: "error",
+        confirmButtonColor: "#ff6464",
       });
       return false;
     }
@@ -387,8 +394,9 @@ function ValidacionCamposVacios(banderaFormulario) {
       if (newPass !== checkPass) {
         Swal.fire({
           title: "Contraseñas no coinciden",
-          text: "La confirmación no coincide con la nueva contraseña.",
-          icon: "warning",
+          text: "La confirmación no coincide con la nueva contraseña",
+          icon: "error",
+          confirmButtonColor: "#ff6464",
         });
         return false;
       }
