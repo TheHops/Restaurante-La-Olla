@@ -1,24 +1,119 @@
-import datetime
-from django.utils import timezone
-from decimal import Decimal
 import os
 import traceback
+import pdfkit
+
+from datetime import datetime, time
+from decimal import Decimal
+
+from jinja2 import Environment, FileSystemLoader
+
+from django.utils import timezone
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from jinja2 import Environment, FileSystemLoader
+from django.db.models import Prefetch
+
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
-import pdfkit, xlwt
 from openpyxl.utils import get_column_letter
 
-from Application.models import Platillo, TipoPlatillo
+from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden
 from RestauranteLaOlla import settings
+
+
 
 def Reportes (request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
     return render(request, "reportes.html")
+
+def ReportesOrdenesFiltradas (request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+
+    if request.method != "GET":
+        return JsonResponse(
+            {"status": "error", "message": "Método no permitido"},
+            status=405
+        )
+
+    try:
+        fecha_inicio_str = request.GET.get("FechaInicio")
+        fecha_fin_str = request.GET.get("FechaFin")
+
+        if not fecha_inicio_str or not fecha_fin_str:
+            return JsonResponse(
+                {"status": "error", "message": "Fechas incompletas"},
+                status=400
+            )
+
+        # Convertir string → date
+        fecha_inicio_date = datetime.strptime(fecha_inicio_str, "%Y-%m-%d").date()
+        fecha_fin_date = datetime.strptime(fecha_fin_str, "%Y-%m-%d").date()
+
+        # Validación lógica
+        if fecha_inicio_date > fecha_fin_date:
+            return JsonResponse(
+                {"status": "error", "message": "La fecha inicio no puede ser mayor a la fecha fin"},
+                status=400
+            )
+
+        # Ajustar horas
+        fecha_inicio = timezone.make_aware(datetime.combine(fecha_inicio_date, time.min), timezone.get_current_timezone())   # 00:00:00
+        fecha_fin = timezone.make_aware(datetime.combine(fecha_fin_date, time.max), timezone.get_current_timezone())         # 23:59:59.999999
+        
+        print(fecha_inicio)
+        print(fecha_fin)
+
+        # Query base
+        ordenes = Orden.objects.select_related(
+            'IdUsuario'
+        ).prefetch_related(
+            Prefetch('Detalles')
+        ).filter(
+            EsActivo="1",
+            UltimaModificacion__range=(fecha_inicio, fecha_fin),
+            Estado__in=["0"] 
+        ).order_by("-Id")
+        
+        print(ordenes)
+
+        contexto = {
+            "Ordenes": ordenes,
+        }
+
+        return render(
+            request,
+            "reportes_ordenes_filtradas.html",
+            contexto
+        )
+
+    except Exception as ex:
+        print("\n############### EXCEPCIÓN ###############")
+        print(traceback.format_exc())
+        print("#########################################\n")
+        return JsonResponse(
+            {"status": "error", "message": str(ex)},
+            status=500
+        )
+
+def InicioMostrar(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+    
+    idOrden = request.GET.get("IdOrden")
+    
+    if not idOrden:
+        return JsonResponse({"message": "Orden no válida"})
+
+    orden = Orden.objects.prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1"))).get(Id=idOrden)
+    
+    contexto = {
+        "Orden": orden,
+        "Modo": "Mostrar"
+    }
+
+    return render(request, "detalle_orden_editar.html", contexto)
 
 #region EXPORTACIONES
 def Exportar_ExcelPlatillo(request):

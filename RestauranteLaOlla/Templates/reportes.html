@@ -3,35 +3,23 @@
 {% block content %}
 {% load static %}
 
+<form action="">
+    {% csrf_token %}
+</form>
+
 <div id="encabezado_inventario">
     <div id="contenedorIzquierdoEncabezadoInventario">
         <div class="contenedorFechasReportes">
-            <span class="titulo-fecha">Desde</span>
-
-            <label for="fechaDesde" id="labelDesde" class="label-fecha">
-                - - - -
-            </label>
-
-            <input
-                type="datetime-local"
-                id="fechaDesde"
-                name="fecha_desde"
-                class="input-fecha-oculto">
+            <input type="date" id="fechaDesde" name="fecha_desde">
         </div>
         
         <div class="contenedorFechasReportes">
-            <span class="titulo-fecha">Hasta</span>
-
-            <label for="fechaHasta" id="labelHasta" class="label-fecha">
-                - - - -
-            </label>
-
-            <input
-                type="datetime-local"
-                id="fechaHasta"
-                name="fecha_hasta"
-                class="input-fecha-oculto">
+            <input type="date" id="fechaHasta" name="fecha_hasta">
         </div>
+
+        <small id="errorFechas" style="color:#dc3545; display:none;">
+            La fecha <strong>de inicio</strong> no puede ser mayor que la<strong> fecha fin</strong>
+        </small>
 
         <div>
             <button data-toggle="modal" data-target="#FiltrarOrdenes">
@@ -48,6 +36,23 @@
 
 <div id="cuerpoInventario">
     <!-- TODO EL CONTENIDO ESTÁ EN LA PLANTILLA 'personal_filtrados' -->
+
+    <table class="display tablaInventario" style="width:100%;">
+        <thead>
+            <!-- Columnas -->
+            <tr>
+                <th>Nº orden</th>
+                <th>Fecha y hora</th>
+                <th>Mesas</th>
+                <th>Área</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <!-- Filas -->
+        <tbody>
+        </tbody>
+    </table>
 </div>
 
 <div class="modal-overlay"></div>
@@ -83,6 +88,22 @@
             </div>
         </div>
     </div>
+</div>
+
+<div
+    class="modal fade"
+    id="EditarOrden"
+    data-backdrop="static"
+    data-keyboard="false"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+  <div class="modal-dialog modal-editar-orden" role="document">
+    <div class="modal-content"  id="contenidoDetalleOrden">
+      <!-- modal-header, modal-body y modal-footer se encuentran en detalle_orden_editar.html -->
+    </div>
+  </div>
 </div>
 
 <div class="modal fade" id="FiltrarOrdenes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

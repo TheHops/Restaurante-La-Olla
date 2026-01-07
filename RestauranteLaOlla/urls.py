@@ -74,7 +74,9 @@ urlpatterns = [
     path("MiPerfil/", MiPerfil.MiPerfil, name="MiPerfil"),
     path("EditarMiPerfil/", MiPerfil.EditarDatosPerfil, name="EditarMiPerfil"),
     path("CambiarPass/", MiPerfil.CambiarPass, name="CambiarPass"),
-    path("Reportes/", Reportes.Reportes, name="reportes")
+    path("Reportes/", Reportes.Reportes, name="reportes"),
+    path("InicioMostrar/", Reportes.InicioMostrar, name="InicioMostrar"),
+    path("ReportesOrdenesFiltradas/", Reportes.ReportesOrdenesFiltradas, name="ReportesOrdenesFiltradas"),
 ]
 
 urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
