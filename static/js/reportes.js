@@ -2,6 +2,32 @@ const fechaDesde = document.getElementById("fechaDesde");
 const fechaHasta = document.getElementById("fechaHasta");
 const errorFechas = document.getElementById("errorFechas");
 
+document.addEventListener("DOMContentLoaded", () => {
+  $(".tablaInventario").DataTable({
+    scrollY: "43vh",
+    scrollCollapse: true,
+    paging: true,
+    language: {
+      url: "/static/json/es-ES.json",
+    },
+  });
+
+  inicializarFechas();
+});
+
+function inicializarFechas()
+{
+  const hoy = new Date();
+  const yyyy = hoy.getFullYear();
+  const mm = String(hoy.getMonth() + 1).padStart(2, "0");
+  const dd = String(hoy.getDate()).padStart(2, "0");
+  
+  fechaDesde.value = `${yyyy}-${mm}-${dd}`;
+  fechaHasta.value = `${yyyy}-${mm}-${dd}`;
+
+  filtrarOrdenesFecha();
+}
+
 function validarFechas() {
   if (!fechaDesde.value || !fechaHasta.value) {
     errorFechas.style.display = "none";
@@ -23,7 +49,7 @@ function validarFechas() {
 }
 
 fechaDesde.addEventListener("change", () => {
-  if(validarFechas()) filtrarOrdenesFecha();
+  if (validarFechas()) filtrarOrdenesFecha();
 });
 fechaHasta.addEventListener("change", () => {
   if (validarFechas()) filtrarOrdenesFecha();
@@ -42,16 +68,48 @@ function rellenarParaMostrarOrden(idOrden) {
       let contenedor = document.getElementById("contenidoDetalleOrden");
 
       if (contenedor) {
-        destruirPopovers();
         contenedor.innerHTML = this.responseText;
       }
     }
   };
 }
 
-function filtrarOrdenesFecha(){
-  console.log("FECHA VALIDA");
+function filtrarOrdenesFecha() {
+  const fechaInicio = fechaDesde.value;
+  const fechaFin = fechaHasta.value;
 
-  console.log("Desde " + fechaDesde.value);
-  console.log("Hasta " + fechaHasta.value);
+  const url = `/ReportesOrdenesFiltradas?FechaInicio=${encodeURIComponent(
+    fechaInicio
+  )}&FechaFin=${encodeURIComponent(fechaFin)}`;
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", url, true);
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        $(".tablaInventario").DataTable().destroy();
+
+        const tbody = document.querySelector("#cuerpoInventario");
+        tbody.innerHTML = this.responseText;
+
+        $(".tablaInventario").DataTable({
+          scrollY: "43vh",
+          scrollCollapse: true,
+          paging: true,
+          language: {
+            url: "/static/json/es-ES.json",
+          },
+        });
+      } else {
+        alert(xhr.message);
+      }
+    }
+  };
+
+  xhr.onerror = function () {
+    reject("Error al conectar con el servidor.");
+  };
+
+  xhr.send();
 }

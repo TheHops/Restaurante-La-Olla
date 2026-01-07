@@ -33,6 +33,7 @@
     {% endif %}
   </div>
 
+  {% if Modo == "Editar" %}
   <hr>
 
   <div class="col-12">
@@ -40,6 +41,7 @@
 
     <button onclick="rellenarParaEditarOrden('{{Orden.Id}}')">Reiniciar</button>
   </div>
+  {% endif %}
 
   <hr>
 

@@ -28,8 +28,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 /////////////////////////////////////////////////////////////////////
 
-function FacturarOrden() {
-  const { value: isConfirmed } = Swal.fire({
+async function FacturarOrden() {
+  const { value: isConfirmed } = await Swal.fire({
+    target: document.getElementById('FacturarOrden'),
     title: "¿Los datos están correctos?",
     showCancelButton: true,
     cancelButtonText: "Cancelar",
@@ -39,6 +40,8 @@ function FacturarOrden() {
     iconColor: "#ff964e",
     reverseButtons: true,
   });
+
+  console.log(isConfirmed);
 
   if (isConfirmed)
   {
