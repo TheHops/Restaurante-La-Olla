@@ -50,7 +50,9 @@ function validarFechas() {
 }
 
 fechaDesde.addEventListener("change", () => {
+  filtrosAplicados.fechaPredefinida = null;
   estadoFiltros.fechaPredefinida = null;
+
   document
     .querySelectorAll('input[name="fecha"]')
     .forEach((r) => (r.checked = false));
@@ -60,7 +62,9 @@ fechaDesde.addEventListener("change", () => {
 });
 
 fechaHasta.addEventListener("change", () => {
+  filtrosAplicados.fechaPredefinida = null;
   estadoFiltros.fechaPredefinida = null;
+
   document
     .querySelectorAll('input[name="fecha"]')
     .forEach((r) => (r.checked = false));
@@ -119,12 +123,35 @@ function filtrarOrdenesFecha() {
 /****************************************************************************/
 /****************************************************************************/
 
+let filtrosAplicados = {
+  fechaPredefinida: null,
+  areas: [],
+  fechaDesde: null,
+  fechaHasta: null,
+};
+
+let filtrosTemp = {
+  fechaPredefinida: null,
+  areas: [],
+  fechaDesde: null,
+  fechaHasta: null,
+};
+
+let estadoFiltros = { fechaPredefinida: null, areas: [] };
+
 // Funcion que verifica si hay algún filtro seleccionado
 function hayFiltrosActivos() {
-  const hayFecha = estadoFiltros.fechaPredefinida !== null;
-  const hayAreas = estadoFiltros.areas.length > 0;
+  return (
+    filtrosAplicados.fechaPredefinida !== null ||
+    filtrosAplicados.areas.length > 0
+  );
+}
 
-  return hayFecha || hayAreas;
+function hayFiltrosActivosTemp() {
+  return (
+    filtrosTemp.fechaPredefinida !== null ||
+    filtrosTemp.areas.length > 0
+  );
 }
 
 // Agrega un indicador para decir que hay un filtro aplicado
@@ -138,89 +165,93 @@ function actualizarIndicadorFiltros() {
   }
 }
 
-let estadoFiltros = {
-  fechaPredefinida: null,
-  areas: [],
-};
-
-document.querySelectorAll('input[name="fecha"]').forEach((radio) => {
-  radio.addEventListener("change", function () {
-    estadoFiltros.fechaPredefinida = this.value;
-    aplicarFechaPredefinida(this.value, false);
-    actualizarIndicadorFiltros();
-  });
-});
-
-function aplicarFechaPredefinida(tipo, filtrar = true) {
+function aplicarFechaPredefinidaTemp(tipo) {
   const hoy = new Date();
   let desde, hasta;
 
   hasta = new Date(hoy);
 
   switch (tipo) {
-    case "1": // Hoy
+    case "1":
       desde = new Date(hoy);
       break;
-
-    case "2": // Ayer
+    case "2":
       desde = new Date(hoy);
       desde.setDate(hoy.getDate() - 1);
       hasta = new Date(desde);
       break;
-
-    case "3": // Últimos 7 días
+    case "3":
       desde = new Date(hoy);
       desde.setDate(hoy.getDate() - 7);
       break;
-
-    case "4": // Últimos 15 días
+    case "4":
       desde = new Date(hoy);
       desde.setDate(hoy.getDate() - 15);
       break;
-
-    case "5": // Últimos 30 días
+    case "5":
       desde = new Date(hoy);
       desde.setDate(hoy.getDate() - 30);
       break;
   }
 
-  fechaDesde.value = desde.toISOString().split("T")[0];
-  fechaHasta.value = hasta.toISOString().split("T")[0];
+  filtrosTemp.fechaDesde = desde.toISOString().split("T")[0];
+  filtrosTemp.fechaHasta = hasta.toISOString().split("T")[0];
 
-  if (filtrar){
-    filtrarOrdenesFecha();
-  }
+  // fechaDesde.value = filtrosTemp.fechaDesde;
+  // fechaHasta.value = filtrosTemp.fechaHasta;
 }
+
+document.querySelectorAll('input[name="fecha"]').forEach((radio) => {
+  radio.addEventListener("change", function () {
+    filtrosTemp.fechaPredefinida = this.value;
+    aplicarFechaPredefinidaTemp(this.value);
+
+    document.querySelector("#btnAplicarFiltros").disabled = !hayFiltrosActivosTemp();
+  });
+});
 
 document.querySelectorAll('input[name="areas[]"]').forEach((check) => {
   check.addEventListener("change", function () {
-    estadoFiltros.areas = Array.from(
+    filtrosTemp.areas = Array.from(
       document.querySelectorAll('input[name="areas[]"]:checked')
     ).map((el) => el.value);
 
-    actualizarIndicadorFiltros();
+    document.querySelector("#btnAplicarFiltros").disabled = !hayFiltrosActivosTemp();
   });
 });
 
 $("#FiltrarOrdenes").on("shown.bs.modal", function () {
-  // Restaurar radio
+  // Clonar filtros aplicados → temporales
+  filtrosTemp = JSON.parse(JSON.stringify(filtrosAplicados));
+
+  // Restaurar radios
   document.querySelectorAll('input[name="fecha"]').forEach((r) => {
-    r.checked = r.value === estadoFiltros.fechaPredefinida;
+    r.checked = r.value === filtrosTemp.fechaPredefinida;
   });
 
-  // Áreas
+  // Restaurar áreas
   document.querySelectorAll('input[name="areas[]"]').forEach((check) => {
-    check.checked = estadoFiltros.areas.includes(check.value);
+    check.checked = filtrosTemp.areas.includes(check.value);
   });
+
+  document.querySelector("#btnAplicarFiltros").disabled = !hayFiltrosActivos();
 });
 
 document
   .getElementById("btnAplicarFiltros")
   .addEventListener("click", function () {
-    // Validar fechas si existen
     if (!validarFechas()) return;
 
+    // Commit
+    filtrosAplicados = JSON.parse(JSON.stringify(filtrosTemp));
+
+    // Aplicar fechas definitivas
+    fechaDesde.value = filtrosAplicados.fechaDesde || "";
+    fechaHasta.value = filtrosAplicados.fechaHasta || "";
+
     filtrarOrdenesFecha();
+
+    actualizarIndicadorFiltros();
 
     $("#FiltrarOrdenes").modal("hide");
   });
