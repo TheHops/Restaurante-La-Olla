@@ -25,6 +25,8 @@
             <button data-toggle="modal" data-target="#FiltrarOrdenes">
                 Más filtros
             </button>
+
+            <div id="indicadorFiltros">Filtro activo</div>
         </div>
     </div>
 
@@ -35,7 +37,7 @@
 </div>
 
 <div id="cuerpoInventario">
-    <!-- TODO EL CONTENIDO ESTÁ EN LA PLANTILLA 'personal_filtrados' -->
+    <!-- TODO EL CONTENIDO ESTÁ EN LA PLANTILLA 'reportes_ordenes_filtradas' -->
 
     <table class="display tablaInventario" style="width:100%;">
         <thead>
@@ -150,9 +152,9 @@
                     <div class="form-radio">
                         <input class="form-radio-input"
                                type="radio"
-                               name="area"
+                               name="fecha"
                                value="1"
-                               id="tipo_fecha_1" checked>
+                               id="tipo_fecha_1">
                 
                         <label class="form-radio-label" for="tipo_fecha_1">
                             Hoy
@@ -162,7 +164,7 @@
                     <div class="form-radio">
                         <input class="form-radio-input"
                                type="radio"
-                               name="area"
+                               name="fecha"
                                value="2"
                                id="tipo_fecha_2">
                 
@@ -174,7 +176,7 @@
                     <div class="form-radio">
                         <input class="form-radio-input"
                                type="radio"
-                               name="area"
+                               name="fecha"
                                value="3"
                                id="tipo_fecha_3">
                 
@@ -186,7 +188,7 @@
                     <div class="form-radio">
                         <input class="form-radio-input"
                                type="radio"
-                               name="area"
+                               name="fecha"
                                value="4"
                                id="tipo_fecha_4">
                 
@@ -198,7 +200,7 @@
                     <div class="form-radio">
                         <input class="form-radio-input"
                                type="radio"
-                               name="area"
+                               name="fecha"
                                value="5"
                                id="tipo_fecha_5">
                 
@@ -213,6 +215,12 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+
+                <button type="button"
+                        class="btn btn-danger"
+                        id="btnAplicarFiltros">
+                    Aplicar
+                </button>
             </div>
         </div>
     </div>
