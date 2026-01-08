@@ -16,7 +16,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
 from openpyxl.utils import get_column_letter
 
-from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden
+from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden, AreaMesa
 from RestauranteLaOlla import settings
 
 
@@ -25,7 +25,9 @@ def Reportes (request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
-    return render(request, "reportes.html")
+    areas = AreaMesa.objects.filter(EsActivo = "1")
+    
+    return render(request, "reportes.html", {"Areas": areas})
 
 def ReportesOrdenesFiltradas (request):
     if not request.user.is_authenticated:
@@ -61,9 +63,6 @@ def ReportesOrdenesFiltradas (request):
         # Ajustar horas
         fecha_inicio = timezone.make_aware(datetime.combine(fecha_inicio_date, time.min), timezone.get_current_timezone())   # 00:00:00
         fecha_fin = timezone.make_aware(datetime.combine(fecha_fin_date, time.max), timezone.get_current_timezone())         # 23:59:59.999999
-        
-        print(fecha_inicio)
-        print(fecha_fin)
 
         # Query base
         ordenes = Orden.objects.select_related(
@@ -75,8 +74,6 @@ def ReportesOrdenesFiltradas (request):
             UltimaModificacion__range=(fecha_inicio, fecha_fin),
             Estado__in=["0"] 
         ).order_by("-Id")
-        
-        print(ordenes)
 
         contexto = {
             "Ordenes": ordenes,

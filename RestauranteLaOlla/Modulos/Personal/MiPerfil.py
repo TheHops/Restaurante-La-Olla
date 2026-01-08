@@ -102,14 +102,24 @@ def CambiarPass (request):
             })
         
         try:
+            old_pass = request.POST.get("OldPass")
             new_pass = request.POST.get("NewPass")
             verify_pass = request.POST.get("VerifyPass")
 
-            # 🔹 Verificar que vengan datos
-            if not new_pass or not verify_pass:
+            # 🔹 Verificar campos obligatorios
+            if not old_pass or not new_pass or not verify_pass:
                 return JsonResponse({
                     "status": "error",
                     "message": "Debe completar todos los campos"
+                })
+
+            user = request.user
+
+            # 🔹 Verificar contraseña actual
+            if not user.check_password(old_pass):
+                return JsonResponse({
+                    "status": "error",
+                    "message": "La contraseña actual es incorrecta"
                 })
 
             # 🔹 Verificar coincidencia
