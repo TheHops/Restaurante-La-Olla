@@ -9,6 +9,7 @@
                 <th>Fecha y hora</th>
                 <th>Mesas</th>
                 <th>Área</th>
+                <th>Total</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -30,6 +31,8 @@
                     {% if not forloop.last %} - {% endif %} 
                     {% endfor %}
                 </td>
+                
+                <td>{{Orden.Total}}</td>
                 
                 <!-- Area -->
                 <td>{{Orden.AreaDeMesa}}</td>

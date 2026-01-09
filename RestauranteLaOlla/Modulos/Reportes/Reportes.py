@@ -19,7 +19,7 @@ from openpyxl.utils import get_column_letter
 from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden, AreaMesa
 from RestauranteLaOlla import settings
 
-
+#region Inicio
 
 def Reportes (request):
     if not request.user.is_authenticated:
@@ -28,6 +28,10 @@ def Reportes (request):
     areas = AreaMesa.objects.filter(EsActivo = "1")
     
     return render(request, "reportes.html", {"Areas": areas})
+
+#endregion Inicio
+
+#region Ordenes filtradas
 
 def ReportesOrdenesFiltradas (request):
     if not request.user.is_authenticated:
@@ -111,6 +115,10 @@ def ReportesOrdenesFiltradas (request):
             status=500
         )
 
+#endregion Ordenes filtradas
+
+#region Mostrar orden
+
 def InicioMostrar(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
@@ -129,7 +137,10 @@ def InicioMostrar(request):
 
     return render(request, "detalle_orden_editar.html", contexto)
 
+#endregion Mostrar orden
+
 #region EXPORTACIONES
+
 def Exportar_ExcelPlatillo(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
@@ -304,6 +315,24 @@ def CreacionTipoPlatillos_PDF(request):
 #endregion
 
 #region PublicFunctions
+
+def obtener_ordenes_filtradas(fecha_inicio, fecha_fin, areas_ids):
+    filtros = Q(
+        EsActivo="1",
+        UltimaModificacion__range=(fecha_inicio, fecha_fin),
+        Estado__in=["0"]
+    )
+
+    if areas_ids:
+        filtros &= Q(IdAreaDeMesa__in=areas_ids)
+
+    return (
+        Orden.objects
+        .select_related('IdUsuario', 'IdAreaDeMesa')
+        .prefetch_related('Mesas')
+        .filter(filtros)
+        .order_by("-Id")
+    )
 
 def exportar_excel_datos(titulo, columnas, datos):
     # ==== CREAR LIBRO ====
