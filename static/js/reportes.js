@@ -51,11 +51,13 @@ function validarFechas() {
 
 fechaDesde.addEventListener("change", () => {
   filtrosAplicados.fechaPredefinida = null;
-  estadoFiltros.fechaPredefinida = null;
+  filtrosAplicados.fechaDesde = fechaDesde.value;
+  filtrosTemp.fechaDesde = fechaDesde.value;
 
   document
     .querySelectorAll('input[name="fecha"]')
     .forEach((r) => (r.checked = false));
+
   actualizarIndicadorFiltros();
 
   if (validarFechas()) filtrarOrdenesFecha();
@@ -63,11 +65,13 @@ fechaDesde.addEventListener("change", () => {
 
 fechaHasta.addEventListener("change", () => {
   filtrosAplicados.fechaPredefinida = null;
-  estadoFiltros.fechaPredefinida = null;
+  filtrosAplicados.fechaHasta = fechaHasta.value;
+  filtrosTemp.fechaHasta = fechaHasta.value;
 
   document
     .querySelectorAll('input[name="fecha"]')
     .forEach((r) => (r.checked = false));
+
   actualizarIndicadorFiltros();
   
   if (validarFechas()) filtrarOrdenesFecha();
@@ -98,9 +102,7 @@ function filtrarOrdenesFecha() {
     FechaFin: fechaHasta.value,
   });
 
-  // estadoFiltros.areas.forEach((id) => params.append("areas[]", id));
-
-  const areasSeleccionadas = obtenerAreasSeleccionadas();
+  const areasSeleccionadas = filtrosAplicados.areas;
   const areasParam = areasSeleccionadas.join(",");
 
   const xhr = new XMLHttpRequest();
@@ -135,6 +137,7 @@ function obtenerAreasSeleccionadas() {
   const areasSeleccionadas = Array.from(checkboxes).map(
     (checkbox) => checkbox.value
   );
+
   return areasSeleccionadas;
 }
 
@@ -155,8 +158,6 @@ let filtrosTemp = {
   fechaDesde: null,
   fechaHasta: null,
 };
-
-let estadoFiltros = { fechaPredefinida: null, areas: [] };
 
 // Funcion que verifica si hay algún filtro seleccionado
 function hayFiltrosActivos() {
