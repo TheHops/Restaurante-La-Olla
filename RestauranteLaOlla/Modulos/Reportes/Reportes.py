@@ -10,7 +10,7 @@ from jinja2 import Environment, FileSystemLoader
 from django.utils import timezone
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
@@ -42,6 +42,13 @@ def ReportesOrdenesFiltradas (request):
     try:
         fecha_inicio_str = request.GET.get("FechaInicio")
         fecha_fin_str = request.GET.get("FechaFin")
+        
+        areasSeleccionadas = request.GET.get("AreasSeleccionadas", "")
+        print(areasSeleccionadas)
+        
+        areas_ids = []
+        if areasSeleccionadas:
+            areas_ids = [int(x) for x in areasSeleccionadas.split(",") if x.isdigit()]
 
         if not fecha_inicio_str or not fecha_fin_str:
             return JsonResponse(
@@ -63,17 +70,27 @@ def ReportesOrdenesFiltradas (request):
         # Ajustar horas
         fecha_inicio = timezone.make_aware(datetime.combine(fecha_inicio_date, time.min), timezone.get_current_timezone())   # 00:00:00
         fecha_fin = timezone.make_aware(datetime.combine(fecha_fin_date, time.max), timezone.get_current_timezone())         # 23:59:59.999999
-
-        # Query base
-        ordenes = Orden.objects.select_related(
-            'IdUsuario'
-        ).prefetch_related(
-            Prefetch('Detalles')
-        ).filter(
+        
+        filtros = Q(
             EsActivo="1",
             UltimaModificacion__range=(fecha_inicio, fecha_fin),
-            Estado__in=["0"] 
-        ).order_by("-Id")
+            Estado__in=["0"]
+        )
+
+        # Filtrar por áreas de mesa (opcional)
+        if areas_ids:
+            filtros &= Q(IdAreaDeMesa__in=areas_ids)
+
+        # ------------------------
+        # Query final
+        # ------------------------
+        ordenes = (
+            Orden.objects
+            .select_related('IdUsuario', 'IdAreaDeMesa')
+            .prefetch_related(Prefetch('Detalles'))
+            .filter(filtros)
+            .order_by("-Id")
+        )
 
         contexto = {
             "Ordenes": ordenes,

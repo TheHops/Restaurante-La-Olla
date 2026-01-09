@@ -98,10 +98,19 @@ function filtrarOrdenesFecha() {
     FechaFin: fechaHasta.value,
   });
 
-  estadoFiltros.areas.forEach((id) => params.append("areas[]", id));
+  // estadoFiltros.areas.forEach((id) => params.append("areas[]", id));
+
+  const areasSeleccionadas = obtenerAreasSeleccionadas();
+  const areasParam = areasSeleccionadas.join(",");
 
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", `/ReportesOrdenesFiltradas?${params.toString()}`, true);
+  xhr.open(
+    "GET",
+    `/ReportesOrdenesFiltradas?${params.toString()}&AreasSeleccionadas=${encodeURIComponent(
+      areasParam
+    )}`,
+    true
+  );
 
   xhr.onreadystatechange = function () {
     if (xhr.readyState === 4 && xhr.status === 200) {
@@ -117,6 +126,16 @@ function filtrarOrdenesFecha() {
   };
 
   xhr.send();
+}
+
+function obtenerAreasSeleccionadas() {
+  const checkboxes = document.querySelectorAll(
+    '#areasBusqueda input[type="checkbox"]:checked'
+  );
+  const areasSeleccionadas = Array.from(checkboxes).map(
+    (checkbox) => checkbox.value
+  );
+  return areasSeleccionadas;
 }
 
 /****************************************************************************/
