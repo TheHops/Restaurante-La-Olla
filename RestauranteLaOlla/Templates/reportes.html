@@ -71,18 +71,14 @@
 
             <div class="modal-body row exportar col-12">
                 <div class="col-6">
-                    <button class="excel w-100">
-                        <a href="">
-                            <img src="{% static 'img/Export_excel_2.png' %}">
-                        </a>
+                    <button class="excel w-100" onclick="ExportarOrdenes('1')">
+                        <img src="{% static 'img/Export_excel_2.png' %}">
                     </button>
                 </div>
         
                 <div class="col-6">
-                    <button class="pdf w-100">
-                        <a href="">
-                            <img src="{% static 'img/Export_pdf_2.png' %}">
-                        </a>
+                    <button class="pdf w-100" onclick="ExportarOrdenes('2')">
+                        <img src="{% static 'img/Export_pdf_2.png' %}">
                     </button>
                 </div>
             </div>
@@ -218,7 +214,7 @@
 
                 <button type="button"
                         class="btn btn-danger"
-                        id="btnAplicarFiltros" disabled>
+                        id="btnAplicarFiltros">
                     Aplicar
                 </button>
             </div>

@@ -26,6 +26,9 @@ function inicializarFechas()
   fechaDesde.value = `${yyyy}-${mm}-${dd}`;
   fechaHasta.value = `${yyyy}-${mm}-${dd}`;
 
+  filtrosAplicados.fechaDesde = fechaDesde.value;
+  filtrosAplicados.fechaHasta = fechaHasta.value;
+
   filtrarOrdenesFecha();
 }
 
@@ -226,7 +229,7 @@ document.querySelectorAll('input[name="fecha"]').forEach((radio) => {
     filtrosTemp.fechaPredefinida = this.value;
     aplicarFechaPredefinidaTemp(this.value);
 
-    document.querySelector("#btnAplicarFiltros").disabled = !hayFiltrosActivosTemp();
+    // document.querySelector("#btnAplicarFiltros").disabled = !hayFiltrosActivosTemp();
   });
 });
 
@@ -236,7 +239,7 @@ document.querySelectorAll('input[name="areas[]"]').forEach((check) => {
       document.querySelectorAll('input[name="areas[]"]:checked')
     ).map((el) => el.value);
 
-    document.querySelector("#btnAplicarFiltros").disabled = !hayFiltrosActivosTemp();
+    // document.querySelector("#btnAplicarFiltros").disabled = !hayFiltrosActivosTemp();
   });
 });
 
@@ -254,7 +257,7 @@ $("#FiltrarOrdenes").on("shown.bs.modal", function () {
     check.checked = filtrosTemp.areas.includes(check.value);
   });
 
-  document.querySelector("#btnAplicarFiltros").disabled = !hayFiltrosActivos();
+  // document.querySelector("#btnAplicarFiltros").disabled = !hayFiltrosActivos();
 });
 
 document
@@ -276,7 +279,63 @@ document
     $("#FiltrarOrdenes").modal("hide");
   });
 
+/**************************************************************/
+/**************************************************************/
+/**************************************************************/
 
+function ExportarOrdenes(tipo)
+{
+  console.log("Exportación de tipo: " + (tipo == "1" ? "excel" : "pdf"));
+
+  let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+  let xhr = new XMLHttpRequest();
+  xhr.open("POST", "/ExportarOrdenes/", true);
+
+  const params = new URLSearchParams({
+    FechaInicio: fechaDesde.value,
+    FechaFin: fechaHasta.value,
+  });
+
+  const areasSeleccionadas = filtrosAplicados.areas;
+  const areasParam = areasSeleccionadas.join(",");
+
+  const payload = {
+    FechaInicio: fechaDesde.value,
+    FechaFin: fechaHasta.value,
+    AreasSeleccionadas: filtrosAplicados.areas,
+    TipoExportacion: tipo
+  };
+
+  let datos = new FormData();
+  datos.append("Areas", JSON.stringify(ordenP));
+  datos.append("csrfmiddlewaretoken", token);
+  datos.append("mesas", JSON.stringify(listaMesasSeleccionadas));
+  datos.append("descripcion", descripcion);
+  datos.append("total", total);
+
+  xhr.open(
+    "POST",
+    `/ExportarOrdenes?${params.toString()}&AreasSeleccionadas=${encodeURIComponent(
+      areasParam
+    )}`,
+    true
+  );
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      $(".tablaInventario").DataTable().destroy();
+      document.querySelector("#cuerpoInventario").innerHTML = this.responseText;
+
+      $(".tablaInventario").DataTable({
+        scrollY: "43vh",
+        paging: true,
+        language: { url: "/static/json/es-ES.json" },
+      });
+    }
+  };
+
+  xhr.send();
+}
 
 
 
