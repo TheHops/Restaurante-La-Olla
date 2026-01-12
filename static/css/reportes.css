@@ -6,3 +6,19 @@
     position: absolute;
     bottom: -20px;
 }
+
+#areasBusqueda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+
+    padding: 5px 15px 0 15px;
+}
+
+#fechasFiltro {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+
+    padding: 5px 15px 0 15px;
+}

@@ -431,8 +431,6 @@ function filtrarMesas(idAreaMesa) {
       let contenedor = document.getElementById("mesas");
       contenedor.innerHTML = this.responseText;
 
-      console.log("SI ENTRÓ A LA FUNCIÓN ONREADY");
-
       cambioTipoDeSeleccion(combinarCheckbox);
     }
   };
@@ -460,7 +458,7 @@ async function agregarOrden() {
     iconColor: "#ff964e",
     didOpen: () => {
       const input = Swal.getInput();
-      if (input) input.blur(); // 👈 Quita el focus
+      if (input) input.blur(); 
     },
   });
 

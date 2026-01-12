@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   inicializarFechas();
+  actualizarIndicadorFiltros();
 });
 
 function inicializarFechas()
@@ -24,6 +25,9 @@ function inicializarFechas()
   
   fechaDesde.value = `${yyyy}-${mm}-${dd}`;
   fechaHasta.value = `${yyyy}-${mm}-${dd}`;
+
+  filtrosAplicados.fechaDesde = fechaDesde.value;
+  filtrosAplicados.fechaHasta = fechaHasta.value;
 
   filtrarOrdenesFecha();
 }
@@ -49,9 +53,30 @@ function validarFechas() {
 }
 
 fechaDesde.addEventListener("change", () => {
+  filtrosAplicados.fechaPredefinida = null;
+  filtrosAplicados.fechaDesde = fechaDesde.value;
+  filtrosTemp.fechaDesde = fechaDesde.value;
+
+  document
+    .querySelectorAll('input[name="fecha"]')
+    .forEach((r) => (r.checked = false));
+
+  actualizarIndicadorFiltros();
+
   if (validarFechas()) filtrarOrdenesFecha();
 });
+
 fechaHasta.addEventListener("change", () => {
+  filtrosAplicados.fechaPredefinida = null;
+  filtrosAplicados.fechaHasta = fechaHasta.value;
+  filtrosTemp.fechaHasta = fechaHasta.value;
+
+  document
+    .querySelectorAll('input[name="fecha"]')
+    .forEach((r) => (r.checked = false));
+
+  actualizarIndicadorFiltros();
+  
   if (validarFechas()) filtrarOrdenesFecha();
 });
 
@@ -75,41 +100,243 @@ function rellenarParaMostrarOrden(idOrden) {
 }
 
 function filtrarOrdenesFecha() {
-  const fechaInicio = fechaDesde.value;
-  const fechaFin = fechaHasta.value;
+  const params = new URLSearchParams({
+    FechaInicio: fechaDesde.value,
+    FechaFin: fechaHasta.value,
+  });
 
-  const url = `/ReportesOrdenesFiltradas?FechaInicio=${encodeURIComponent(
-    fechaInicio
-  )}&FechaFin=${encodeURIComponent(fechaFin)}`;
+  const areasSeleccionadas = filtrosAplicados.areas;
+  const areasParam = areasSeleccionadas.join(",");
 
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", url, true);
+  xhr.open(
+    "GET",
+    `/ReportesOrdenesFiltradas?${params.toString()}&AreasSeleccionadas=${encodeURIComponent(
+      areasParam
+    )}`,
+    true
+  );
 
   xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        $(".tablaInventario").DataTable().destroy();
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      $(".tablaInventario").DataTable().destroy();
+      document.querySelector("#cuerpoInventario").innerHTML = this.responseText;
 
-        const tbody = document.querySelector("#cuerpoInventario");
-        tbody.innerHTML = this.responseText;
-
-        $(".tablaInventario").DataTable({
-          scrollY: "43vh",
-          scrollCollapse: true,
-          paging: true,
-          language: {
-            url: "/static/json/es-ES.json",
-          },
-        });
-      } else {
-        alert(xhr.message);
-      }
+      $(".tablaInventario").DataTable({
+        scrollY: "43vh",
+        paging: true,
+        language: { url: "/static/json/es-ES.json" },
+      });
     }
-  };
-
-  xhr.onerror = function () {
-    reject("Error al conectar con el servidor.");
   };
 
   xhr.send();
 }
+
+function obtenerAreasSeleccionadas() {
+  const checkboxes = document.querySelectorAll(
+    '#areasBusqueda input[type="checkbox"]:checked'
+  );
+  const areasSeleccionadas = Array.from(checkboxes).map(
+    (checkbox) => checkbox.value
+  );
+
+  return areasSeleccionadas;
+}
+
+/****************************************************************************/
+/****************************************************************************/
+/****************************************************************************/
+
+let filtrosAplicados = {
+  fechaPredefinida: null,
+  areas: [],
+  fechaDesde: null,
+  fechaHasta: null,
+};
+
+let filtrosTemp = {
+  fechaPredefinida: null,
+  areas: [],
+  fechaDesde: null,
+  fechaHasta: null,
+};
+
+// Funcion que verifica si hay algún filtro seleccionado
+function hayFiltrosActivos() {
+  return (
+    filtrosAplicados.fechaPredefinida !== null ||
+    filtrosAplicados.areas.length > 0
+  );
+}
+
+function hayFiltrosActivosTemp() {
+  return (
+    filtrosTemp.fechaPredefinida !== null ||
+    filtrosTemp.areas.length > 0
+  );
+}
+
+// Agrega un indicador para decir que hay un filtro aplicado
+function actualizarIndicadorFiltros() {
+  const indicador = document.getElementById("indicadorFiltros");
+
+  if (hayFiltrosActivos()) {
+    indicador.style.display = "inline-block";
+  } else {
+    indicador.style.display = "none";
+  }
+}
+
+function aplicarFechaPredefinidaTemp(tipo) {
+  const hoy = new Date();
+  let desde, hasta;
+
+  hasta = new Date(hoy);
+
+  switch (tipo) {
+    case "1":
+      desde = new Date(hoy);
+      break;
+    case "2":
+      desde = new Date(hoy);
+      desde.setDate(hoy.getDate() - 1);
+      hasta = new Date(desde);
+      break;
+    case "3":
+      desde = new Date(hoy);
+      desde.setDate(hoy.getDate() - 7);
+      break;
+    case "4":
+      desde = new Date(hoy);
+      desde.setDate(hoy.getDate() - 15);
+      break;
+    case "5":
+      desde = new Date(hoy);
+      desde.setDate(hoy.getDate() - 30);
+      break;
+  }
+
+  filtrosTemp.fechaDesde = desde.toISOString().split("T")[0];
+  filtrosTemp.fechaHasta = hasta.toISOString().split("T")[0];
+
+  // fechaDesde.value = filtrosTemp.fechaDesde;
+  // fechaHasta.value = filtrosTemp.fechaHasta;
+}
+
+document.querySelectorAll('input[name="fecha"]').forEach((radio) => {
+  radio.addEventListener("change", function () {
+    filtrosTemp.fechaPredefinida = this.value;
+    aplicarFechaPredefinidaTemp(this.value);
+
+    // document.querySelector("#btnAplicarFiltros").disabled = !hayFiltrosActivosTemp();
+  });
+});
+
+document.querySelectorAll('input[name="areas[]"]').forEach((check) => {
+  check.addEventListener("change", function () {
+    filtrosTemp.areas = Array.from(
+      document.querySelectorAll('input[name="areas[]"]:checked')
+    ).map((el) => el.value);
+
+    // document.querySelector("#btnAplicarFiltros").disabled = !hayFiltrosActivosTemp();
+  });
+});
+
+$("#FiltrarOrdenes").on("shown.bs.modal", function () {
+  // Clonar filtros aplicados → temporales
+  filtrosTemp = JSON.parse(JSON.stringify(filtrosAplicados));
+
+  // Restaurar radios
+  document.querySelectorAll('input[name="fecha"]').forEach((r) => {
+    r.checked = r.value === filtrosTemp.fechaPredefinida;
+  });
+
+  // Restaurar áreas
+  document.querySelectorAll('input[name="areas[]"]').forEach((check) => {
+    check.checked = filtrosTemp.areas.includes(check.value);
+  });
+
+  // document.querySelector("#btnAplicarFiltros").disabled = !hayFiltrosActivos();
+});
+
+document
+  .getElementById("btnAplicarFiltros")
+  .addEventListener("click", function () {
+    if (!validarFechas()) return;
+
+    // Commit
+    filtrosAplicados = JSON.parse(JSON.stringify(filtrosTemp));
+
+    // Aplicar fechas definitivas
+    fechaDesde.value = filtrosAplicados.fechaDesde || "";
+    fechaHasta.value = filtrosAplicados.fechaHasta || "";
+
+    filtrarOrdenesFecha();
+
+    actualizarIndicadorFiltros();
+
+    $("#FiltrarOrdenes").modal("hide");
+  });
+
+/**************************************************************/
+/**************************************************************/
+/**************************************************************/
+
+function ExportarOrdenes(tipo)
+{
+  console.log("Exportación de tipo: " + (tipo == "1" ? "excel" : "pdf"));
+
+  let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+  let xhr = new XMLHttpRequest();
+  xhr.open("POST", "/ExportarOrdenes/", true);
+
+  const params = new URLSearchParams({
+    FechaInicio: fechaDesde.value,
+    FechaFin: fechaHasta.value,
+  });
+
+  const areasSeleccionadas = filtrosAplicados.areas;
+  const areasParam = areasSeleccionadas.join(",");
+
+  const payload = {
+    FechaInicio: fechaDesde.value,
+    FechaFin: fechaHasta.value,
+    AreasSeleccionadas: filtrosAplicados.areas,
+    TipoExportacion: tipo
+  };
+
+  let datos = new FormData();
+  datos.append("Areas", JSON.stringify(ordenP));
+  datos.append("csrfmiddlewaretoken", token);
+  datos.append("mesas", JSON.stringify(listaMesasSeleccionadas));
+  datos.append("descripcion", descripcion);
+  datos.append("total", total);
+
+  xhr.open(
+    "POST",
+    `/ExportarOrdenes?${params.toString()}&AreasSeleccionadas=${encodeURIComponent(
+      areasParam
+    )}`,
+    true
+  );
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      $(".tablaInventario").DataTable().destroy();
+      document.querySelector("#cuerpoInventario").innerHTML = this.responseText;
+
+      $(".tablaInventario").DataTable({
+        scrollY: "43vh",
+        paging: true,
+        language: { url: "/static/json/es-ES.json" },
+      });
+    }
+  };
+
+  xhr.send();
+}
+
+
+
+

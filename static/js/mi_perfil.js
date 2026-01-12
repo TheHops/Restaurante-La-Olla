@@ -164,6 +164,7 @@ function cambiarPass()
   });
 
   const data = {
+    OldPass: $("#OldPassEditarPerfil").val(),
     NewPass: $("#NuevaPassEditarPerfil").val(),
     VerifyPass: $("#VerificarPassEditarPerfil").val(),
     csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()

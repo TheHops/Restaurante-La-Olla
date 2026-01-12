@@ -14,6 +14,21 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+function resetFormAgregarPersonal() {
+  const form = document.getElementById("formAgregarPersonal");
+
+  // Reset básico del formulario
+  form.reset();
+
+  // Limpieza manual extra (passwords + inputs)
+  const inputs = form.querySelectorAll("input");
+
+  inputs.forEach((input) => {
+    input.value = "";
+    input.setAttribute("value", "");
+  });
+}
+
 function cargarPersonal(ver) {
   document.getElementById("cuerpoInventario").style.opacity = "0";
 

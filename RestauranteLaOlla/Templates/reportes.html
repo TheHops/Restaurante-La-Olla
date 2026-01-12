@@ -25,6 +25,8 @@
             <button data-toggle="modal" data-target="#FiltrarOrdenes">
                 Más filtros
             </button>
+
+            <div id="indicadorFiltros">Filtro activo</div>
         </div>
     </div>
 
@@ -35,7 +37,7 @@
 </div>
 
 <div id="cuerpoInventario">
-    <!-- TODO EL CONTENIDO ESTÁ EN LA PLANTILLA 'personal_filtrados' -->
+    <!-- TODO EL CONTENIDO ESTÁ EN LA PLANTILLA 'reportes_ordenes_filtradas' -->
 
     <table class="display tablaInventario" style="width:100%;">
         <thead>
@@ -61,25 +63,22 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title " id="exampleModalLabel" >Exportar ordenes</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+                <h5 class="modal-title " id="exampleModalLabel" >Exportar ordenes</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
+
             <div class="modal-body row exportar col-12">
                 <div class="col-6">
-                    <button class="excel w-100">
-                        <a href="">
-                            <img src="{% static 'img/Export_excel_2.png' %}">
-                        </a>
+                    <button class="excel w-100" onclick="ExportarOrdenes('1')">
+                        <img src="{% static 'img/Export_excel_2.png' %}">
                     </button>
                 </div>
         
                 <div class="col-6">
-                    <button class="pdf w-100">
-                        <a href="">
-                            <img src="{% static 'img/Export_pdf_2.png' %}">
-                        </a>
+                    <button class="pdf w-100" onclick="ExportarOrdenes('2')">
+                        <img src="{% static 'img/Export_pdf_2.png' %}">
                     </button>
                 </div>
             </div>
@@ -114,12 +113,110 @@
                 </button>
             </div>
 
-            <div class="modal-body row exportar col-12">
-                
+            <div class="alert alert-info alert-dismissible mb-0">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                Puedes seleccionar una o más áreas de mesa
             </div>
+
+            <div class="modal-body col-12">
+                <h5 style="color: #555555; font-size: 20px;">Áreas de mesa</h5>
+                
+                <div id="areasBusqueda">
+                    {% for Area in Areas%}
+                    <div class="form-check">
+                        <input class="form-check-input" 
+                               type="checkbox" 
+                               name="areas[]" 
+                               value="{{ Area.Id }}" 
+                               id="tipo_{{ Area.Id }}">
+                               
+                        <label class="form-check-label" for="tipo_{{ Area.Id }}">
+                            {{ Area.Nombre }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-------------------------------------------->
+
+                <hr>
+                
+                <h5 style="color: #555555; font-size: 20px;">Fechas</h5>
+
+                <div id="fechasFiltro">
+
+                    <div class="form-radio">
+                        <input class="form-radio-input"
+                               type="radio"
+                               name="fecha"
+                               value="1"
+                               id="tipo_fecha_1">
+                
+                        <label class="form-radio-label" for="tipo_fecha_1">
+                            Hoy
+                        </label>
+                    </div>
+                
+                    <div class="form-radio">
+                        <input class="form-radio-input"
+                               type="radio"
+                               name="fecha"
+                               value="2"
+                               id="tipo_fecha_2">
+                
+                        <label class="form-radio-label" for="tipo_fecha_2">
+                            Ayer
+                        </label>
+                    </div>
+
+                    <div class="form-radio">
+                        <input class="form-radio-input"
+                               type="radio"
+                               name="fecha"
+                               value="3"
+                               id="tipo_fecha_3">
+                
+                        <label class="form-radio-label" for="tipo_fecha_3">
+                            Últimos 7 días
+                        </label>
+                    </div>
+
+                    <div class="form-radio">
+                        <input class="form-radio-input"
+                               type="radio"
+                               name="fecha"
+                               value="4"
+                               id="tipo_fecha_4">
+                
+                        <label class="form-radio-label" for="tipo_fecha_4">
+                            Últimos 15 días
+                        </label>
+                    </div>
+
+                    <div class="form-radio">
+                        <input class="form-radio-input"
+                               type="radio"
+                               name="fecha"
+                               value="5"
+                               id="tipo_fecha_5">
+                
+                        <label class="form-radio-label" for="tipo_fecha_5">
+                            Últimos 30 días
+                        </label>
+                    </div>
+                    
+                </div>
+            </div>
+
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+
+                <button type="button"
+                        class="btn btn-danger"
+                        id="btnAplicarFiltros">
+                    Aplicar
+                </button>
             </div>
         </div>
     </div>
