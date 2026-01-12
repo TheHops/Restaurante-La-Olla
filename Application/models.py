@@ -117,9 +117,11 @@ class Orden(models.Model):
     
     Total = models.DecimalField(db_column='total', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     
+    TotalPagar = models.DecimalField(db_column='total_pagar', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
+    
     Monto = models.DecimalField(db_column='monto', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     
-    MontoRestante = models.DecimalField(db_column='monto_restante', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
+    SegundoMonto = models.DecimalField(db_column='segundo_monto', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     
     Cambio = models.DecimalField(db_column='cambio', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     

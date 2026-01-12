@@ -360,7 +360,7 @@ def FacturarOrden(request):
         metodoPago  = int(request.POST.get('metodoPago'))
         banco  = request.POST.get('banco')
         numRef      = request.POST.get('numRef')
-        montoRestante = 0
+        segundoMonto = 0
 
         # ===============================
         # Obtener orden
@@ -402,11 +402,11 @@ def FacturarOrden(request):
                 orden.NumReferencia = None
 
         elif metodoPago == 4:
-            montoRestante = total - monto
+            segundoMonto = total - monto
             
-            if montoRestante < 0:
+            if segundoMonto < 0:
                 cambio = monto - total
-                montoRestante = 0
+                segundoMonto = 0
             else:
                 cambio = 0
 
@@ -428,7 +428,7 @@ def FacturarOrden(request):
         orden.MetodoPago    = metodoPago
         orden.Banco         = banco
         orden.NumRef        = numRef
-        orden.MontoRestante = montoRestante
+        orden.SegundoMonto  = segundoMonto
         orden.Estado        = "0"  # Facturada
 
         orden.save()
