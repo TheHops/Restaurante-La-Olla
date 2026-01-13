@@ -114,13 +114,14 @@ function MP(valor) {
   let NumRefOrden = document.getElementById("numRef");
   let infoMetodoMixto = document.getElementById("infoMetodoPagoMixto");
   let h4 = document.querySelector("#monto h4");
+  let h4Cambio = document.querySelector("#cambio h4");
   let bancoh4 = document.querySelector("#banco h4");
   let contMonto = document.querySelector("#monto");
 
   let BtnRegistrar = document.getElementById("btnFacturar");
   let Banco = document.getElementById("banco");
 
-  console.log(h4);
+  let inputCambio = document.getElementById("CambioOrden");
 
   if (valor == 1) {
     // EFECTIVO
@@ -130,8 +131,13 @@ function MP(valor) {
     Banco.style.display = "none";
     infoMetodoMixto.style.display = "none";
 
-    contMonto.classList.remove("mb-2");
+    inputCambio.disabled = true;
+    inputCambio.placeholder = "";
+    inputCambio.value = null;
+
+    // contMonto.classList.remove("mb-2");
     h4.innerHTML = 'Monto<span class="asterisco">*</span>';
+    h4Cambio.innerHTML = 'Cambio<span class="asterisco">*</span>';
     
     BtnRegistrar.disabled = true;
   } else if (valor == 2) {
@@ -159,14 +165,18 @@ function MP(valor) {
   }
   else {
     // EFECTIVO Y TARJETA    
-    CambioOrden.style.display = "none";
+    CambioOrden.style.display = "initial";
     MontoOrden.style.display = "initial";
     NumRefOrden.style.display = "none";
     Banco.style.display = "initial";
     infoMetodoMixto.style.display = "initial";
+
+    inputCambio.disabled = false;
+    inputCambio.placeholder = "Ej: 50"
     
     contMonto.classList.add("mb-2");
     h4.innerHTML = "Monto en efectivo<span class='asterisco'>*</span>";
+    h4Cambio.innerHTML = "Cambio en efectivo<span class='asterisco'>*</span>";
     bancoh4.innerHTML = "Banco de la tarjeta";
 
     BtnRegistrar.disabled = true;
