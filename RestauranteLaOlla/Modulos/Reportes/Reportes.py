@@ -16,7 +16,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
 from openpyxl.utils import get_column_letter
 
-from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden, AreaMesa
+from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden, AreaMesa, Usuario
 from RestauranteLaOlla import settings
 
 #region Inicio
@@ -130,9 +130,13 @@ def InicioMostrar(request):
 
     orden = Orden.objects.prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1"))).get(Id=idOrden)
     
+    usuario = Usuario.objects.select_related("IdCargo").get(Id=orden.IdUsuario.Id)
+    
     contexto = {
         "Orden": orden,
-        "Modo": "Mostrar"
+        "Modo": "Mostrar",
+        "NombreCreador": usuario.Nombres + " " + usuario.Apellidos,
+        "CargoCreador": usuario.IdCargo.Nombre
     }
 
     return render(request, "detalle_orden_editar.html", contexto)

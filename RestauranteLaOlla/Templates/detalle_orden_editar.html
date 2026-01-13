@@ -21,6 +21,121 @@
   <form action="">
     {% csrf_token %}
   </form>
+
+  {% if Modo != "Editar" %}
+
+  <!-- ¿Quién creó la orden? -->
+  <div class="col-12 row">
+    <!-- Detalles del que hizo la orden -->
+    <h4 style="font-size: 18px; margin-bottom: 3px;" class="col-12">¿Quién creó la orden?</h4>
+
+    <div class="col-4 mb-2" id="nombreCreadorDiv">
+      <div class="nombreCreadorTxt">
+        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Nombre</h4>
+      </div>
+      <input type="text" class="form-control" id="nombreCreador" value="{{NombreCreador}}" readonly/>
+    </div>
+
+    <div class="col-4 mb-2" id="cargoCreadorDiv">
+      <div class="cargoCreadorTxt">
+        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Cargo</h4>
+      </div>
+      <input type="text" class="form-control" id="cargoCreador" value="{{CargoCreador}}" readonly/>
+    </div>
+  </div>
+  <!-- ¿Quién creó la orden? -->
+
+  <hr>
+
+  <!-- Detalles de pago de la orden -->
+  <div class="col-12 row">
+    <!-- Detalles del que hizo la orden -->
+    <h4 style="font-size: 18px; margin-bottom: 3px;" class="col-12">Detalles de pago</h4>
+
+    {% if Orden.TotalPagar > 0 %}
+    <!-- Total pagado -->
+    <div class="col-4 mb-2" id="totalPagadoOrdenDiv">
+      <div class="totalPagadoOrdenTxt">
+        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Total pagado</h4>
+      </div>
+      <input type="text" class="form-control" id="totalPagadoOrden" value="{{Orden.TotalPagar}}" readonly/>
+    </div>
+    {% endif %}
+
+    {% if Orden.Total > 0 %}
+    <!-- Total base -->
+    <div class="col-4 mb-2" id="totalBaseOrdenDiv">
+      <div class="totalBaseOrdenTxt">
+        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Total base</h4>
+      </div>
+      <input type="text" class="form-control" id="totalBaseOrden" value="{{Orden.Total}}" readonly/>
+    </div>
+    {% endif %}
+
+    {% if Orden.Monto > 0 %}
+    <!-- Monto -->
+    <div class="col-4 mb-2" id="montoOrdenDiv">
+      <div class="montoOrdenTxt">
+        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Monto</h4>
+      </div>
+      <input type="text" class="form-control" id="montoOrden" value="{{Orden.Monto}}" readonly/>
+    </div>
+    {% endif %}
+
+    {% if Orden.Cambio > 0 %}
+    <!-- Cambio -->
+    <div class="col-4 mb-2" id="cambioOrdenDiv">
+      <div class="cambioOrdenTxt">
+        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Cambio</h4>
+      </div>
+      <input type="text" class="form-control" id="cambioOrden" value="{{Orden.Cambio}}" readonly/>
+    </div>
+    {% endif %}
+
+    {% if Orden.Propina > 0 %}
+    <!-- Propina -->
+    <div class="col-4 mb-2" id="propinaOrdenDiv">
+      <div class="propinaOrdenTxt">
+        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Propina</h4>
+      </div>
+      <input type="text" class="form-control" id="propinaOrden" value="{{Orden.Propina}}" readonly/>
+    </div>
+    {% endif %}
+
+    {% if Orden.Descuento < 0 %}
+    <!-- Descuento -->
+    <div class="col-4 mb-2" id="descuentoOrdenDiv">
+      <div class="descuentoOrdenTxt">
+        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Descuento</h4>
+      </div>
+      <input type="text" class="form-control" id="descuentoOrden" value="{{Orden.Descuento}}" readonly/>
+    </div>
+    {% endif %}
+
+    {% if Orden.SegundoMonto > 0 %}
+    <!-- Segundo monto -->
+    <div class="col-4 mb-2" id="segundoMontoOrdenDiv">
+      <div class="segundoMontoOrdenTxt">
+        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Segundo monto</h4>
+      </div>
+      <input type="text" class="form-control" id="segundoMontoOrden" value="{{Orden.SegundoMonto}}" readonly/>
+    </div>
+    {% endif %}
+
+    <!-- Metodo de pago -->
+    <div class="col-4 mb-2" id="metodoPagoOrdenDiv">
+      <div class="metodoPagoOrdenTxt">
+        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Metodo pago</h4>
+      </div>
+      <input type="text" class="form-control" id="metodoPagoOrden" value="{{Orden.get_MetodoPago_display }}" readonly/>
+    </div>
+    
+  </div>
+  <!-- Detalles de pago -->
+  
+  <hr>
+  {% endif %}
+
   
   <div class="col-12">
     <!-- Descripción -->
