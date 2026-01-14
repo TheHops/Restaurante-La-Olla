@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.db import transaction
 from django.db.models import Q, Prefetch, Count
 
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 
 from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Platillo, MesasPorOrden, TipoPlatillo
 
@@ -337,6 +337,8 @@ def to_float(valor):
         return 0.0
     return float(valor.replace(".", "").replace(",", "."))
 
+def redondear(valor): return Decimal(valor).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
 def FacturarOrden(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
@@ -347,25 +349,72 @@ def FacturarOrden(request):
                 "status": "error",
                 "message": "Método no permitido"
             }, status=405)
+            
 
         # ===============================
         # Obtener datos
         # ===============================
         idOrden     = request.POST.get('idOrden')
+        
+        if not idOrden:
+            return JsonResponse({
+                "status": "error",
+                "message": "Id de orden no proporcionado."
+            })
+            
+        if not idOrden.isdigit():
+            return JsonResponse({
+                "status": "error",
+                "message": "Id de orden inválido."
+            })
+            
+        metodoPago_raw = request.POST.get('metodoPago')
+        
+        if not metodoPago_raw or not metodoPago_raw.isdigit():
+            return JsonResponse({
+                "status": "error",
+                "message": "Método de pago inválido."
+            })
+            
         monto       = to_float(request.POST.get('monto', 0))
         cambio      = to_float(request.POST.get('cambio', 0))
         propina     = to_float(request.POST.get('propinaOrden', 0))
         descuento   = to_float(request.POST.get('descuentoOrden', 0))
         total       = to_float(request.POST.get('totalOrden', 0))
-        metodoPago  = int(request.POST.get('metodoPago'))
+        metodoPago  = int(metodoPago_raw)
         banco  = request.POST.get('banco')
         numRef      = request.POST.get('numRef')
-        segundoMonto = 0
+        segundoMonto = 0.0
+        
+        for nombre, valor in {
+            "monto": monto,
+            "propina": propina,
+            "total": total,
+            "cambio": cambio
+        }.items():
+            if valor < 0:
+                return JsonResponse({
+                    "status": "error",
+                    "message": f"El valor '{nombre}' no puede ser negativo."
+                })
+                
+        if total <= 0:
+            return JsonResponse({
+                "status": "error",
+                "message": "El total de la orden es inválido."
+            })
 
         # ===============================
         # Obtener orden
         # ===============================
         orden = Orden.objects.get(Id=idOrden)
+        
+        if orden.Estado == "0":
+            return JsonResponse({
+                "status": "error",
+                "message": "La orden ya fue facturada."
+            })
+        
         orden.UltimaModificacion = timezone.now()
         
         if banco is not None and banco.strip() == "":
@@ -392,7 +441,7 @@ def FacturarOrden(request):
 
             cambio_calculado = monto - totalPagar
 
-            if cambio != cambio_calculado:
+            if redondear(cambio) != redondear(cambio_calculado):
                 return JsonResponse({
                     "status": "error",
                     "message": "El cambio no coincide con el monto entregado."
@@ -476,6 +525,9 @@ def FacturarOrden(request):
         })
         
 def calcularTotalPagar (totalBase, propina, descuento):
+    if descuento > 0:
+        descuento *= -1
+    
     return float(totalBase) + float(propina) + float(descuento)
 
 #endregion FacturarOrden
