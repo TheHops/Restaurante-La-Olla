@@ -456,9 +456,10 @@ async function agregarOrden() {
     confirmButtonColor: "#ff6464",
     icon: "question",
     iconColor: "#ff964e",
+    reverseButtons: true,
     didOpen: () => {
       const input = Swal.getInput();
-      if (input) input.blur(); 
+      if (input) input.blur();
     },
   });
 
