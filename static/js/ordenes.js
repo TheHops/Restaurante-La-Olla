@@ -45,7 +45,6 @@ async function FacturarOrden() {
 
   if (isConfirmed)
   {
-
     let idOrdenF = document.getElementById("idOrdenFactura");
     let CambioOrden = document.getElementById("CambioOrden");
     let MontoOrden = document.getElementById("MontoOrden");
@@ -55,6 +54,13 @@ async function FacturarOrden() {
     let MetodoDePago = document.getElementById("SelectMetodoPago");
     let Banco = document.getElementById("SelectBanco");
     let numRef = document.getElementById("numRefOrden");
+
+    // Se validan los valores de propina y descuento según su check
+    let propinaCheck = document.getElementById("checkPropina");
+    let descuentoCheck = document.getElementById("checkDescuento");
+
+    if (!propinaCheck.checked) PropinaOrden.value = 0;
+    if (!descuentoCheck.checked) DescuentoOrden.value = 0;
   
     let Monto = MontoOrden.value || 0;
     let Cambio = CambioOrden.value || 0;
@@ -104,7 +110,6 @@ async function FacturarOrden() {
     xhr.send(datos);
   }
 }
-
 
 function MP(valor) {
   ReiniciarCampos();
@@ -256,11 +261,43 @@ function rellenarParaFacturar(id, total) {
   Monto.innerHTML = "Total: C$" + total;
 }
 
-document.getElementById("MontoOrden").addEventListener("input", function () {
+////////////////////////////////////////////////////////////////////
+
+document.getElementById("MontoOrden").addEventListener("input", CalcularTotal);
+document.getElementById("txtPorcentajeDescuento").addEventListener("input", CalcularTotal);
+document.getElementById("txtPorcentajePropina").addEventListener("input", CalcularTotal);
+document.getElementById("checkPropina").addEventListener("change", CalcularTotal);
+document.getElementById("checkDescuento").addEventListener("change", CalcularTotal);
+
+function CalcularTotal ()
+{
   let MetodoPago = document.getElementById("SelectMetodoPago");
+
+  let txtTotalOrden = document.getElementById("totalOrdenMonto");
 
   // Se obtiene el valor de lo que se ingresa cada vez que se escribe algo
   let MontoIngresado = document.getElementById("MontoOrden").value;
+  let DescuentoCalculado = document.getElementById("txtValorPorcentajeDescuento").value;
+  let PropinaCalculada = document.getElementById("txtValorPorcentajePropina").value;
+  
+  MontoIngresado = MontoIngresado == "" ? 0 : MontoIngresado;
+  let valorDescuento = DescuentoCalculado == "" ? 0 : DescuentoCalculado;
+  let valorPropina = PropinaCalculada == "" ? 0 : PropinaCalculada;
+  
+  console.log("Descuento: " + valorDescuento);
+  console.log("Propina: " + valorPropina);
+  
+  let propinaCheck = document.getElementById("checkPropina");
+  let descuentoCheck = document.getElementById("checkDescuento");
+  
+  if (!propinaCheck.checked)
+    valorPropina = 0;
+  
+  if (!descuentoCheck.checked)
+    valorDescuento = 0;
+  
+  console.log("Propina after checked check: " + valorPropina);
+  console.log("Descuento after checked check: " + valorDescuento);
 
   let MensajeMonto = document.getElementById("MensajeMonto");
   let CambioOrden = document.getElementById("CambioOrden");
@@ -268,22 +305,35 @@ document.getElementById("MontoOrden").addEventListener("input", function () {
 
   try {
     // Se realiza el cálculo del monto
-    let MontoNumero = parseInt(MontoIngresado);
+    let MontoNumero = parseFloat(MontoIngresado);
 
     if (Number.isNaN(MontoNumero)) {
-      throw new Error("El valor no se puede convertir a un número entero");
+      throw new Error("El valor no se puede convertir a un número");
     }
 
-    let Cambio = MontoNumero - TotalGlobal;
+    console.log("Total base: " + TotalGlobal);
 
+    let totalPagar = parseFloat(TotalGlobal) + parseFloat(valorDescuento) + parseFloat(valorPropina);
+
+    console.log("Total a pagar: " + totalPagar);
+
+    txtTotalOrden.textContent = `Total: C$${totalPagar}`;
+    
     // Se verifica si el monto está bien ingresado
-    if (MontoIngresado < TotalGlobal && MetodoPago.value == "1") {
+    if (MontoNumero < totalPagar && MetodoPago.value == "1") {
       MensajeMonto.style.display = "initial";
 
       CambioOrden.value = "";
 
       btnFacturar.disabled = true;
+    } else if (MetodoPago.value == "4") {
+      MensajeMonto.style.display = "none";
+
+      btnFacturar.disabled = false;
     } else {
+      // Este calculo aplica solo para efectivo
+      let Cambio = MontoNumero - totalPagar;
+
       MensajeMonto.style.display = "none";
 
       CambioOrden.value = Cambio;
@@ -297,8 +347,10 @@ document.getElementById("MontoOrden").addEventListener("input", function () {
     CambioOrden.value = "";
 
     btnFacturar.disabled = true;
+
+    console.error(error);
   }
-});
+}
 
 /////////////////////////////////////////////////////////////////////
 

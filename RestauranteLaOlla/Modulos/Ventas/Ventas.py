@@ -370,7 +370,15 @@ def FacturarOrden(request):
         
         if banco is not None and banco.strip() == "":
             banco = None
+            
+        print("Total base: " + str(total))
+        print("Propina: " + str(propina))
+        print("Descuento: " + str(descuento))
+        print("Monto: " + str(monto))
+        print("Cambio: " + str(cambio))
 
+        totalPagar = calcularTotalPagar(total, propina, descuento)
+        
         # ===============================
         # Validaciones por método de pago
         # ===============================
@@ -380,37 +388,50 @@ def FacturarOrden(request):
                     "status": "error",
                     "message": "El monto en efectivo no puede ser menor al total."
                 })
+                
 
-            cambio_calculado = round(monto - total, 2)
+            cambio_calculado = monto - totalPagar
 
-            if round(cambio, 2) != cambio_calculado:
+            if cambio != cambio_calculado:
                 return JsonResponse({
                     "status": "error",
                     "message": "El cambio no coincide con el monto entregado."
                 })
 
-            orden.NumReferencia = None
+            orden.TotalPagar = totalPagar
+            orden.NumRef = None
 
         elif metodoPago in (2, 3):  # TARJETA o TRANSFERENCIA
-            monto = total
+            monto = totalPagar
 
             cambio = 0
 
             if metodoPago == 3:
-                orden.NumReferencia = numRef
+                orden.NumRef = numRef
             else:
-                orden.NumReferencia = None
+                orden.NumRef = None
+                
+            orden.TotalPagar = totalPagar
 
         elif metodoPago == 4:
-            segundoMonto = total - monto
+            # Si el cliente va a pagar en efectivo pero quiere cambio
+            montoReal = monto - cambio
+            
+            if montoReal < 0:
+                return JsonResponse({
+                    "status": "error",
+                    "message": "El cambio no debe ser mayor al monto."
+                })
+            
+            # El monto de la tarjeta es la diferencia entre el total a pagar y el monto real en efectivo
+            segundoMonto = totalPagar - montoReal
             
             if segundoMonto < 0:
-                cambio = monto - total
+                cambio = monto - totalPagar
                 segundoMonto = 0
-            else:
-                cambio = 0
 
-            orden.NumReferencia = None
+            orden.TotalPagar = totalPagar
+            orden.NumRef = None
         else:
             return JsonResponse({
                 "status": "error",
@@ -427,7 +448,7 @@ def FacturarOrden(request):
         orden.Total         = total
         orden.MetodoPago    = metodoPago
         orden.Banco         = banco
-        orden.NumRef        = numRef
+        #orden.NumRef        = numRef
         orden.SegundoMonto  = segundoMonto
         orden.Estado        = "0"  # Facturada
 
@@ -453,6 +474,10 @@ def FacturarOrden(request):
             "status": "error",
             "message": "Ocurrió un error al facturar la orden."
         })
+        
+def calcularTotalPagar (totalBase, propina, descuento):
+    return float(totalBase) + float(propina) + float(descuento)
+
 #endregion FacturarOrden
 
 #region CambiarAEnPreparacion
