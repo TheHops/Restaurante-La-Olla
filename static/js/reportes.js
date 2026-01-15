@@ -285,19 +285,11 @@ document
 
 function ExportarOrdenes(tipo)
 {
+  // PREPARACION DE DATOS
   console.log("Exportación de tipo: " + (tipo == "1" ? "excel" : "pdf"));
 
-  let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
-  let xhr = new XMLHttpRequest();
-  xhr.open("POST", "/ExportarOrdenes/", true);
-
-  const params = new URLSearchParams({
-    FechaInicio: fechaDesde.value,
-    FechaFin: fechaHasta.value,
-  });
-
   const areasSeleccionadas = filtrosAplicados.areas;
-  const areasParam = areasSeleccionadas.join(",");
+  // const areasParam = areasSeleccionadas.join(",");
 
   const payload = {
     FechaInicio: fechaDesde.value,
@@ -306,35 +298,40 @@ function ExportarOrdenes(tipo)
     TipoExportacion: tipo
   };
 
-  let datos = new FormData();
-  datos.append("Areas", JSON.stringify(ordenP));
-  datos.append("csrfmiddlewaretoken", token);
-  datos.append("mesas", JSON.stringify(listaMesasSeleccionadas));
-  datos.append("descripcion", descripcion);
-  datos.append("total", total);
+  // PETICION AL SERVICIO
+  let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+  let xhr = new XMLHttpRequest();
+  xhr.open("POST", "/ExportarOrdenes/", true);
 
-  xhr.open(
-    "POST",
-    `/ExportarOrdenes?${params.toString()}&AreasSeleccionadas=${encodeURIComponent(
-      areasParam
-    )}`,
-    true
-  );
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.setRequestHeader("X-CSRFToken", token);
 
+  // Manejamos la respuesta del servidor
   xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-      $(".tablaInventario").DataTable().destroy();
-      document.querySelector("#cuerpoInventario").innerHTML = this.responseText;
-
-      $(".tablaInventario").DataTable({
-        scrollY: "43vh",
-        paging: true,
-        language: { url: "/static/json/es-ES.json" },
-      });
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        try {
+          let respuesta = JSON.parse(xhr.responseText);
+          
+          Swal.fire({
+            title: respuesta.message,
+            icon: "success",
+            confirmButtonColor: "#ff6464",
+          });
+        } catch (e) {
+          reject("Error al procesar la respuesta del servidor.");
+        }
+      } else {
+        reject("Error de red o servidor: " + xhr.status);
+      }
     }
   };
 
-  xhr.send();
+  xhr.onerror = function () {
+    reject("Error al conectar con el servidor.");
+  };
+
+  xhr.send(JSON.stringify(payload));
 }
 
 

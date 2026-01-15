@@ -244,10 +244,6 @@ function enviarDatosEditar(idOrden) {
 
   let detalles = document.querySelectorAll(".detalleOrdenData" + idOrden);
 
-  console.log(descripcionElement);
-
-  console.log(detalles);
-
   // Estructura base
   const payload = {
     idOrden: parseInt(idOrden),
@@ -268,8 +264,6 @@ function enviarDatosEditar(idOrden) {
 
     payload.detalles.push(detalle);
   });
-
-  console.log("PAYLOAD FINAL:", payload);
 
   /* Se realiza la petición al backend */
 

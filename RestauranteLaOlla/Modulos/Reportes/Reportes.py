@@ -143,7 +143,48 @@ def InicioMostrar(request):
 
 #endregion Mostrar orden
 
-#region EXPORTACIONES
+#region Exportaciones
+
+#region Ordenes
+
+def ExportarOrdenes(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+    
+    print("SI ENTRA A EXPORTAR ORDENES")
+    
+    return JsonResponse({"status": "ok", "message": f"¡Las ordenes fueron exportadas exitosamente!"})
+
+def exportar_excel_ordenes(ordenes):
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Ordenes"
+
+    ws.append(["N° Orden", "Fecha", "Mesas", "Área"])
+
+    for orden in ordenes:
+        mesas = " - ".join(
+            [f"#{m.IdMesa.Numero}" for m in orden.Mesas.all()]
+        )
+
+        ws.append([
+            orden.Id,
+            orden.UltimaModificacion.strftime("%Y-%m-%d %H:%M"),
+            mesas,
+            orden.IdAreaDeMesa.Nombre
+        ])
+
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = 'attachment; filename="ordenes.xlsx"'
+
+    wb.save(response)
+    return response
+
+#endregion Ordenes
+
+#region Otros
 
 def Exportar_ExcelPlatillo(request):
     if not request.user.is_authenticated:
@@ -219,9 +260,13 @@ def ExportarTipoPlatillos(request):
         print("---------------- 'exportar tipo platillo' ----------------")
         print(traceback.format_exc())
         print("#############################################################")
-#endregion
+        
+#endregion Otros
 
-#region  DOCUMENTOS PDF
+#endregion Exportaciones
+
+#region PDF
+
 def CreacionPlatillos_PDF(request):
     if request.user.is_authenticated:
         try:
@@ -316,7 +361,8 @@ def CreacionTipoPlatillos_PDF(request):
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
-#endregion
+    
+#endregion PDF
 
 #region PublicFunctions
 
