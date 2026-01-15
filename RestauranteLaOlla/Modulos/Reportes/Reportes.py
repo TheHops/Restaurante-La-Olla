@@ -1,6 +1,7 @@
 import os
 import traceback
 import pdfkit
+import json
 
 from datetime import datetime, time
 from decimal import Decimal
@@ -151,6 +152,24 @@ def ExportarOrdenes(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
+    if request.method != "POST":
+        return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"status": "error", "message": "JSON inválido"}, status=400)
+    
+    fecha_inicio_str = data["FechaInicio"]
+    fecha_fin_str = data["FechaFin"]
+    areas_ids = data["AreasSeleccionadas"]
+    tipo_exportacion = data["TipoExportacion"]
+    
+    print(data)
+    
+    ordenes = filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids)
+    
+    print(ordenes)
     print("SI ENTRA A EXPORTAR ORDENES")
     
     return JsonResponse({"status": "ok", "message": f"¡Las ordenes fueron exportadas exitosamente!"})
@@ -365,6 +384,56 @@ def CreacionTipoPlatillos_PDF(request):
 #endregion PDF
 
 #region PublicFunctions
+
+def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids):
+    print("INICIA FILTRO PUBLICO DE ORDENES")
+    print(fecha_inicio_str)
+    print(fecha_fin_str)
+    print(areas_ids)
+    
+    if not fecha_inicio_str or not fecha_fin_str:
+        return JsonResponse(
+            {"status": "error", "message": "Fechas incompletas"},
+            status=400
+        )
+
+    # Convertir string → date
+    fecha_inicio_date = datetime.strptime(fecha_inicio_str, "%Y-%m-%d").date()
+    fecha_fin_date = datetime.strptime(fecha_fin_str, "%Y-%m-%d").date()
+
+    # Validación lógica
+    if fecha_inicio_date > fecha_fin_date:
+        return JsonResponse(
+            {"status": "error", "message": "La fecha inicio no puede ser mayor a la fecha fin"},
+            status=400
+        )
+
+    # Ajustar horas
+    fecha_inicio = timezone.make_aware(datetime.combine(fecha_inicio_date, time.min), timezone.get_current_timezone())   # 00:00:00
+    fecha_fin = timezone.make_aware(datetime.combine(fecha_fin_date, time.max), timezone.get_current_timezone())         # 23:59:59.999999
+    
+    filtros = Q(
+        EsActivo="1",
+        UltimaModificacion__range=(fecha_inicio, fecha_fin),
+        Estado__in=["0"]
+    )
+
+    # Filtrar por áreas de mesa (opcional)
+    if areas_ids:
+        filtros &= Q(IdAreaDeMesa__in=areas_ids)
+
+    # ------------------------
+    # Query final
+    # ------------------------
+    ordenes = (
+        Orden.objects
+        .select_related('IdUsuario', 'IdAreaDeMesa')
+        .prefetch_related(Prefetch('Detalles'))
+        .filter(filtros)
+        .order_by("-Id")
+    )
+    
+    return ordenes
 
 def obtener_ordenes_filtradas(fecha_inicio, fecha_fin, areas_ids):
     filtros = Q(

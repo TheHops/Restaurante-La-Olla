@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   inicializarFechas();
   actualizarIndicadorFiltros();
+  verificarFilasTabla();
 });
 
 function inicializarFechas()
@@ -127,6 +128,8 @@ function filtrarOrdenesFecha() {
         paging: true,
         language: { url: "/static/json/es-ES.json" },
       });
+
+      verificarFilasTabla();
     }
   };
 
@@ -334,6 +337,16 @@ function ExportarOrdenes(tipo)
   xhr.send(JSON.stringify(payload));
 }
 
+function verificarFilasTabla() {
+  const tbody = document.querySelector(".tablaInventario tbody");
+  const filas = tbody.querySelectorAll("tr");
+  const btnExportar = document.getElementById("btnExportarOrdenes");
 
+  if (filas.length > 0) {
+    btnExportar.disabled = false;
+  } else {
+    btnExportar.disabled = true;
+  }
+}
 
 
