@@ -77,6 +77,7 @@ urlpatterns = [
     path("Reportes/", Reportes.Reportes, name="reportes"),
     path("InicioMostrar/", Reportes.InicioMostrar, name="InicioMostrar"),
     path("ReportesOrdenesFiltradas/", Reportes.ReportesOrdenesFiltradas, name="ReportesOrdenesFiltradas"),
+    path("ExportarOrdenes/", Reportes.ExportarOrdenes, name="ExportarOrdenes"),
 ]
 
 urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
