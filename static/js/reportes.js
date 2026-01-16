@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   inicializarFechas();
   actualizarIndicadorFiltros();
+  verificarFilasTabla();
 });
 
 function inicializarFechas()
@@ -127,6 +128,8 @@ function filtrarOrdenesFecha() {
         paging: true,
         language: { url: "/static/json/es-ES.json" },
       });
+
+      verificarFilasTabla();
     }
   };
 
@@ -217,12 +220,23 @@ function aplicarFechaPredefinidaTemp(tipo) {
       break;
   }
 
-  filtrosTemp.fechaDesde = desde.toISOString().split("T")[0];
-  filtrosTemp.fechaHasta = hasta.toISOString().split("T")[0];
+  // filtrosTemp.fechaDesde = desde.toISOString().split("T")[0];
+  // filtrosTemp.fechaHasta = hasta.toISOString().split("T")[0];
+
+  filtrosTemp.fechaDesde = formatLocalDate(desde);
+  filtrosTemp.fechaHasta = formatLocalDate(hasta);
 
   // fechaDesde.value = filtrosTemp.fechaDesde;
   // fechaHasta.value = filtrosTemp.fechaHasta;
 }
+
+function formatLocalDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 
 document.querySelectorAll('input[name="fecha"]').forEach((radio) => {
   radio.addEventListener("change", function () {
@@ -301,39 +315,93 @@ function ExportarOrdenes(tipo)
   // PETICION AL SERVICIO
   let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
   let xhr = new XMLHttpRequest();
+
   xhr.open("POST", "/ExportarOrdenes/", true);
+
+  xhr.responseType = "blob";
 
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.setRequestHeader("X-CSRFToken", token);
 
   // Manejamos la respuesta del servidor
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        try {
-          let respuesta = JSON.parse(xhr.responseText);
-          
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      const contentType = xhr.getResponseHeader("Content-Type");
+
+      // Si el backend devolvió JSON (error)
+      if (contentType && contentType.includes("application/json")) {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const respuesta = JSON.parse(reader.result);
           Swal.fire({
             title: respuesta.message,
-            icon: "success",
+            icon: respuesta.status === "error" ? "error" : "success",
             confirmButtonColor: "#ff6464",
           });
-        } catch (e) {
-          reject("Error al procesar la respuesta del servidor.");
-        }
-      } else {
-        reject("Error de red o servidor: " + xhr.status);
+        };
+        reader.readAsText(xhr.response);
+        return;
       }
+
+      // Si es archivo → descargar
+      const blob = xhr.response;
+      const url = window.URL.createObjectURL(blob);
+
+      const disposition = xhr.getResponseHeader("Content-Disposition");
+
+      let filename = "ordenes.xlsx";
+      if (disposition && disposition.includes("filename=")) {
+        filename = disposition.split("filename=")[1].replace(/"/g, "").trim();
+      }
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      window.URL.revokeObjectURL(url);
+
+      Swal.fire({
+        icon: "success",
+        title: "¡Se exportó el archivo con éxito!",
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 4000,
+        timerProgressBar: true,
+      });
+    } else {
+      Swal.fire({
+        title: "Error al exportar",
+        text: "Error de servidor: " + xhr.status,
+        icon: "error",
+      });
     }
   };
 
   xhr.onerror = function () {
-    reject("Error al conectar con el servidor.");
+    Swal.fire({
+      title: "Error",
+      text: "No se pudo conectar con el servidor",
+      icon: "error",
+    });
   };
 
   xhr.send(JSON.stringify(payload));
 }
 
+function verificarFilasTabla() {
+  const tbody = document.querySelector(".tablaInventario tbody");
+  const filas = tbody.querySelectorAll("tr");
+  const btnExportar = document.getElementById("btnExportarOrdenes");
 
+  if (filas.length > 0) {
+    btnExportar.disabled = false;
+  } else {
+    btnExportar.disabled = true;
+  }
+}
 
 

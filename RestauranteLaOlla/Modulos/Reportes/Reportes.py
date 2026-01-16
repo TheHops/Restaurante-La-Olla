@@ -1,12 +1,14 @@
 import os
 import traceback
 import pdfkit
+import json
 
 from datetime import datetime, time
 from decimal import Decimal
 
 from jinja2 import Environment, FileSystemLoader
 
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -54,47 +56,10 @@ def ReportesOrdenesFiltradas (request):
         if areasSeleccionadas:
             areas_ids = [int(x) for x in areasSeleccionadas.split(",") if x.isdigit()]
 
-        if not fecha_inicio_str or not fecha_fin_str:
-            return JsonResponse(
-                {"status": "error", "message": "Fechas incompletas"},
-                status=400
-            )
-
-        # Convertir string → date
-        fecha_inicio_date = datetime.strptime(fecha_inicio_str, "%Y-%m-%d").date()
-        fecha_fin_date = datetime.strptime(fecha_fin_str, "%Y-%m-%d").date()
-
-        # Validación lógica
-        if fecha_inicio_date > fecha_fin_date:
-            return JsonResponse(
-                {"status": "error", "message": "La fecha inicio no puede ser mayor a la fecha fin"},
-                status=400
-            )
-
-        # Ajustar horas
-        fecha_inicio = timezone.make_aware(datetime.combine(fecha_inicio_date, time.min), timezone.get_current_timezone())   # 00:00:00
-        fecha_fin = timezone.make_aware(datetime.combine(fecha_fin_date, time.max), timezone.get_current_timezone())         # 23:59:59.999999
-        
-        filtros = Q(
-            EsActivo="1",
-            UltimaModificacion__range=(fecha_inicio, fecha_fin),
-            Estado__in=["0"]
-        )
-
-        # Filtrar por áreas de mesa (opcional)
-        if areas_ids:
-            filtros &= Q(IdAreaDeMesa__in=areas_ids)
-
-        # ------------------------
-        # Query final
-        # ------------------------
-        ordenes = (
-            Orden.objects
-            .select_related('IdUsuario', 'IdAreaDeMesa')
-            .prefetch_related(Prefetch('Detalles'))
-            .filter(filtros)
-            .order_by("-Id")
-        )
+        try:
+            ordenes = filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids)
+        except ValidationError as e:
+            return JsonResponse({"status": "error", "message": str(e)})
 
         contexto = {
             "Ordenes": ordenes,
@@ -151,36 +116,51 @@ def ExportarOrdenes(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
-    print("SI ENTRA A EXPORTAR ORDENES")
+    if request.method != "POST":
+        return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"status": "error", "message": "JSON inválido"}, status=400)
+    
+    fecha_inicio_str = data["FechaInicio"]
+    fecha_fin_str = data["FechaFin"]
+    areas_ids = data["AreasSeleccionadas"]
+    tipo_exportacion = data["TipoExportacion"]
+    
+    print(data)
+    print(tipo_exportacion)
+    
+    try:
+        ordenes = filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids)
+    except ValidationError as e:
+        return JsonResponse({"status": "error", "message": str(e)})
+    
+    if tipo_exportacion == "1":
+        wb = exportar_excel_ordenes(ordenes)
+        return descargar_excel(wb, f"ordenes_{fecha_inicio_str}_{fecha_fin_str}.xlsx")
     
     return JsonResponse({"status": "ok", "message": f"¡Las ordenes fueron exportadas exitosamente!"})
 
 def exportar_excel_ordenes(ordenes):
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Ordenes"
+    titulo = "Reporte de Órdenes"
+    columnas = ["N° Orden", "Fecha", "Mesas", "Área"]
 
-    ws.append(["N° Orden", "Fecha", "Mesas", "Área"])
-
+    datos = []
     for orden in ordenes:
-        mesas = " - ".join(
-            [f"#{m.IdMesa.Numero}" for m in orden.Mesas.all()]
-        )
+        mesas = " - ".join(f"#{m.IdMesa.Numero}" for m in orden.Mesas.all())
 
-        ws.append([
+        datos.append([
             orden.Id,
             orden.UltimaModificacion.strftime("%Y-%m-%d %H:%M"),
             mesas,
-            orden.IdAreaDeMesa.Nombre
+            orden.IdAreaDeMesa.Nombre if orden.IdAreaDeMesa else ""
         ])
 
-    response = HttpResponse(
-        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
-    response["Content-Disposition"] = 'attachment; filename="ordenes.xlsx"'
+    wb = exportar_excel_datos(titulo, columnas, datos)
 
-    wb.save(response)
-    return response
+    return wb
 
 #endregion Ordenes
 
@@ -366,23 +346,49 @@ def CreacionTipoPlatillos_PDF(request):
 
 #region PublicFunctions
 
-def obtener_ordenes_filtradas(fecha_inicio, fecha_fin, areas_ids):
+def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids):
+    print("INICIA FILTRO PUBLICO DE ORDENES")
+    print(fecha_inicio_str)
+    print(fecha_fin_str)
+    print(areas_ids)
+    
+    if not fecha_inicio_str or not fecha_fin_str:
+        raise ValidationError("Fechas incompletas")
+
+    # Convertir string → date
+    fecha_inicio_date = datetime.strptime(fecha_inicio_str, "%Y-%m-%d").date()
+    fecha_fin_date = datetime.strptime(fecha_fin_str, "%Y-%m-%d").date()
+
+    # Validación lógica
+    if fecha_inicio_date > fecha_fin_date:
+        raise ValidationError("La fecha inicio no puede ser mayor a la fecha fin")
+
+    # Ajustar horas
+    fecha_inicio = timezone.make_aware(datetime.combine(fecha_inicio_date, time.min), timezone.get_current_timezone())   # 00:00:00
+    fecha_fin = timezone.make_aware(datetime.combine(fecha_fin_date, time.max), timezone.get_current_timezone())         # 23:59:59.999999
+    
     filtros = Q(
         EsActivo="1",
         UltimaModificacion__range=(fecha_inicio, fecha_fin),
         Estado__in=["0"]
     )
 
+    # Filtrar por áreas de mesa (opcional)
     if areas_ids:
         filtros &= Q(IdAreaDeMesa__in=areas_ids)
 
-    return (
+    # ------------------------
+    # Query final
+    # ------------------------
+    ordenes = (
         Orden.objects
         .select_related('IdUsuario', 'IdAreaDeMesa')
-        .prefetch_related('Mesas')
+        .prefetch_related(Prefetch('Detalles'))
         .filter(filtros)
         .order_by("-Id")
     )
+    
+    return ordenes
 
 def exportar_excel_datos(titulo, columnas, datos):
     # ==== CREAR LIBRO ====
@@ -446,5 +452,14 @@ def exportar_excel_datos(titulo, columnas, datos):
         ws.column_dimensions[get_column_letter(i)].width = max(len(header) + 5, 15)
 
     return wb
+
+def descargar_excel(wb, nombre_archivo):
+    print(nombre_archivo)
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = f'attachment; filename="{nombre_archivo}"'
+    wb.save(response)
+    return response
 
 #endregion PublicFunctions
