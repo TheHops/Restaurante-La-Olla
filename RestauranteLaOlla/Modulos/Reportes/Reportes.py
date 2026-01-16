@@ -144,8 +144,8 @@ def ExportarOrdenes(request):
     return JsonResponse({"status": "ok", "message": f"¡Las ordenes fueron exportadas exitosamente!"})
 
 def exportar_excel_ordenes(ordenes):
-    titulo = "Reporte de Órdenes"
-    columnas = ["N° Orden", "Fecha", "Mesas", "Área"]
+    titulo = "Reporte de ordenes"
+    columnas = ["N° Orden", "Fecha", "Área", "Mesas", "Subtotal", "Propina", "Descuento", "Total a pagar", "Método de pago", "Monto", "Cambio", "Segundo monto"]
 
     datos = []
     for orden in ordenes:
@@ -154,8 +154,16 @@ def exportar_excel_ordenes(ordenes):
         datos.append([
             orden.Id,
             orden.UltimaModificacion.strftime("%Y-%m-%d %H:%M"),
+            orden.IdAreaDeMesa.Nombre if orden.IdAreaDeMesa else "",
             mesas,
-            orden.IdAreaDeMesa.Nombre if orden.IdAreaDeMesa else ""
+            "C$" + str(orden.Total),
+            "C$" + str(orden.Propina),
+            "C$" + str(orden.Descuento),
+            "C$" + str(orden.TotalPagar),
+            orden.get_MetodoPago_display(),
+            "C$" + str(orden.Monto),
+            "C$" + str(orden.Cambio),
+            "C$" + str(orden.SegundoMonto)
         ])
 
     wb = exportar_excel_datos(titulo, columnas, datos)
