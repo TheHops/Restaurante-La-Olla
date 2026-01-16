@@ -8,6 +8,7 @@ from decimal import Decimal
 
 from jinja2 import Environment, FileSystemLoader
 
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -55,47 +56,10 @@ def ReportesOrdenesFiltradas (request):
         if areasSeleccionadas:
             areas_ids = [int(x) for x in areasSeleccionadas.split(",") if x.isdigit()]
 
-        if not fecha_inicio_str or not fecha_fin_str:
-            return JsonResponse(
-                {"status": "error", "message": "Fechas incompletas"},
-                status=400
-            )
-
-        # Convertir string → date
-        fecha_inicio_date = datetime.strptime(fecha_inicio_str, "%Y-%m-%d").date()
-        fecha_fin_date = datetime.strptime(fecha_fin_str, "%Y-%m-%d").date()
-
-        # Validación lógica
-        if fecha_inicio_date > fecha_fin_date:
-            return JsonResponse(
-                {"status": "error", "message": "La fecha inicio no puede ser mayor a la fecha fin"},
-                status=400
-            )
-
-        # Ajustar horas
-        fecha_inicio = timezone.make_aware(datetime.combine(fecha_inicio_date, time.min), timezone.get_current_timezone())   # 00:00:00
-        fecha_fin = timezone.make_aware(datetime.combine(fecha_fin_date, time.max), timezone.get_current_timezone())         # 23:59:59.999999
-        
-        filtros = Q(
-            EsActivo="1",
-            UltimaModificacion__range=(fecha_inicio, fecha_fin),
-            Estado__in=["0"]
-        )
-
-        # Filtrar por áreas de mesa (opcional)
-        if areas_ids:
-            filtros &= Q(IdAreaDeMesa__in=areas_ids)
-
-        # ------------------------
-        # Query final
-        # ------------------------
-        ordenes = (
-            Orden.objects
-            .select_related('IdUsuario', 'IdAreaDeMesa')
-            .prefetch_related(Prefetch('Detalles'))
-            .filter(filtros)
-            .order_by("-Id")
-        )
+        try:
+            ordenes = filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids)
+        except ValidationError as e:
+            return JsonResponse({"status": "error", "message": str(e)})
 
         contexto = {
             "Ordenes": ordenes,
@@ -166,8 +130,15 @@ def ExportarOrdenes(request):
     tipo_exportacion = data["TipoExportacion"]
     
     print(data)
+    print(tipo_exportacion)
     
-    ordenes = filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids)
+    try:
+        ordenes = filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids)
+    except ValidationError as e:
+        return JsonResponse({"status": "error", "message": str(e)})
+    
+    if tipo_exportacion == "1":
+        return exportar_excel_ordenes(ordenes)
     
     print(ordenes)
     print("SI ENTRA A EXPORTAR ORDENES")
@@ -196,7 +167,8 @@ def exportar_excel_ordenes(ordenes):
     response = HttpResponse(
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-    response["Content-Disposition"] = 'attachment; filename="ordenes.xlsx"'
+    
+    response["Content-Disposition"] = f'attachment; filename="ordenes.xlsx"'
 
     wb.save(response)
     return response
@@ -392,10 +364,7 @@ def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids):
     print(areas_ids)
     
     if not fecha_inicio_str or not fecha_fin_str:
-        return JsonResponse(
-            {"status": "error", "message": "Fechas incompletas"},
-            status=400
-        )
+        raise ValidationError("Fechas incompletas")
 
     # Convertir string → date
     fecha_inicio_date = datetime.strptime(fecha_inicio_str, "%Y-%m-%d").date()
@@ -403,10 +372,7 @@ def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids):
 
     # Validación lógica
     if fecha_inicio_date > fecha_fin_date:
-        return JsonResponse(
-            {"status": "error", "message": "La fecha inicio no puede ser mayor a la fecha fin"},
-            status=400
-        )
+        raise ValidationError("La fecha inicio no puede ser mayor a la fecha fin")
 
     # Ajustar horas
     fecha_inicio = timezone.make_aware(datetime.combine(fecha_inicio_date, time.min), timezone.get_current_timezone())   # 00:00:00
@@ -434,24 +400,6 @@ def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids):
     )
     
     return ordenes
-
-def obtener_ordenes_filtradas(fecha_inicio, fecha_fin, areas_ids):
-    filtros = Q(
-        EsActivo="1",
-        UltimaModificacion__range=(fecha_inicio, fecha_fin),
-        Estado__in=["0"]
-    )
-
-    if areas_ids:
-        filtros &= Q(IdAreaDeMesa__in=areas_ids)
-
-    return (
-        Orden.objects
-        .select_related('IdUsuario', 'IdAreaDeMesa')
-        .prefetch_related('Mesas')
-        .filter(filtros)
-        .order_by("-Id")
-    )
 
 def exportar_excel_datos(titulo, columnas, datos):
     # ==== CREAR LIBRO ====
