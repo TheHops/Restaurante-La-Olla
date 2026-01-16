@@ -347,9 +347,16 @@ function ExportarOrdenes(tipo)
       const blob = xhr.response;
       const url = window.URL.createObjectURL(blob);
 
+      const disposition = xhr.getResponseHeader("Content-Disposition");
+
+      let filename = "ordenes.xlsx";
+      if (disposition && disposition.includes("filename=")) {
+        filename = disposition.split("filename=")[1].replace(/"/g, "").trim();
+      }
+
       const a = document.createElement("a");
       a.href = url;
-      a.download = "ordenes.xlsx"; // puedes hacerlo dinámico
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       a.remove();

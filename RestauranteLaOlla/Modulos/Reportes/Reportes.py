@@ -138,40 +138,29 @@ def ExportarOrdenes(request):
         return JsonResponse({"status": "error", "message": str(e)})
     
     if tipo_exportacion == "1":
-        return exportar_excel_ordenes(ordenes)
-    
-    print(ordenes)
-    print("SI ENTRA A EXPORTAR ORDENES")
+        wb = exportar_excel_ordenes(ordenes)
+        return descargar_excel(wb, f"ordenes_{fecha_inicio_str}_{fecha_fin_str}.xlsx")
     
     return JsonResponse({"status": "ok", "message": f"¡Las ordenes fueron exportadas exitosamente!"})
 
 def exportar_excel_ordenes(ordenes):
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Ordenes"
+    titulo = "Reporte de Órdenes"
+    columnas = ["N° Orden", "Fecha", "Mesas", "Área"]
 
-    ws.append(["N° Orden", "Fecha", "Mesas", "Área"])
-
+    datos = []
     for orden in ordenes:
-        mesas = " - ".join(
-            [f"#{m.IdMesa.Numero}" for m in orden.Mesas.all()]
-        )
+        mesas = " - ".join(f"#{m.IdMesa.Numero}" for m in orden.Mesas.all())
 
-        ws.append([
+        datos.append([
             orden.Id,
             orden.UltimaModificacion.strftime("%Y-%m-%d %H:%M"),
             mesas,
-            orden.IdAreaDeMesa.Nombre
+            orden.IdAreaDeMesa.Nombre if orden.IdAreaDeMesa else ""
         ])
 
-    response = HttpResponse(
-        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
-    
-    response["Content-Disposition"] = f'attachment; filename="ordenes.xlsx"'
+    wb = exportar_excel_datos(titulo, columnas, datos)
 
-    wb.save(response)
-    return response
+    return wb
 
 #endregion Ordenes
 
@@ -463,5 +452,14 @@ def exportar_excel_datos(titulo, columnas, datos):
         ws.column_dimensions[get_column_letter(i)].width = max(len(header) + 5, 15)
 
     return wb
+
+def descargar_excel(wb, nombre_archivo):
+    print(nombre_archivo)
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = f'attachment; filename="{nombre_archivo}"'
+    wb.save(response)
+    return response
 
 #endregion PublicFunctions
