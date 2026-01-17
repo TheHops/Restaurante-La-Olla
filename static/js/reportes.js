@@ -367,7 +367,7 @@ function ExportarOrdenes(tipo)
         icon: "success",
         title: "¡Se exportó el archivo con éxito!",
         toast: true,
-        position: "bottom-end",
+        position: "top-start",
         showConfirmButton: false,
         timer: 4000,
         timerProgressBar: true,
