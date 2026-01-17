@@ -128,6 +128,7 @@ def ExportarOrdenes(request):
     fecha_fin_str = data["FechaFin"]
     areas_ids = data["AreasSeleccionadas"]
     tipo_exportacion = data["TipoExportacion"]
+    incluir_detalles = data["IncluirDetalles"]
     
     print(data)
     print(tipo_exportacion)
@@ -138,12 +139,12 @@ def ExportarOrdenes(request):
         return JsonResponse({"status": "error", "message": str(e)})
     
     if tipo_exportacion == "1":
-        wb = exportar_excel_ordenes(ordenes)
+        wb = exportar_excel_ordenes(ordenes, incluir_detalles)
         return descargar_excel(wb, f"ordenes_{fecha_inicio_str}_{fecha_fin_str}.xlsx")
     
     return JsonResponse({"status": "ok", "message": f"¡Las ordenes fueron exportadas exitosamente!"})
 
-def exportar_excel_ordenes(ordenes):
+def exportar_excel_ordenes(ordenes, incluir_detalles = False):
     titulo = "REPORTE DE ORDENES"
     columnas = ["N° Orden", "Fecha", "Área", "Mesas", "Subtotal", "Propina", "Descuento", "Total a pagar", "Método de pago", "Monto", "Cambio", "Segundo monto"]
 
@@ -166,7 +167,42 @@ def exportar_excel_ordenes(ordenes):
             "C$" + str(orden.SegundoMonto)
         ])
 
-    wb = exportar_excel_datos(titulo, columnas, datos)
+    wb = exportar_excel_datos(titulo, columnas, datos, "Ordenes")
+    
+    # HOJA 2: DETALLES (OPCIONAL)
+    if incluir_detalles:
+        ws_detalles = wb.create_sheet(title="Detalles")
+
+        columnas_detalles = [
+            "N° Orden", "Fecha", "Área", "Mesa",
+            "Producto", "Cantidad", "Precio", "Subtotal"
+        ]
+
+        datos_detalles = []
+
+        for orden in ordenes:
+            mesas = " - ".join(f"#{m.IdMesa.Numero}" for m in orden.Mesas.all())
+            area = orden.IdAreaDeMesa.Nombre if orden.IdAreaDeMesa else ""
+
+            for detalle in orden.Detalles.all():
+                datos_detalles.append([
+                    orden.Id,
+                    orden.UltimaModificacion.strftime("%Y-%m-%d %H:%M"),
+                    area,
+                    mesas,
+                    detalle.IdPlatillo.Nombre,
+                    detalle.Cantidad,
+                    detalle.PrecioVenta,
+                    detalle.Cantidad * detalle.PrecioVenta
+                ])
+
+        # Ponemos estilo a la nueva hoja
+        poblar_hoja_existente(
+            ws_detalles,
+            "DETALLES DE ÓRDENES",
+            columnas_detalles,
+            datos_detalles
+        )
 
     return wb
 
@@ -196,7 +232,7 @@ def Exportar_ExcelPlatillo(request):
                 estado_symbol
             ])
 
-        wb = exportar_excel_datos("CONSUMOS", columnas, datos)
+        wb = exportar_excel_datos("CONSUMOS", columnas, datos, "Consumos")
 
         # Preparar respuesta
         response = HttpResponse(
@@ -233,7 +269,7 @@ def ExportarTipoPlatillos(request):
                 estado_symbol
             ])
 
-        wb = exportar_excel_datos("TIPO DE CONSUMO", columnas, datos)
+        wb = exportar_excel_datos("TIPO DE CONSUMO", columnas, datos, "Tipos de consumo")
 
         response = HttpResponse(
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -400,11 +436,11 @@ def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids):
     
     return ordenes
 
-def exportar_excel_datos(titulo, columnas, datos):
+def exportar_excel_datos(titulo, columnas, datos, sheetName):
     # ==== CREAR LIBRO ====
     wb = Workbook()
     ws = wb.active
-    ws.title = "Datos"
+    ws.title = sheetName
 
     # ==== ESTILOS ====
     vino_oscuro = "800000"
@@ -462,6 +498,47 @@ def exportar_excel_datos(titulo, columnas, datos):
         ws.column_dimensions[get_column_letter(i)].width = max(len(header) + 5, 15)
 
     return wb
+
+def poblar_hoja_existente(ws, titulo, columnas, datos):
+    vino_oscuro = "800000"
+    blanco = "FFFFFF"
+    font_blanca_sans = Font(bold=True, color=blanco, name="Arial")
+
+    borde_resaltado = Border(
+        left=Side(border_style="thin", color="000000"),
+        right=Side(border_style="thin", color="000000"),
+        top=Side(border_style="thin", color="000000"),
+        bottom=Side(border_style="thin", color="000000")
+    )
+
+    ultima_columna = get_column_letter(len(columnas))
+    ws.merge_cells(f"A1:{ultima_columna}1")
+
+    ws["A1"].value = titulo
+    ws["A1"].font = font_blanca_sans
+    ws["A1"].alignment = Alignment(horizontal="center", vertical="center")
+    ws["A1"].fill = PatternFill("solid", fgColor=vino_oscuro)
+    ws["A1"].border = borde_resaltado
+    ws.row_dimensions[1].height = 25
+
+    for col_idx, header in enumerate(columnas, start=1):
+        c = ws.cell(row=2, column=col_idx, value=header)
+        c.font = font_blanca_sans
+        c.alignment = Alignment(horizontal="center", vertical="center")
+        c.fill = PatternFill("solid", fgColor=vino_oscuro)
+        c.border = borde_resaltado
+
+    start_row = 3
+    for idx, fila in enumerate(datos):
+        fill_color = "FFF5F5" if idx % 2 == 0 else "FFF0E6"
+        for col_idx, valor in enumerate(fila, start=1):
+            cell = ws.cell(row=start_row + idx, column=col_idx, value=valor)
+            cell.fill = PatternFill("solid", fgColor=fill_color)
+            cell.border = borde_resaltado
+
+    ws.freeze_panes = "A3"
+    for i, header in enumerate(columnas, start=1):
+        ws.column_dimensions[get_column_letter(i)].width = max(len(header) + 5, 15)
 
 def descargar_excel(wb, nombre_archivo):
     print(nombre_archivo)
