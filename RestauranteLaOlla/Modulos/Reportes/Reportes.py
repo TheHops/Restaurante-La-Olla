@@ -144,7 +144,7 @@ def ExportarOrdenes(request):
     return JsonResponse({"status": "ok", "message": f"¡Las ordenes fueron exportadas exitosamente!"})
 
 def exportar_excel_ordenes(ordenes):
-    titulo = "Reporte de ordenes"
+    titulo = "REPORTE DE ORDENES"
     columnas = ["N° Orden", "Fecha", "Área", "Mesas", "Subtotal", "Propina", "Descuento", "Total a pagar", "Método de pago", "Monto", "Cambio", "Segundo monto"]
 
     datos = []
@@ -177,6 +177,8 @@ def exportar_excel_ordenes(ordenes):
 def Exportar_ExcelPlatillo(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    print("SI ENTRA A EXPORTAR PLATILLOS")
 
     try:
         columnas = ['Nombre consumo', 'Precio', 'Tipo de consumo', 'Descripcion', 'Estado']
@@ -194,7 +196,7 @@ def Exportar_ExcelPlatillo(request):
                 estado_symbol
             ])
 
-        wb = exportar_excel_datos("PLATILLOS", columnas, datos)
+        wb = exportar_excel_datos("CONSUMOS", columnas, datos)
 
         # Preparar respuesta
         response = HttpResponse(
@@ -221,7 +223,7 @@ def ExportarTipoPlatillos(request):
         return render(request, "login.html")
 
     try:
-        columnas = ['Tipo de Platillos', 'Estado']
+        columnas = ['Nombre', 'Estado']
         datos = []
 
         for nombre, es_activo in TipoPlatillo.objects.values_list('Nombre', 'EsActivo'):
@@ -231,7 +233,7 @@ def ExportarTipoPlatillos(request):
                 estado_symbol
             ])
 
-        wb = exportar_excel_datos("TIPO DE PLATILLO", columnas, datos)
+        wb = exportar_excel_datos("TIPO DE CONSUMO", columnas, datos)
 
         response = HttpResponse(
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
