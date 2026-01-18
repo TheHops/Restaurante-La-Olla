@@ -425,3 +425,58 @@ function agregarFilaDetalleEditar(platillo) {
 
   $("#cuerpoTablaEditarOrdenDetalles").append(fila);
 }
+
+/* ****************************************************** */
+/* ****************** EDITAR MESAS ********************** */
+/* ****************************************************** */
+
+function editarMesas(idOrden) {
+  let request = new XMLHttpRequest();
+
+  const url = `/InicioEditarMesas?IdOrden=${idOrden}`;
+
+  // data.append('InputBuscarPlatillo', cadena);
+  request.open("GET", url);
+  request.send();
+  request.onreadystatechange = function () {
+    if (this.readyState == 4) {
+    if (this.status === 200)
+    {
+        let contenedor = document.getElementById("contenidoModalBodyEditarMesas");
+
+        console.log(this.responseText);
+        
+        if (contenedor) {
+        contenedor.innerHTML = this.responseText;
+        }
+    }
+    }
+  };
+}
+
+$("#EditarMesas").on("shown.bs.modal", function () {
+  const select = document.getElementById("selectAreaMesa");
+  const mesas = document.querySelectorAll(".mesa-item");
+
+  function filtrarMesas() {
+    const areaSeleccionada = select.value;
+
+    mesas.forEach((mesa) => {
+      if (!areaSeleccionada) {
+        mesa.classList.add("d-none");
+        return;
+      }
+
+      if (mesa.dataset.area === areaSeleccionada) {
+        mesa.classList.remove("d-none");
+      } else {
+        mesa.classList.add("d-none");
+      }
+    });
+  }
+
+  select.addEventListener("change", filtrarMesas);
+
+  // Ejecutar una vez al abrir
+  filtrarMesas();
+});

@@ -78,6 +78,7 @@ urlpatterns = [
     path("InicioMostrar/", Reportes.InicioMostrar, name="InicioMostrar"),
     path("ReportesOrdenesFiltradas/", Reportes.ReportesOrdenesFiltradas, name="ReportesOrdenesFiltradas"),
     path("ExportarOrdenes/", Reportes.ExportarOrdenes, name="ExportarOrdenes"),
+    path("InicioEditarMesas/", Ventas.InicioEditarMesas, name="InicioEditarMesas"),
 ]
 
 urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)

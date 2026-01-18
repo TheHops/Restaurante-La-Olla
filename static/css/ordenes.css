@@ -421,6 +421,10 @@
     z-index: 1060 !important;
 }
 
+#EditarMesas.modal.show {
+    z-index: 1060 !important;
+}
+
 #contenidoIncluirPlatillosEditar {
     max-height: 50vh;
     overflow: auto;
@@ -449,6 +453,17 @@
 .nombreConsumoIncluir:has(input:checked) {
     background-color: #d4edda;
     border-color: #c3e6cb;
+}
+
+#contenedorMesas {
+    border-style: solid;
+    border-color: #DFDFDF;
+    border-width: 1px;
+    border-radius: 10px;
+
+    overflow: auto;
+
+    margin-top: 15px;
 }
 
 .filaDetalleOrdenNuevo {

@@ -659,6 +659,46 @@ def InicioIncluir(request):
 
     return render(request, "incluir_platillos_editar.html", contexto)
 
+def InicioEditarMesas(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+    
+    print("SI ENTRO")
+
+    idOrden = request.GET.get("IdOrden")
+    if not idOrden:
+        return JsonResponse({"message": "Orden no válida"}, status=400)
+
+    orden = get_object_or_404(Orden, Id=idOrden)
+
+    mesas_orden = (
+        MesasPorOrden.objects
+        .filter(IdOrden=orden, EsActivo="1")
+        .values_list("IdMesa_id", flat=True)
+    )
+
+    areas = (
+        AreaMesa.objects
+        .filter(EsActivo="1")
+        .prefetch_related(
+            Prefetch(
+                "Mesas",
+                queryset=Mesa.objects.filter(EsActivo="1"),
+                to_attr="mesas_activas"
+            )
+        )
+    )
+
+    contexto = {
+        "Orden": orden,
+        "Areas": areas,
+        "MesasOrden": list(mesas_orden),
+    }
+    
+    print(contexto)
+
+    return render(request, "editar_mesas.html", contexto)
+
 def EditarOrden (request):
     descripcionFueEditada = False
     detalleNuevo = False
