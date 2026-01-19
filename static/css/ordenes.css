@@ -455,6 +455,34 @@
     border-color: #c3e6cb;
 }
 
+.nombreConsumoIncluir:has(input:checked):hover {
+    background-color: hsl(134, 41%, 85%);
+}
+
+.numeroMesaEditar {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
+}
+
+.numeroMesaEditar input:checked + span,
+.numeroMesaEditar input:checked ~ span {
+    font-weight: 600;
+}
+
+.numeroMesaEditar input:checked {
+    display: none;
+}
+
+.numeroMesaEditar:has(input:checked) {
+    background-color: #d4edda;
+    border-color: hsl(134, 41%, 70%);
+}
+
+.numeroMesaEditar:has(input:checked):hover {
+    background-color: hsl(134, 41%, 85%);
+}
+
 #contenedorMesas {
     border-style: solid;
     border-color: #DFDFDF;

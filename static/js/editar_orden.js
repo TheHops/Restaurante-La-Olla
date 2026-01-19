@@ -18,8 +18,7 @@ function rellenarParaEditarOrden(idOrden) {
   };
 }
 
-function agregarPlatillosIncluir(idOrden)
-{
+function agregarPlatillosIncluir(idOrden) {
   let request = new XMLHttpRequest();
 
   const url = `/InicioIncluir?IdOrden=${idOrden}`;
@@ -30,7 +29,7 @@ function agregarPlatillosIncluir(idOrden)
   request.onreadystatechange = function () {
     if (this.readyState == 4) {
       let contenedor = document.getElementById(
-        "contenidoModalBodyIncluirPlatillosEditar"
+        "contenidoModalBodyIncluirPlatillosEditar",
       );
 
       if (contenedor) {
@@ -42,11 +41,9 @@ function agregarPlatillosIncluir(idOrden)
 
 function subirCantidad(id) {
   const span = document.getElementById(`cantidadDetalle-${id}`);
-  const dataFinal = document.getElementById(
-    `detalleOrdenEditarData${id}`
-  );
+  const dataFinal = document.getElementById(`detalleOrdenEditarData${id}`);
   const btnConfirmar = document.getElementById(
-    `btnConfirmarCambiosEditarOrden`
+    `btnConfirmarCambiosEditarOrden`,
   );
 
   if (!span) return;
@@ -69,7 +66,7 @@ function bajarCantidad(id) {
   const span = document.getElementById(`cantidadDetalle-${id}`);
   const dataFinal = document.getElementById(`detalleOrdenEditarData${id}`);
   const btnConfirmar = document.getElementById(
-    `btnConfirmarCambiosEditarOrden`
+    `btnConfirmarCambiosEditarOrden`,
   );
 
   if (!span) return;
@@ -166,7 +163,7 @@ function confirmarQuitar(idPlatillo) {
   if (esNuevo) {
     // Nunca existió → eliminar del DOM
     fila.addClass("quitar");
-    
+
     setTimeout(() => {
       fila.remove();
 
@@ -174,13 +171,13 @@ function confirmarQuitar(idPlatillo) {
     }, 500);
     return;
   }
-  
+
   dataFinal.attr("data-es-activo", "0");
-  
+
   setTimeout(() => {
     fila.hide();
   }, 500);
-  
+
   cerrarPopover();
 }
 
@@ -440,26 +437,28 @@ function editarMesas(idOrden) {
   request.send();
   request.onreadystatechange = function () {
     if (this.readyState == 4) {
-    if (this.status === 200)
-    {
-        let contenedor = document.getElementById("contenidoModalBodyEditarMesas");
+      if (this.status === 200) {
+        let contenedor = document.getElementById(
+          "contenidoModalBodyEditarMesas",
+        );
 
         console.log(this.responseText);
-        
+
         if (contenedor) {
-        contenedor.innerHTML = this.responseText;
+          contenedor.innerHTML = this.responseText;
         }
-    }
+      }
     }
   };
 }
 
 $("#EditarMesas").on("shown.bs.modal", function () {
   const select = document.getElementById("selectAreaMesa");
-  const mesas = document.querySelectorAll(".mesa-item");
+  const btnConfirmar = document.getElementById("btnConfirmarEditarMesas");
 
   function filtrarMesas() {
     const areaSeleccionada = select.value;
+    const mesas = document.querySelectorAll(".mesa-item");
 
     mesas.forEach((mesa) => {
       if (!areaSeleccionada) {
@@ -473,10 +472,150 @@ $("#EditarMesas").on("shown.bs.modal", function () {
         mesa.classList.add("d-none");
       }
     });
+
+    validarSeleccion();
   }
 
+  function validarSeleccion() {
+    const areaSeleccionada = select.value;
+
+    if (!areaSeleccionada) {
+      btnConfirmar.disabled = true;
+      return;
+    }
+
+    const mesasSeleccionadas = document.querySelectorAll(
+      `.mesa-item[data-area="${areaSeleccionada}"] .chkMesaEditar:checked`,
+    );
+
+    btnConfirmar.disabled = mesasSeleccionadas.length === 0;
+  }
+
+  function sincronizarMesasDesdeHidden() {
+    const areaId = document.getElementById("ValorIdAreaMesaOrdenEditar").value;
+
+    const mesasIdsStr = document.getElementById(
+      "ValorIdMesasOrdenEditar",
+    ).value;
+
+    const mesasIds = mesasIdsStr ? mesasIdsStr.split(",") : [];
+
+    const selectArea = document.getElementById("selectAreaMesa");
+
+    // Seleccionar área
+    selectArea.value = areaId;
+
+    // Resetear todas las mesas
+    document.querySelectorAll(".chkMesaEditar").forEach((cb) => {
+      cb.checked = false;
+    });
+
+    // Marcar solo mesas del área seleccionada
+    document.querySelectorAll(".mesa-item").forEach((label) => {
+      const perteneceArea = label.dataset.area === areaId;
+      const idMesa = label.dataset.idmesa;
+
+      if (perteneceArea && mesasIds.includes(idMesa)) {
+        const checkbox = label.querySelector(".chkMesaEditar");
+        checkbox.checked = true;
+      }
+    });
+
+    // Mostrar solo las mesas del área
+    filtrarMesas();
+  }
+
+  // Eventos
   select.addEventListener("change", filtrarMesas);
 
-  // Ejecutar una vez al abrir
-  filtrarMesas();
+  document.addEventListener("change", function (e) {
+    if (e.target.classList.contains("chkMesaEditar")) {
+      validarSeleccion();
+    }
+  });
+
+  // Ejecutar al abrir
+  sincronizarMesasDesdeHidden();
+
+  document
+    .getElementById("btnConfirmarEditarMesas")
+    .addEventListener("click", confirmarMesas);
 });
+
+// document
+//   .getElementById("btnConfirmarEditarMesas")
+//   .addEventListener("click", function () {
+//     const select = document.getElementById("selectAreaMesa");
+//     const areaId = select.value;
+//     const areaNombre = select.options[selectArea.selectedIndex].text;
+
+//     const inputArea = document.getElementById("ValorIdAreaMesaOrdenEditar");
+//     const inputMesas = document.getElementById("ValorIdMesasOrdenEditar");
+
+//     const inputAreaVisible = document.getElementById("NombreAreaMesaOrden");
+//     const inputMesasVisible = document.getElementById("MesasOrden");
+
+//     const areaSeleccionada = select.value;
+
+//     if (!areaSeleccionada) return;
+
+//     // Guardar área
+//     inputArea.value = areaSeleccionada;
+//     inputAreaVisible.value = areaNombre;
+
+//     // Obtener mesas seleccionadas SOLO del área actual
+//     const mesasSeleccionadas = document.querySelectorAll(
+//       `.mesa-item[data-area="${areaSeleccionada}"] .chkMesaEditar:checked`,
+//     );
+
+//     const idsMesas = Array.from(mesasSeleccionadas).map((cb) => cb.value);
+
+//     // Guardar mesas separadas por coma
+//     inputMesas.value = idsMesas.join(",");
+
+//     // Cerrar modal
+//     $("#EditarMesas").modal("hide");
+//   });
+
+function confirmarMesas() {
+  const areaSeleccionada = document.getElementById("selectAreaMesa").value;
+
+  const checkboxes = document.querySelectorAll(".chkMesaEditar");
+
+  const idsMesas = [];
+  const numerosMesas = [];
+
+  checkboxes.forEach((cb) => {
+    if (!cb.checked) return;
+
+    const label = cb.closest(".mesa-item");
+
+    // 👉 VALIDACIÓN CLAVE: solo mesas del área seleccionada
+    if (label.dataset.area !== areaSeleccionada) return;
+
+    idsMesas.push(label.dataset.idmesa);
+    numerosMesas.push("#" + label.dataset.numero);
+  });
+
+  // Seguridad extra (por si acaso)
+  if (idsMesas.length === 0) {
+    alert("Debes seleccionar al menos una mesa del área seleccionada.");
+    return;
+  }
+
+  // Hidden inputs (para backend)
+  document.getElementById("ValorIdAreaMesaOrdenEditar").value =
+    areaSeleccionada;
+  document.getElementById("ValorIdMesasOrdenEditar").value = idsMesas.join(",");
+
+  // Inputs visibles
+  document.getElementById("MesasOrden").value = numerosMesas.join(" - ");
+
+  const areaTexto = document.querySelector(
+    "#selectAreaMesa option:checked",
+  ).text;
+
+  document.getElementById("NombreAreaMesaOrden").value = areaTexto;
+
+  $("#EditarMesas").modal("hide");
+}

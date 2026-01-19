@@ -156,7 +156,7 @@
       </div>
 
       {% with "" as mesas_str %}
-        <input type="text" class="form-control" readonly
+        <input type="text" class="form-control" id="MesasOrden" readonly
           value="{% for mesa in Orden.Mesas.all %}#{{ mesa.IdMesa.Numero }}{% if not forloop.last %} - {% endif %}{% endfor %}">
       {% endwith %}
     </div>
@@ -166,7 +166,7 @@
     </div>
 
     <!-- Datos generales de mesas en la orden -->
-    <input type="hidden" id="ValorIdAreaMesaOrdenEditar" value="{{Orden.IdAreaDeMesa}}">
+    <input type="hidden" id="ValorIdAreaMesaOrdenEditar" value="{{Orden.IdAreaDeMesa.Id}}">
     {% with "" as mesas_str %}
         <input type="hidden" class="form-control" readonly
           value="{% for mesa in Orden.Mesas.all %}{{ mesa.IdMesa.Id }}{% if not forloop.last %},{% endif %}{% endfor %}" id="ValorIdMesasOrdenEditar">
