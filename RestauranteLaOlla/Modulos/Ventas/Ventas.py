@@ -704,6 +704,8 @@ def EditarOrden (request):
     detalleNuevo = False
     detalleEditado = False
     detalleEliminado = False
+    areaCambiada = False
+    mesasCambiadas = False
     cantidadEliminados = 0
     cantidadEditados = 0
     cantidadNuevos = 0
@@ -732,6 +734,14 @@ def EditarOrden (request):
             
         if orden.Descripcion != descripcionOrden:
             descripcionFueEditada = True
+            
+        idAreaMesa = data["idAreaMesa"]
+        mesasIdList = data["mesas"]
+        
+        print("Id area de mesa:")
+        print(idAreaMesa)
+        print("Mesas:")
+        print(mesasIdList)
         
         orden.Descripcion = descripcionOrden
         orden.FueEditada = True
@@ -758,11 +768,6 @@ def EditarOrden (request):
             # Se guarda el precio y subtotal para el detalle
             precio = platillo.Precio
             subtotal = precio * cantidad
-            
-            print("Cantidad: " + str(cantidad))
-            print("Precio: " + str(precio))
-            print("Subtotal: " + str(subtotal))
-            print("Es activo: " + es_activo)
 
             if is_new:
                 # Si es nuevo, se crea

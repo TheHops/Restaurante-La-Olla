@@ -165,7 +165,9 @@
       <button data-toggle="modal" data-target="#EditarMesas" onclick="editarMesas('{{Orden.Id}}')" id="btnEditarMesas">Editar mesas</button>
     </div>
 
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Datos generales de mesas en la orden -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <input type="hidden" id="ValorIdAreaMesaOrdenEditar" value="{{Orden.IdAreaDeMesa.Id}}">
     {% with "" as mesas_str %}
         <input type="hidden" class="form-control" readonly
