@@ -142,10 +142,10 @@ def ExportarOrdenes(request):
         wb = exportar_excel_ordenes(ordenes, incluir_detalles)
         return descargar_excel(wb, f"ordenes_{fecha_inicio_str}_{fecha_fin_str}.xlsx")
     
-    return JsonResponse({"status": "ok", "message": f"¡Las ordenes fueron exportadas exitosamente!"})
+    return JsonResponse({"status": "ok", "message": f"¡Las órdenes fueron exportadas exitosamente!"})
 
 def exportar_excel_ordenes(ordenes, incluir_detalles = False):
-    titulo = "REPORTE DE ORDENES"
+    titulo = "REPORTE DE ÓRDENES"
     columnas = ["N° Orden", "Fecha", "Área", "Mesas", "Subtotal", "Propina", "Descuento", "Total a pagar", "Método de pago", "Monto", "Cambio", "Segundo monto"]
 
     datos = []
@@ -254,7 +254,7 @@ def Exportar_ExcelPlatillo(request):
         print("#############################################################")
         print()
 
-def ExportarTipoPlatillos(request):
+def ExportarExcelTipoPlatillos(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
 
@@ -275,6 +275,45 @@ def ExportarTipoPlatillos(request):
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
         filename = 'TipoPlatillos_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        wb.save(response)
+        return response
+
+    except Exception:
+        import traceback
+        print()
+        print("#################### E X C E P C I O N ########################")
+        print("---------------- 'exportar tipo platillo' ----------------")
+        print(traceback.format_exc())
+        print("#############################################################")
+        
+def ExportarExcelPersonal(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+
+    try:
+        columnas = ['Id', 'Nombres y apellidos', 'Usuario', 'Cargo', 'Telefono', 'Correo', 'Estado']
+        datos = []
+
+        for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'Nombres', 'Apellidos', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'EsActivo'):
+            estadoData = 'Activo ✅' if es_activo in (1, '1', True) else 'Dado de baja ⛔'
+            datos.append([
+                id,
+                nombre + " " + apellido,
+                nombre_user,
+                nombre_cargo,
+                telefono,
+                correo,
+                estadoData
+            ])
+
+        wb = exportar_excel_datos("PERSONAL", columnas, datos, "Personal")
+
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        
+        filename = 'Personal_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
         wb.save(response)
         return response
@@ -393,7 +432,6 @@ def CreacionTipoPlatillos_PDF(request):
 #region PublicFunctions
 
 def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids):
-    print("INICIA FILTRO PUBLICO DE ORDENES")
     print(fecha_inicio_str)
     print(fecha_fin_str)
     print(areas_ids)

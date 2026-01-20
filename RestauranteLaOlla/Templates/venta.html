@@ -18,8 +18,8 @@
             <div id="encabezadoVenta_pag1">
                 <a href="{% url 'OrdenesPendientes' %}">
                     <button id="btnver_ordenes">
-                        <img src="{% static 'img/Order2.png' %}" style="width: 30px; height: 30px;" title="Ver ordenes"><span>Ver
-                            ordenes</span>
+                        <img src="{% static 'img/Order2.png' %}" style="width: 30px; height: 30px;" title="Ver órdenes"><span>Ver
+                            órdenes</span>
                     </button>
                 </a>
 
@@ -27,14 +27,6 @@
                     <span id="noti">{{ordenesPendientes}}</span>
                 {% endif %}
 
-                <!-- <div class="exportarV">
-                        <button class="excel">
-                            <img src="{% static 'img/Export_excel_2.png' %}" alt="Exportar en excel" title="Exportar en excel">
-                        </button>
-                        <button class="pdf">
-                            <img src="{% static 'img/Export_pdf_2.png' %}" alt="Exportar en pdf" title="Exportar en pdf">
-                        </button>
-                    </div>  -->
             </div>
 
             <!-- --------------------------------------------------------------- -->
@@ -205,7 +197,7 @@
 
                 <div class="encabezado_ordenes">
                     <i class="fa-solid fa-angles-right fa-lg" id="iconoCerrarCarrito" onclick="cerrarCarrito()"></i>
-                    <span>Ordenes</span>
+                    <span>Órdenes</span>
 
                     <button data-toggle="modal" data-target="#InfoCrearOrden">info</button>
                 </div>

@@ -88,9 +88,9 @@
           <!-- <li class="opcion"><a href="">Compra</a></li> -->
 
           {% if request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Administrador" %}
-            <li class="opcion"><a href="{% url 'venta' %}">Ordenes</a></li>
+            <li class="opcion"><a href="{% url 'venta' %}">Órdenes</a></li>
           {% else %}
-            <li class="opcion"><a href="{% url 'OrdenesPendientes' %}">Ordenes</a></li>
+            <li class="opcion"><a href="{% url 'OrdenesPendientes' %}">Órdenes</a></li>
           {% endif %}
 
           {% if request.user.IdCargo.Nombre == "Administrador" %}
@@ -264,7 +264,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title ">Detalles de íconos en las ordenes</h5>
+            <h5 class="modal-title ">Detalles de íconos en las órdenes</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
