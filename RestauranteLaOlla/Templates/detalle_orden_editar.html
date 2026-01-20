@@ -52,6 +52,37 @@
     <!-- Detalles del que hizo la orden -->
     <h4 style="font-size: 18px; margin-bottom: 3px;" class="col-12">Detalles de pago</h4>
 
+    
+    {% if Orden.Total > 0 %}
+    <!-- Total base -->
+    <div class="col-3 mb-2" id="totalBaseOrdenDiv">
+      <div class="totalBaseOrdenTxt">
+        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Subtotal</h4>
+      </div>
+      <input type="text" class="form-control" id="totalBaseOrden" value="{{Orden.Total}}" readonly/>
+    </div>
+    {% endif %}
+  
+    {% if Orden.Propina > 0 %}
+    <!-- Propina -->
+    <div class="col-3 mb-2" id="propinaOrdenDiv">
+      <div class="propinaOrdenTxt">
+        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Propina</h4>
+      </div>
+      <input type="text" class="form-control" id="propinaOrden" value="{{Orden.Propina}}" readonly/>
+    </div>
+    {% endif %}
+
+    {% if Orden.Descuento < 0 %}
+    <!-- Descuento -->
+    <div class="col-3 mb-2" id="descuentoOrdenDiv">
+      <div class="descuentoOrdenTxt">
+        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Descuento</h4>
+      </div>
+      <input type="text" class="form-control" id="descuentoOrden" value="{{Orden.Descuento}}" readonly/>
+    </div>
+    {% endif %}
+    
     {% if Orden.TotalPagar > 0 %}
     <!-- Total pagado -->
     <div class="col-3 mb-2" id="totalPagadoOrdenDiv">
@@ -59,16 +90,6 @@
         <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Total pagado</h4>
       </div>
       <input type="text" class="form-control" id="totalPagadoOrden" value="{{Orden.TotalPagar}}" readonly/>
-    </div>
-    {% endif %}
-
-    {% if Orden.Total > 0 %}
-    <!-- Total base -->
-    <div class="col-3 mb-2" id="totalBaseOrdenDiv">
-      <div class="totalBaseOrdenTxt">
-        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Total base</h4>
-      </div>
-      <input type="text" class="form-control" id="totalBaseOrden" value="{{Orden.Total}}" readonly/>
     </div>
     {% endif %}
 
@@ -89,26 +110,6 @@
         <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Cambio</h4>
       </div>
       <input type="text" class="form-control" id="cambioOrden" value="{{Orden.Cambio}}" readonly/>
-    </div>
-    {% endif %}
-
-    {% if Orden.Propina > 0 %}
-    <!-- Propina -->
-    <div class="col-3 mb-2" id="propinaOrdenDiv">
-      <div class="propinaOrdenTxt">
-        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Propina</h4>
-      </div>
-      <input type="text" class="form-control" id="propinaOrden" value="{{Orden.Propina}}" readonly/>
-    </div>
-    {% endif %}
-
-    {% if Orden.Descuento < 0 %}
-    <!-- Descuento -->
-    <div class="col-3 mb-2" id="descuentoOrdenDiv">
-      <div class="descuentoOrdenTxt">
-        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Descuento</h4>
-      </div>
-      <input type="text" class="form-control" id="descuentoOrden" value="{{Orden.Descuento}}" readonly/>
     </div>
     {% endif %}
 
@@ -134,6 +135,48 @@
   <!-- Detalles de pago -->
   
   <hr class="separadorMostrarOrden">
+  {% else %}
+
+  <div class="col-12 row">
+    <!-- Detalles del que hizo la orden -->
+    <h4 style="font-size: 18px; margin-bottom: 3px;" class="col-12">Area de mesa</h4>
+
+    <!-- Area de mesa -->
+    <div class="col-3 mb-2" id="NombreAreaMesaOrdenDiv">
+      <div class="NombreAreaMesaOrdenTxt">
+        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Nombre</h4>
+      </div>
+      <input type="text" class="form-control" id="NombreAreaMesaOrden" value="{{Orden.AreaDeMesa}}" readonly/>
+    </div>
+    
+    <!-- Mesas -->
+    <div class="col-3 mb-2" id="MesasOrdenDiv">
+      <div class="MesasOrdenTxt">
+        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Mesas</h4>
+      </div>
+
+      {% with "" as mesas_str %}
+        <input type="text" class="form-control" id="MesasOrden" readonly
+          value="{% for mesa in Orden.Mesas.all %}#{{ mesa.IdMesa.Numero }}{% if not forloop.last %} - {% endif %}{% endfor %}">
+      {% endwith %}
+    </div>
+
+    <div class="col-3">
+      <button data-toggle="modal" data-target="#EditarMesas" onclick="editarMesas('{{Orden.Id}}')" id="btnEditarMesas">Editar mesas</button>
+    </div>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Datos generales de mesas en la orden -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <input type="hidden" id="ValorIdAreaMesaOrdenEditar" value="{{Orden.IdAreaDeMesa.Id}}">
+    {% with "" as mesas_str %}
+        <input type="hidden" class="form-control" readonly
+          value="{% for mesa in Orden.Mesas.all %}{{ mesa.IdMesa.Id }}{% if not forloop.last %},{% endif %}{% endfor %}" id="ValorIdMesasOrdenEditar">
+      {% endwith %}
+  </div>
+
+  <hr>
+  
   {% endif %}
 
   

@@ -349,7 +349,7 @@
 /********************* EDITAR ***********************/
 
 #contenedorTablaEditarOrden {
-    max-height: 40vh;
+    max-height: 25vh;
     overflow: auto;
 }
 
@@ -421,6 +421,10 @@
     z-index: 1060 !important;
 }
 
+#EditarMesas.modal.show {
+    z-index: 1060 !important;
+}
+
 #contenidoIncluirPlatillosEditar {
     max-height: 50vh;
     overflow: auto;
@@ -449,6 +453,45 @@
 .nombreConsumoIncluir:has(input:checked) {
     background-color: #d4edda;
     border-color: #c3e6cb;
+}
+
+.nombreConsumoIncluir:has(input:checked):hover {
+    background-color: hsl(134, 41%, 85%);
+}
+
+.numeroMesaEditar {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
+}
+
+.numeroMesaEditar input:checked + span,
+.numeroMesaEditar input:checked ~ span {
+    font-weight: 600;
+}
+
+.numeroMesaEditar input:checked {
+    display: none;
+}
+
+.numeroMesaEditar:has(input:checked) {
+    background-color: #d4edda;
+    border-color: hsl(134, 41%, 70%);
+}
+
+.numeroMesaEditar:has(input:checked):hover {
+    background-color: hsl(134, 41%, 85%);
+}
+
+#contenedorMesas {
+    border-style: solid;
+    border-color: #DFDFDF;
+    border-width: 1px;
+    border-radius: 10px;
+
+    overflow: auto;
+
+    margin-top: 15px;
 }
 
 .filaDetalleOrdenNuevo {

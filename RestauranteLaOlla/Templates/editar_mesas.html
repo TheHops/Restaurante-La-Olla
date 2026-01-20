@@ -1,0 +1,36 @@
+{% load static %}
+
+<div class="col-12">
+    <select id="selectAreaMesa" class="form-control">
+        <option value="" disabled>Seleccione un área</option>
+        {% for area in Areas %}
+            <option value="{{ area.Id }}"
+                {% if area.Id == Orden.IdAreaDeMesa.Id %}selected{% endif %}>
+                {{ area.Nombre }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+
+<div id="contenedorMesas" class="col-12 list-group pr-0">
+    {% for area in Areas %}
+        {% for mesa in area.mesas_activas %}
+            <label class="numeroMesaEditar list-group-item list-group-item-action mb-0 mesa-item d-none"
+                   data-area="{{ area.Id }}"
+                   data-idmesa="{{ mesa.Id }}"
+                   data-numero="{{ mesa.Numero }}">
+
+                <div class="row w-100 align-items-center">
+
+                    <input type="checkbox"
+                           class="chkMesaEditar d-none"
+                           value="{{ mesa.Id }}"
+                           {% if mesa.Id in MesasOrden %}checked{% endif %}>
+
+                    <span class="col-6">Mesa #{{ mesa.Numero }}</span>
+
+                </div>
+            </label>
+        {% endfor %}
+    {% endfor %}
+</div>

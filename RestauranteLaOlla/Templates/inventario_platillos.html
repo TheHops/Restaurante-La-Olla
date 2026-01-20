@@ -46,15 +46,13 @@
         </div>
         <div class="modal-body row exportar col-12">
             <div class="col-6">
-                <button class="excel w-100">
-                    <a href="{% url 'ExportarPlatillo' %}">
-                        <img src="{% static 'img/Export_excel_2.png' %}">
-                    </a>
-                </button>
+                <a href="{% url 'ExportarPlatillo' %}" class="excel w-100 d-block text-center">
+                    <img src="{% static 'img/Export_excel_2.png' %}">
+                </a>
             </div>
     
             <div class="col-6">
-                <button class="pdf w-100">
+                <button class="pdf w-100"> <!-- TODO: CORREGIR LUEGO (a sin button) -->
                     <a href="{% url 'CreacionPlatillos_PDF' %}">
                         <img src="{% static 'img/Export_pdf_2.png' %}">
                     </a>

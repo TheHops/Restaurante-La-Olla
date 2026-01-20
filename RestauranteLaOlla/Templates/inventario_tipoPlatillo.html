@@ -45,11 +45,9 @@
       </div>
       <div class="modal-body row exportar col-12">
           <div class="col-6">
-              <button class="excel w-100">
-                  <a href="{% url 'ExportarTipoPlatillo' %}">
-                      <img src="{% static 'img/Export_excel_2.png' %}">
-                  </a>
-              </button>
+                <a href="{% url 'ExportarTipoPlatillo' %}" class="excel w-100 d-block text-center">
+                    <img src="{% static 'img/Export_excel_2.png' %}">
+                </a>
           </div>
   
           <div class="col-6">

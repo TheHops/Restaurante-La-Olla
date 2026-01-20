@@ -302,15 +302,18 @@ function ExportarOrdenes(tipo)
   // PREPARACION DE DATOS
   console.log("Exportación de tipo: " + (tipo == "1" ? "excel" : "pdf"));
 
-  const areasSeleccionadas = filtrosAplicados.areas;
-  // const areasParam = areasSeleccionadas.join(",");
-
   const payload = {
     FechaInicio: fechaDesde.value,
     FechaFin: fechaHasta.value,
     AreasSeleccionadas: filtrosAplicados.areas,
-    TipoExportacion: tipo
+    TipoExportacion: tipo,
+    IncluirDetalles: false
   };
+
+  let incluirDetalle = document.getElementById("check_incluir_detalles");
+  payload.IncluirDetalles = incluirDetalle.checked;
+
+  console.log("Incluir detalles : " + incluirDetalle.checked) ;
 
   // PETICION AL SERVICIO
   let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
@@ -367,7 +370,7 @@ function ExportarOrdenes(tipo)
         icon: "success",
         title: "¡Se exportó el archivo con éxito!",
         toast: true,
-        position: "top-end",
+        position: "top-start",
         showConfirmButton: false,
         timer: 4000,
         timerProgressBar: true,
@@ -377,6 +380,7 @@ function ExportarOrdenes(tipo)
         title: "Error al exportar",
         text: "Error de servidor: " + xhr.status,
         icon: "error",
+        confirmButtonColor: "#ff6464",
       });
     }
   };
@@ -386,6 +390,7 @@ function ExportarOrdenes(tipo)
       title: "Error",
       text: "No se pudo conectar con el servidor",
       icon: "error",
+      confirmButtonColor: "#ff6464",
     });
   };
 

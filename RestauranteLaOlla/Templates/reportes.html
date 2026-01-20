@@ -63,7 +63,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title " id="exampleModalLabel" >Exportar ordenes</h5>
+                <h5 class="modal-title " id="exampleModalLabel" >Exportar órdenes</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -82,8 +82,13 @@
                     </button>
                 </div>
             </div>
-            <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <div class="modal-footer d-flex justify-content-between">
+                <label>
+                    <input type="checkbox" id="check_incluir_detalles" name="incluir_detalles" value="false">
+                    Incluir detalles
+                </label>
+                
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
             </div>
         </div>
     </div>
@@ -107,7 +112,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title " id="exampleModalLabel" >Filtrar ordenes</h5>
+                <h5 class="modal-title " id="exampleModalLabel" >Filtrar órdenes</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

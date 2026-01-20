@@ -7,6 +7,8 @@ from django.utils import timezone
 from django.db import transaction
 from django.db.models import Q, Prefetch, Count
 
+from django.core.exceptions import ValidationError
+
 from decimal import Decimal, ROUND_HALF_UP
 
 from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Platillo, MesasPorOrden, TipoPlatillo
@@ -617,7 +619,7 @@ def InicioEditar(request):
     if not idOrden:
         return JsonResponse({"message": "Orden no válida"})
 
-    orden = Orden.objects.prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1"))).get(Id=idOrden)
+    orden = Orden.objects.prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1")), Prefetch('Mesas', queryset=MesasPorOrden.objects.filter(EsActivo="1").select_related('IdMesa'))).get(Id=idOrden)
     
     contexto = {
         "Orden": orden,
@@ -659,11 +661,118 @@ def InicioIncluir(request):
 
     return render(request, "incluir_platillos_editar.html", contexto)
 
+def InicioEditarMesas(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+    
+    print("SI ENTRO")
+
+    idOrden = request.GET.get("IdOrden")
+    if not idOrden:
+        return JsonResponse({"message": "Orden no válida"}, status=400)
+
+    orden = get_object_or_404(Orden, Id=idOrden)
+
+    mesas_orden = (
+        MesasPorOrden.objects
+        .filter(IdOrden=orden, EsActivo="1")
+        .values_list("IdMesa_id", flat=True)
+    )
+
+    areas = (
+        AreaMesa.objects
+        .filter(EsActivo="1")
+        .prefetch_related(
+            Prefetch(
+                "Mesas",
+                queryset=Mesa.objects.filter(EsActivo="1"),
+                to_attr="mesas_activas"
+            )
+        )
+    )
+
+    contexto = {
+        "Orden": orden,
+        "Areas": areas,
+        "MesasOrden": list(mesas_orden),
+    }
+    
+    print(contexto)
+
+    return render(request, "editar_mesas.html", contexto)
+
+def Editar_area_y_mesas(orden, id_area_mesa_nueva, mesas_nuevas_ids):
+    hayCambioAreaMesa = False
+    hayCambiosMesas = False
+
+    # ---------- ÁREA DE MESA ----------
+    id_area_actual = orden.IdAreaDeMesa_id
+
+    if str(id_area_actual) != str(id_area_mesa_nueva):
+        area = get_object_or_404(AreaMesa, Id=id_area_mesa_nueva, EsActivo="1")
+        orden.IdAreaDeMesa = area
+        orden.AreaDeMesa = area.Nombre
+        hayCambioAreaMesa = True
+    else:
+        area = orden.IdAreaDeMesa  # reutilizamos
+
+    # ---------- VALIDACIÓN DE MESAS ----------
+    mesas_invalidas = Mesa.objects.filter(
+        Id__in=mesas_nuevas_ids
+    ).exclude(
+        IdAreaMesa=area,
+        EsActivo="1"
+    )
+
+    if mesas_invalidas.exists():
+        numeros = ", ".join(
+            str(m.Numero) for m in mesas_invalidas
+        )
+        raise ValidationError(
+            f"Las siguientes mesas no pertenecen al área '{area.Nombre}': {numeros}"
+        )
+
+    # ---------- MESAS ----------
+    mesas_actuales_qs = MesasPorOrden.objects.filter(
+        IdOrden=orden,
+        EsActivo="1"
+    )
+
+    mesas_actuales_ids = set(
+        mesas_actuales_qs.values_list("IdMesa_id", flat=True)
+    )
+    mesas_nuevas_ids = set(map(int, mesas_nuevas_ids))
+
+    # Mesas eliminadas
+    mesas_a_eliminar = mesas_actuales_ids - mesas_nuevas_ids
+    if mesas_a_eliminar:
+        MesasPorOrden.objects.filter(
+            IdOrden=orden,
+            IdMesa_id__in=mesas_a_eliminar
+        ).update(EsActivo="0")
+        hayCambiosMesas = True
+
+    # Mesas nuevas
+    mesas_a_agregar = mesas_nuevas_ids - mesas_actuales_ids
+    if mesas_a_agregar:
+        for id_mesa in mesas_a_agregar:
+            mesa = get_object_or_404(Mesa, Id=id_mesa, EsActivo="1")
+            MesasPorOrden.objects.create(
+                IdOrden=orden,
+                IdMesa=mesa,
+                EsActivo="1"
+            )
+        hayCambiosMesas = True
+
+    return hayCambioAreaMesa, hayCambiosMesas
+
 def EditarOrden (request):
     descripcionFueEditada = False
     detalleNuevo = False
     detalleEditado = False
     detalleEliminado = False
+    areaCambiada = False
+    mesasCambiadas = False
     cantidadEliminados = 0
     cantidadEditados = 0
     cantidadNuevos = 0
@@ -692,6 +801,20 @@ def EditarOrden (request):
             
         if orden.Descripcion != descripcionOrden:
             descripcionFueEditada = True
+            
+        idAreaMesa = data["idAreaMesa"]
+        mesasIdList = data["mesas"]
+        
+        print("Id area de mesa:")
+        print(idAreaMesa)
+        print("Mesas:")
+        print(mesasIdList)
+        
+        areaCambiada, mesasCambiadas = Editar_area_y_mesas(
+            orden,
+            idAreaMesa,
+            mesasIdList
+        )
         
         orden.Descripcion = descripcionOrden
         orden.FueEditada = True
@@ -718,11 +841,6 @@ def EditarOrden (request):
             # Se guarda el precio y subtotal para el detalle
             precio = platillo.Precio
             subtotal = precio * cantidad
-            
-            print("Cantidad: " + str(cantidad))
-            print("Precio: " + str(precio))
-            print("Subtotal: " + str(subtotal))
-            print("Es activo: " + es_activo)
 
             if is_new:
                 # Si es nuevo, se crea
@@ -776,7 +894,7 @@ def EditarOrden (request):
 
         # Se actualiza el total de la orden
         orden.Total = total_orden
-        orden.DescripcionEdicion = obtenerMensajeEdicion(descripcionFueEditada, detalleNuevo, detalleEditado, detalleEliminado, cantidadEliminados, cantidadEditados, cantidadNuevos)
+        orden.DescripcionEdicion = obtenerMensajeEdicion(descripcionFueEditada, detalleNuevo, detalleEditado, detalleEliminado, cantidadEliminados, cantidadEditados, cantidadNuevos, areaCambiada, mesasCambiadas)
         orden.save()
         
         orden.recalcular_estado()
@@ -787,7 +905,9 @@ def EditarOrden (request):
         "total": str(total_orden)
     })
 
-def obtenerMensajeEdicion (edicionDescripcion, detalleNuevo, detalleEditado, detalleEliminado, cantidadEliminados, cantidadEditados, cantidadNuevos):
+def obtenerMensajeEdicion (edicionDescripcion, detalleNuevo, detalleEditado, detalleEliminado, cantidadEliminados, cantidadEditados, cantidadNuevos, areaCambiada, mesasCambiadas):
+    mensaje = ""
+    
     if edicionDescripcion and detalleNuevo and detalleEditado and detalleEliminado:
         mensajeEliminados = "una eliminación" if cantidadEliminados == 1 else f"{cantidadEliminados} eliminaciones"
         
@@ -795,46 +915,46 @@ def obtenerMensajeEdicion (edicionDescripcion, detalleNuevo, detalleEditado, det
         
         mensajeNuevos = "se agregó un nuevo consumo" if cantidadNuevos == 1 else f"se agregaron {cantidadNuevos} nuevos consumos"
         
-        return f"Se editó la descripción de la orden, {mensajeNuevos} a la orden y {mensajeEditados} junto con {mensajeEliminados} de los detalles ya existentes"
+        mensaje = f"Se editó la descripción de la orden, {mensajeNuevos} a la orden y {mensajeEditados} junto con {mensajeEliminados} de los detalles ya existentes"
     
     elif edicionDescripcion and detalleNuevo and detalleEliminado:
         mensajeEliminados = "hubo una eliminación" if cantidadEliminados == 1 else f"hubieron {cantidadEliminados} eliminaciones"
         
         mensajeNuevos = "se agregó un nuevo consumo" if cantidadNuevos == 1 else f"se agregaron {cantidadNuevos} nuevos consumos"
         
-        return f"Se editó la descripción de la orden, {mensajeNuevos} a la orden y {mensajeEliminados} de los detalles ya existentes"
+        mensaje = f"Se editó la descripción de la orden, {mensajeNuevos} a la orden y {mensajeEliminados} de los detalles ya existentes"
     
     elif edicionDescripcion and detalleNuevo and detalleEditado:
         mensajeEditados = "hubo una modificación" if cantidadEditados == 1 else f"hubieron {cantidadEditados} modificaciones"
         
         mensajeNuevos = "se agregó un nuevo consumo" if cantidadNuevos == 1 else f"se agregaron {cantidadNuevos} nuevos consumos"
         
-        return f"Se editó la descripción de la orden, {mensajeNuevos} a la orden y {mensajeEditados} de los detalles ya existentes"
+        mensaje = f"Se editó la descripción de la orden, {mensajeNuevos} a la orden y {mensajeEditados} de los detalles ya existentes"
     
     elif edicionDescripcion and detalleEditado and detalleEliminado:
         mensajeEliminados = "una eliminación" if cantidadEliminados == 1 else f"{cantidadEliminados} eliminaciones"
         
         mensajeEditados = "hubo una modificación" if cantidadEditados == 1 else f"hubieron {cantidadEditados} modificaciones"
         
-        return f"Se editó la descripción de la orden y {mensajeEditados} junto con {mensajeEliminados} de los detalles ya existentes"
+        mensaje = f"Se editó la descripción de la orden y {mensajeEditados} junto con {mensajeEliminados} de los detalles ya existentes"
     
     elif edicionDescripcion and detalleNuevo:
         mensajeNuevos = "se agregó un nuevo consumo" if cantidadNuevos == 1 else f"se agregaron {cantidadNuevos} nuevos consumos"
         
-        return f"Se editó la descripción de la orden y {mensajeNuevos} a la orden"
+        mensaje = f"Se editó la descripción de la orden y {mensajeNuevos} a la orden"
     
     elif edicionDescripcion and detalleEliminado:
         mensajeEliminados = "hubo una eliminación" if cantidadEliminados == 1 else f"hubieron {cantidadEliminados} eliminaciones"
         
-        return f"Se editó la descripción de la orden y {mensajeEliminados} en los detalles ya existentes"
+        mensaje = f"Se editó la descripción de la orden y {mensajeEliminados} en los detalles ya existentes"
     
     elif edicionDescripcion and detalleEditado:
         mensajeEditados = "hubo una modificación" if cantidadEditados == 1 else f"hubieron {cantidadEditados} modificaciones"
         
-        return f"Se editó la descripción de la orden y {mensajeEditados} en los detalles ya existentes"
+        mensaje = f"Se editó la descripción de la orden y {mensajeEditados} en los detalles ya existentes"
     
     elif edicionDescripcion:
-        return "Se editó la descripción de la orden"
+        mensaje = "Se editó la descripción de la orden"
     
     elif detalleNuevo and detalleEditado and detalleEliminado:
         mensajeEliminados = "una eliminación" if cantidadEliminados == 1 else f"{cantidadEliminados} eliminaciones"
@@ -843,44 +963,59 @@ def obtenerMensajeEdicion (edicionDescripcion, detalleNuevo, detalleEditado, det
         
         mensajeNuevos = "Se agregó un nuevo consumo" if cantidadNuevos == 1 else f"Se agregaron {cantidadNuevos} nuevos consumos"
         
-        return f"{mensajeNuevos} a la orden y {mensajeEditados} junto con {mensajeEliminados} de los detalles ya existentes"
+        mensaje = f"{mensajeNuevos} a la orden y {mensajeEditados} junto con {mensajeEliminados} de los detalles ya existentes"
         
     elif detalleNuevo and detalleEliminado:
         mensajeEliminados = "hubo una eliminación" if cantidadEliminados == 1 else f"hubieron {cantidadEliminados} eliminaciones"
         
         mensajeNuevos = "Se agregó un nuevo consumo" if cantidadNuevos == 1 else f"Se agregaron {cantidadNuevos} nuevos consumos"
         
-        return f"{mensajeNuevos} a la orden y {mensajeEliminados} de los detalles ya existentes"
+        mensaje = f"{mensajeNuevos} a la orden y {mensajeEliminados} de los detalles ya existentes"
     
     elif detalleNuevo and detalleEditado:
         mensajeEditados = "hubo una modificación" if cantidadEditados == 1 else f"hubieron {cantidadEditados} modificaciones"
         
         mensajeNuevos = "Se agregó un nuevo consumo" if cantidadNuevos == 1 else f"Se agregaron {cantidadNuevos} nuevos consumos"
         
-        return f"{mensajeNuevos} a la orden y {mensajeEditados} de los detalles ya existentes"
+        mensaje = f"{mensajeNuevos} a la orden y {mensajeEditados} de los detalles ya existentes"
     
     elif detalleEditado and detalleEliminado:
         mensajeEliminados = "una eliminación" if cantidadEliminados == 1 else f"{cantidadEliminados} eliminaciones"
         
         mensajeEditados = "Hubo una modificación" if cantidadEditados == 1 else f"Hubieron {cantidadEditados} modificaciones"
         
-        return f"{mensajeEditados} junto con {mensajeEliminados} de los detalles ya existentes"
+        mensaje = f"{mensajeEditados} junto con {mensajeEliminados} de los detalles ya existentes"
     
     elif detalleNuevo:
         mensajeNuevos = "Se agregó un nuevo consumo" if cantidadNuevos == 1 else f"Se agregaron {cantidadNuevos} nuevos consumos"
         
-        return f"{mensajeNuevos} a la orden"
+        mensaje = f"{mensajeNuevos} a la orden"
     
     elif detalleEliminado:
         mensajeEliminados = "Hubo una eliminación" if cantidadEliminados == 1 else f"Hubieron {cantidadEliminados} eliminaciones"
         
-        return f"{mensajeEliminados} en los detalles ya existentes"
+        mensaje = f"{mensajeEliminados} en los detalles ya existentes"
     
     elif detalleEditado:
         mensajeEditados = "Hubo una modificación" if cantidadEditados == 1 else f"Hubieron {cantidadEditados} modificaciones"
         
-        return f"{mensajeEditados} en los detalles ya existentes"
+        mensaje = f"{mensajeEditados} en los detalles ya existentes"
     
-    else:
-        return None
+    if areaCambiada and mesasCambiadas:
+        if mensaje != "":
+            mensaje += " - "
+        
+        mensaje += "Hubieron cambios en el área y de las mesas"
+    
+    elif mesasCambiadas:
+        if mensaje != "":
+            mensaje += " - "
+        
+        mensaje += "Hubieron cambios en las mesas"
+        
+    if mensaje == "":
+        mensaje = None
+        
+    return mensaje
+        
 #endregion EditarOrden

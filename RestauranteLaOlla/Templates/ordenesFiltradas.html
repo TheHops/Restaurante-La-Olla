@@ -37,7 +37,12 @@
       <div class="EstC"></div>
       {% endif %}
     </h5>
-    <h4>Total: C${{Orden.Total}}</h4>
+    
+    {% if Orden.Estado == "0" %}
+      <h4>Total pagado: C${{Orden.TotalPagar}}</h4>
+    {% else %}
+      <h4>Total: C${{Orden.Total}}</h4>
+    {% endif %}
   </div>
   <!-- Fin encabezadoPoFoC -->
 

@@ -2,7 +2,7 @@
 from django.db.models import Case, When, Count
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from Application.models  import Orden, Platillo, Usuario, DetalleOrden
+from Application.models  import Orden, Platillo, Usuario, DetalleOrden, MesasPorOrden
 from django.contrib import messages
 from django.http import JsonResponse
 from datetime import datetime, timedelta
@@ -197,7 +197,9 @@ def FiltrarOrdenes(request):
         ordenes = Orden.objects.select_related(
             'IdUsuario'
         ).prefetch_related(
-            Prefetch('Detalles', queryset=DetalleOrden.objects.order_by('-EsActivo'))
+            Prefetch('Detalles', queryset=DetalleOrden.objects.order_by('-EsActivo')),
+            Prefetch('Mesas', queryset=MesasPorOrden.objects.filter(EsActivo="1").select_related('IdMesa')
+    )
         ).filter(EsActivo="1")
 
         # FILTRO ADICIONAL PARA MESERO

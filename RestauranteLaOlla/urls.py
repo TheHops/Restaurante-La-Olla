@@ -46,7 +46,8 @@ urlpatterns = [
     path('DarBajaTipoPlatillo/', TipoPlatillos.DarBaja_TipoPlatillo, name="DarBajaTipoPlatillo"),
     path('AgregarTIpoPlatillo/', TipoPlatillos.Agregar_TipoPlatillo, name="AgregarTIpoPlatillo"),
     path('ExportarPlatillo/', Reportes.Exportar_ExcelPlatillo, name="ExportarPlatillo"),
-    path('ExportarTipoPlatillo/', Reportes.ExportarTipoPlatillos, name="ExportarTipoPlatillo"),
+    path('ExportarTipoPlatillo/', Reportes.ExportarExcelTipoPlatillos, name="ExportarTipoPlatillo"),
+    path('ExportarPersonal/', Reportes.ExportarExcelPersonal, name="ExportarPersonal"),
     path('AgregarPersonal/', Personal.AgregarPersonal, name="AgregarPersonal"),
     path('ModificarPersonal/',Personal. ModificarPersonal, name = "ModificarPersonal"),
     path('DarBajaPersonal/', Personal.DarBajaPersonal,name="DarBajaPersonal"),
@@ -78,6 +79,7 @@ urlpatterns = [
     path("InicioMostrar/", Reportes.InicioMostrar, name="InicioMostrar"),
     path("ReportesOrdenesFiltradas/", Reportes.ReportesOrdenesFiltradas, name="ReportesOrdenesFiltradas"),
     path("ExportarOrdenes/", Reportes.ExportarOrdenes, name="ExportarOrdenes"),
+    path("InicioEditarMesas/", Ventas.InicioEditarMesas, name="InicioEditarMesas"),
 ]
 
 urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
