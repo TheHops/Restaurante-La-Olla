@@ -7,6 +7,8 @@ from django.utils import timezone
 from django.db import transaction
 from django.db.models import Q, Prefetch, Count
 
+from django.core.exceptions import ValidationError
+
 from decimal import Decimal, ROUND_HALF_UP
 
 from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Platillo, MesasPorOrden, TipoPlatillo
@@ -617,7 +619,7 @@ def InicioEditar(request):
     if not idOrden:
         return JsonResponse({"message": "Orden no válida"})
 
-    orden = Orden.objects.prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1"))).get(Id=idOrden)
+    orden = Orden.objects.prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1")), Prefetch('Mesas', queryset=MesasPorOrden.objects.filter(EsActivo="1").select_related('IdMesa'))).get(Id=idOrden)
     
     contexto = {
         "Orden": orden,
@@ -699,6 +701,71 @@ def InicioEditarMesas(request):
 
     return render(request, "editar_mesas.html", contexto)
 
+def Editar_area_y_mesas(orden, id_area_mesa_nueva, mesas_nuevas_ids):
+    hayCambioAreaMesa = False
+    hayCambiosMesas = False
+
+    # ---------- ÁREA DE MESA ----------
+    id_area_actual = orden.IdAreaDeMesa_id
+
+    if str(id_area_actual) != str(id_area_mesa_nueva):
+        area = get_object_or_404(AreaMesa, Id=id_area_mesa_nueva, EsActivo="1")
+        orden.IdAreaDeMesa = area
+        orden.AreaDeMesa = area.Nombre
+        hayCambioAreaMesa = True
+    else:
+        area = orden.IdAreaDeMesa  # reutilizamos
+
+    # ---------- VALIDACIÓN DE MESAS ----------
+    mesas_invalidas = Mesa.objects.filter(
+        Id__in=mesas_nuevas_ids
+    ).exclude(
+        IdAreaMesa=area,
+        EsActivo="1"
+    )
+
+    if mesas_invalidas.exists():
+        numeros = ", ".join(
+            str(m.Numero) for m in mesas_invalidas
+        )
+        raise ValidationError(
+            f"Las siguientes mesas no pertenecen al área '{area.Nombre}': {numeros}"
+        )
+
+    # ---------- MESAS ----------
+    mesas_actuales_qs = MesasPorOrden.objects.filter(
+        IdOrden=orden,
+        EsActivo="1"
+    )
+
+    mesas_actuales_ids = set(
+        mesas_actuales_qs.values_list("IdMesa_id", flat=True)
+    )
+    mesas_nuevas_ids = set(map(int, mesas_nuevas_ids))
+
+    # Mesas eliminadas
+    mesas_a_eliminar = mesas_actuales_ids - mesas_nuevas_ids
+    if mesas_a_eliminar:
+        MesasPorOrden.objects.filter(
+            IdOrden=orden,
+            IdMesa_id__in=mesas_a_eliminar
+        ).update(EsActivo="0")
+        hayCambiosMesas = True
+
+    # Mesas nuevas
+    mesas_a_agregar = mesas_nuevas_ids - mesas_actuales_ids
+    if mesas_a_agregar:
+        for id_mesa in mesas_a_agregar:
+            mesa = get_object_or_404(Mesa, Id=id_mesa, EsActivo="1")
+            MesasPorOrden.objects.create(
+                IdOrden=orden,
+                IdMesa=mesa,
+                EsActivo="1"
+            )
+        hayCambiosMesas = True
+
+    return hayCambioAreaMesa, hayCambiosMesas
+
 def EditarOrden (request):
     descripcionFueEditada = False
     detalleNuevo = False
@@ -742,6 +809,12 @@ def EditarOrden (request):
         print(idAreaMesa)
         print("Mesas:")
         print(mesasIdList)
+        
+        areaCambiada, mesasCambiadas = Editar_area_y_mesas(
+            orden,
+            idAreaMesa,
+            mesasIdList
+        )
         
         orden.Descripcion = descripcionOrden
         orden.FueEditada = True

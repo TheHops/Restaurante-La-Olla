@@ -349,7 +349,7 @@
 /********************* EDITAR ***********************/
 
 #contenedorTablaEditarOrden {
-    max-height: 40vh;
+    max-height: 25vh;
     overflow: auto;
 }
 

@@ -18,7 +18,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
 from openpyxl.utils import get_column_letter
 
-from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden, AreaMesa, Usuario
+from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden, AreaMesa, Usuario, MesasPorOrden
 from RestauranteLaOlla import settings
 
 #region Inicio
@@ -93,7 +93,7 @@ def InicioMostrar(request):
     if not idOrden:
         return JsonResponse({"message": "Orden no válida"})
 
-    orden = Orden.objects.prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1"))).get(Id=idOrden)
+    orden = Orden.objects.prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1")), Prefetch('Mesas', queryset=MesasPorOrden.objects.filter(EsActivo="1").select_related('IdMesa'))).get(Id=idOrden)
     
     usuario = Usuario.objects.select_related("IdCargo").get(Id=orden.IdUsuario.Id)
     
@@ -429,7 +429,7 @@ def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids):
     ordenes = (
         Orden.objects
         .select_related('IdUsuario', 'IdAreaDeMesa')
-        .prefetch_related(Prefetch('Detalles'))
+        .prefetch_related(Prefetch('Detalles'), Prefetch('Mesas', queryset=MesasPorOrden.objects.filter(EsActivo="1").select_related('IdMesa')))
         .filter(filtros)
         .order_by("-Id")
     )
