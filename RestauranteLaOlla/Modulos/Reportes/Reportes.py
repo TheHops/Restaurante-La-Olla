@@ -305,7 +305,7 @@ def ExportarExcelTipoPlatillos(request):
         print(traceback.format_exc())
         print("#############################################################")
         
-def ExportarExcelPersonal(request):
+def ExportarPersonal(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
@@ -313,31 +313,35 @@ def ExportarExcelPersonal(request):
         return redirect("/")
 
     try:
-        columnas = ['Id', 'Nombres y apellidos', 'Usuario', 'Cargo', 'Telefono', 'Correo', 'Estado']
-        datos = []
-
-        for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'Nombres', 'Apellidos', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'EsActivo'):
-            estadoData = 'Activo ✅' if es_activo in (1, '1', True) else 'Dado de baja ⛔'
-            datos.append([
-                id,
-                nombre + " " + apellido,
-                nombre_user,
-                nombre_cargo,
-                telefono,
-                correo,
-                estadoData
-            ])
-
-        wb = exportar_excel_datos("PERSONAL", columnas, datos, "Personal")
-
-        response = HttpResponse(
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )
+        tipo = request.GET.get("Tipo")
         
-        filename = 'Personal_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
-        wb.save(response)
-        return response
+        # Para exportar en excel
+        if tipo == "1":
+            columnas = ['Id', 'Nombres y apellidos', 'Usuario', 'Cargo', 'Telefono', 'Correo', 'Estado']
+            datos = []
+
+            for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'Nombres', 'Apellidos', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'EsActivo'):
+                estadoData = 'Activo ✅' if es_activo in (1, '1', True) else 'Dado de baja ⛔'
+                datos.append([
+                    id,
+                    nombre + " " + apellido,
+                    nombre_user,
+                    nombre_cargo,
+                    telefono,
+                    correo,
+                    estadoData
+                ])
+
+            wb = exportar_excel_datos("PERSONAL", columnas, datos, "Personal")
+
+            response = HttpResponse(
+                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )
+            
+            filename = 'Personal_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            wb.save(response)
+            return response
 
     except Exception:
         import traceback

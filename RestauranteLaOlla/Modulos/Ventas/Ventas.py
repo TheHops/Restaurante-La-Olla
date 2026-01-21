@@ -1044,7 +1044,7 @@ def obtenerMensajeEdicion (edicionDescripcion, detalleNuevo, detalleEditado, det
         if mensaje != "":
             mensaje += " - "
         
-        mensaje += "Hubieron cambios en el área y de las mesas"
+        mensaje += "Hubieron cambios en el área y en las mesas"
     
     elif mesasCambiadas:
         if mensaje != "":

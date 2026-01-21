@@ -38,16 +38,14 @@
         </div>
         <div class="modal-body row exportar col-12">
             <div class="col-6">
-                <a href="{% url 'ExportarPersonal' %}" class="excel w-100 d-block text-center">
+                <button class="excel w-100" onclick="ExportarPersonal('1')">
                     <img src="{% static 'img/Export_excel_2.png' %}">
-                </a>
+                </button>
             </div>
     
             <div class="col-6">
-                <button class="pdf w-100">
-                    <a href="">
-                        <img src="{% static 'img/Export_pdf_2.png' %}">
-                    </a>
+                <button class="pdf w-100" onclick="ExportarPersonal('2')">
+                    <img src="{% static 'img/Export_pdf_2.png' %}">
                 </button>
             </div>
         </div>
