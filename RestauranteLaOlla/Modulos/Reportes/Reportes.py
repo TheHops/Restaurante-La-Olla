@@ -11,7 +11,7 @@ from jinja2 import Environment, FileSystemLoader
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Prefetch, Q
 
 from openpyxl import Workbook
@@ -27,6 +27,9 @@ def Reportes (request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero":
+            return redirect("/")
+    
     areas = AreaMesa.objects.filter(EsActivo = "1")
     
     return render(request, "reportes.html", {"Areas": areas})
@@ -38,6 +41,9 @@ def Reportes (request):
 def ReportesOrdenesFiltradas (request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero":
+        return redirect("/")
 
     if request.method != "GET":
         return JsonResponse(
@@ -88,6 +94,9 @@ def InicioMostrar(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero":
+        return redirect("/")
+    
     idOrden = request.GET.get("IdOrden")
     
     if not idOrden:
@@ -118,6 +127,9 @@ def ExportarOrdenes(request):
     
     if request.method != "POST":
         return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero":
+        return redirect("/")
     
     try:
         data = json.loads(request.body)
@@ -214,6 +226,9 @@ def Exportar_ExcelPlatillo(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero":
+        return redirect("/")
+    
     print("SI ENTRA A EXPORTAR PLATILLOS")
 
     try:
@@ -257,6 +272,9 @@ def Exportar_ExcelPlatillo(request):
 def ExportarExcelTipoPlatillos(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero":
+        return redirect("/")
 
     try:
         columnas = ['Nombre', 'Estado']
@@ -290,6 +308,9 @@ def ExportarExcelTipoPlatillos(request):
 def ExportarExcelPersonal(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero":
+        return redirect("/")
 
     try:
         columnas = ['Id', 'Nombres y apellidos', 'Usuario', 'Cargo', 'Telefono', 'Correo', 'Estado']

@@ -1,5 +1,5 @@
 from Application.models import Platillo, TipoPlatillo 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import traceback
 from django.http import JsonResponse
 
@@ -9,6 +9,9 @@ from django.http import JsonResponse
 
 def inventario_platillos(request):
     if request.user.is_authenticated:
+        if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+            return redirect("/")
+        
         try:
             Platillos = (
                 Platillo.objects
@@ -33,6 +36,9 @@ def inventario_platillos(request):
 def filtrar_platillos(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+        return redirect("/")
 
     ver_eliminados = request.GET.get("verEliminados") == "1"
 
@@ -54,6 +60,9 @@ def filtrar_platillos(request):
 
 def inventario_tipoplatillo(request):
     if request.user.is_authenticated:
+        if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+            return redirect("/")
+        
         try:
             PlatilloType = TipoPlatillo.objects.all()
             return render(request, "inventario_tipoPlatillo.html", {'TypePlatillo': PlatilloType})
@@ -71,6 +80,9 @@ def inventario_tipoplatillo(request):
 def filtrar_tipo_platillos(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+        return redirect("/")
 
     ver_eliminados = request.GET.get("verEliminados") == "1"
 

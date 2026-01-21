@@ -1,7 +1,7 @@
 #region Personal
 
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from Application.models import Cargo, Usuario
 from django.views.decorators.http import require_POST
@@ -15,6 +15,9 @@ User = get_user_model()
 
 def personal(request):
     if request.user.is_authenticated:
+        if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+            return redirect("/")
+        
         try:
             personal = Usuario.objects.filter(EsActivo="1")
             cargos = Cargo.objects.filter(EsActivo="1")
@@ -47,6 +50,9 @@ def cargo(request):
 def AgregarPersonal(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+        return redirect("/")
 
     try:
         nombre = request.POST.get("Nombre", "").strip()
@@ -136,6 +142,9 @@ def AgregarPersonal(request):
 def ModificarPersonal(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+        return redirect("/")
 
     try:
         usuario = request.POST.get("User", "").strip()
@@ -228,6 +237,9 @@ def ModificarPersonal(request):
 def DarBajaPersonal(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+        return redirect("/")
 
     if request.method == "POST":
         try:
@@ -274,6 +286,9 @@ def generar_pass_temporal():
 def RestablecerPass(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+        return redirect("/")
 
     if request.method == "POST":
         try:
@@ -312,6 +327,9 @@ def RestablecerPass(request):
 def filtrar_personal(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+            return redirect("/")
 
     ver_eliminados = request.GET.get("verEliminados") == "1"
 

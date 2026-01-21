@@ -2,7 +2,7 @@ import json
 import traceback
 
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.db import transaction
 from django.db.models import Q, Prefetch, Count
@@ -17,6 +17,9 @@ from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Pla
 # region VENTAS
 def venta(request):
     if request.user.is_authenticated:
+        if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Cajero":
+            return redirect("/")
+        
         try:
             platillo = Platillo.objects.filter(
                 EsActivo="1").order_by('Nombre')
@@ -51,7 +54,7 @@ def venta(request):
                 EsActivo="1"
             )
 
-            # 🔒 Si es mesero, solo contar sus órdenes
+            # Si es mesero, solo contar sus órdenes
             if cargo_usuario == "Mesero":
                 ordenes_query = ordenes_query.filter(IdUsuario=request.user)
 
@@ -81,6 +84,9 @@ def venta(request):
 #region FiltrarPlatillo
 def BuscarPlatillo(request):
     if request.user.is_authenticated:
+        if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Cajero":
+            return redirect("/")
+        
         try:
             if request.method == "GET":
                 Texto = request.GET.get("InputBuscarPlatillo")
@@ -149,6 +155,9 @@ def BuscarPlatillo(request):
 #region FiltrarMesas
 def FiltrarMesas(request):
     if request.user.is_authenticated:
+        if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Cajero":
+            return redirect("/")
+        
         try:
             if request.method == "GET":
                 idAM = request.GET.get("listaAreasDeMesa")
@@ -186,6 +195,9 @@ def FiltrarMesas(request):
 #region OrdenesPendientes
 def OrdenesPendientes(request):
     if request.user.is_authenticated:
+        if request.user.IdCargo.Nombre == "Cajero":
+            return redirect("/")
+        
         try:
             # El signo negativo para ordenarlos de manera descendiente
             ordenes =  Orden.objects.select_related('IdUsuario').filter(Q(Estado="1") & Q(EsActivo="1")).order_by('-Id')
@@ -219,6 +231,9 @@ def OrdenesPendientes(request):
 def CrearOrden(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Cajero":
+        return redirect("/")
     
     if request.method != "POST":
         return JsonResponse({"status": "error", "message": "Método no permitido."}, status=405)
@@ -296,6 +311,9 @@ def CrearOrden(request):
 def CancelarOrden(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero":
+        return redirect("/")
 
     if request.method != "POST":
         return JsonResponse({"status": "error", "message": "Método no permitido."}, status=405)
@@ -344,6 +362,9 @@ def redondear(valor): return Decimal(valor).quantize(Decimal("0.01"), rounding=R
 def FacturarOrden(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero":
+        return redirect("/")
 
     try:
         if request.method != "POST":
@@ -540,6 +561,9 @@ def CambiarAEnPreparacion(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
+    if request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+        return redirect("/")
+    
     if request.method == "POST":
         try:
             id = request.POST.get("ID")
@@ -576,6 +600,9 @@ def CambiarAEnPreparacion(request):
 def CambiarAPreparado(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+        return redirect("/")
     
     if request.method == "POST":
         try:
@@ -614,6 +641,9 @@ def InicioEditar(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
+    if request.user.IdCargo.Nombre == "Cocinero":
+            return redirect("/")
+    
     idOrden = request.GET.get("IdOrden")
     
     if not idOrden:
@@ -631,6 +661,9 @@ def InicioEditar(request):
 def InicioIncluir(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero":
+            return redirect("/")
 
     idOrden = request.GET.get("IdOrden")
 
@@ -664,6 +697,9 @@ def InicioIncluir(request):
 def InicioEditarMesas(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero":
+            return redirect("/")
     
     print("SI ENTRO")
 
@@ -782,6 +818,9 @@ def EditarOrden (request):
     
     if request.method != "POST":
         return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
+    
+    if request.user.IdCargo.Nombre == "Cocinero":
+            return redirect("/")
 
     try:
         data = json.loads(request.body)

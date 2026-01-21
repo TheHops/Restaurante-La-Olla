@@ -83,6 +83,9 @@ dias_semana_es = {
 def GraficarOrdenes(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero":
+            return redirect("/")
 
     try:
         hoy_local = timezone.localdate()  # 18/12/2025
@@ -291,6 +294,9 @@ def validar_cargo(request, cargo_recibido):
 def EnviarCorreo(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+            return redirect("/")
     
     if request.method == "POST":
         id_personal = request.POST.get("idPersonal")
