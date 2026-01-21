@@ -69,7 +69,7 @@ function ImpresionPersonal(
   idPersonal,
   estado,
   nombre,
-  apellido
+  apellido,
 ) {
   $("#NameUsuario").val(usuario);
   $("#CorreoUsuario").val(correo == "None" || correo == "" ? null : correo);
@@ -193,8 +193,7 @@ function ModificarPersonal() {
   });
 }
 
-function ConfirmarRestablecer(idPersonal)
-{
+function ConfirmarRestablecer(idPersonal) {
   Swal.fire({
     title: "¿Realmente desea restablecer la contraseña de este usuario?",
     icon: "question",
@@ -234,7 +233,7 @@ function ConfirmarRestablecer(idPersonal)
 
             // Crear instancia y mostrar modal
             const modal = new bootstrap.Modal(
-              document.getElementById("modalPassRestablecida")
+              document.getElementById("modalPassRestablecida"),
             );
 
             modal.show();
@@ -484,8 +483,7 @@ document.getElementById("btnCopiarPass").addEventListener("click", function () {
     });
 });
 
-function EnviarCorreo() 
-{
+function EnviarCorreo() {
   let idPersonal = $("#IdPersonalRestablecerPass").val();
   let passTemporal = $("#nuevaPassTemporal").val();
 
@@ -509,7 +507,6 @@ function EnviarCorreo()
       csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
     },
     success: function (response) {
-      
       Swal.close();
 
       if (response.status === "ok") {
@@ -535,4 +532,94 @@ function EnviarCorreo()
       }
     },
   });
+}
+
+/******************************************************************************/
+/*********************************EXPORTAR*************************************/
+/******************************************************************************/
+
+function ExportarPersonal(tipo) {
+  // PREPARACION DE DATOS
+  console.log("Exportación de tipo: " + (tipo == "1" ? "excel" : "pdf"));
+
+  // PETICION AL SERVICIO
+  let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+  let xhr = new XMLHttpRequest();
+
+  xhr.open("GET", "/ExportarPersonal?Tipo=" + tipo, true);
+
+  xhr.responseType = "blob";
+
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.setRequestHeader("X-CSRFToken", token);
+
+  // Manejamos la respuesta del servidor
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      const contentType = xhr.getResponseHeader("Content-Type");
+
+      // Si el backend devolvió JSON (error)
+      if (contentType && contentType.includes("application/json")) {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const respuesta = JSON.parse(reader.result);
+          Swal.fire({
+            title: respuesta.message,
+            icon: respuesta.status === "error" ? "error" : "success",
+            confirmButtonColor: "#ff6464",
+          });
+        };
+        reader.readAsText(xhr.response);
+        return;
+      }
+
+      // Si es archivo → descargar
+      const blob = xhr.response;
+      const url = window.URL.createObjectURL(blob);
+
+      const disposition = xhr.getResponseHeader("Content-Disposition");
+
+      let filename = "ordenes.xlsx";
+      if (disposition && disposition.includes("filename=")) {
+        filename = disposition.split("filename=")[1].replace(/"/g, "").trim();
+      }
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      window.URL.revokeObjectURL(url);
+
+      Swal.fire({
+        icon: "success",
+        title: "¡Se exportó el archivo con éxito!",
+        toast: true,
+        position: "top-start",
+        showConfirmButton: false,
+        timer: 4000,
+        timerProgressBar: true,
+      });
+    } else {
+      Swal.fire({
+        title: "Error al exportar",
+        text: "Error de servidor: " + xhr.status,
+        icon: "error",
+        confirmButtonColor: "#ff6464",
+      });
+    }
+  };
+
+  xhr.onerror = function () {
+    Swal.fire({
+      title: "Error",
+      text: "No se pudo conectar con el servidor",
+      icon: "error",
+      confirmButtonColor: "#ff6464",
+    });
+  };
+
+  xhr.send();
 }

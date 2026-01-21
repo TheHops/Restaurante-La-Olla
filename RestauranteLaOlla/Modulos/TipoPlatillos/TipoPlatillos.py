@@ -1,5 +1,5 @@
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 from django.db import transaction
 
@@ -15,6 +15,9 @@ def Actualizar_TipoPlatillo(request):
 
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+        return redirect("/")
 
     try:
         with transaction.atomic():
@@ -81,6 +84,9 @@ def Actualizar_TipoPlatillo(request):
 def DarBaja_TipoPlatillo(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+        return redirect("/")
 
     try:
         if request.method == "POST":
@@ -123,6 +129,9 @@ def Agregar_TipoPlatillo(request):
 
     if not request.user.is_authenticated:
         return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+        return redirect("/")
 
     try:
         with transaction.atomic():
