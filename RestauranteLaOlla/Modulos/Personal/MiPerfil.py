@@ -148,7 +148,7 @@ def CambiarPass (request):
 
             return JsonResponse({
                 "status": "ok",
-                "message": "La contraseña fué cambiada con éxito"
+                "message": "La contraseña fue cambiada con éxito"
             })
         except Exception as ex:
             print()

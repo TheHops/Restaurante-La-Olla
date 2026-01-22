@@ -195,9 +195,6 @@ def FiltrarMesas(request):
 #region OrdenesPendientes
 def OrdenesPendientes(request):
     if request.user.is_authenticated:
-        if request.user.IdCargo.Nombre == "Cajero":
-            return redirect("/")
-        
         try:
             # El signo negativo para ordenarlos de manera descendiente
             ordenes =  Orden.objects.select_related('IdUsuario').filter(Q(Estado="1") & Q(EsActivo="1")).order_by('-Id')
@@ -528,7 +525,7 @@ def FacturarOrden(request):
 
         return JsonResponse({
             "status": "ok",
-            "message": f"¡La orden #{orden.Id} fue registrada exitosamente!"
+            "message": f"¡El pago de la orden #{orden.Id} fue registrado exitosamente!"
         })
 
     except Orden.DoesNotExist:
