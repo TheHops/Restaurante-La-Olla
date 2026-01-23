@@ -49,14 +49,7 @@
 
 <!-- ------------------------------------------------------------------------ -->
 
-<div
-  class="modal fade"
-  id="FacturarOrden"
-  tabindex="-1"
-  role="dialog"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
->
+<div class="modal fade" id="FacturarOrden" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -98,7 +91,7 @@
 
             <div class="col-6 mb-2" id="monto">
                 <h4 style="font-size: 20px; margin-bottom: 3px;">
-                  Monto<span class="asterisco">*</span>
+                  Monto (C$)<span class="asterisco">*</span>
                 </h4>
 
               <input
@@ -222,7 +215,11 @@
                 </div>
               </div>
             </div>
-            
+
+            <div class="alert alert-info alert-dismissible mb-0 mt-4" id="infoCalculoPropina">
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+              La propina se calcula sobre el total con el descuento ya aplicado
+            </div>
           </div>
           
           <input type="hidden" id="idOrdenFactura"/>

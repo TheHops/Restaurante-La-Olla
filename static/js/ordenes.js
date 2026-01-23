@@ -41,8 +41,6 @@ async function FacturarOrden() {
     reverseButtons: true,
   });
 
-  console.log(isConfirmed);
-
   if (isConfirmed)
   {
     let idOrdenF = document.getElementById("idOrdenFactura");
@@ -77,6 +75,13 @@ async function FacturarOrden() {
     let Descuento = DescuentoOrden.value || 0;
     let PorcentajePropina = PorcentajePropinaOrden.value || 0;
     let PorcentajeDescuento = PorcentajeDescuentoOrden.value || 0;
+
+    console.log(Monto);
+    console.log(Cambio);
+    console.log(Propina);
+    console.log(Descuento);
+    console.log(PorcentajePropina);
+    console.log(PorcentajeDescuento);
   
     let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
   
@@ -154,7 +159,7 @@ function MP(valor) {
     inputCambio.value = null;
 
     // contMonto.classList.remove("mb-2");
-    h4.innerHTML = 'Monto<span class="asterisco">*</span>';
+    h4.innerHTML = 'Monto (C$)<span class="asterisco">*</span>';
     h4Cambio.innerHTML = 'Cambio<span class="asterisco">*</span>';
     
     BtnRegistrar.disabled = true;
@@ -193,7 +198,7 @@ function MP(valor) {
     inputCambio.placeholder = "Ej: 50"
     
     contMonto.classList.add("mb-2");
-    h4.innerHTML = "Monto en efectivo<span class='asterisco'>*</span>";
+    h4.innerHTML = "Monto en efectivo (C$)<span class='asterisco'>*</span>";
     h4Cambio.innerHTML = "Cambio en efectivo<span class='asterisco'>*</span>";
     bancoh4.innerHTML = "Banco de la tarjeta";
 
@@ -307,8 +312,22 @@ function rellenarParaFacturar(id, total) {
 document.getElementById("MontoOrden").addEventListener("input", CalcularTotal);
 document.getElementById("txtPorcentajeDescuento").addEventListener("input", CalcularTotal);
 document.getElementById("txtPorcentajePropina").addEventListener("input", CalcularTotal);
-document.getElementById("checkPropina").addEventListener("change", CalcularTotal);
-document.getElementById("checkDescuento").addEventListener("change", CalcularTotal);
+document.getElementById("checkPropina").addEventListener("change", function () {
+  let propinaCheck = document.getElementById("checkPropina");
+  let descuentoCheck = document.getElementById("checkDescuento");
+  
+  $("#infoCalculoPropina").toggle(propinaCheck.checked && descuentoCheck.checked);
+  
+  CalcularTotal();
+});
+document.getElementById("checkDescuento").addEventListener("change", function () {
+  let propinaCheck = document.getElementById("checkPropina");
+  let descuentoCheck = document.getElementById("checkDescuento");
+  
+  $("#infoCalculoPropina").toggle(propinaCheck.checked && descuentoCheck.checked);
+
+  CalcularTotal();
+});
 
 function CalcularTotal ()
 {
@@ -400,6 +419,8 @@ function ReiniciarCampos() {
 
   $("#inputPorcentajePropina").toggle(false);
   $("#inputPorcentajePropina").toggle(false);
+
+  $("#infoCalculoPropina").toggle(false);
 
   CambioOrden.value = "";
   MontoOrden.value = "";
