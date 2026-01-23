@@ -18,7 +18,7 @@
         width: 50px;
         height: 50px;
         ">
-          <img src="{% static 'img/Edit_alert_png.png' %}" style="width: 25px; height: 25px; z-index: 3;" alt="La orden fué editada" title="La orden fué editada">
+          <img src="{% static 'img/Edit_alert_png.png' %}" style="width: 25px; height: 25px; z-index: 3;" alt="La orden fue editada" title="La orden fue editada">
         </div>
       {% endif %}
     {% endif %}
@@ -27,7 +27,7 @@
       Orden #{{ Orden.Id }} - 
       {% if Orden.Estado == "1" %} Pendiente
       <div class="EstP"></div>
-      {% elif Orden.Estado == "0" %} Registrada
+      {% elif Orden.Estado == "0" %} Pago registrado
       <div class="EstF"></div>
       {% elif Orden.Estado == "3" %} Preparada
       <div class="EstPre"></div>
@@ -135,15 +135,6 @@
           <i class="fa-solid fa-ban"></i> Anular
         </button>
 
-        <!-- Editar la orden -->
-        <button
-          class="btnEditarOrden"
-          data-toggle="modal"
-          data-target="#EditarOrden"
-          onclick="rellenarParaEditarOrden('{{Orden.Id}}')"
-          >Editar
-        </button>
-
         <!-- Registrar la orden -->
         <button
           class="btnFacturarOrden"
@@ -151,7 +142,7 @@
           data-target="#FacturarOrden"
           onclick="rellenarParaFacturar('{{Orden.Id}}', '{{Orden.Total}}')"
         >
-          <i class="fa-solid fa-file-invoice-dollar"></i> Registrar
+          <i class="fa-solid fa-file-invoice-dollar"></i> Registrar pago
         </button>
 
       <!-- Anulada -->

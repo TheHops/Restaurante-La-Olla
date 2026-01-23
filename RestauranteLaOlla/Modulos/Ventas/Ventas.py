@@ -195,9 +195,6 @@ def FiltrarMesas(request):
 #region OrdenesPendientes
 def OrdenesPendientes(request):
     if request.user.is_authenticated:
-        if request.user.IdCargo.Nombre == "Cajero":
-            return redirect("/")
-        
         try:
             # El signo negativo para ordenarlos de manera descendiente
             ordenes =  Orden.objects.select_related('IdUsuario').filter(Q(Estado="1") & Q(EsActivo="1")).order_by('-Id')
@@ -399,11 +396,11 @@ def FacturarOrden(request):
                 "message": "Método de pago inválido."
             })
             
-        monto       = to_float(request.POST.get('monto', 0))
-        cambio      = to_float(request.POST.get('cambio', 0))
-        propina     = to_float(request.POST.get('propinaOrden', 0))
-        descuento   = to_float(request.POST.get('descuentoOrden', 0))
-        total       = to_float(request.POST.get('totalOrden', 0))
+        monto       = float(request.POST.get('monto', 0))
+        cambio      = float(request.POST.get('cambio', 0))
+        propina     = float(request.POST.get('propinaOrden', 0))
+        descuento   = float(request.POST.get('descuentoOrden', 0))
+        
         metodoPago  = int(metodoPago_raw)
         banco  = request.POST.get('banco')
         numRef      = request.POST.get('numRef')
@@ -412,7 +409,6 @@ def FacturarOrden(request):
         for nombre, valor in {
             "monto": monto,
             "propina": propina,
-            "total": total,
             "cambio": cambio
         }.items():
             if valor < 0:
@@ -421,11 +417,6 @@ def FacturarOrden(request):
                     "message": f"El valor '{nombre}' no puede ser negativo."
                 })
                 
-        if total <= 0:
-            return JsonResponse({
-                "status": "error",
-                "message": "El total de la orden es inválido."
-            })
 
         # ===============================
         # Obtener orden
@@ -436,6 +427,14 @@ def FacturarOrden(request):
             return JsonResponse({
                 "status": "error",
                 "message": "La orden ya fue facturada."
+            })
+            
+        total       = orden.Total
+        
+        if total <= 0:
+            return JsonResponse({
+                "status": "error",
+                "message": "El total de la orden es inválido."
             })
         
         orden.UltimaModificacion = timezone.now()
@@ -528,7 +527,7 @@ def FacturarOrden(request):
 
         return JsonResponse({
             "status": "ok",
-            "message": f"¡La orden #{orden.Id} fue registrada exitosamente!"
+            "message": f"¡El pago de la orden #{orden.Id} fue registrado exitosamente!"
         })
 
     except Orden.DoesNotExist:

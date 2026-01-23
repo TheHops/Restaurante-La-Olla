@@ -252,7 +252,7 @@ class DetalleOrden(models.Model):
 
     SubTotal = models.DecimalField(db_column='sub_total', max_digits=8, decimal_places=2)
     
-    # Sirve para indicar si fué recién editado
+    # Sirve para indicar si fue recién editado
     DesdeEdicion = models.BooleanField(db_column="desde_edicion", null=True, default=False)
     
     # Estos van a estar en True solo si fueron recién agregados o eliminados

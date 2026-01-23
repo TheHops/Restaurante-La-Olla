@@ -62,7 +62,17 @@
       <input type="text" class="form-control" id="totalBaseOrden" value="{{Orden.Total}}" readonly/>
     </div>
     {% endif %}
-  
+    
+    {% if Orden.Descuento < 0 %}
+    <!-- Descuento -->
+    <div class="col-3 mb-2" id="descuentoOrdenDiv">
+      <div class="descuentoOrdenTxt">
+        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Descuento</h4>
+      </div>
+      <input type="text" class="form-control" id="descuentoOrden" value="{{Orden.Descuento}}" readonly/>
+    </div>
+    {% endif %}
+
     {% if Orden.Propina > 0 %}
     <!-- Propina -->
     <div class="col-3 mb-2" id="propinaOrdenDiv">
@@ -73,16 +83,6 @@
     </div>
     {% endif %}
 
-    {% if Orden.Descuento < 0 %}
-    <!-- Descuento -->
-    <div class="col-3 mb-2" id="descuentoOrdenDiv">
-      <div class="descuentoOrdenTxt">
-        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Descuento</h4>
-      </div>
-      <input type="text" class="form-control" id="descuentoOrden" value="{{Orden.Descuento}}" readonly/>
-    </div>
-    {% endif %}
-    
     {% if Orden.TotalPagar > 0 %}
     <!-- Total pagado -->
     <div class="col-3 mb-2" id="totalPagadoOrdenDiv">
