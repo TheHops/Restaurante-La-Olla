@@ -17,7 +17,7 @@ from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Pla
 # region VENTAS
 def venta(request):
     if request.user.is_authenticated:
-        if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Cajero":
+        if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Cajero":
             return redirect("/")
         
         try:
@@ -84,7 +84,7 @@ def venta(request):
 #region FiltrarPlatillo
 def BuscarPlatillo(request):
     if request.user.is_authenticated:
-        if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Cajero":
+        if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Cajero":
             return redirect("/")
         
         try:
@@ -155,7 +155,7 @@ def BuscarPlatillo(request):
 #region FiltrarMesas
 def FiltrarMesas(request):
     if request.user.is_authenticated:
-        if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Cajero":
+        if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Cajero":
             return redirect("/")
         
         try:
@@ -229,7 +229,7 @@ def CrearOrden(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
-    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Cajero":
+    if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Cajero":
         return redirect("/")
     
     if request.method != "POST":
@@ -309,7 +309,7 @@ def CancelarOrden(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
-    if request.user.IdCargo.Nombre == "Cocinero":
+    if request.user.IdCargo.Nombre == "Armador":
         return redirect("/")
 
     if request.method != "POST":
@@ -360,7 +360,7 @@ def FacturarOrden(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
-    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero":
+    if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Mesero":
         return redirect("/")
 
     try:
@@ -640,7 +640,7 @@ def InicioEditar(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
-    if request.user.IdCargo.Nombre == "Cocinero":
+    if request.user.IdCargo.Nombre == "Armador":
             return redirect("/")
     
     idOrden = request.GET.get("IdOrden")
@@ -661,7 +661,7 @@ def InicioIncluir(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
-    if request.user.IdCargo.Nombre == "Cocinero":
+    if request.user.IdCargo.Nombre == "Armador":
             return redirect("/")
 
     idOrden = request.GET.get("IdOrden")
@@ -697,7 +697,7 @@ def InicioEditarMesas(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
-    if request.user.IdCargo.Nombre == "Cocinero":
+    if request.user.IdCargo.Nombre == "Armador":
             return redirect("/")
     
     print("SI ENTRO")
@@ -818,7 +818,7 @@ def EditarOrden (request):
     if request.method != "POST":
         return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
     
-    if request.user.IdCargo.Nombre == "Cocinero":
+    if request.user.IdCargo.Nombre == "Armador":
             return redirect("/")
 
     try:

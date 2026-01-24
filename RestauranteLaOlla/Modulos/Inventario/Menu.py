@@ -9,7 +9,7 @@ from django.http import JsonResponse
 
 def inventario_platillos(request):
     if request.user.is_authenticated:
-        if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+        if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
             return redirect("/")
         
         try:
@@ -37,7 +37,7 @@ def filtrar_platillos(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
-    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+    if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
         return redirect("/")
 
     ver_eliminados = request.GET.get("verEliminados") == "1"
@@ -60,7 +60,7 @@ def filtrar_platillos(request):
 
 def inventario_tipoplatillo(request):
     if request.user.is_authenticated:
-        if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+        if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
             return redirect("/")
         
         try:
@@ -81,7 +81,7 @@ def filtrar_tipo_platillos(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
-    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+    if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
         return redirect("/")
 
     ver_eliminados = request.GET.get("verEliminados") == "1"

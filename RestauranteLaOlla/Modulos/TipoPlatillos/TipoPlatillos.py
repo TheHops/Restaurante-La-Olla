@@ -16,7 +16,7 @@ def Actualizar_TipoPlatillo(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
-    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+    if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
         return redirect("/")
 
     try:
@@ -85,7 +85,7 @@ def DarBaja_TipoPlatillo(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
-    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+    if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
         return redirect("/")
 
     try:
@@ -130,7 +130,7 @@ def Agregar_TipoPlatillo(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
-    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+    if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
         return redirect("/")
 
     try:
