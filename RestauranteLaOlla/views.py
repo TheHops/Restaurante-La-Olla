@@ -16,7 +16,7 @@ User = get_user_model()
 def index(request):
     # Direccion que me llevará al login por defecto
     if request.user.is_authenticated:
-        if request.user.IdCargo.Nombre == "Cocinero":
+        if request.user.IdCargo.Nombre == "Armador":
             return redirect("OrdenesPendientes/")
         elif request.user.IdCargo.Nombre == "Mesero":
             return redirect("venta/")
@@ -26,6 +26,17 @@ def index(request):
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
+    
+def DebeCambiarPass(request):
+    if not request.user.is_authenticated:
+        return redirect("/")
+    
+    if request.method != "GET":
+        return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
+    
+    print(request.user.DebeCambiarPass)
+    
+    return JsonResponse({"status": "ok", "DebeCambiarPass": request.user.DebeCambiarPass})
 
 def loginUser(request):
 
@@ -84,7 +95,7 @@ def GraficarOrdenes(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
-    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero":
+    if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Mesero":
             return redirect("/")
 
     try:
@@ -160,14 +171,14 @@ def GraficarOrdenes(request):
 OPCIONES_DISPONIBLES = {
     "Administrador": ["0", "1", "2", "3", "4", "5"],
     "Mesero": ["1", "4", "6"],
-    "Cocinero": ["1", "4", "6"],
+    "Armador": ["1", "4", "6"],
     "Cajero": ["0", "2", "3"]
 }
 
 VALORES_POR_DEFECTO = {
     "Administrador": "5",
     "Mesero": "6",
-    "Cocinero": "6",
+    "Armador": "6",
     "Cajero": "3"
 }
 
@@ -295,7 +306,7 @@ def EnviarCorreo(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
-    if request.user.IdCargo.Nombre == "Cocinero" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
+    if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
             return redirect("/")
     
     if request.method == "POST":

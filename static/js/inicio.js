@@ -77,4 +77,30 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     },
   });
+
+  ConsultaDebeCambiarPass();
 });
+
+function ConsultaDebeCambiarPass() {
+  console.log("INICIA CONSULA DEBE CAMBIAR PASS");
+
+  $.ajax({
+    url: "/DebeCambiarPass/",
+    type: "GET",
+    success: function (response) {
+      console.log(response);
+      if (response.status === "ok" && response.DebeCambiarPass) {
+        Swal.fire({
+          icon: "warning",
+          title: "¡Protege tu cuenta! Cambia tu contraseña temporal por una propia",
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 5000,
+          timerProgressBar: false,
+        });
+        return;
+      }
+    },
+  });
+}

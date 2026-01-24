@@ -12,7 +12,7 @@ def initial_data(sender, **kwargs):
         cargos = [
             {"Id": 1, "Nombre": "Administrador", "EsActivo": "1"},
             {"Id": 2, "Nombre": "Mesero", "EsActivo": "1"},
-            {"Id": 3, "Nombre": "Cocinero", "EsActivo": "1"},
+            {"Id": 3, "Nombre": "Armador", "EsActivo": "1"},
             {"Id": 4, "Nombre": "Cajero", "EsActivo": "1"},
         ]
         

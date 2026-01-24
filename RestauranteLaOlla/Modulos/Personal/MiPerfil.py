@@ -11,6 +11,8 @@ from django.core.exceptions import ValidationError
 
 User = get_user_model()
 
+#region Inicio
+
 def MiPerfil(request):
     if request.user.is_authenticated:
         try:
@@ -24,6 +26,10 @@ def MiPerfil(request):
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
+
+#endregion Inicio
+
+#region EditarPerfil
     
 def EditarDatosPerfil (request):
     if request.user.is_authenticated:
@@ -93,6 +99,10 @@ def EditarDatosPerfil (request):
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
     
+#endregion EditarPerfil
+
+#region EditarPass
+    
 def CambiarPass (request):
     if request.user.is_authenticated:
         if request.method != "POST":
@@ -141,6 +151,7 @@ def CambiarPass (request):
             # 🔹 Cambiar contraseña
             user = request.user
             user.set_password(new_pass)
+            user.DebeCambiarPass = False
             user.save()
 
             # 🔹 Mantener sesión activa
@@ -159,3 +170,5 @@ def CambiarPass (request):
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
+    
+#endregion EditarPass

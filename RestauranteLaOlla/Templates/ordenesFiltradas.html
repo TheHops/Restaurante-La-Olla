@@ -92,7 +92,7 @@
         </button>
         {% endif %}
 
-        {% if CargoUsuario == "Cocinero" or CargoUsuario == "Administrador" %}
+        {% if CargoUsuario == "Armador" or CargoUsuario == "Administrador" %}
           <!-- Cambiar el estado de la orden a 'En preparación' -->
           <button onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAEnPreparacion' %}', 'Cambiando a En preparación')">Empezar preparación</button>
         {% endif %}
@@ -119,7 +119,7 @@
           </button>
         {% endif %}
 
-        {% if CargoUsuario == "Cocinero" or CargoUsuario == "Administrador" %}
+        {% if CargoUsuario == "Armador" or CargoUsuario == "Administrador" %}
           <!-- Cambiar el estado de la orden a 'Preparada' -->
           <button onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAPreparado' %}', 'Cambiando a Preparada')">Confirmar preparado</button>
         {% endif %}

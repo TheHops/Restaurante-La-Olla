@@ -35,6 +35,8 @@ class Usuario(AbstractUser):
     Direccion = models.CharField(max_length=200, blank=True, null=True, default="", db_column='direccion')
     Telefono = models.CharField(max_length=20, blank=True, null=True, db_column='telefono')
     
+    DebeCambiarPass = models.BooleanField(db_column="debe_cambiar_pass", null=True, default=False)
+    
     email = models.EmailField(unique=True, null=True, default=None, db_column="email")
 
     ESTADOS = [("1", "Activo"), ("0", "Inactivo")]
