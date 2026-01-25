@@ -1,6 +1,7 @@
 const fechaDesde = document.getElementById("fechaDesde");
 const fechaHasta = document.getElementById("fechaHasta");
 const errorFechas = document.getElementById("errorFechas");
+const listaEstado = document.getElementById("listaEstadoOrdenesExportar");
 
 document.addEventListener("DOMContentLoaded", () => {
   $(".tablaInventario").DataTable({
@@ -81,6 +82,10 @@ fechaHasta.addEventListener("change", () => {
   if (validarFechas()) filtrarOrdenesFecha();
 });
 
+listaEstado.addEventListener("change", () => {
+  if (validarFechas()) filtrarOrdenesFecha();
+});
+
 function rellenarParaMostrarOrden(idOrden) {
   let request = new XMLHttpRequest();
 
@@ -101,9 +106,15 @@ function rellenarParaMostrarOrden(idOrden) {
 }
 
 function filtrarOrdenesFecha() {
+  estadoAFiltrar = document.getElementById("listaEstadoOrdenesExportar");
+
+  console.log("ESTADO");
+  console.log(estadoAFiltrar.value);
+  
   const params = new URLSearchParams({
     FechaInicio: fechaDesde.value,
     FechaFin: fechaHasta.value,
+    Estado: estadoAFiltrar.value
   });
 
   const areasSeleccionadas = filtrosAplicados.areas;
@@ -299,6 +310,8 @@ document
 
 function ExportarOrdenes(tipo)
 {
+  estadoAFiltrar = document.getElementById("listaEstadoOrdenesExportar");
+
   // PREPARACION DE DATOS
   console.log("Exportación de tipo: " + (tipo == "1" ? "excel" : "pdf"));
 
@@ -307,7 +320,8 @@ function ExportarOrdenes(tipo)
     FechaFin: fechaHasta.value,
     AreasSeleccionadas: filtrosAplicados.areas,
     TipoExportacion: tipo,
-    IncluirDetalles: false
+    IncluirDetalles: false,
+    Estado: estadoAFiltrar.value
   };
 
   let incluirDetalle = document.getElementById("check_incluir_detalles");

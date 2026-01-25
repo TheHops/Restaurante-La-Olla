@@ -10,6 +10,7 @@ from jinja2 import Environment, FileSystemLoader
 
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.utils.formats import date_format
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.db.models import Prefetch, Q
@@ -54,16 +55,19 @@ def ReportesOrdenesFiltradas (request):
     try:
         fecha_inicio_str = request.GET.get("FechaInicio")
         fecha_fin_str = request.GET.get("FechaFin")
+        estado = request.GET.get("Estado")
         
         areasSeleccionadas = request.GET.get("AreasSeleccionadas", "")
-        print(areasSeleccionadas)
+        
+        print("ESTADO")
+        print(estado)
         
         areas_ids = []
         if areasSeleccionadas:
             areas_ids = [int(x) for x in areasSeleccionadas.split(",") if x.isdigit()]
 
         try:
-            ordenes = filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids)
+            ordenes = filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids, estado)
         except ValidationError as e:
             return JsonResponse({"status": "error", "message": str(e)})
 
@@ -136,17 +140,21 @@ def ExportarOrdenes(request):
     except json.JSONDecodeError:
         return JsonResponse({"status": "error", "message": "JSON inválido"}, status=400)
     
-    fecha_inicio_str = data["FechaInicio"]
-    fecha_fin_str = data["FechaFin"]
-    areas_ids = data["AreasSeleccionadas"]
-    tipo_exportacion = data["TipoExportacion"]
-    incluir_detalles = data["IncluirDetalles"]
+    try:
+        fecha_inicio_str = data["FechaInicio"]
+        fecha_fin_str = data["FechaFin"]
+        areas_ids = data["AreasSeleccionadas"]
+        tipo_exportacion = data["TipoExportacion"]
+        incluir_detalles = data["IncluirDetalles"]
+        estado = data["Estado"]
+    except KeyError as e:
+        return JsonResponse({"status": "error", "message": f"Falta el campo {str(e)}"}, status=400)
     
     print(data)
     print(tipo_exportacion)
     
     try:
-        ordenes = filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids)
+        ordenes = filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids, estado)
     except ValidationError as e:
         return JsonResponse({"status": "error", "message": str(e)})
     
@@ -158,7 +166,7 @@ def ExportarOrdenes(request):
 
 def exportar_excel_ordenes(ordenes, incluir_detalles = False):
     titulo = "REPORTE DE ÓRDENES"
-    columnas = ["N° Orden", "Fecha", "Área", "Mesas", "Subtotal", "Propina", "Descuento", "Total a pagar", "Método de pago", "Monto", "Cambio", "Segundo monto"]
+    columnas = ["N° Orden", "Estado", "Fecha", "Área", "Mesas", "Subtotal", "Propina", "Descuento", "Total a pagar", "Método de pago", "Monto", "Cambio", "Segundo monto"]
 
     datos = []
     for orden in ordenes:
@@ -166,7 +174,11 @@ def exportar_excel_ordenes(ordenes, incluir_detalles = False):
 
         datos.append([
             orden.Id,
-            orden.UltimaModificacion.strftime("%Y-%m-%d %H:%M"),
+            orden.get_Estado_display(),
+            date_format(
+                timezone.localtime(orden.UltimaModificacion),
+                "j \\d\\e F \\d\\e Y \\a \\l\\a\\s H:i"
+            ),
             orden.IdAreaDeMesa.Nombre if orden.IdAreaDeMesa else "",
             mesas,
             "C$" + str(orden.Total),
@@ -186,22 +198,15 @@ def exportar_excel_ordenes(ordenes, incluir_detalles = False):
         ws_detalles = wb.create_sheet(title="Detalles")
 
         columnas_detalles = [
-            "N° Orden", "Fecha", "Área", "Mesa",
-            "Producto", "Cantidad", "Precio", "Subtotal"
+            "N° Orden", "Consumo", "Cantidad", "Precio", "Subtotal"
         ]
 
         datos_detalles = []
 
         for orden in ordenes:
-            mesas = " - ".join(f"#{m.IdMesa.Numero}" for m in orden.Mesas.all())
-            area = orden.IdAreaDeMesa.Nombre if orden.IdAreaDeMesa else ""
-
-            for detalle in orden.Detalles.all():
+            for detalle in orden.Detalles.filter(EsActivo="1"):
                 datos_detalles.append([
                     orden.Id,
-                    orden.UltimaModificacion.strftime("%Y-%m-%d %H:%M"),
-                    area,
-                    mesas,
                     detalle.IdPlatillo.Nombre,
                     detalle.Cantidad,
                     detalle.PrecioVenta,
@@ -456,10 +461,12 @@ def CreacionTipoPlatillos_PDF(request):
 
 #region PublicFunctions
 
-def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids):
+def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids, estado = "0"):
     print(fecha_inicio_str)
     print(fecha_fin_str)
     print(areas_ids)
+    
+    listaEstado = estado.split(",")
     
     if not fecha_inicio_str or not fecha_fin_str:
         raise ValidationError("Fechas incompletas")
@@ -479,7 +486,7 @@ def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids):
     filtros = Q(
         EsActivo="1",
         UltimaModificacion__range=(fecha_inicio, fecha_fin),
-        Estado__in=["0"]
+        Estado__in=listaEstado
     )
 
     # Filtrar por áreas de mesa (opcional)
@@ -557,8 +564,22 @@ def exportar_excel_datos(titulo, columnas, datos, sheetName):
 
     # ==== AJUSTES VISUALES ====
     ws.freeze_panes = "A3"
-    for i, header in enumerate(columnas, start=1):
-        ws.column_dimensions[get_column_letter(i)].width = max(len(header) + 5, 15)
+    
+    for col_idx, header in enumerate(columnas, start=1):
+        column_letter = get_column_letter(col_idx)
+        max_length = len(str(header))
+
+        for row in ws.iter_rows(
+            min_row=2,
+            max_row=ws.max_row,
+            min_col=col_idx,
+            max_col=col_idx
+        ):
+            cell_value = row[0].value
+            if cell_value:
+                max_length = max(max_length, len(str(cell_value)))
+
+        ws.column_dimensions[column_letter].width = min(max_length + 4, 50)
 
     return wb
 

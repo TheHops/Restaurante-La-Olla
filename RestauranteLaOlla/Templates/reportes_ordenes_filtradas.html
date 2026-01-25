@@ -10,6 +10,7 @@
                 <th>Mesas</th>
                 <th>Área</th>
                 <th>Total</th>
+                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -35,7 +36,9 @@
                 <!-- Area -->
                 <td>{{Orden.AreaDeMesa}}</td>
 
-                <td>C${{Orden.Total}}</td>
+                <td>C${{Orden.TotalPagar}}</td>
+
+                <td>{{Orden.get_Estado_display}}</td>
 
                 <!-- Acciones -->
                 <td class="actions">
