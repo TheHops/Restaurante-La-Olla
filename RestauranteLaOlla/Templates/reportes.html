@@ -9,6 +9,7 @@
 
 <div id="encabezado_inventario">
     <div id="contenedorIzquierdoEncabezadoInventario">
+        
         <div class="contenedorFechasReportes">
             <input type="date" id="fechaDesde" name="fecha_desde">
         </div>
@@ -21,6 +22,12 @@
             La fecha <strong>de inicio</strong> no puede ser mayor que la<strong> fecha fin</strong>
         </small>
 
+        <select name="" id="listaEstadoOrdenesExportar">
+            <option value="0">Pago registrado</option>
+            <option value="2">Anuladas</option>
+            <option value="0,2">Ambas</option>
+        </select>
+
         <div>
             <button data-toggle="modal" data-target="#FiltrarOrdenes">
                 Más filtros
@@ -28,6 +35,7 @@
 
             <div id="indicadorFiltros">Filtro activo</div>
         </div>
+
     </div>
 
     <div id="contenedorDerechoEncabezadoInventario">
