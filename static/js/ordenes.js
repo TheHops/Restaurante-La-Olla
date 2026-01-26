@@ -265,7 +265,7 @@ function CalcularPropina() {
   let porcentaje = parseFloat(txtPorcentajePropina.value) || 0;
 
   // Cálculo de la propina sobre el total ya descontado
-  let resultado = (total * porcentaje) / 100; // PROPINA CALCULADA DESPUÉS DEL DESCUENTO
+  let resultado = redondear((total * porcentaje) / 100); // PROPINA CALCULADA DESPUÉS DEL DESCUENTO
 
   // Se asigna el valor calculado
   $("#txtValorPorcentajePropina").val(resultado);
@@ -284,6 +284,8 @@ document.getElementById("txtPorcentajeDescuento").addEventListener("input", func
     validarCampoNumero(this, 10, 30);
     
     calculosDescuento(this, total);
+
+    CalcularTotal();
   }, 1000);
   
   calculosDescuento(this, total);
@@ -355,6 +357,10 @@ document.getElementById("checkDescuento").addEventListener("change", function ()
   CalcularTotal();
 });
 
+function redondear(valor, decimales = 2) {
+  return Number(Math.round(valor + "e" + decimales) + "e-" + decimales);
+}
+
 function CalcularTotal ()
 {
   let MetodoPago = document.getElementById("SelectMetodoPago");
@@ -382,8 +388,12 @@ function CalcularTotal ()
   let MensajeMonto = document.getElementById("MensajeMonto");
   let CambioOrden = document.getElementById("CambioOrden");
   let btnFacturar = document.getElementById("btnFacturar");
-
+  
   try {
+    let totalGlobalNumero = parseFloat(TotalGlobal);
+    let valorDescuentoNumero = parseFloat(valorDescuento);
+    let valorPropinaNumero = parseFloat(valorPropina);
+
     // Se realiza el cálculo del monto
     let MontoNumero = parseFloat(MontoIngresado);
 
@@ -393,7 +403,9 @@ function CalcularTotal ()
 
     console.log("Total base: " + TotalGlobal);
 
-    let totalPagar = parseFloat(TotalGlobal) + parseFloat(valorDescuento) + parseFloat(valorPropina);
+    let totalPagar = redondear(
+      totalGlobalNumero + valorDescuentoNumero + valorPropinaNumero,
+    );
 
     console.log("Total a pagar: " + totalPagar);
 
@@ -412,7 +424,7 @@ function CalcularTotal ()
       btnFacturar.disabled = false;
     } else {
       // Este calculo aplica solo para efectivo
-      let Cambio = MontoNumero - totalPagar;
+      let Cambio = redondear(MontoNumero - totalPagar);
 
       MensajeMonto.style.display = "none";
 
@@ -444,7 +456,7 @@ function ReiniciarCampos() {
   let btnFacturar = document.getElementById("btnFacturar");
 
   $("#inputPorcentajePropina").toggle(false);
-  $("#inputPorcentajePropina").toggle(false);
+  $("#inputPorcentajeDescuento").toggle(false);
 
   $("#infoCalculoPropina").toggle(false);
 
