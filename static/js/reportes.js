@@ -91,7 +91,6 @@ function rellenarParaMostrarOrden(idOrden) {
 
   const url = `/InicioMostrar?IdOrden=${idOrden}`;
 
-  // data.append('InputBuscarPlatillo', cadena);
   request.open("GET", url);
   request.send();
   request.onreadystatechange = function () {
@@ -387,7 +386,7 @@ function ExportarOrdenes(tipo)
         position: "top-start",
         showConfirmButton: false,
         timer: 4000,
-        timerProgressBar: true,
+        timerProgressBar: false,
       });
     } else {
       Swal.fire({
