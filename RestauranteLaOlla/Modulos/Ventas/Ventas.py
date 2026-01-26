@@ -349,10 +349,6 @@ def CancelarOrden(request):
 #endregion AnularOrden
 
 #region FacturarOrden
-def to_float(valor):
-    if valor is None:
-        return 0.0
-    return float(valor.replace(".", "").replace(",", "."))
 
 def redondear(valor): return Decimal(valor).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
@@ -396,10 +392,14 @@ def FacturarOrden(request):
                 "message": "Método de pago inválido."
             })
             
-        monto       = float(request.POST.get('monto', 0))
-        cambio      = float(request.POST.get('cambio', 0))
-        propina     = float(request.POST.get('propinaOrden', 0))
-        descuento   = float(request.POST.get('descuentoOrden', 0))
+        monto       = Decimal(request.POST.get('monto', 0))
+        cambio      = Decimal(request.POST.get('cambio', 0))
+        
+        propina     = Decimal(request.POST.get('propinaOrden', 0))
+        porcentajePropina   = Decimal(request.POST.get('porcentajePropinaOrden', 0))
+        
+        descuento   = Decimal(request.POST.get('descuentoOrden', 0))
+        porcentajeDescuento   = Decimal(request.POST.get('porcentajeDescuentoOrden', 0))
         
         metodoPago  = int(metodoPago_raw)
         banco  = request.POST.get('banco')
@@ -417,6 +417,17 @@ def FacturarOrden(request):
                     "message": f"El valor '{nombre}' no puede ser negativo."
                 })
                 
+        if porcentajeDescuento != 0 and (porcentajeDescuento < 10 or porcentajeDescuento > 30):
+            return JsonResponse({
+                "status": "error",
+                "message": "Porcentaje de descuento inválido."
+            })
+            
+        if porcentajePropina < 0 or porcentajePropina > 10:
+            return JsonResponse({
+                "status": "error",
+                "message": "Porcentaje de propina inválido."
+            })
 
         # ===============================
         # Obtener orden
@@ -436,6 +447,14 @@ def FacturarOrden(request):
                 "status": "error",
                 "message": "El total de la orden es inválido."
             })
+            
+        descuento_calculado = redondear(
+            ((total * Decimal(porcentajeDescuento)) / Decimal(100)) * -1
+        )
+            
+        propina_calculada = redondear(
+            ((total + descuento_calculado) * Decimal(porcentajePropina)) / Decimal(100)
+        )
         
         orden.UltimaModificacion = timezone.now()
         
@@ -443,10 +462,29 @@ def FacturarOrden(request):
             banco = None
             
         print("Total base: " + str(total))
-        print("Propina: " + str(propina))
-        print("Descuento: " + str(descuento))
-        print("Monto: " + str(monto))
+        print("Descuento (Front): " + str(descuento))
+        print("Propina (Front): " + str(propina))
+        print("Monto (Front): " + str(monto))
+        
+        print("Porcentaje descuento: " + str(porcentajeDescuento))
+        print("Descuento calculado (Back): " + str(descuento_calculado))
+        
+        print("Porcentaje propina: " + str(porcentajePropina))
+        print("Propina calculada (Back): " + str(propina_calculada))
+        
         print("Cambio: " + str(cambio))
+        
+        if redondear(propina) != propina_calculada:
+            return JsonResponse({
+                "status": "error",
+                "message": "La propina no coincide con el porcentaje enviado."
+            })
+
+        if redondear(descuento) != descuento_calculado:
+            return JsonResponse({
+                "status": "error",
+                "message": "El descuento no coincide con el porcentaje enviado."
+            })
 
         totalPagar = calcularTotalPagar(total, propina, descuento)
         
@@ -550,7 +588,7 @@ def calcularTotalPagar (totalBase, propina, descuento):
     if descuento > 0:
         descuento *= -1
     
-    return float(totalBase) + float(propina) + float(descuento)
+    return redondear(Decimal(totalBase) + Decimal(propina) + Decimal(descuento))
 
 #endregion FacturarOrden
 
