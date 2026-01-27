@@ -88,7 +88,7 @@ def EditarDatosPerfil (request):
 
             usuario.save()
             
-            return JsonResponse({"status": "ok", "message": "Los datos de su perfil fueron modificados con éxito"})
+            return JsonResponse({"status": "ok", "message": "¡Los datos de su perfil fueron modificados con éxito!"})
         except Exception as ex:
             print()
             print("#################### E X C E P C I O N ########################")
@@ -159,7 +159,7 @@ def CambiarPass (request):
 
             return JsonResponse({
                 "status": "ok",
-                "message": "La contraseña fue cambiada con éxito"
+                "message": "¡La contraseña fue cambiada con éxito!"
             })
         except Exception as ex:
             print()

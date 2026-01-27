@@ -9,7 +9,7 @@ document.getElementById("listaInventario").addEventListener(
   function () {
     window.location = this.value;
   },
-  false
+  false,
 );
 
 function ActualizarTipoPlatillo() {
@@ -74,12 +74,12 @@ function DarBajaImpresion(id) {
 async function DarBajaTipoPlatillo(idTipo) {
   // Confirmación inicial
   const confirmacion = await Swal.fire({
-    title: "¿Realmente desea eliminar este tipo de consumo?",
+    title: "¿Realmente desea desactivar este tipo de consumo?",
     icon: "question",
     iconColor: "#ff964e",
     showCancelButton: true,
     cancelButtonText: "Cancelar",
-    confirmButtonText: "Eliminar",
+    confirmButtonText: "Desactivar",
     confirmButtonColor: "#ff6464",
     reverseButtons: true,
   });
@@ -111,7 +111,7 @@ async function DarBajaTipoPlatillo(idTipo) {
 
     if (json.status === "ok") {
       await Swal.fire({
-        title: "¡Tipo de consumo eliminado correctamente!",
+        title: "¡Tipo de consumo desactivado correctamente!",
         icon: "success",
         confirmButtonColor: "#ff6464",
       });
@@ -228,13 +228,119 @@ function cargarTipoPlatillos(ver) {
           url: "/static/json/es-ES.json",
         },
       });
-      
-      setTimeout(() => {
 
+      setTimeout(() => {
         document.getElementById("cuerpoInventario").style.transition =
           "all .15s ease";
         document.getElementById("cuerpoInventario").style.opacity = "100%";
       }, 500);
     }
   };
+}
+
+/************************* E X P O R T A R **************************/
+
+function ExportarTipoPlatillos(tipo) {
+  // PREPARACION DE DATOS
+  console.log("Exportación de tipo: " + (tipo == "1" ? "excel" : "pdf"));
+
+  // PETICION AL SERVICIO
+  let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+  let xhr = new XMLHttpRequest();
+
+  xhr.open("GET", "/ExportarTipoPlatillo?Tipo=" + tipo, true);
+
+  xhr.responseType = "blob";
+
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.setRequestHeader("X-CSRFToken", token);
+
+  // Manejamos la respuesta del servidor
+  xhr.onload = function () {
+    const contentType = xhr.getResponseHeader("Content-Type");
+
+    console.log(contentType);
+
+    // Si el backend devolvió JSON (error)
+    if (contentType && contentType.includes("application/json")) {
+      const reader = new FileReader();
+
+      console.log("ES JSON");
+
+      reader.onload = function () {
+        try {
+          const respuesta = JSON.parse(reader.result);
+          Swal.fire({
+            title: respuesta.message || "Error inesperado",
+            icon: respuesta.status === "error" ? "error" : "success",
+            confirmButtonColor: "#ff6464",
+          });
+        } catch (e) {
+          Swal.fire({
+            title: "Error",
+            text: "Respuesta inválida del servidor",
+            icon: "error",
+          });
+        }
+      };
+
+      reader.readAsText(xhr.response);
+      return;
+    }
+
+    if (xhr.status === 200) {
+      // Se detecta si es excel
+      if (
+        contentType.includes("application/vnd.openxmlformats-officedocument")
+      ) {
+        // Si es archivo → descargar
+        const blob = xhr.response;
+        const url = window.URL.createObjectURL(blob);
+
+        const disposition = xhr.getResponseHeader("Content-Disposition");
+
+        let filename = "platillos.xlsx";
+        if (disposition && disposition.includes("filename=")) {
+          filename = disposition.split("filename=")[1].replace(/"/g, "").trim();
+        }
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        window.URL.revokeObjectURL(url);
+      }
+
+      Swal.fire({
+        icon: "success",
+        title: "¡Se exportó el archivo con éxito!",
+        toast: true,
+        position: "top-start",
+        showConfirmButton: false,
+        timer: 4000,
+        timerProgressBar: false,
+      });
+    } else {
+      Swal.fire({
+        title: "Error al exportar",
+        text: "Error de servidor: " + xhr.status,
+        icon: "error",
+        confirmButtonColor: "#ff6464",
+      });
+    }
+  };
+
+  xhr.onerror = function () {
+    Swal.fire({
+      title: "Error",
+      text: "No se pudo conectar con el servidor",
+      icon: "error",
+      confirmButtonColor: "#ff6464",
+    });
+  };
+
+  xhr.send();
 }

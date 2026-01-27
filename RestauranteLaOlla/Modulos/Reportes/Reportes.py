@@ -162,7 +162,10 @@ def ExportarOrdenes(request):
         wb = exportar_excel_ordenes(ordenes, incluir_detalles)
         return descargar_excel(wb, f"ordenes_{fecha_inicio_str}_{fecha_fin_str}.xlsx")
     
-    return JsonResponse({"status": "ok", "message": f"¡Las órdenes fueron exportadas exitosamente!"})
+    return JsonResponse({
+            "status": "error",
+            "message": "Exportación no implementada"
+        }, status=400)
 
 def exportar_excel_ordenes(ordenes, incluir_detalles = False):
     titulo = "REPORTE DE ÓRDENES"
@@ -225,46 +228,35 @@ def exportar_excel_ordenes(ordenes, incluir_detalles = False):
 
 #endregion Ordenes
 
-#region Otros
+#region Platillos
 
-def Exportar_ExcelPlatillo(request):
+def ExportarPlatillo(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
     if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Mesero":
         return redirect("/")
     
-    print("SI ENTRA A EXPORTAR PLATILLOS")
-
     try:
-        columnas = ['Nombre consumo', 'Precio', 'Tipo de consumo', 'Descripcion', 'Estado']
-        datos = []
-
-        for nombre, precio, tipo, desc, es_activo in Platillo.objects.values_list(
-            'Nombre', 'Precio', 'IdTipoPlatillo__Nombre', 'Descripcion', 'EsActivo'
-        ):
-            estado_symbol = '✅' if es_activo in (1, '1', True) else '⛔'
-            datos.append([
-                nombre,
-                precio,
-                tipo,
-                desc,
-                estado_symbol
-            ])
-
-        wb = exportar_excel_datos("CONSUMOS", columnas, datos, "Consumos")
-
-        # Preparar respuesta
-        response = HttpResponse(
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )
+        tipoExportacion = request.GET.get("Tipo")
         
-        filename = 'Platillos_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        print(tipoExportacion)
         
-        wb.save(response)
+        if tipoExportacion not in ("1","2"):
+            return JsonResponse({
+                "status": "error",
+                "message": "Tipo de exportación inválido"
+            }, status=400)
         
-        return response
+        if tipoExportacion == "1":
+            response = exportar_excel_platillos()
+        
+            return response
+        
+        return JsonResponse({
+            "status": "error",
+            "message": "Exportación no implementada"
+        }, status=400)
     except Exception:
         import traceback
         print()
@@ -273,8 +265,46 @@ def Exportar_ExcelPlatillo(request):
         print(traceback.format_exc())
         print("#############################################################")
         print()
+        return JsonResponse({
+            "status": "error",
+            "message": "Error interno al exportar consumos"
+        }, status=500)
+        
+def exportar_excel_platillos():
+    columnas = ['Nombre consumo', 'Precio', 'Tipo de consumo', 'Descripcion', 'Estado']
+    datos = []
 
-def ExportarExcelTipoPlatillos(request):
+    for nombre, precio, tipo, desc, es_activo in Platillo.objects.values_list(
+        'Nombre', 'Precio', 'IdTipoPlatillo__Nombre', 'Descripcion', 'EsActivo'
+    ):
+        estado_symbol = '✅ Activo' if es_activo in (1, '1', True) else '⛔ Inactivo'
+        datos.append([
+            nombre,
+            precio,
+            tipo,
+            desc,
+            estado_symbol
+        ])
+
+    wb = exportar_excel_datos("CONSUMOS", columnas, datos, "Consumos")
+
+    # Preparar respuesta
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    
+    filename = 'Consumos_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    
+    wb.save(response)
+    
+    return response
+        
+#endregion Platillos
+
+#region TipoPlatillos
+
+def ExportarTipoPlatillo(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
@@ -282,26 +312,25 @@ def ExportarExcelTipoPlatillos(request):
         return redirect("/")
 
     try:
-        columnas = ['Nombre', 'Estado']
-        datos = []
-
-        for nombre, es_activo in TipoPlatillo.objects.values_list('Nombre', 'EsActivo'):
-            estado_symbol = '✅' if es_activo in (1, '1', True) else '⛔'
-            datos.append([
-                nombre,
-                estado_symbol
-            ])
-
-        wb = exportar_excel_datos("TIPO DE CONSUMO", columnas, datos, "Tipos de consumo")
-
-        response = HttpResponse(
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )
-        filename = 'TipoPlatillos_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
-        wb.save(response)
-        return response
-
+        tipoExportacion = request.GET.get("Tipo")
+        
+        print(tipoExportacion)
+        
+        if tipoExportacion not in ("1","2"):
+            return JsonResponse({
+                "status": "error",
+                "message": "Tipo de exportación inválido"
+            }, status=400)
+        
+        if tipoExportacion == "1":
+            response = exportar_excel_tipo_platillo()
+        
+            return response
+        
+        return JsonResponse({
+            "status": "error",
+            "message": "Exportación no implementada"
+        }, status=400)
     except Exception:
         import traceback
         print()
@@ -309,6 +338,36 @@ def ExportarExcelTipoPlatillos(request):
         print("---------------- 'exportar tipo platillo' ----------------")
         print(traceback.format_exc())
         print("#############################################################")
+        
+        return JsonResponse({
+            "status": "error",
+            "message": "Error interno al exportar consumos"
+        }, status=500)
+        
+def exportar_excel_tipo_platillo():
+    columnas = ['Nombre', 'Estado']
+    datos = []
+
+    for nombre, es_activo in TipoPlatillo.objects.values_list('Nombre', 'EsActivo'):
+        estado_symbol = '✅ Activo' if es_activo in (1, '1', True) else '⛔ Inactivo'
+        datos.append([
+            nombre,
+            estado_symbol
+        ])
+
+    wb = exportar_excel_datos("TIPO DE CONSUMO", columnas, datos, "Tipos de consumo")
+
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    filename = 'TipoConsumo_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    wb.save(response)
+    return response
+        
+#endregion TipoPlatillos
+
+#region Personal
         
 def ExportarPersonal(request):
     if not request.user.is_authenticated:
@@ -326,7 +385,7 @@ def ExportarPersonal(request):
             datos = []
 
             for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'Nombres', 'Apellidos', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'EsActivo'):
-                estadoData = 'Activo ✅' if es_activo in (1, '1', True) else 'Dado de baja ⛔'
+                estadoData = '✅ Activo' if es_activo in (1, '1', True) else '⛔ Dado de baja'
                 datos.append([
                     id,
                     nombre + " " + apellido,
@@ -356,7 +415,7 @@ def ExportarPersonal(request):
         print(traceback.format_exc())
         print("#############################################################")
         
-#endregion Otros
+#endregion Personal
 
 #endregion Exportaciones
 

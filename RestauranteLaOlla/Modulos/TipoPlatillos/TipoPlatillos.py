@@ -29,14 +29,14 @@ def Actualizar_TipoPlatillo(request):
             if not id_tipo:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'ID no proporcionado.'
+                    'message': 'ID no proporcionado'
                 }, status=400)
 
             # Validación del nombre
             if not nombre:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'El nombre del tipo de consumo es obligatorio.'
+                    'message': 'El nombre del tipo de consumo es obligatorio'
                 }, status=400)
 
             # Verificar existencia
@@ -45,14 +45,14 @@ def Actualizar_TipoPlatillo(request):
             except TipoPlatillo.DoesNotExist:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'El tipo de consumo no existe.'
+                    'message': 'El tipo de consumo no existe'
                 }, status=404)
 
             # Evitar duplicados con otro registro
             if TipoPlatillo.objects.exclude(Id=id_tipo).filter(Nombre__iexact=nombre).exists():
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'Ya existe otro tipo de consumo con ese nombre.'
+                    'message': 'Ya existe otro tipo de consumo con ese nombre'
                 }, status=409)
 
             # Actualizar
@@ -65,7 +65,7 @@ def Actualizar_TipoPlatillo(request):
 
             return JsonResponse({
                 'status': 'ok',
-                'message': 'Tipo de consumo actualizado correctamente.'
+                'message': '¡Tipo de consumo actualizado correctamente!'
             })
 
     except Exception as ex:
@@ -74,7 +74,7 @@ def Actualizar_TipoPlatillo(request):
 
         return JsonResponse({
             'status': 'error',
-            'message': 'Error interno del servidor.'
+            'message': 'Error interno del servidor'
         }, status=500)
     
 #endregion Actualizar platillos
@@ -109,7 +109,7 @@ def DarBaja_TipoPlatillo(request):
 
             return JsonResponse({
                 "status": "ok",
-                "message": "Tipo de consumo y consumos asociados dados de baja correctamente"
+                "message": "¡Tipo de consumo y consumos asociados dados de baja correctamente!"
             })
 
         return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
@@ -141,14 +141,14 @@ def Agregar_TipoPlatillo(request):
             if not nombre:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'El nombre del tipo de consumo es obligatorio.'
+                    'message': 'El nombre del tipo de consumo es obligatorio'
                 }, status=400)
 
             # Verificar si ya existe
             if TipoPlatillo.objects.filter(Nombre__iexact=nombre).exists():
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'Este tipo de consumo ya existe.'
+                    'message': 'Este tipo de consumo ya existe'
                 }, status=409)
 
             tipo = TipoPlatillo(
@@ -159,7 +159,7 @@ def Agregar_TipoPlatillo(request):
 
             return JsonResponse({
                 'status': 'ok',
-                'message': 'Tipo de consumo agregado correctamente.'
+                'message': 'Tipo de consumo agregado correctamente'
             })
 
     except Exception as ex:
@@ -168,7 +168,7 @@ def Agregar_TipoPlatillo(request):
 
         return JsonResponse({
             'status': 'error',
-            'message': 'Error interno del servidor.'
+            'message': 'Error interno del servidor'
         }, status=500)
         
 #endregion Agregar platillos

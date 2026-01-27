@@ -31,7 +31,7 @@ def Actualizar_Platillos(request):
             if not platillo_id or not nombre or not precio or not tipo_id:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'Faltan datos obligatorios.'
+                    'message': 'Faltan datos obligatorios'
                 }, status=400)
 
             try:
@@ -39,7 +39,7 @@ def Actualizar_Platillos(request):
             except Platillo.DoesNotExist:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'El consumo no existe.'
+                    'message': 'El consumo no existe'
                 }, status=404)
 
             try:
@@ -47,7 +47,7 @@ def Actualizar_Platillos(request):
             except TipoPlatillo.DoesNotExist:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'Tipo de consumo no válido.'
+                    'message': 'Tipo de consumo no válido'
                 }, status=404)
 
             # Asignar campos
@@ -75,7 +75,7 @@ def Actualizar_Platillos(request):
 
         return JsonResponse({
             'status': 'error',
-            'message': 'Error interno del servidor.'
+            'message': 'Error interno del servidor'
         }, status=500)
 
 #region EliminarPlatillos
@@ -94,7 +94,7 @@ def DarBaja_Platillo(request):
             if not id_platillo:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'ID de consumo no proporcionado.'
+                    'message': 'ID de consumo no proporcionado'
                 }, status=400)
 
             try:
@@ -102,7 +102,7 @@ def DarBaja_Platillo(request):
             except Platillo.DoesNotExist:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'El consumo no existe.'
+                    'message': 'El consumo no existe'
                 }, status=404)
 
             platillo.EsActivo = "0"
@@ -110,12 +110,12 @@ def DarBaja_Platillo(request):
 
             return JsonResponse({
                 'status': 'ok',
-                'message': '¡Consumo eliminado exitosamente!'
+                'message': '¡Consumo desactivado exitosamente!'
             })
 
         return JsonResponse({
             'status': 'error',
-            'message': 'Método no permitido.'
+            'message': 'Método no permitido'
         }, status=405)
 
     except Exception as ex:
@@ -125,7 +125,7 @@ def DarBaja_Platillo(request):
 
         return JsonResponse({
             'status': 'error',
-            'message': 'Error interno del servidor.'
+            'message': 'Error interno del servidor'
         }, status=500)
         
 #endregion EliminarPlatillos
@@ -152,7 +152,7 @@ def Agregar_Platillo(request):
             if not nombre or not precio or not tipo_id:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'Faltan datos obligatorios.'
+                    'message': 'Faltan datos obligatorios'
                 }, status=400)
 
             try:
@@ -160,7 +160,7 @@ def Agregar_Platillo(request):
             except TipoPlatillo.DoesNotExist:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'Tipo de consumo no válido.'
+                    'message': 'Tipo de consumo no válido'
                 }, status=404)
 
             platillo = Platillo(
@@ -189,7 +189,7 @@ def Agregar_Platillo(request):
 
         return JsonResponse({
             'status': 'error',
-            'message': 'Error interno del servidor.'
+            'message': 'Error interno del servidor'
         }, status=500)
     
 #endregion AgregarPlatillos

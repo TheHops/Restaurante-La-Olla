@@ -471,7 +471,7 @@ document.getElementById("btnCopiarPass").addEventListener("click", function () {
         position: "top-end",
         showConfirmButton: false,
         timer: 2000,
-        timerProgressBar: true,
+        timerProgressBar: false,
       });
 
       setTimeout(() => {
@@ -517,7 +517,7 @@ function EnviarCorreo() {
           position: "top-end",
           showConfirmButton: false,
           timer: 4000,
-          timerProgressBar: true,
+          timerProgressBar: false,
         });
       } else {
         Swal.fire({
@@ -527,7 +527,7 @@ function EnviarCorreo() {
           position: "top-end",
           showConfirmButton: false,
           timer: 4000,
-          timerProgressBar: true,
+          timerProgressBar: false,
         });
       }
     },
@@ -579,7 +579,7 @@ function ExportarPersonal(tipo) {
 
       const disposition = xhr.getResponseHeader("Content-Disposition");
 
-      let filename = "ordenes.xlsx";
+      let filename = "personal.xlsx";
       if (disposition && disposition.includes("filename=")) {
         filename = disposition.split("filename=")[1].replace(/"/g, "").trim();
       }
@@ -600,7 +600,7 @@ function ExportarPersonal(tipo) {
         position: "top-start",
         showConfirmButton: false,
         timer: 4000,
-        timerProgressBar: true,
+        timerProgressBar: false,
       });
     } else {
       Swal.fire({

@@ -292,7 +292,7 @@ def validar_cargo(request, cargo_recibido):
     if cargo_usuario != cargo_recibido:
         return JsonResponse({
             "status": "error",
-            "message": "Cargo inválido o manipulado desde el cliente."
+            "message": "Cargo inválido o manipulado desde el cliente"
         }, status=403)
 
     # Si coincide → todo bien
