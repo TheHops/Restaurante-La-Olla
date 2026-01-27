@@ -23,7 +23,7 @@
     <div id="contenedorDerechoEncabezadoInventario">
         <!-- Botón para mostrar u ocultar los registros inactivos -->
         <div class="btnVerInactivos">
-            <label for="checkVerConsumosInactivos">Incluir eliminados</label>
+            <label for="checkVerConsumosInactivos">Incluir inactivos</label>
             <input type="checkbox" id="checkVerConsumosInactivos" class="checkVerInactivos">
         </div>
     </div>
@@ -46,13 +46,13 @@
         </div>
         <div class="modal-body row exportar col-12">
             <div class="col-6">
-                <button class="excel w-100" onclick="ExportarPlatillos('1')">
+                <button type="button" class="excel w-100" onclick="ExportarPlatillos('1')">
                     <img src="{% static 'img/Export_excel_2.png' %}">
                 </button>
             </div>
     
             <div class="col-6">
-                <button class="pdf w-100" onclick="ExportarPlatillos('2')">
+                <button type="button" class="pdf w-100" onclick="ExportarPlatillos('2')">
                     <img src="{% static 'img/Export_pdf_2.png' %}">
                 </button>
             </div>

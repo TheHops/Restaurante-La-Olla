@@ -720,7 +720,10 @@ def InicioIncluir(request):
     # Platillos activos que NO estén en la orden
     platillos_disponibles = (
         Platillo.objects
-        .filter(EsActivo="1")
+        .filter(
+            EsActivo="1",
+            IdTipoPlatillo__EsActivo="1"
+        )
         .exclude(Id__in=platillos_en_orden)
         .order_by("Nombre")
     )

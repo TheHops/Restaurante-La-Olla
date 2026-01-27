@@ -110,7 +110,7 @@ def DarBaja_Platillo(request):
 
             return JsonResponse({
                 'status': 'ok',
-                'message': '¡Consumo eliminado exitosamente!'
+                'message': '¡Consumo desactivado exitosamente!'
             })
 
         return JsonResponse({

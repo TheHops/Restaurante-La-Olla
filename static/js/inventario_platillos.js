@@ -163,12 +163,12 @@ function ActualizarPlatillo() {
 async function DarBaja_Platillo(idPlatillo) {
   // Confirmación
   const confirmacion = await Swal.fire({
-    title: "¿Realmente desea eliminar este consumo?",
+    title: "¿Realmente desea desactivar este consumo?",
     icon: "question",
     iconColor: "#ff964e",
     showCancelButton: true,
     cancelButtonText: "Cancelar",
-    confirmButtonText: "Eliminar",
+    confirmButtonText: "Desactivar",
     confirmButtonColor: "#ff6464",
     reverseButtons: true,
   });
@@ -203,7 +203,7 @@ async function DarBaja_Platillo(idPlatillo) {
 
     if (data.status === "ok") {
       await Swal.fire({
-        title: data.message || "¡Consumo eliminado exitosamente!",
+        title: data.message || "¡Consumo desactivado exitosamente!",
         icon: "success",
         confirmButtonColor: "#ff6464",
       });
@@ -211,7 +211,7 @@ async function DarBaja_Platillo(idPlatillo) {
     } else {
       await Swal.fire({
         title: "Error",
-        text: data.message || "No se pudo eliminar el consumo.",
+        text: data.message || "No se pudo desactivar el consumo.",
         icon: "error",
         confirmButtonColor: "#ff6464",
       });
@@ -341,43 +341,61 @@ function ExportarPlatillos(tipo) {
 
   // Manejamos la respuesta del servidor
   xhr.onload = function () {
-    if (xhr.status === 200) {
-      const contentType = xhr.getResponseHeader("Content-Type");
+    const contentType = xhr.getResponseHeader("Content-Type");
 
-      // Si el backend devolvió JSON (error)
-      if (contentType && contentType.includes("application/json")) {
-        const reader = new FileReader();
-        reader.onload = function () {
+    console.log(contentType);
+
+    // Si el backend devolvió JSON (error)
+    if (contentType && contentType.includes("application/json")) {
+      const reader = new FileReader();
+      
+      console.log("ES JSON");
+
+      reader.onload = function () {
+        try {
           const respuesta = JSON.parse(reader.result);
           Swal.fire({
-            title: respuesta.message,
+            title: respuesta.message || "Error inesperado",
             icon: respuesta.status === "error" ? "error" : "success",
             confirmButtonColor: "#ff6464",
           });
-        };
-        reader.readAsText(xhr.response);
-        return;
+        } catch (e) {
+          Swal.fire({
+            title: "Error",
+            text: "Respuesta inválida del servidor",
+            icon: "error",
+          });
+        }
+      };
+
+      reader.readAsText(xhr.response);
+      return;
+    }
+
+    if (xhr.status === 200){
+      // Se detecta si es excel
+      if (contentType.includes("application/vnd.openxmlformats-officedocument"))
+      {
+        // Si es archivo → descargar
+        const blob = xhr.response;
+        const url = window.URL.createObjectURL(blob);
+      
+        const disposition = xhr.getResponseHeader("Content-Disposition");
+
+        let filename = "platillos.xlsx";
+        if (disposition && disposition.includes("filename=")) {
+          filename = disposition.split("filename=")[1].replace(/"/g, "").trim();
+        }
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        window.URL.revokeObjectURL(url);
       }
-
-      // Si es archivo → descargar
-      const blob = xhr.response;
-      const url = window.URL.createObjectURL(blob);
-
-      const disposition = xhr.getResponseHeader("Content-Disposition");
-
-      let filename = "platillos.xlsx";
-      if (disposition && disposition.includes("filename=")) {
-        filename = disposition.split("filename=")[1].replace(/"/g, "").trim();
-      }
-
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-
-      window.URL.revokeObjectURL(url);
 
       Swal.fire({
         icon: "success",
