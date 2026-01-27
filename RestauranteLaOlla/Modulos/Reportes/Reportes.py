@@ -22,6 +22,12 @@ from openpyxl.utils import get_column_letter
 from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden, AreaMesa, Usuario, MesasPorOrden
 from RestauranteLaOlla import settings
 
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+import io
+
 #region Inicio
 
 def Reportes (request):
@@ -323,9 +329,10 @@ def ExportarTipoPlatillo(request):
             }, status=400)
         
         if tipoExportacion == "1":
-            response = exportar_excel_tipo_platillo()
+            return exportar_excel_tipo_platillo()
         
-            return response
+        if tipoExportacion == "2":
+            return exportar_pdf_tipo_platillo()
         
         return JsonResponse({
             "status": "error",
@@ -364,6 +371,68 @@ def exportar_excel_tipo_platillo():
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     wb.save(response)
     return response
+
+def exportar_pdf_tipo_platillo():
+    buffer = io.BytesIO()
+
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=letter,
+        rightMargin=40,
+        leftMargin=40,
+        topMargin=40,
+        bottomMargin=40
+    )
+
+    elements = []
+    styles = getSampleStyleSheet()
+
+    # ===== TÍTULO =====
+    titulo = Paragraph(
+        "<b>TIPOS DE CONSUMO</b>",
+        styles["Title"]
+    )
+    elements.append(titulo)
+
+    elements.append(Paragraph("<br/>", styles["Normal"]))
+
+    # ===== DATOS =====
+    data = [["Nombre", "Estado"]]
+
+    for nombre, es_activo in TipoPlatillo.objects.values_list("Nombre", "EsActivo"):
+        estado = "Activo" if es_activo == "1" else "Inactivo"
+        data.append([nombre, estado])
+
+    # ===== TABLA =====
+    table = Table(data, colWidths=[250, 120])
+
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.darkred),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("ALIGN", (1, 1), (-1, -1), "CENTER"),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
+        ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
+        ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
+        ("TOPPADDING", (0, 0), (-1, 0), 8),
+    ]))
+
+    elements.append(table)
+
+    # ===== GENERAR PDF =====
+    doc.build(elements)
+
+    buffer.seek(0)
+
+    response = HttpResponse(
+        buffer,
+        content_type="application/pdf"
+    )
+
+    filename = "TipoConsumo_" + timezone.localtime().strftime("%d-%m-%Y") + ".pdf"
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+
+    return response
         
 #endregion TipoPlatillos
 
@@ -377,35 +446,23 @@ def ExportarPersonal(request):
         return redirect("/")
 
     try:
-        tipo = request.GET.get("Tipo")
+        tipoExportacion = request.GET.get("Tipo")
+        
+        if tipoExportacion not in ("1","2"):
+            return JsonResponse({
+                "status": "error",
+                "message": "Tipo de exportación inválido"
+            }, status=400)
         
         # Para exportar en excel
-        if tipo == "1":
-            columnas = ['Id', 'Nombres y apellidos', 'Usuario', 'Cargo', 'Telefono', 'Correo', 'Estado']
-            datos = []
-
-            for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'Nombres', 'Apellidos', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'EsActivo'):
-                estadoData = '✅ Activo' if es_activo in (1, '1', True) else '⛔ Dado de baja'
-                datos.append([
-                    id,
-                    nombre + " " + apellido,
-                    nombre_user,
-                    nombre_cargo,
-                    telefono,
-                    correo,
-                    estadoData
-                ])
-
-            wb = exportar_excel_datos("PERSONAL", columnas, datos, "Personal")
-
-            response = HttpResponse(
-                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            )
-            
-            filename = 'Personal_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
-            response['Content-Disposition'] = f'attachment; filename="{filename}"'
-            wb.save(response)
+        if tipoExportacion == "1":
+            response = exportar_excel_personal()
             return response
+        
+        return JsonResponse({
+            "status": "error",
+            "message": "Exportación no implementada"
+        }, status=400)
 
     except Exception:
         import traceback
@@ -414,6 +471,33 @@ def ExportarPersonal(request):
         print("---------------- 'exportar tipo platillo' ----------------")
         print(traceback.format_exc())
         print("#############################################################")
+        
+def exportar_excel_personal():
+    columnas = ['Id', 'Nombres y apellidos', 'Usuario', 'Cargo', 'Telefono', 'Correo', 'Estado']
+    datos = []
+
+    for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'Nombres', 'Apellidos', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'EsActivo'):
+        estadoData = '✅ Activo' if es_activo in (1, '1', True) else '⛔ Dado de baja'
+        datos.append([
+            id,
+            nombre + " " + apellido,
+            nombre_user,
+            nombre_cargo,
+            telefono,
+            correo,
+            estadoData
+        ])
+
+    wb = exportar_excel_datos("PERSONAL", columnas, datos, "Personal")
+
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    
+    filename = 'Personal_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    wb.save(response)
+    return response
         
 #endregion Personal
 
