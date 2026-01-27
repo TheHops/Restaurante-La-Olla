@@ -313,7 +313,7 @@ def CancelarOrden(request):
         return redirect("/")
 
     if request.method != "POST":
-        return JsonResponse({"status": "error", "message": "Método no permitido."}, status=405)
+        return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
 
     try:
         idOrden = request.POST.get('idOrden')
@@ -339,7 +339,7 @@ def CancelarOrden(request):
         })
 
     except Orden.DoesNotExist:
-        return JsonResponse({"status": "error", "message": "La orden no existe."}, status=404)
+        return JsonResponse({"status": "error", "message": "La orden no existe"}, status=404)
 
     except Exception as ex:
         print("\n############### EXCEPCIÓN ###############")
@@ -375,13 +375,13 @@ def FacturarOrden(request):
         if not idOrden:
             return JsonResponse({
                 "status": "error",
-                "message": "Id de orden no proporcionado."
+                "message": "Id de orden no proporcionado"
             })
             
         if not idOrden.isdigit():
             return JsonResponse({
                 "status": "error",
-                "message": "Id de orden inválido."
+                "message": "Id de orden inválido"
             })
             
         metodoPago_raw = request.POST.get('metodoPago')
@@ -389,7 +389,7 @@ def FacturarOrden(request):
         if not metodoPago_raw or not metodoPago_raw.isdigit():
             return JsonResponse({
                 "status": "error",
-                "message": "Método de pago inválido."
+                "message": "Método de pago inválido"
             })
             
         monto       = Decimal(request.POST.get('monto', 0))
@@ -414,19 +414,19 @@ def FacturarOrden(request):
             if valor < 0:
                 return JsonResponse({
                     "status": "error",
-                    "message": f"El valor '{nombre}' no puede ser negativo."
+                    "message": f"El valor '{nombre}' no puede ser negativo"
                 })
                 
         if porcentajeDescuento != 0 and (porcentajeDescuento < 10 or porcentajeDescuento > 30):
             return JsonResponse({
                 "status": "error",
-                "message": "Porcentaje de descuento inválido."
+                "message": "Porcentaje de descuento inválido"
             })
             
         if porcentajePropina < 0 or porcentajePropina > 10:
             return JsonResponse({
                 "status": "error",
-                "message": "Porcentaje de propina inválido."
+                "message": "Porcentaje de propina inválido"
             })
 
         # ===============================
@@ -437,7 +437,7 @@ def FacturarOrden(request):
         if orden.Estado == "0":
             return JsonResponse({
                 "status": "error",
-                "message": "La orden ya fue facturada."
+                "message": "La orden ya fue facturada"
             })
             
         total       = orden.Total
@@ -445,7 +445,7 @@ def FacturarOrden(request):
         if total <= 0:
             return JsonResponse({
                 "status": "error",
-                "message": "El total de la orden es inválido."
+                "message": "El total de la orden es inválido"
             })
             
         descuento_calculado = redondear(
@@ -477,13 +477,13 @@ def FacturarOrden(request):
         if redondear(propina) != propina_calculada:
             return JsonResponse({
                 "status": "error",
-                "message": "La propina no coincide con el porcentaje enviado."
+                "message": "La propina no coincide con el porcentaje enviado"
             })
 
         if redondear(descuento) != descuento_calculado:
             return JsonResponse({
                 "status": "error",
-                "message": "El descuento no coincide con el porcentaje enviado."
+                "message": "El descuento no coincide con el porcentaje enviado"
             })
 
         totalPagar = calcularTotalPagar(total, propina, descuento)
@@ -495,7 +495,7 @@ def FacturarOrden(request):
             if monto < total:
                 return JsonResponse({
                     "status": "error",
-                    "message": "El monto en efectivo no puede ser menor al total."
+                    "message": "El monto en efectivo no puede ser menor al total"
                 })
                 
 
@@ -504,7 +504,7 @@ def FacturarOrden(request):
             if redondear(cambio) != redondear(cambio_calculado):
                 return JsonResponse({
                     "status": "error",
-                    "message": "El cambio no coincide con el monto entregado."
+                    "message": "El cambio no coincide con el monto entregado"
                 })
 
             orden.TotalPagar = totalPagar
@@ -529,7 +529,7 @@ def FacturarOrden(request):
             if montoReal < 0:
                 return JsonResponse({
                     "status": "error",
-                    "message": "El cambio no debe ser mayor al monto."
+                    "message": "El cambio no debe ser mayor al monto"
                 })
             
             # El monto de la tarjeta es la diferencia entre el total a pagar y el monto real en efectivo
@@ -544,7 +544,7 @@ def FacturarOrden(request):
         else:
             return JsonResponse({
                 "status": "error",
-                "message": "Método de pago inválido."
+                "message": "Método de pago inválido"
             })
 
         # ===============================
@@ -571,7 +571,7 @@ def FacturarOrden(request):
     except Orden.DoesNotExist:
         return JsonResponse({
             "status": "error",
-            "message": "La orden no existe."
+            "message": "La orden no existe"
         })
 
     except Exception as ex:
@@ -581,7 +581,7 @@ def FacturarOrden(request):
 
         return JsonResponse({
             "status": "error",
-            "message": "Ocurrió un error al facturar la orden."
+            "message": "Ocurrió un error al facturar la orden"
         })
         
 def calcularTotalPagar (totalBase, propina, descuento):
@@ -619,7 +619,7 @@ def CambiarAEnPreparacion(request):
 
             return JsonResponse({
                 "status": "ok",
-                "message": f"La orden #{orden.Id} ahora está en preparación",
+                "message": f"¡La orden #{orden.Id} ahora está en preparación!",
                 "old_type": "1",
                 "new_type": "4"
             }, status=200)
@@ -659,7 +659,7 @@ def CambiarAPreparado(request):
 
             return JsonResponse({
                 "status": "ok",
-                "message": f"La orden #{orden.Id} está preparada",
+                "message": f"¡La orden #{orden.Id} está preparada!",
                 "old_type": "4",
                 "new_type": "3"
             }, status=200)
@@ -980,7 +980,7 @@ def EditarOrden (request):
 
     return JsonResponse({
         "status": "ok",
-        "message": f"¡Orden #{orden.Id} editada con éxito!",
+        "message": f"¡Orden #{orden.Id} modificada con éxito!",
         "total": str(total_orden)
     })
 
