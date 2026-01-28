@@ -291,7 +291,8 @@ function ExportarTipoPlatillos(tipo) {
     if (xhr.status === 200) {
       // Se detecta si es excel
       if (
-        contentType.includes("application/vnd.openxmlformats-officedocument")
+        contentType.includes("application/vnd.openxmlformats-officedocument") ||
+        contentType.includes("application/pdf")
       ) {
         // Si es archivo → descargar
         const blob = xhr.response;
@@ -299,7 +300,7 @@ function ExportarTipoPlatillos(tipo) {
 
         const disposition = xhr.getResponseHeader("Content-Disposition");
 
-        let filename = "platillos.xlsx";
+        let filename = "tipo_platillos.xlsx";
         if (disposition && disposition.includes("filename=")) {
           filename = disposition.split("filename=")[1].replace(/"/g, "").trim();
         }

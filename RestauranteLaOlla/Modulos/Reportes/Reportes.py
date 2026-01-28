@@ -22,6 +22,12 @@ from openpyxl.utils import get_column_letter
 from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden, AreaMesa, Usuario, MesasPorOrden
 from RestauranteLaOlla import settings
 
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.lib import colors
+import io
+
 #region Inicio
 
 def Reportes (request):
@@ -249,9 +255,10 @@ def ExportarPlatillo(request):
             }, status=400)
         
         if tipoExportacion == "1":
-            response = exportar_excel_platillos()
+            return exportar_excel_platillos()
         
-            return response
+        if tipoExportacion == "2":
+            return exportar_pdf_platillo(request)
         
         return JsonResponse({
             "status": "error",
@@ -299,6 +306,30 @@ def exportar_excel_platillos():
     wb.save(response)
     
     return response
+
+def exportar_pdf_platillo(request):
+    columnas = ['Nombre consumo', 'Precio', 'Tipo de consumo', 'Descripcion', 'Estado']
+    filas = []
+
+    for nombre, precio, tipo, desc, es_activo in Platillo.objects.values_list('Nombre', 'Precio', 'IdTipoPlatillo__Nombre', 'Descripcion', 'EsActivo'):
+        estado_symbol = '✅ Activo' if es_activo in (1, '1', True) else '⛔ Inactivo'
+        filas.append([
+            nombre,
+            precio,
+            tipo,
+            desc,
+            estado_symbol
+        ])
+
+    return generar_pdf_tabla(
+        titulo="CONSUMOS",
+        columnas=columnas,
+        filas=filas,
+        nombre_archivo="Consumos",
+        ancho_columnas=[100, 50, 100, 200, 70],
+        wrap_columns=[0, 2, 3],
+        usuario=request.user.username
+    )
         
 #endregion Platillos
 
@@ -323,9 +354,10 @@ def ExportarTipoPlatillo(request):
             }, status=400)
         
         if tipoExportacion == "1":
-            response = exportar_excel_tipo_platillo()
+            return exportar_excel_tipo_platillo()
         
-            return response
+        if tipoExportacion == "2":
+            return exportar_pdf_tipo_platillo(request)
         
         return JsonResponse({
             "status": "error",
@@ -364,6 +396,23 @@ def exportar_excel_tipo_platillo():
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     wb.save(response)
     return response
+
+def exportar_pdf_tipo_platillo(request):
+    columnas = ["Nombre", "Estado"]
+    filas = []
+
+    for nombre, es_activo in TipoPlatillo.objects.values_list("Nombre", "EsActivo"):
+        estado = "Activo" if es_activo == "1" else "Inactivo"
+        filas.append([nombre, estado])
+
+    return generar_pdf_tabla(
+        titulo="TIPOS DE CONSUMO",
+        columnas=columnas,
+        filas=filas,
+        nombre_archivo="TipoConsumo",
+        ancho_columnas=[300, 150],
+        usuario=request.user.username
+    )
         
 #endregion TipoPlatillos
 
@@ -377,35 +426,23 @@ def ExportarPersonal(request):
         return redirect("/")
 
     try:
-        tipo = request.GET.get("Tipo")
+        tipoExportacion = request.GET.get("Tipo")
+        
+        if tipoExportacion not in ("1","2"):
+            return JsonResponse({
+                "status": "error",
+                "message": "Tipo de exportación inválido"
+            }, status=400)
         
         # Para exportar en excel
-        if tipo == "1":
-            columnas = ['Id', 'Nombres y apellidos', 'Usuario', 'Cargo', 'Telefono', 'Correo', 'Estado']
-            datos = []
-
-            for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'Nombres', 'Apellidos', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'EsActivo'):
-                estadoData = '✅ Activo' if es_activo in (1, '1', True) else '⛔ Dado de baja'
-                datos.append([
-                    id,
-                    nombre + " " + apellido,
-                    nombre_user,
-                    nombre_cargo,
-                    telefono,
-                    correo,
-                    estadoData
-                ])
-
-            wb = exportar_excel_datos("PERSONAL", columnas, datos, "Personal")
-
-            response = HttpResponse(
-                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            )
-            
-            filename = 'Personal_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
-            response['Content-Disposition'] = f'attachment; filename="{filename}"'
-            wb.save(response)
+        if tipoExportacion == "1":
+            response = exportar_excel_personal()
             return response
+        
+        return JsonResponse({
+            "status": "error",
+            "message": "Exportación no implementada"
+        }, status=400)
 
     except Exception:
         import traceback
@@ -414,6 +451,33 @@ def ExportarPersonal(request):
         print("---------------- 'exportar tipo platillo' ----------------")
         print(traceback.format_exc())
         print("#############################################################")
+        
+def exportar_excel_personal():
+    columnas = ['Id', 'Nombres y apellidos', 'Usuario', 'Cargo', 'Telefono', 'Correo', 'Estado']
+    datos = []
+
+    for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'Nombres', 'Apellidos', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'EsActivo'):
+        estadoData = '✅ Activo' if es_activo in (1, '1', True) else '⛔ Dado de baja'
+        datos.append([
+            id,
+            nombre + " " + apellido,
+            nombre_user,
+            nombre_cargo,
+            telefono,
+            correo,
+            estadoData
+        ])
+
+    wb = exportar_excel_datos("PERSONAL", columnas, datos, "Personal")
+
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    
+    filename = 'Personal_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    wb.save(response)
+    return response
         
 #endregion Personal
 
@@ -690,6 +754,104 @@ def descargar_excel(wb, nombre_archivo):
     )
     response["Content-Disposition"] = f'attachment; filename="{nombre_archivo}"'
     wb.save(response)
+    return response
+
+## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+ ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+
+def generar_pdf_tabla(*, titulo: str, columnas: list, filas: list, nombre_archivo: str,
+    ancho_columnas=None, wrap_columns=None, horizontal=False, usuario=None
+):
+    if wrap_columns is None: wrap_columns = []
+    buffer = io.BytesIO()
+    pagesize = landscape(letter) if horizontal else letter
+    width, height = pagesize
+
+    # Ajustamos el margen superior para que el contenido no choque con el encabezado elegante
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=pagesize,
+        rightMargin=40,
+        leftMargin=40,
+        topMargin=120,  # 👈 Aumentado para dar aire al encabezado
+        bottomMargin=60
+    )
+
+    elementos = []
+    styles = getSampleStyleSheet()
+    cell_style = ParagraphStyle(name="CellStyle", fontSize=9, leading=12, alignment=0, wordWrap="CJK")
+
+    # --- PROCESAR FILAS ---
+    filas_procesadas = [[Paragraph(str(valor) if valor else "", cell_style) if i in wrap_columns else valor 
+                         for i, valor in enumerate(fila)] for fila in filas]
+
+    # --- TABLA DE DATOS ---
+    # Nota: Eliminamos el título de adentro de la tabla para ponerlo en el encabezado elegante
+    data = [columnas] + filas_procesadas
+    table = Table(data, colWidths=ancho_columnas, repeatRows=1)
+
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#8e0000")), # Rojo elegante
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    ]))
+    elementos.append(table)
+
+    # ======================================================
+    # ENCABEZADO TIPO FACTURA (POSICIÓN ABSOLUTA)
+    # ======================================================
+    def encabezado_pie(canvas, doc):
+        canvas.saveState()
+        
+        # 1. Dibujar el Logo (Posición Absoluta: Top-Izquierda)
+        logo_path = os.path.join("static", "img", "LogoBgBlanco.jpg")
+        if os.path.exists(logo_path):
+            # drawImage(ruta, x, y, width, height)
+            canvas.drawImage(logo_path, doc.leftMargin, height - 80, width=60, height=60, preserveAspectRatio=True)
+
+        # 2. Título Principal (Centro-Izquierda, al lado del logo)
+        canvas.setFont("Helvetica-Bold", 18)
+        canvas.setFillColor(colors.HexColor("#a05047"))
+        canvas.drawString(doc.leftMargin + 70, height - 62, titulo.upper())
+        
+        # 3. Bloque de Información (Derecha - Estilo Factura)
+        canvas.setFont("Helvetica-Bold", 10)
+        canvas.drawRightString(width - doc.rightMargin, height - 40, "REPORTE OFICIAL")
+        
+        canvas.setFont("Helvetica", 9)
+        canvas.setFillColor(colors.grey)
+        fecha_str = timezone.localtime().strftime("%d/%m/%Y %H:%M")
+        canvas.drawRightString(width - doc.rightMargin, height - 55, f"Fecha de emisión: {fecha_str}")
+        if usuario:
+            canvas.drawRightString(width - doc.rightMargin, height - 67, f"Generado por: {usuario}")
+
+        # 4. Línea decorativa elegante
+        canvas.setStrokeColor(colors.HexColor("#8e0000"))
+        canvas.setLineWidth(2)
+        canvas.line(doc.leftMargin, height - 90, width - doc.rightMargin, height - 90)
+
+        # --- PIE DE PÁGINA ---
+        canvas.setFont("Helvetica", 8)
+        canvas.setStrokeColor(colors.lightgrey)
+        canvas.line(doc.leftMargin, 50, width - doc.rightMargin, 50) # Línea superior al pie
+        canvas.drawString(doc.leftMargin, 35, f"Documento generado por el sistema.")
+        canvas.drawRightString(width - doc.rightMargin, 35, f"Página {canvas.getPageNumber()}")
+        
+        canvas.restoreState()
+
+    # --- CONSTRUIR ---
+    doc.build(elementos, onFirstPage=encabezado_pie, onLaterPages=encabezado_pie)
+    
+    buffer.seek(0)
+    response = HttpResponse(buffer, content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="{nombre_archivo}.pdf"'
     return response
 
 #endregion PublicFunctions

@@ -555,43 +555,57 @@ function ExportarPersonal(tipo) {
 
   // Manejamos la respuesta del servidor
   xhr.onload = function () {
-    if (xhr.status === 200) {
-      const contentType = xhr.getResponseHeader("Content-Type");
+    const contentType = xhr.getResponseHeader("Content-Type");
+    
+    // Si el backend devolvió JSON (error)
+    if (contentType && contentType.includes("application/json")) {
+      const reader = new FileReader();
 
-      // Si el backend devolvió JSON (error)
-      if (contentType && contentType.includes("application/json")) {
-        const reader = new FileReader();
-        reader.onload = function () {
+      reader.onload = function () {
+        try {
           const respuesta = JSON.parse(reader.result);
           Swal.fire({
-            title: respuesta.message,
+            title: respuesta.message || "Error inesperado",
             icon: respuesta.status === "error" ? "error" : "success",
             confirmButtonColor: "#ff6464",
           });
-        };
-        reader.readAsText(xhr.response);
-        return;
+        } catch (e) {
+          Swal.fire({
+            title: "Error",
+            text: "Respuesta inválida del servidor",
+            icon: "error",
+          });
+        }
+      };
+
+      reader.readAsText(xhr.response);
+      return;
+    }
+      
+    if (xhr.status === 200) {
+      
+      if (contentType.includes("application/vnd.openxmlformats-officedocument"))
+      {
+        // Si es archivo → descargar
+        const blob = xhr.response;
+        const url = window.URL.createObjectURL(blob);
+  
+        const disposition = xhr.getResponseHeader("Content-Disposition");
+  
+        let filename = "personal.xlsx";
+        if (disposition && disposition.includes("filename=")) {
+          filename = disposition.split("filename=")[1].replace(/"/g, "").trim();
+        }
+  
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+  
+        window.URL.revokeObjectURL(url);
       }
-
-      // Si es archivo → descargar
-      const blob = xhr.response;
-      const url = window.URL.createObjectURL(blob);
-
-      const disposition = xhr.getResponseHeader("Content-Disposition");
-
-      let filename = "personal.xlsx";
-      if (disposition && disposition.includes("filename=")) {
-        filename = disposition.split("filename=")[1].replace(/"/g, "").trim();
-      }
-
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-
-      window.URL.revokeObjectURL(url);
 
       Swal.fire({
         icon: "success",
@@ -602,6 +616,7 @@ function ExportarPersonal(tipo) {
         timer: 4000,
         timerProgressBar: false,
       });
+
     } else {
       Swal.fire({
         title: "Error al exportar",
