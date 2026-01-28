@@ -23,7 +23,7 @@ from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden, Area
 from RestauranteLaOlla import settings
 
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 import io
@@ -255,9 +255,10 @@ def ExportarPlatillo(request):
             }, status=400)
         
         if tipoExportacion == "1":
-            response = exportar_excel_platillos()
+            return exportar_excel_platillos()
         
-            return response
+        if tipoExportacion == "2":
+            return exportar_pdf_platillo()
         
         return JsonResponse({
             "status": "error",
@@ -305,6 +306,29 @@ def exportar_excel_platillos():
     wb.save(response)
     
     return response
+
+def exportar_pdf_platillo():
+    columnas = ['Nombre consumo', 'Precio', 'Tipo de consumo', 'Descripcion', 'Estado']
+    filas = []
+
+    for nombre, precio, tipo, desc, es_activo in Platillo.objects.values_list('Nombre', 'Precio', 'IdTipoPlatillo__Nombre', 'Descripcion', 'EsActivo'):
+        estado_symbol = '✅ Activo' if es_activo in (1, '1', True) else '⛔ Inactivo'
+        filas.append([
+            nombre,
+            precio,
+            tipo,
+            desc,
+            estado_symbol
+        ])
+
+    return generar_pdf_tabla(
+        titulo="CONSUMOS",
+        columnas=columnas,
+        filas=filas,
+        nombre_archivo="Consumos",
+        ancho_columnas=[100, 50, 100, 200, 50],
+        wrap_columns=[0, 2, 3]
+    )
         
 #endregion Platillos
 
@@ -373,66 +397,20 @@ def exportar_excel_tipo_platillo():
     return response
 
 def exportar_pdf_tipo_platillo():
-    buffer = io.BytesIO()
-
-    doc = SimpleDocTemplate(
-        buffer,
-        pagesize=letter,
-        rightMargin=40,
-        leftMargin=40,
-        topMargin=40,
-        bottomMargin=40
-    )
-
-    elements = []
-    styles = getSampleStyleSheet()
-
-    # ===== TÍTULO =====
-    titulo = Paragraph(
-        "<b>TIPOS DE CONSUMO</b>",
-        styles["Title"]
-    )
-    elements.append(titulo)
-
-    elements.append(Paragraph("<br/>", styles["Normal"]))
-
-    # ===== DATOS =====
-    data = [["Nombre", "Estado"]]
+    columnas = ["Nombre", "Estado"]
+    filas = []
 
     for nombre, es_activo in TipoPlatillo.objects.values_list("Nombre", "EsActivo"):
         estado = "Activo" if es_activo == "1" else "Inactivo"
-        data.append([nombre, estado])
+        filas.append([nombre, estado])
 
-    # ===== TABLA =====
-    table = Table(data, colWidths=[250, 120])
-
-    table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.darkred),
-        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-        ("ALIGN", (1, 1), (-1, -1), "CENTER"),
-        ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
-        ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
-        ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
-        ("TOPPADDING", (0, 0), (-1, 0), 8),
-    ]))
-
-    elements.append(table)
-
-    # ===== GENERAR PDF =====
-    doc.build(elements)
-
-    buffer.seek(0)
-
-    response = HttpResponse(
-        buffer,
-        content_type="application/pdf"
+    return generar_pdf_tabla(
+        titulo="TIPOS DE CONSUMO",
+        columnas=columnas,
+        filas=filas,
+        nombre_archivo="TipoConsumo",
+        ancho_columnas=[300, 150]
     )
-
-    filename = "TipoConsumo_" + timezone.localtime().strftime("%d-%m-%Y") + ".pdf"
-    response["Content-Disposition"] = f'attachment; filename="{filename}"'
-
-    return response
         
 #endregion TipoPlatillos
 
@@ -774,6 +752,130 @@ def descargar_excel(wb, nombre_archivo):
     )
     response["Content-Disposition"] = f'attachment; filename="{nombre_archivo}"'
     wb.save(response)
+    return response
+
+def generar_pdf_tabla(
+    *,
+    titulo: str,
+    columnas: list,
+    filas: list,
+    nombre_archivo: str,
+    ancho_columnas=None,
+    wrap_columns=None,   # 👈 columnas que deben hacer wrap (índices)
+):
+    if wrap_columns is None:
+        wrap_columns = []
+
+    buffer = io.BytesIO()
+
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=letter,
+        rightMargin=40,
+        leftMargin=40,
+        topMargin=40,
+        bottomMargin=40
+    )
+
+    elementos = []
+
+    # ======================================================
+    # ESTILOS
+    # ======================================================
+    styles = getSampleStyleSheet()
+
+    cell_style = ParagraphStyle(
+        name="CellStyle",
+        fontSize=9,
+        leading=12,
+        alignment=0,      
+        wordWrap="CJK",   
+    )
+
+    # ======================================================
+    # PROCESAR FILAS (WRAP DE TEXTO)
+    # ======================================================
+    filas_procesadas = []
+
+    for fila in filas:
+        fila_nueva = []
+        for i, valor in enumerate(fila):
+            if i in wrap_columns:
+                fila_nueva.append(
+                    Paragraph(str(valor) if valor is not None else "", cell_style)
+                )
+            else:
+                fila_nueva.append(valor)
+        filas_procesadas.append(fila_nueva)
+
+    # ======================================================
+    # CONSTRUCCIÓN DE TABLA
+    # ======================================================
+    total_columnas = len(columnas)
+
+    data = [
+        [titulo] + [""] * (total_columnas - 1),  # FILA TÍTULO (SPAN)
+        columnas,                                # ENCABEZADOS
+        *filas_procesadas                        # DATOS
+    ]
+
+    table = Table(data, colWidths=ancho_columnas, repeatRows=2)
+
+    table.setStyle(TableStyle([
+        # ======================
+        # TÍTULO
+        # ======================
+        ("SPAN", (0, 0), (-1, 0)),
+        ("BACKGROUND", (0, 0), (-1, 0), colors.darkred),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, 0), 14),
+        ("ALIGN", (0, 0), (-1, 0), "CENTER"),
+        ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+        ("TOPPADDING", (0, 0), (-1, 0), 12),
+
+        # ======================
+        # ENCABEZADOS
+        # ======================
+        ("BACKGROUND", (0, 1), (-1, 1), colors.HexColor("#800000")),
+        ("TEXTCOLOR", (0, 1), (-1, 1), colors.white),
+        ("FONTNAME", (0, 1), (-1, 1), "Helvetica-Bold"),
+        ("ALIGN", (0, 1), (-1, 1), "CENTER"),
+        ("BOTTOMPADDING", (0, 1), (-1, 1), 8),
+        ("TOPPADDING", (0, 1), (-1, 1), 8),
+
+        # ======================
+        # CUERPO
+        # ======================
+        ("ALIGN", (0, 2), (-1, -1), "LEFT"),
+        ("VALIGN", (0, 2), (-1, -1), "TOP"),
+        ("BACKGROUND", (0, 2), (-1, -1), colors.whitesmoke),
+
+        # ======================
+        # BORDES
+        # ======================
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
+    ]))
+
+    elementos.append(table)
+
+    # ======================================================
+    # CONSTRUIR PDF
+    # ======================================================
+    doc.build(elementos)
+
+    buffer.seek(0)
+
+    response = HttpResponse(
+        buffer,
+        content_type="application/pdf"
+    )
+
+    fecha = timezone.localtime().strftime("%d-%m-%Y")
+    response["Content-Disposition"] = (
+        f'attachment; filename="{nombre_archivo}_{fecha}.pdf"'
+    )
+
     return response
 
 #endregion PublicFunctions
