@@ -24,7 +24,7 @@ from RestauranteLaOlla import settings
 
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib import colors
 import io
 
@@ -258,7 +258,7 @@ def ExportarPlatillo(request):
             return exportar_excel_platillos()
         
         if tipoExportacion == "2":
-            return exportar_pdf_platillo()
+            return exportar_pdf_platillo(request)
         
         return JsonResponse({
             "status": "error",
@@ -307,7 +307,7 @@ def exportar_excel_platillos():
     
     return response
 
-def exportar_pdf_platillo():
+def exportar_pdf_platillo(request):
     columnas = ['Nombre consumo', 'Precio', 'Tipo de consumo', 'Descripcion', 'Estado']
     filas = []
 
@@ -326,8 +326,9 @@ def exportar_pdf_platillo():
         columnas=columnas,
         filas=filas,
         nombre_archivo="Consumos",
-        ancho_columnas=[100, 50, 100, 200, 50],
-        wrap_columns=[0, 2, 3]
+        ancho_columnas=[100, 50, 100, 200, 70],
+        wrap_columns=[0, 2, 3],
+        usuario=request.user.username
     )
         
 #endregion Platillos
@@ -356,7 +357,7 @@ def ExportarTipoPlatillo(request):
             return exportar_excel_tipo_platillo()
         
         if tipoExportacion == "2":
-            return exportar_pdf_tipo_platillo()
+            return exportar_pdf_tipo_platillo(request)
         
         return JsonResponse({
             "status": "error",
@@ -396,7 +397,7 @@ def exportar_excel_tipo_platillo():
     wb.save(response)
     return response
 
-def exportar_pdf_tipo_platillo():
+def exportar_pdf_tipo_platillo(request):
     columnas = ["Nombre", "Estado"]
     filas = []
 
@@ -409,7 +410,8 @@ def exportar_pdf_tipo_platillo():
         columnas=columnas,
         filas=filas,
         nombre_archivo="TipoConsumo",
-        ancho_columnas=[300, 150]
+        ancho_columnas=[300, 150],
+        usuario=request.user.username
     )
         
 #endregion TipoPlatillos
@@ -754,128 +756,102 @@ def descargar_excel(wb, nombre_archivo):
     wb.save(response)
     return response
 
-def generar_pdf_tabla(
-    *,
-    titulo: str,
-    columnas: list,
-    filas: list,
-    nombre_archivo: str,
-    ancho_columnas=None,
-    wrap_columns=None,   # 👈 columnas que deben hacer wrap (índices)
+## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+ ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+
+def generar_pdf_tabla(*, titulo: str, columnas: list, filas: list, nombre_archivo: str,
+    ancho_columnas=None, wrap_columns=None, horizontal=False, usuario=None
 ):
-    if wrap_columns is None:
-        wrap_columns = []
-
+    if wrap_columns is None: wrap_columns = []
     buffer = io.BytesIO()
+    pagesize = landscape(letter) if horizontal else letter
+    width, height = pagesize
 
+    # Ajustamos el margen superior para que el contenido no choque con el encabezado elegante
     doc = SimpleDocTemplate(
         buffer,
-        pagesize=letter,
+        pagesize=pagesize,
         rightMargin=40,
         leftMargin=40,
-        topMargin=40,
-        bottomMargin=40
+        topMargin=120,  # 👈 Aumentado para dar aire al encabezado
+        bottomMargin=60
     )
 
     elementos = []
-
-    # ======================================================
-    # ESTILOS
-    # ======================================================
     styles = getSampleStyleSheet()
+    cell_style = ParagraphStyle(name="CellStyle", fontSize=9, leading=12, alignment=0, wordWrap="CJK")
 
-    cell_style = ParagraphStyle(
-        name="CellStyle",
-        fontSize=9,
-        leading=12,
-        alignment=0,      
-        wordWrap="CJK",   
-    )
+    # --- PROCESAR FILAS ---
+    filas_procesadas = [[Paragraph(str(valor) if valor else "", cell_style) if i in wrap_columns else valor 
+                         for i, valor in enumerate(fila)] for fila in filas]
 
-    # ======================================================
-    # PROCESAR FILAS (WRAP DE TEXTO)
-    # ======================================================
-    filas_procesadas = []
-
-    for fila in filas:
-        fila_nueva = []
-        for i, valor in enumerate(fila):
-            if i in wrap_columns:
-                fila_nueva.append(
-                    Paragraph(str(valor) if valor is not None else "", cell_style)
-                )
-            else:
-                fila_nueva.append(valor)
-        filas_procesadas.append(fila_nueva)
-
-    # ======================================================
-    # CONSTRUCCIÓN DE TABLA
-    # ======================================================
-    total_columnas = len(columnas)
-
-    data = [
-        [titulo] + [""] * (total_columnas - 1),  # FILA TÍTULO (SPAN)
-        columnas,                                # ENCABEZADOS
-        *filas_procesadas                        # DATOS
-    ]
-
-    table = Table(data, colWidths=ancho_columnas, repeatRows=2)
+    # --- TABLA DE DATOS ---
+    # Nota: Eliminamos el título de adentro de la tabla para ponerlo en el encabezado elegante
+    data = [columnas] + filas_procesadas
+    table = Table(data, colWidths=ancho_columnas, repeatRows=1)
 
     table.setStyle(TableStyle([
-        # ======================
-        # TÍTULO
-        # ======================
-        ("SPAN", (0, 0), (-1, 0)),
-        ("BACKGROUND", (0, 0), (-1, 0), colors.darkred),
-        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-        ("FONTSIZE", (0, 0), (-1, 0), 14),
-        ("ALIGN", (0, 0), (-1, 0), "CENTER"),
-        ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
-        ("TOPPADDING", (0, 0), (-1, 0), 12),
-
-        # ======================
-        # ENCABEZADOS
-        # ======================
-        ("BACKGROUND", (0, 1), (-1, 1), colors.HexColor("#800000")),
-        ("TEXTCOLOR", (0, 1), (-1, 1), colors.white),
-        ("FONTNAME", (0, 1), (-1, 1), "Helvetica-Bold"),
-        ("ALIGN", (0, 1), (-1, 1), "CENTER"),
-        ("BOTTOMPADDING", (0, 1), (-1, 1), 8),
-        ("TOPPADDING", (0, 1), (-1, 1), 8),
-
-        # ======================
-        # CUERPO
-        # ======================
-        ("ALIGN", (0, 2), (-1, -1), "LEFT"),
-        ("VALIGN", (0, 2), (-1, -1), "TOP"),
-        ("BACKGROUND", (0, 2), (-1, -1), colors.whitesmoke),
-
-        # ======================
-        # BORDES
-        # ======================
-        ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#8e0000")), # Rojo elegante
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
     ]))
-
     elementos.append(table)
 
     # ======================================================
-    # CONSTRUIR PDF
+    # ENCABEZADO TIPO FACTURA (POSICIÓN ABSOLUTA)
     # ======================================================
-    doc.build(elementos)
+    def encabezado_pie(canvas, doc):
+        canvas.saveState()
+        
+        # 1. Dibujar el Logo (Posición Absoluta: Top-Izquierda)
+        logo_path = os.path.join("static", "img", "LogoBgBlanco.jpg")
+        if os.path.exists(logo_path):
+            # drawImage(ruta, x, y, width, height)
+            canvas.drawImage(logo_path, doc.leftMargin, height - 80, width=60, height=60, preserveAspectRatio=True)
 
+        # 2. Título Principal (Centro-Izquierda, al lado del logo)
+        canvas.setFont("Helvetica-Bold", 18)
+        canvas.setFillColor(colors.HexColor("#a05047"))
+        canvas.drawString(doc.leftMargin + 70, height - 62, titulo.upper())
+        
+        # 3. Bloque de Información (Derecha - Estilo Factura)
+        canvas.setFont("Helvetica-Bold", 10)
+        canvas.drawRightString(width - doc.rightMargin, height - 40, "REPORTE OFICIAL")
+        
+        canvas.setFont("Helvetica", 9)
+        canvas.setFillColor(colors.grey)
+        fecha_str = timezone.localtime().strftime("%d/%m/%Y %H:%M")
+        canvas.drawRightString(width - doc.rightMargin, height - 55, f"Fecha de emisión: {fecha_str}")
+        if usuario:
+            canvas.drawRightString(width - doc.rightMargin, height - 67, f"Generado por: {usuario}")
+
+        # 4. Línea decorativa elegante
+        canvas.setStrokeColor(colors.HexColor("#8e0000"))
+        canvas.setLineWidth(2)
+        canvas.line(doc.leftMargin, height - 90, width - doc.rightMargin, height - 90)
+
+        # --- PIE DE PÁGINA ---
+        canvas.setFont("Helvetica", 8)
+        canvas.setStrokeColor(colors.lightgrey)
+        canvas.line(doc.leftMargin, 50, width - doc.rightMargin, 50) # Línea superior al pie
+        canvas.drawString(doc.leftMargin, 35, f"Documento generado por el sistema.")
+        canvas.drawRightString(width - doc.rightMargin, 35, f"Página {canvas.getPageNumber()}")
+        
+        canvas.restoreState()
+
+    # --- CONSTRUIR ---
+    doc.build(elementos, onFirstPage=encabezado_pie, onLaterPages=encabezado_pie)
+    
     buffer.seek(0)
-
-    response = HttpResponse(
-        buffer,
-        content_type="application/pdf"
-    )
-
-    fecha = timezone.localtime().strftime("%d-%m-%Y")
-    response["Content-Disposition"] = (
-        f'attachment; filename="{nombre_archivo}_{fecha}.pdf"'
-    )
-
+    response = HttpResponse(buffer, content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="{nombre_archivo}.pdf"'
     return response
 
 #endregion PublicFunctions
