@@ -436,8 +436,11 @@ def ExportarPersonal(request):
         
         # Para exportar en excel
         if tipoExportacion == "1":
-            response = exportar_excel_personal()
-            return response
+            return exportar_excel_personal()
+        
+        # Para exportar en pdf
+        if tipoExportacion == "2":
+            return exportar_pdf_personal(request)
         
         return JsonResponse({
             "status": "error",
@@ -478,6 +481,33 @@ def exportar_excel_personal():
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     wb.save(response)
     return response
+
+def exportar_pdf_personal(request):
+    columnas = ['Id', 'Nombres y apellidos', 'Usuario', 'Cargo', 'Telefono', 'Correo', 'Estado']
+    filas = []
+
+    for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'Nombres', 'Apellidos', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'EsActivo'):
+        estadoData = '✅ Activo' if es_activo in (1, '1', True) else '⛔ Dado de baja'
+        filas.append([
+            id,
+            nombre + " " + apellido,
+            nombre_user,
+            nombre_cargo,
+            telefono,
+            correo,
+            estadoData
+        ])
+
+    return generar_pdf_tabla(
+        titulo="PERSONAL",
+        columnas=columnas,
+        filas=filas,
+        nombre_archivo="Personal",
+        ancho_columnas=[50, 150, 100, 100, 60, 170, 80],
+        usuario=request.user.username,
+        wrap_columns=[1],
+        horizontal=True
+    )
         
 #endregion Personal
 
