@@ -139,8 +139,8 @@ class Orden(models.Model):
     
     DescripcionEdicion = models.CharField(max_length=200, null=True, blank=True, db_column='descripcion_edicion')
     
-    METODOPAGO = [("1", "Efectivo"), ("2", "Tarjeta"), ("3", "Transferencia"), ("4", "Efectivo y tarjeta")]
-    MetodoPago = models.CharField(max_length=10, choices=METODOPAGO, default="1", db_column='metodo_pago')
+    METODOPAGO = [("1", "Efectivo"), ("2", "Tarjeta"), ("3", "Transferencia"), ("4", "Efectivo y tarjeta"), ("5", "N/A")]
+    MetodoPago = models.CharField(max_length=10, choices=METODOPAGO, default="5", db_column='metodo_pago')
 
     ESTADO = [("0", "Pago registrado"), ("1", "Pendiente"), ("2", "Anulada"), ("3", "Preparada"), ("4", "En preparación")]
     Estado = models.CharField(max_length=10, choices=ESTADO, default="1", db_column='estado')

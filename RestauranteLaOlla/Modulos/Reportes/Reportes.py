@@ -22,7 +22,7 @@ from openpyxl.utils import get_column_letter
 from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden, AreaMesa, Usuario, MesasPorOrden
 from RestauranteLaOlla import settings
 
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib import colors
@@ -168,6 +168,9 @@ def ExportarOrdenes(request):
         wb = exportar_excel_ordenes(ordenes, incluir_detalles)
         return descargar_excel(wb, f"ordenes_{fecha_inicio_str}_{fecha_fin_str}.xlsx")
     
+    if tipo_exportacion == "2":
+        return exportar_pdf_ordenes(ordenes, request, incluir_detalles, fecha_inicio_str)
+    
     return JsonResponse({
             "status": "error",
             "message": "Exportación no implementada"
@@ -232,7 +235,136 @@ def exportar_excel_ordenes(ordenes, incluir_detalles = False):
 
     return wb
 
-#endregion Ordenes
+def exportar_pdf_ordenes(ordenes, request, incluir_detalles=False, fecha_inicio=""):
+    buffer = io.BytesIO()
+    pagesize = landscape(letter)
+    width, height = pagesize
+
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=pagesize,
+        rightMargin=40,
+        leftMargin=40,
+        topMargin=100,
+        bottomMargin=60
+    )
+
+    elementos = []
+    styles = getSampleStyleSheet()
+    
+    # Estilos de texto
+    header_label_style = ParagraphStyle(name="LabelStyle", fontSize=10, fontName="Helvetica-Bold", textColor=colors.HexColor("#8e0000"))
+    cell_style = ParagraphStyle(name="CellStyle", fontSize=9, leading=11)
+    # Estilo especial para resaltar el TOTAL
+    total_style = ParagraphStyle(name="TotalStyle", fontSize=10, fontName="Helvetica-Bold", textColor=colors.black)
+
+    titulo_texto = "REPORTE DETALLADO DE ÓRDENES" if incluir_detalles else "REPORTE GENERAL DE ÓRDENES"
+    
+    for orden in ordenes:
+        # ======================================================
+        # TABLA 1: RESUMEN DE LA ORDEN (Cabecera Expandida)
+        # ======================================================
+        color_estado = "green" if orden.Estado == "0" else "black"
+        estado_html = f'<font color="{color_estado}">●</font> {orden.get_Estado_display()}'
+        fecha_fmt = timezone.localtime(orden.Fecha).strftime("%d/%m/%Y %H:%M")
+        mesas = " - ".join(f"#{m.IdMesa.Numero}" for m in orden.Mesas.all())
+
+        # Organizamos los datos en 3 bloques (6 filas en total)
+        data_orden = [
+            # Bloque 1: Identificación
+            [Paragraph("N° Orden", header_label_style), Paragraph("Fecha / Hora", header_label_style), Paragraph("Estado", header_label_style), Paragraph("Área / Mesas", header_label_style)],
+            [orden.Id, fecha_fmt, Paragraph(estado_html, cell_style), f"{orden.IdAreaDeMesa.Nombre if orden.IdAreaDeMesa else 'N/A'} ({mesas})"],
+            
+            # Bloque 2: Totales de la Cuenta
+            [Paragraph("Subtotal", header_label_style), Paragraph("Propina", header_label_style), Paragraph("Descuento", header_label_style), Paragraph("TOTAL A PAGAR", header_label_style)],
+            [f"C$ {orden.Total}", f"C$ {orden.Propina}", f"C$ {orden.Descuento}", Paragraph(f"C$ {orden.TotalPagar}", total_style)],
+            
+            # Bloque 3: Detalles del Pago (Aquí agregamos los nuevos campos)
+            [Paragraph("Método de Pago", header_label_style), Paragraph("Monto Recibido", header_label_style), Paragraph("Cambio", header_label_style), Paragraph("2do Monto (Pago Mixto)", header_label_style)],
+            [orden.get_MetodoPago_display(), f"C$ {orden.Monto}", f"C$ {orden.Cambio}", f"C$ {orden.SegundoMonto}" if orden.MetodoPago == "4" else "N/A"]
+        ]
+
+        tabla_cabecera = Table(data_orden, colWidths=[100, 180, 150, 300])
+        tabla_cabecera.setStyle(TableStyle([
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            # Fondos para las filas de etiquetas (0, 2 y 4)
+            ('BACKGROUND', (0, 0), (-1, 0), colors.whitesmoke),
+            ('BACKGROUND', (0, 2), (-1, 2), colors.whitesmoke),
+            ('BACKGROUND', (0, 4), (-1, 4), colors.whitesmoke),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ]))
+        
+        elementos.append(tabla_cabecera)
+
+        # ======================================================
+        # TABLA 2: DETALLES DE PRODUCTOS
+        # ======================================================
+        if incluir_detalles:
+            elementos.append(Spacer(1, 5))
+            detalles_data = [["Nombre del consumo", "Precio Unitario", "Cantidad",  "Subtotal"]]
+            detalles_activos = orden.Detalles.filter(EsActivo="1")
+
+            for det in detalles_activos:
+                detalles_data.append([
+                    Paragraph(det.IdPlatillo.Nombre, cell_style),
+                    f"C$ {det.PrecioVenta}",
+                    det.Cantidad,
+                    f"C$ {det.SubTotal}"
+                ])
+
+            if not detalles_activos:
+                detalles_data.append(["-", "Sin detalles registrados", "-", "-"])
+
+            tabla_detalle = Table(detalles_data, colWidths=[420, 120, 70, 120])
+            tabla_detalle.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#DDDDDD")),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor("#555555")),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('ALIGN', (2, 0), (2, -1), 'CENTER'), # Cantidad centrada
+                ('ALIGN', (1, 0), (1, -1), 'RIGHT'),  # Precio derecha
+                ('ALIGN', (3, 0), (3, -1), 'RIGHT'),  # Subtotal derecha
+                ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+                ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ]))
+            elementos.append(tabla_detalle)
+
+        elementos.append(Spacer(1, 25))
+
+    # --- ENCABEZADO Y PIE ---
+    # (Se mantiene igual a tu última versión...)
+    def encabezado_pie(canvas, doc):
+        canvas.saveState()
+        logo_path = os.path.join("static", "img", "LogoBgBlanco.jpg")
+        if os.path.exists(logo_path):
+            canvas.drawImage(logo_path, doc.leftMargin, height - 80, width=60, height=60, preserveAspectRatio=True)
+
+        canvas.setFont("Helvetica-Bold", 18)
+        canvas.setFillColor(colors.HexColor("#8e0000"))
+        canvas.drawCentredString(width / 2, height - 62, titulo_texto.upper())
+        
+        canvas.setFont("Helvetica", 9)
+        canvas.setFillColor(colors.grey)
+        fecha_emision = timezone.localtime().strftime("%d/%m/%Y %H:%M")
+        canvas.drawRightString(width - doc.rightMargin, height - 50, f"Emisión: {fecha_emision}")
+        canvas.drawRightString(width - doc.rightMargin, height - 65, f"Usuario: {request.user.username}")
+
+        canvas.setStrokeColor(colors.HexColor("#8e0000"))
+        canvas.setLineWidth(2)
+        canvas.line(doc.leftMargin, height - 90, width - doc.rightMargin, height - 90)
+
+        canvas.setFont("Helvetica", 8)
+        canvas.drawString(doc.leftMargin, 35, "Documento generado por el sistema.")
+        canvas.drawRightString(width - doc.rightMargin, 35, f"Página {doc.page}")
+        canvas.restoreState()
+
+    doc.build(elementos, onFirstPage=encabezado_pie, onLaterPages=encabezado_pie)
+    
+    buffer.seek(0)
+    response = HttpResponse(buffer, content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="Reporte_Ordenes_{fecha_inicio}.pdf"'
+    return response
 
 #region Platillos
 

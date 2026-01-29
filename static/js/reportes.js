@@ -371,12 +371,14 @@ function ExportarOrdenes(tipo)
     }
     
     if (xhr.status === 200) {
-      if (contentType.includes("application/vnd.openxmlformats-officedocument"))
-      {
+      if (
+        contentType.includes("application/vnd.openxmlformats-officedocument") ||
+        contentType.includes("application/pdf")
+      ) {
         // Si es archivo → descargar
         const blob = xhr.response;
         const url = window.URL.createObjectURL(blob);
-        
+
         const disposition = xhr.getResponseHeader("Content-Disposition");
 
         let filename = "ordenes.xlsx";
@@ -390,7 +392,7 @@ function ExportarOrdenes(tipo)
         document.body.appendChild(a);
         a.click();
         a.remove();
-        
+
         window.URL.revokeObjectURL(url);
       }
 
