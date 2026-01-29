@@ -312,7 +312,7 @@ def exportar_pdf_platillo(request):
     filas = []
 
     for nombre, precio, tipo, desc, es_activo in Platillo.objects.values_list('Nombre', 'Precio', 'IdTipoPlatillo__Nombre', 'Descripcion', 'EsActivo'):
-        estado_symbol = '✅ Activo' if es_activo in (1, '1', True) else '⛔ Inactivo'
+        estado_symbol = '✓ Activo' if es_activo in (1, '1', True) else '✗ Inactivo'
         filas.append([
             nombre,
             precio,
@@ -402,7 +402,7 @@ def exportar_pdf_tipo_platillo(request):
     filas = []
 
     for nombre, es_activo in TipoPlatillo.objects.values_list("Nombre", "EsActivo"):
-        estado = "Activo" if es_activo == "1" else "Inactivo"
+        estado = "✓ Activo" if es_activo == "1" else "✗ Inactivo"
         filas.append([nombre, estado])
 
     return generar_pdf_tabla(
@@ -487,7 +487,7 @@ def exportar_pdf_personal(request):
     filas = []
 
     for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'Nombres', 'Apellidos', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'EsActivo'):
-        estadoData = '✅ Activo' if es_activo in (1, '1', True) else '⛔ Dado de baja'
+        estadoData = '✓ Activo' if es_activo in (1, '1', True) else '✗ Dado de baja'
         filas.append([
             id,
             nombre + " " + apellido,
