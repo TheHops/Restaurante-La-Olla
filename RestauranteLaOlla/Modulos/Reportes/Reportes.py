@@ -185,7 +185,18 @@ def exportar_excel_ordenes(ordenes, incluir_detalles=False):
     vino_oscuro = "800000"
     blanco = "FFFFFF"
     gris_totales = "EEEEEE"
+    gris_detalles = "F9F9F9"
     negro = "000000"
+    
+    color_bordes_detalle = "CCCCCC"
+    
+    # Definir bordes para los detalles
+    borde_detalle = Border(
+        left=Side(style='thin', color=color_bordes_detalle),
+        right=Side(style='thin', color=color_bordes_detalle),
+        top=Side(style='thin', color=color_bordes_detalle),
+        bottom=Side(style='thin', color=color_bordes_detalle)
+    )
 
     # Estilo Encabezado (Vinotinto)
     if "header_style" not in wb.named_styles:
@@ -259,6 +270,18 @@ def exportar_excel_ordenes(ordenes, incluir_detalles=False):
 
         # --- DETALLES (OPCIONAL) ---
         if incluir_detalles:
+            det_headers = ["", "CONSUMO", "CANTIDAD", "PRECIO UNITARIO", "SUBTOTAL"]
+            for col_det, text in enumerate(det_headers, start=1):
+                if text: # No pintar la primera celda vacía
+                    c_h = ws.cell(row=row_idx, column=col_det, value=text)
+                    c_h.font = Font(size=8, bold=True, color="555555")
+                    c_h.fill = PatternFill("solid", fgColor=gris_detalles)
+                    c_h.alignment = Alignment(horizontal="center")
+                    c_h.border = borde_detalle
+            
+            ws.row_dimensions[row_idx].outlineLevel = 1
+            row_idx += 1
+            
             for det in orden.Detalles.filter(EsActivo="1"):
                 # Producto en col B, Cantidad en col C, etc.
                 ws.cell(row=row_idx, column=2, value=f" > {det.IdPlatillo.Nombre}").font = Font(size=9, italic=True)
@@ -272,6 +295,8 @@ def exportar_excel_ordenes(ordenes, incluir_detalles=False):
 
                 ws.row_dimensions[row_idx].outlineLevel = 1
                 row_idx += 1
+            
+            row_idx += 1
 
     # --- FILA DE TOTALES GENERALES ---
     row_idx += 1 # Espacio

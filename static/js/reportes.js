@@ -311,6 +311,16 @@ function ExportarOrdenes(tipo)
 {
   estadoAFiltrar = document.getElementById("listaEstadoOrdenesExportar");
 
+  Swal.fire({
+    toast: true,
+    position: "top-start",
+    title: "Procesando...",
+    showConfirmButton: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+
   // PREPARACION DE DATOS
   console.log("Exportación de tipo: " + (tipo == "1" ? "excel" : "pdf"));
 

@@ -230,6 +230,8 @@ function MP(valor) {
 
     BtnRegistrar.disabled = true;
   }
+
+  CalcularTotal();
 }
 
 ///////////////////////////// EXTRAS /////////////////////////////////////
@@ -457,6 +459,12 @@ function ReiniciarCampos() {
 
   $("#inputPorcentajePropina").toggle(false);
   $("#inputPorcentajeDescuento").toggle(false);
+
+  let descuentoCheck = document.getElementById("checkDescuento");
+  let propinaCheck = document.getElementById("checkPropina");
+
+  descuentoCheck.checked = false;
+  propinaCheck.checked = false;
 
   $("#infoCalculoPropina").toggle(false);
 
