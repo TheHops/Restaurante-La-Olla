@@ -584,26 +584,28 @@ function ExportarPersonal(tipo) {
       
     if (xhr.status === 200) {
       
-      if (contentType.includes("application/vnd.openxmlformats-officedocument"))
-      {
+      if (
+        contentType.includes("application/vnd.openxmlformats-officedocument") ||
+        contentType.includes("application/pdf")
+      ) {
         // Si es archivo → descargar
         const blob = xhr.response;
         const url = window.URL.createObjectURL(blob);
-  
+
         const disposition = xhr.getResponseHeader("Content-Disposition");
-  
+
         let filename = "personal.xlsx";
         if (disposition && disposition.includes("filename=")) {
           filename = disposition.split("filename=")[1].replace(/"/g, "").trim();
         }
-  
+
         const a = document.createElement("a");
         a.href = url;
         a.download = filename;
         document.body.appendChild(a);
         a.click();
         a.remove();
-  
+
         window.URL.revokeObjectURL(url);
       }
 

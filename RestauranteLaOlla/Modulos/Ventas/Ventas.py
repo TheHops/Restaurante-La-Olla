@@ -325,6 +325,7 @@ def CancelarOrden(request):
         # Actualizar estado y motivo
         orden.Estado = "2"  # Cancelada / Anulada
         orden.Motivo = motivo
+        orden.MetodoPago = "5" # N/A
         orden.UltimaModificacion = timezone.now()
         
         orden.save()

@@ -16,13 +16,13 @@ from django.shortcuts import render, redirect
 from django.db.models import Prefetch, Q
 
 from openpyxl import Workbook
-from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
+from openpyxl.styles import Alignment, Font, PatternFill, Border, Side, NamedStyle
 from openpyxl.utils import get_column_letter
 
 from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden, AreaMesa, Usuario, MesasPorOrden
 from RestauranteLaOlla import settings
 
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib import colors
@@ -168,71 +168,297 @@ def ExportarOrdenes(request):
         wb = exportar_excel_ordenes(ordenes, incluir_detalles)
         return descargar_excel(wb, f"ordenes_{fecha_inicio_str}_{fecha_fin_str}.xlsx")
     
+    if tipo_exportacion == "2":
+        return exportar_pdf_ordenes(ordenes, request, incluir_detalles, fecha_inicio_str)
+    
     return JsonResponse({
             "status": "error",
             "message": "Exportación no implementada"
         }, status=400)
 
-def exportar_excel_ordenes(ordenes, incluir_detalles = False):
-    titulo = "REPORTE DE ÓRDENES"
-    columnas = ["N° Orden", "Estado", "Fecha", "Área", "Mesas", "Subtotal", "Propina", "Descuento", "Total a pagar", "Método de pago", "Monto", "Cambio", "Segundo monto"]
+def exportar_excel_ordenes(ordenes, incluir_detalles=False):
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Reporte de Órdenes"
 
-    datos = []
+    # --- DEFINICIÓN DE ESTILOS ---
+    vino_oscuro = "800000"
+    blanco = "FFFFFF"
+    gris_totales = "EEEEEE"
+    gris_detalles = "F9F9F9"
+    negro = "000000"
+    
+    color_bordes_detalle = "CCCCCC"
+    
+    # Definir bordes para los detalles
+    borde_detalle = Border(
+        left=Side(style='thin', color=color_bordes_detalle),
+        right=Side(style='thin', color=color_bordes_detalle),
+        top=Side(style='thin', color=color_bordes_detalle),
+        bottom=Side(style='thin', color=color_bordes_detalle)
+    )
+
+    # Estilo Encabezado (Vinotinto)
+    if "header_style" not in wb.named_styles:
+        header_style = NamedStyle(name="header_style")
+        header_style.font = Font(bold=True, color=blanco)
+        header_style.fill = PatternFill("solid", fgColor=vino_oscuro)
+        header_style.alignment = Alignment(horizontal="center", vertical="center")
+        wb.add_named_style(header_style)
+
+    # Estilo Fila Normal (Blanco, texto normal)
+    if "normal_row" not in wb.named_styles:
+        normal_row = NamedStyle(name="normal_row")
+        normal_row.font = Font(bold=False, color=negro)
+        normal_row.fill = PatternFill("solid", fgColor=blanco)
+        normal_row.border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+        wb.add_named_style(normal_row)
+
+    columnas = ["N° Orden", "Estado", "Fecha", "Área/Mesas", "Subtotal", "Propina", "Desc.", "Total Pagar", "Método Pago", "Monto", "Cambio", "2do Monto"]
+    
+    # Título Principal
+    ultima_col_letra = get_column_letter(len(columnas))
+    ws.merge_cells(f"A1:{ultima_col_letra}1")
+    ws["A1"] = "REPORTE DE VENTAS TOTALES"
+    ws["A1"].style = "header_style"
+    ws.row_dimensions[1].height = 25
+
+    # Encabezados de tabla
+    for col_idx, valor in enumerate(columnas, start=1):
+        cell = ws.cell(row=2, column=col_idx, value=valor)
+        cell.style = "header_style"
+
+    # --- VARIABLES PARA ACUMULAR TOTALES ---
+    sum_subtotal = sum_propina = sum_desc = sum_total = sum_monto = sum_cambio = sum_2do = Decimal(0)
+
+    row_idx = 3
     for orden in ordenes:
         mesas = " - ".join(f"#{m.IdMesa.Numero}" for m in orden.Mesas.all())
-
-        datos.append([
-            orden.Id,
-            orden.get_Estado_display(),
-            date_format(
-                timezone.localtime(orden.UltimaModificacion),
-                "j \\d\\e F \\d\\e Y \\a \\l\\a\\s H:i"
-            ),
-            orden.IdAreaDeMesa.Nombre if orden.IdAreaDeMesa else "",
-            mesas,
-            "C$" + str(orden.Total),
-            "C$" + str(orden.Propina),
-            "C$" + str(orden.Descuento),
-            "C$" + str(orden.TotalPagar),
-            orden.get_MetodoPago_display(),
-            "C$" + str(orden.Monto),
-            "C$" + str(orden.Cambio),
-            "C$" + str(orden.SegundoMonto)
-        ])
-
-    wb = exportar_excel_datos(titulo, columnas, datos, "Ordenes")
-    
-    # HOJA 2: DETALLES (OPCIONAL)
-    if incluir_detalles:
-        ws_detalles = wb.create_sheet(title="Detalles")
-
-        columnas_detalles = [
-            "N° Orden", "Consumo", "Cantidad", "Precio", "Subtotal"
+        area_info = f"{orden.IdAreaDeMesa.Nombre if orden.IdAreaDeMesa else 'N/A'} ({mesas})"
+        
+        # Datos de la fila
+        datos_orden = [
+            orden.Id, orden.get_Estado_display(), 
+            timezone.localtime(orden.Fecha).replace(tzinfo=None),
+            area_info, orden.Total, orden.Propina, orden.Descuento, 
+            orden.TotalPagar, orden.get_MetodoPago_display(), 
+            orden.Monto, orden.Cambio, orden.SegundoMonto
         ]
 
-        datos_detalles = []
+        # Llenado de la fila
+        for col_idx, valor in enumerate(datos_orden, start=1):
+            cell = ws.cell(row=row_idx, column=col_idx, value=valor)
+            cell.style = "normal_row"
+            
+            # Formatos numéricos y acumulación (solo si el estado es Pagado/Finalizado o según tu lógica)
+            if col_idx in [5, 6, 7, 8, 10, 11, 12]:
+                cell.number_format = '"C$"#,##0.00'
+                # Acumulamos para el gran total al final
+                if valor:
+                    if col_idx == 5: sum_subtotal += Decimal(str(valor))
+                    if col_idx == 6: sum_propina += Decimal(str(valor))
+                    if col_idx == 7: sum_desc += Decimal(str(valor))
+                    if col_idx == 8: sum_total += Decimal(str(valor))
+                    if col_idx == 10: sum_monto += Decimal(str(valor))
+                    if col_idx == 11: sum_cambio += Decimal(str(valor))
+                    if col_idx == 12: sum_2do += Decimal(str(valor))
+            
+            if col_idx == 3:
+                cell.number_format = 'dd/mm/yyyy hh:mm AM/PM'
 
-        for orden in ordenes:
-            for detalle in orden.Detalles.filter(EsActivo="1"):
-                datos_detalles.append([
-                    orden.Id,
-                    detalle.IdPlatillo.Nombre,
-                    detalle.Cantidad,
-                    detalle.PrecioVenta,
-                    detalle.Cantidad * detalle.PrecioVenta
-                ])
+        row_idx += 1
 
-        # Ponemos estilo a la nueva hoja
-        poblar_hoja_existente(
-            ws_detalles,
-            "DETALLES DE ÓRDENES",
-            columnas_detalles,
-            datos_detalles
-        )
+        # --- DETALLES (OPCIONAL) ---
+        if incluir_detalles:
+            det_headers = ["", "CONSUMO", "CANTIDAD", "PRECIO UNITARIO", "SUBTOTAL"]
+            for col_det, text in enumerate(det_headers, start=1):
+                if text: # No pintar la primera celda vacía
+                    c_h = ws.cell(row=row_idx, column=col_det, value=text)
+                    c_h.font = Font(size=8, bold=True, color="555555")
+                    c_h.fill = PatternFill("solid", fgColor=gris_detalles)
+                    c_h.alignment = Alignment(horizontal="center")
+                    c_h.border = borde_detalle
+            
+            ws.row_dimensions[row_idx].outlineLevel = 1
+            row_idx += 1
+            
+            for det in orden.Detalles.filter(EsActivo="1"):
+                # Producto en col B, Cantidad en col C, etc.
+                ws.cell(row=row_idx, column=2, value=f" > {det.IdPlatillo.Nombre}").font = Font(size=9, italic=True)
+                ws.cell(row=row_idx, column=3, value=det.Cantidad).alignment = Alignment(horizontal="center")
+                
+                prec = ws.cell(row=row_idx, column=4, value=det.PrecioVenta)
+                prec.number_format = '"C$"#,##0.00'
+                
+                subt = ws.cell(row=row_idx, column=5, value=det.SubTotal)
+                subt.number_format = '"C$"#,##0.00'
+
+                ws.row_dimensions[row_idx].outlineLevel = 1
+                row_idx += 1
+            
+            row_idx += 1
+
+    # --- FILA DE TOTALES GENERALES ---
+    row_idx += 1 # Espacio
+    ws.cell(row=row_idx, column=4, value="TOTALES GENERALES:").font = Font(bold=True)
+    
+    totales_map = {5: sum_subtotal, 6: sum_propina, 7: sum_desc, 8: sum_total, 10: sum_monto, 11: sum_cambio, 12: sum_2do}
+    
+    for col, valor in totales_map.items():
+        cell = ws.cell(row=row_idx, column=col, value=valor)
+        cell.font = Font(bold=True)
+        cell.fill = PatternFill("solid", fgColor=gris_totales)
+        cell.number_format = '"C$"#,##0.00'
+        cell.border = Border(top=Side(style='medium'))
+
+    # --- AJUSTE AUTOMÁTICO DE COLUMNAS (Tu método solicitado) ---
+    for col_idx in range(1, len(columnas) + 1):
+        column_letter = get_column_letter(col_idx)
+        max_length = 0
+        
+        # Revisamos todas las celdas de la columna para encontrar el valor más largo
+        for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=col_idx, max_col=col_idx):
+            for cell in row:
+                if cell.value:
+                    # Si es fecha o moneda, le damos un margen extra fijo
+                    longitud = len(str(cell.value))
+                    if longitud > max_length:
+                        max_length = longitud
+        
+        ws.column_dimensions[column_letter].width = min(max_length + 5, 60)
 
     return wb
 
-#endregion Ordenes
+def exportar_pdf_ordenes(ordenes, request, incluir_detalles=False, fecha_inicio=""):
+    buffer = io.BytesIO()
+    pagesize = landscape(letter)
+    width, height = pagesize
+
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=pagesize,
+        rightMargin=40,
+        leftMargin=40,
+        topMargin=100,
+        bottomMargin=60
+    )
+
+    elementos = []
+    styles = getSampleStyleSheet()
+    
+    # Estilos de texto
+    header_label_style = ParagraphStyle(name="LabelStyle", fontSize=10, fontName="Helvetica-Bold", textColor=colors.HexColor("#8e0000"))
+    cell_style = ParagraphStyle(name="CellStyle", fontSize=9, leading=11)
+    # Estilo especial para resaltar el TOTAL
+    total_style = ParagraphStyle(name="TotalStyle", fontSize=10, fontName="Helvetica-Bold", textColor=colors.black)
+
+    titulo_texto = "REPORTE DETALLADO DE ÓRDENES" if incluir_detalles else "REPORTE GENERAL DE ÓRDENES"
+    
+    for orden in ordenes:
+        # ======================================================
+        # TABLA 1: RESUMEN DE LA ORDEN (Cabecera Expandida)
+        # ======================================================
+        color_estado = "green" if orden.Estado == "0" else "black"
+        estado_html = f'<font color="{color_estado}">●</font> {orden.get_Estado_display()}'
+        fecha_fmt = timezone.localtime(orden.Fecha).strftime("%d/%m/%Y %H:%M")
+        mesas = " - ".join(f"#{m.IdMesa.Numero}" for m in orden.Mesas.all())
+
+        # Organizamos los datos en 3 bloques (6 filas en total)
+        data_orden = [
+            # Bloque 1: Identificación
+            [Paragraph("N° Orden", header_label_style), Paragraph("Fecha / Hora", header_label_style), Paragraph("Estado", header_label_style), Paragraph("Área / Mesas", header_label_style)],
+            [orden.Id, fecha_fmt, Paragraph(estado_html, cell_style), f"{orden.IdAreaDeMesa.Nombre if orden.IdAreaDeMesa else 'N/A'} ({mesas})"],
+            
+            # Bloque 2: Totales de la Cuenta
+            [Paragraph("Subtotal", header_label_style), Paragraph("Propina", header_label_style), Paragraph("Descuento", header_label_style), Paragraph("TOTAL A PAGAR", header_label_style)],
+            [f"C$ {orden.Total}", f"C$ {orden.Propina}", f"C$ {orden.Descuento}", Paragraph(f"C$ {orden.TotalPagar}", total_style)],
+            
+            # Bloque 3: Detalles del Pago (Aquí agregamos los nuevos campos)
+            [Paragraph("Método de Pago", header_label_style), Paragraph("Monto Recibido", header_label_style), Paragraph("Cambio", header_label_style), Paragraph("2do Monto (Pago Mixto)", header_label_style)],
+            [orden.get_MetodoPago_display(), f"C$ {orden.Monto}", f"C$ {orden.Cambio}", f"C$ {orden.SegundoMonto}" if orden.MetodoPago == "4" else "N/A"]
+        ]
+
+        tabla_cabecera = Table(data_orden, colWidths=[100, 180, 150, 300])
+        tabla_cabecera.setStyle(TableStyle([
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            # Fondos para las filas de etiquetas (0, 2 y 4)
+            ('BACKGROUND', (0, 0), (-1, 0), colors.whitesmoke),
+            ('BACKGROUND', (0, 2), (-1, 2), colors.whitesmoke),
+            ('BACKGROUND', (0, 4), (-1, 4), colors.whitesmoke),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ]))
+        
+        elementos.append(tabla_cabecera)
+
+        # ======================================================
+        # TABLA 2: DETALLES DE PRODUCTOS
+        # ======================================================
+        if incluir_detalles:
+            elementos.append(Spacer(1, 5))
+            detalles_data = [["Nombre del consumo", "Precio Unitario", "Cantidad",  "Subtotal"]]
+            detalles_activos = orden.Detalles.filter(EsActivo="1")
+
+            for det in detalles_activos:
+                detalles_data.append([
+                    Paragraph(det.IdPlatillo.Nombre, cell_style),
+                    f"C$ {det.PrecioVenta}",
+                    det.Cantidad,
+                    f"C$ {det.SubTotal}"
+                ])
+
+            if not detalles_activos:
+                detalles_data.append(["-", "Sin detalles registrados", "-", "-"])
+
+            tabla_detalle = Table(detalles_data, colWidths=[420, 120, 70, 120])
+            tabla_detalle.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#DDDDDD")),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor("#555555")),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('ALIGN', (2, 0), (2, -1), 'CENTER'), # Cantidad centrada
+                ('ALIGN', (1, 0), (1, -1), 'RIGHT'),  # Precio derecha
+                ('ALIGN', (3, 0), (3, -1), 'RIGHT'),  # Subtotal derecha
+                ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+                ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ]))
+            elementos.append(tabla_detalle)
+
+        elementos.append(Spacer(1, 25))
+
+    # --- ENCABEZADO Y PIE ---
+    # (Se mantiene igual a tu última versión...)
+    def encabezado_pie(canvas, doc):
+        canvas.saveState()
+        logo_path = os.path.join("static", "img", "LogoBgBlanco.jpg")
+        if os.path.exists(logo_path):
+            canvas.drawImage(logo_path, doc.leftMargin, height - 80, width=60, height=60, preserveAspectRatio=True)
+
+        canvas.setFont("Helvetica-Bold", 18)
+        canvas.setFillColor(colors.HexColor("#8e0000"))
+        canvas.drawCentredString(width / 2, height - 62, titulo_texto.upper())
+        
+        canvas.setFont("Helvetica", 9)
+        canvas.setFillColor(colors.grey)
+        fecha_emision = timezone.localtime().strftime("%d/%m/%Y %H:%M")
+        canvas.drawRightString(width - doc.rightMargin, height - 50, f"Emisión: {fecha_emision}")
+        canvas.drawRightString(width - doc.rightMargin, height - 65, f"Usuario: {request.user.username}")
+
+        canvas.setStrokeColor(colors.HexColor("#8e0000"))
+        canvas.setLineWidth(2)
+        canvas.line(doc.leftMargin, height - 90, width - doc.rightMargin, height - 90)
+
+        canvas.setFont("Helvetica", 8)
+        canvas.drawString(doc.leftMargin, 35, "Documento generado por el sistema.")
+        canvas.drawRightString(width - doc.rightMargin, 35, f"Página {doc.page}")
+        canvas.restoreState()
+
+    doc.build(elementos, onFirstPage=encabezado_pie, onLaterPages=encabezado_pie)
+    
+    buffer.seek(0)
+    response = HttpResponse(buffer, content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="Reporte_Ordenes_{fecha_inicio}.pdf"'
+    return response
 
 #region Platillos
 
@@ -312,7 +538,7 @@ def exportar_pdf_platillo(request):
     filas = []
 
     for nombre, precio, tipo, desc, es_activo in Platillo.objects.values_list('Nombre', 'Precio', 'IdTipoPlatillo__Nombre', 'Descripcion', 'EsActivo'):
-        estado_symbol = '✅ Activo' if es_activo in (1, '1', True) else '⛔ Inactivo'
+        estado_symbol = '✓ Activo' if es_activo in (1, '1', True) else '✗ Inactivo'
         filas.append([
             nombre,
             precio,
@@ -402,7 +628,7 @@ def exportar_pdf_tipo_platillo(request):
     filas = []
 
     for nombre, es_activo in TipoPlatillo.objects.values_list("Nombre", "EsActivo"):
-        estado = "Activo" if es_activo == "1" else "Inactivo"
+        estado = "✓ Activo" if es_activo == "1" else "✗ Inactivo"
         filas.append([nombre, estado])
 
     return generar_pdf_tabla(
@@ -436,8 +662,11 @@ def ExportarPersonal(request):
         
         # Para exportar en excel
         if tipoExportacion == "1":
-            response = exportar_excel_personal()
-            return response
+            return exportar_excel_personal()
+        
+        # Para exportar en pdf
+        if tipoExportacion == "2":
+            return exportar_pdf_personal(request)
         
         return JsonResponse({
             "status": "error",
@@ -478,6 +707,33 @@ def exportar_excel_personal():
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     wb.save(response)
     return response
+
+def exportar_pdf_personal(request):
+    columnas = ['Id', 'Nombres y apellidos', 'Usuario', 'Cargo', 'Telefono', 'Correo', 'Estado']
+    filas = []
+
+    for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'Nombres', 'Apellidos', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'EsActivo'):
+        estadoData = '✓ Activo' if es_activo in (1, '1', True) else '✗ Dado de baja'
+        filas.append([
+            id,
+            nombre + " " + apellido,
+            nombre_user,
+            nombre_cargo,
+            telefono,
+            correo,
+            estadoData
+        ])
+
+    return generar_pdf_tabla(
+        titulo="PERSONAL",
+        columnas=columnas,
+        filas=filas,
+        nombre_archivo="Personal",
+        ancho_columnas=[50, 150, 100, 100, 60, 170, 80],
+        usuario=request.user.username,
+        wrap_columns=[1],
+        horizontal=True
+    )
         
 #endregion Personal
 
@@ -748,11 +1004,12 @@ def poblar_hoja_existente(ws, titulo, columnas, datos):
         ws.column_dimensions[get_column_letter(i)].width = max(len(header) + 5, 15)
 
 def descargar_excel(wb, nombre_archivo):
-    print(nombre_archivo)
     response = HttpResponse(
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-    response["Content-Disposition"] = f'attachment; filename="{nombre_archivo}"'
+    # Limpiamos el nombre por si trae espacios o caracteres raros
+    nombre_limpio = nombre_archivo.replace(" ", "_")
+    response["Content-Disposition"] = f'attachment; filename="{nombre_limpio}"'
     wb.save(response)
     return response
 
