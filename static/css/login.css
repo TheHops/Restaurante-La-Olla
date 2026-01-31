@@ -4,19 +4,25 @@
     overflow: hidden;
 }
 
-.izquierda {
+#izquierda {
     width: 50%;
     height: 100%;
 }
 
-.derecha {
+#derecha {
     width: 50%;
     height: 100%;
     background-color: rgb(255, 255, 255);
     display: flex;
     flex-direction: column;
-    /* align-items: center; */
+    align-items: center;
     justify-content: center;
+
+    transition: opacity .3s ease;
+}
+
+#derecha.hide {
+    opacity: 0;
 }
 
 .cuadro {
@@ -81,8 +87,7 @@
 
 .form {
     text-align: left;
-    margin: 20px;
-    margin: 40px;
+    margin: 0 20px 10px 20px;
 }
 
 .form_in {
@@ -157,6 +162,19 @@
     justify-content: center;
 }
 
+.forgot_pasword {
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.forgot_pasword span {
+    color: rgba(120, 20, 20, 1);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 .btn_login {
     /* margin-left: 5%; */
     width: 25%;
@@ -213,7 +231,7 @@
         transition: all .5s;
     }
 
-    .izquierda {
+    #izquierda {
         display: none;
         transition: all 2s;
     }
@@ -223,7 +241,7 @@
         margin: 0 10%;
     }
 
-    .derecha {
+    #derecha {
         width: 100%;
     }
 
