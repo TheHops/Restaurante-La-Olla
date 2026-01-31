@@ -2,49 +2,56 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/login.css' %}">
-    <title>Document</title>
-</head>
-<body>
-    <div id="contenido">
-        <div class="cuadro">
-            <div class="izquierda">
-                <img src="{% static 'img/FondoCuadroLogin4.png' %}" alt="Fondo" style="width: 100%; height: 100%;">
-            </div>
-            <div class="derecha">
-                <div class="logo">
-                    <img id="imglogo" src="{% static 'img/Logo la olla 2.png' %}" alt="Logo">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'css/login.css' %}">
+        <title>Document</title>
+    </head>
+    <body>
+        <div id="contenido">
+            <div class="cuadro">
+                <div id="izquierda">
+                    <img src="{% static 'img/FondoCuadroLogin4.png' %}" alt="Fondo" style="width: 100%; height: 100%;">
                 </div>
-                
-                <!-- Formulario de log in-->
-                <form action="{% url 'loginUser' %}" class="form" id="login" method="POST">
-                    {% csrf_token %}
-                    <!-- Caja de texto 1 (Nombre de usuario) -->
-                    <div class="form_in">
-                        <input type="text" name="txtUsername" class="campo" id="opc1" autocomplete="off" required>
-                        <label class="lbl">
-                            Usuario o correo
-                        </label>
+                <div id="derecha">
+                    <div class="logo">
+                        <img id="imglogo" src="{% static 'img/Logo la olla 2.png' %}" alt="Logo">
                     </div>
-                
-                    <div class="form_in">
-                        <input type="password" name="txtPassword" class="campo" id="opc2" required autocomplete="new-password">
-                        <label class="lbl">
-                            Contraseña
-                        </label>
-                    </div>
-                
-                    <div class="form_button">
-                        <input type="submit" name="" class="btn_login" value="Iniciar sesión"
-                            style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 17px; width: 120px">
-                    </div>
-                </form>
+                    
+                    <!-- Formulario de log in-->
+                    <form action="{% url 'loginUser' %}" class="form" id="login" method="POST">
+                        {% csrf_token %}
+                        <!-- Caja de texto 1 (Nombre de usuario) -->
+                        <div class="form_in">
+                            <input type="text" name="txtUsername" class="campo" id="opc1" autocomplete="off" required>
+                            <label class="lbl">
+                                Usuario o correo
+                            </label>
+                        </div>
+                    
+                        <div class="form_in">
+                            <input type="password" name="txtPassword" class="campo" id="opc2" required autocomplete="new-password">
+                            <label class="lbl">
+                                Contraseña
+                            </label>
+                        </div>
+                    
+                        <div class="form_button">
+                            <input type="submit" name="" class="btn_login" value="Iniciar sesión"
+                                style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 17px; width: 120px">
+                        </div>
+
+                    </form>
+                    
+                    <div class="forgot_pasword">
+                        <span onclick="InicioForgotPassword()">¿Olvidaste tu contraseña?</span>
+                    </div> 
+                </div>
             </div>
         </div>
-    </div>
-</body>
+    </body>
+
+    <script src="{% static 'js/login.js' %}"></script>
 </html>

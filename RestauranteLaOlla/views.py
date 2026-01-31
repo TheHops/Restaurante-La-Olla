@@ -331,6 +331,16 @@ def EnviarCorreo(request):
 
 #endregion Correo
 
+#region ForgotPassword
+
+# Método que sirve para renderizar los elementos necesarios para cambiar contraseña desde login
+def ForgotPassword(request):
+    if request.method == "GET":
+        print("SI ENTRÓ")
+        return render(request, "inicio_forgot_password.html")
+
+
+
 
 
 
