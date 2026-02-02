@@ -76,6 +76,12 @@ async function DarBajaTipoPlatillo(idTipo) {
   const confirmacion = await Swal.fire({
     title: "¿Realmente desea desactivar este tipo de consumo?",
     icon: "question",
+    html: `
+      <div style="margin-top:10px; padding:10px; background:#fff3cd; color:#856404; border-radius:6px;">
+        Si desactiva un tipo de consumo, dejarán de estar disponibles en el menú
+        todos aquellos consumos relacionados.
+      </div>
+    `,
     iconColor: "#ff964e",
     showCancelButton: true,
     cancelButtonText: "Cancelar",

@@ -11,15 +11,39 @@ function InicioForgotPassword() {
   request.open("GET", url);
   request.onreadystatechange = function () {
     if (this.readyState == 4 && this.status === 200) {
-        console.log("INICIO FORGOT AFTER GET");
-        
-        setTimeout(() => {
-            if (contenedor) {
-                contenedor.innerHTML = this.responseText;
-                contenedor.classList.remove("hide");
-        }}, 500);
-    }};
+      console.log("INICIO FORGOT AFTER GET");
 
-    request.send();
+      setTimeout(() => {
+        if (contenedor) {
+          contenedor.innerHTML = this.responseText;
+          contenedor.classList.remove("hide");
+        }
+      }, 500);
+    }
+  };
+
+  request.send();
 }
- 
+
+///////////////////////////////////////////////////////////////////
+
+
+function validarCorreoForgotPass() {
+    const inputCorreo = document.getElementById("CorreoForgotPass");
+    const btnVerificar = document.getElementById(
+        "btn_verificar_correo_forgot_pass",
+    );
+
+    const correo = inputCorreo.value.trim();
+
+    console.log("Se está validando")
+
+    // Expresión regular básica para correo
+    const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (regexCorreo.test(correo)) {
+        btnVerificar.disabled = false;
+    } else {
+        btnVerificar.disabled = true;
+    }
+}

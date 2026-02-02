@@ -25,6 +25,16 @@
     opacity: 0;
 }
 
+#derecha #ContenidoForgotPass {
+    padding: 0 20px;
+}
+
+#ContenidoForgotPass h2 {
+    color: #781414;
+    text-align: center;
+    font-family: math;
+}
+
 .cuadro {
     background-color: rgb(255, 255, 255);
     width: 60%;
@@ -81,6 +91,11 @@
     transition: all 3s;
 }
 
+.footerForgotPass {
+    display: flex;
+    justify-content: space-between;
+}
+
 /*********************************************************/
 /****************** F O R M U L A R I O ******************/
 /*********************************************************/
@@ -123,7 +138,7 @@
     color: rgb(200, 130, 130);
 }
 
-.form .campo:focus~.lbl, .form .campo:valid~.lbl {
+#derecha .campo:focus~.lbl, #derecha .campo:valid~.lbl {
     transform: translateY(-20px);
     font-size: 15px;
     color: rgb(230, 130, 130);
@@ -162,6 +177,14 @@
     justify-content: center;
 }
 
+.form_button_forgot {
+    margin-top: 20px;
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
 .forgot_pasword {
     margin-top: 10px;
     width: 100%;
@@ -175,7 +198,7 @@
     text-decoration: underline;
 }
 
-.btn_login {
+.btn_login, .btn_next {
     /* margin-left: 5%; */
     width: 25%;
     height: 40px;
@@ -190,10 +213,55 @@
     transition: all .3s ease-in-out;
 }
 
-.btn_login:hover {
+.btn_back {
+    width: 25%;
+    height: 40px;
+    background: rgb(69, 69, 69);
+    /* position: absolute;
+    z-index: 1; */
+    border: none;
+    border-radius: 15px;
+    color: rgb(237, 237, 237);
+    cursor: pointer;
+    /* overflow: hidden; */
+    transition: all .3s ease-in-out;
+}
+
+.btn_back:hover {
+    background: rgb(100, 100, 100);
+}
+
+.btn_login:hover, .btn_next:hover {
     background: rgba(150, 50, 50, 1);
 }
 
+.btn_next:disabled {
+    background: hsl(0, 20%, 40%);
+    cursor: initial;
+}
+
+.info_forgot_pass {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-top: 40px; 
+    background: #fff3cd; 
+    border-radius: 20px;
+}
+
+.info_forgot_pass span {
+    padding: 10px 15px 10px 0; 
+    color: #856404;
+    text-align: center;
+    font-family: math;
+    font-weight: bold;
+    font-size: smaller;
+}
+
+.info_forgot_pass img {
+    margin: 10px 5px 10px 15px;
+}
 
 /*******************************************************************************************/
 /*******************************************************************************************/
