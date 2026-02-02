@@ -2,7 +2,8 @@
 from django.db.models import Case, When, Count
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from Application.models  import Orden, Platillo, Usuario, DetalleOrden, MesasPorOrden
+from django.views.decorators.http import require_POST
+from Application.models  import Orden, Platillo, Usuario, DetalleOrden, MesasPorOrden, OTP
 from django.contrib import messages
 from django.http import JsonResponse
 from datetime import datetime, timedelta
@@ -10,6 +11,8 @@ from django.db.models import Q, Prefetch
 import traceback
 from django.core.mail import send_mail
 from django.utils import timezone
+import secrets
+import string
 
 User = get_user_model()
 
@@ -333,16 +336,118 @@ def EnviarCorreo(request):
 
 #region ForgotPassword
 
+def generar_otp(longitud=6):
+    caracteres = string.digits
+    otp = ''.join(secrets.choice(caracteres) for _ in range(longitud))
+    return otp
+
+def generar_crear_otp(usuario):
+    # Invalidar OTP anteriores no usados
+    OTP.objects.filter(
+        Usuario=usuario,
+        Usado=False
+    ).update(Usado=True)
+    
+    codigo = generar_otp()
+
+    OTP.objects.create(
+        Usuario=usuario,
+        Codigo=codigo,
+        FechaExpiracion=timezone.now() + timedelta(minutes=5)
+    )
+
+    return codigo
+
+def enviar_otp_correo(usuario, otp):
+    try:
+        asunto = "Código OTP para restablecer contraseña"
+        mensaje = f"Hola {usuario.Nombres},\n\nTu código OTP para restablecer tu contraseña es:\n\n{otp}\n\nEste código expirará en 5 minutos. Si no solicitaste este OTP, ignora este mensaje."
+        
+        enviado = send_mail(
+            subject=asunto,
+            message=mensaje,
+            from_email="jasson2852@gmail.com",
+            recipient_list=[usuario.email],
+            fail_silently=False,
+        )
+
+        if enviado <= 0:
+            return {"ok": False, "message": "Error al enviar el OTP"}
+        
+        return {"ok": True, "message": "OTP enviado correctamente al correo"}
+    except Exception as e:
+        return {"ok": False, "message": f"Error al enviar el OTP: {str(e)}"}
+
 # Método que sirve para renderizar los elementos necesarios para cambiar contraseña desde login
 def ForgotPassword(request):
     if request.method == "GET":
-        print("SI ENTRÓ")
         return render(request, "inicio_forgot_password.html")
 
+@require_POST
+def ValidateEmailForgotPass(request):
 
+    correo = request.POST.get("txtCorreoForgotPass")
 
+    if not correo:
+        return JsonResponse({
+            "ok": False,
+            "message": "Debes ingresar un correo electrónico"
+        })
 
+    try:
+        usuario = Usuario.objects.select_related("IdCargo").get(email=correo)
+    except Usuario.DoesNotExist:
+        return JsonResponse({
+            "ok": False,
+            "message": "No existe ningún usuario asociado a este correo"
+        }, 400)
 
+    try:
+        if usuario.EsActivo != "1":
+            return JsonResponse({
+                "ok": False,
+                "message": "El usuario asociado a este correo está inactivo"
+            }, 400)
+
+        if not usuario.IdCargo or usuario.IdCargo.Nombre != "Administrador":
+            return JsonResponse({
+                "ok": False,
+                "message": "Esta función solo está disponible para administradores"
+            }, 400)
+
+        # Caso correcto
+        print("ESTE USUARIO ES ADMIN")
+        
+        otp = generar_crear_otp(usuario)
+        print("OTP generado:", otp)
+        
+        resultado_envio = enviar_otp_correo(usuario, otp)
+
+        if not resultado_envio["ok"]:
+            return JsonResponse({
+                "ok": False,
+                "message": resultado_envio["message"]
+            })
+        
+        contexto = {
+            "Usuario": usuario
+        }
+
+        return render(request, "ingresar_otp_forgot_password.html", contexto)
+    except Exception as ex:
+        print()
+        print("#################### E X C E P C I O N ########################")
+        print("-----------------------'ForgotPass'--------------------------")
+        print(traceback.format_exc(ex))
+        print("########################################################")
+        print()
+        
+        return JsonResponse({
+            "ok": False,
+            "message": "Ocurrió un error al generar el OTP"
+        }, 500)
+
+#endregion ForgotPassword
 
 
 
