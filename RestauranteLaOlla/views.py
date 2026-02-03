@@ -349,14 +349,15 @@ def generar_crear_otp(usuario):
     ).update(Usado=True)
     
     codigo = generar_otp()
+    expiracion = timezone.now() + timedelta(minutes=2)
 
     OTP.objects.create(
         Usuario=usuario,
         Codigo=codigo,
-        FechaExpiracion=timezone.now() + timedelta(minutes=5)
+        FechaExpiracion=expiracion
     )
 
-    return codigo
+    return codigo, expiracion
 
 def enviar_otp_correo(usuario, otp):
     try:
@@ -418,8 +419,10 @@ def ValidateEmailForgotPass(request):
         # Caso correcto
         print("ESTE USUARIO ES ADMIN")
         
-        otp = generar_crear_otp(usuario)
+        otp, expiracion = generar_crear_otp(usuario)
         print("OTP generado:", otp)
+        
+        segundos_restantes = int((expiracion - timezone.now()).total_seconds())
         
         resultado_envio = enviar_otp_correo(usuario, otp)
 
@@ -430,7 +433,8 @@ def ValidateEmailForgotPass(request):
             })
         
         contexto = {
-            "Usuario": usuario
+            "Usuario": usuario,
+            "segundos_restantes": segundos_restantes
         }
 
         return render(request, "ingresar_otp_forgot_password.html", contexto)
@@ -446,6 +450,32 @@ def ValidateEmailForgotPass(request):
             "ok": False,
             "message": "Ocurrió un error al generar el OTP"
         }, 500)
+        
+@require_POST
+def ReenviarOTPForgotPass(request):
+    user_id = request.POST.get("idUsuario")
+
+    try:
+        usuario = Usuario.objects.get(Id=user_id)
+
+        otp, expiracion = generar_crear_otp(usuario)
+        envio = enviar_otp_correo(usuario, otp)
+
+        if not envio["ok"]:
+            return JsonResponse({"ok": False, "message": envio["message"]})
+
+        segundos = int((expiracion - timezone.now()).total_seconds())
+
+        return JsonResponse({
+            "ok": True,
+            "segundos": segundos
+        })
+
+    except Exception:
+        return JsonResponse({
+            "ok": False,
+            "message": "Error al reenviar OTP"
+        }, status=500)
 
 #endregion ForgotPassword
 
