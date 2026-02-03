@@ -51,6 +51,21 @@ class Usuario(AbstractUser):
 
 #endregion Usuario
 
+#region OTP
+
+class OTP(models.Model):
+    Id = models.AutoField(primary_key=True, db_column='id_otp')
+    Usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, db_column='id_usuario', related_name='otps')
+    Codigo = models.CharField(max_length=6, db_column='codigo')
+    FechaCreacion = models.DateTimeField(auto_now_add=True, db_column='fecha_creacion')
+    FechaExpiracion = models.DateTimeField(db_column='fecha_expiracion')
+    Usado = models.BooleanField(default=False, db_column='usado')
+
+    class Meta:
+        db_table = 'otp'
+
+#endregion OTP
+
 #region AreaMesa
 
 class AreaMesa(models.Model):

@@ -4,6 +4,20 @@
     overflow: hidden;
 }
 
+body > .swal2-container {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif !important;
+}
+
+body > .swal2-container > .swal2-popup {
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+}
+
+body ::selection {
+    background-color: rgba(255, 0, 0, .5);
+    color: white;
+}
+
 #izquierda {
     width: 50%;
     height: 100%;
@@ -29,10 +43,16 @@
     padding: 0 20px;
 }
 
-#ContenidoForgotPass h2 {
+#ContenidoForgotPass h2, #ContenidoForgotPass h4 {
     color: #781414;
     text-align: center;
     font-family: math;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none; /* elimina los botones */
+    margin: 0; /* opcional, elimina el espacio extra */
 }
 
 .cuadro {
@@ -111,6 +131,16 @@
     margin-top: 25px;
 }
 
+.form_in.otp {
+    width: 100%;
+    position: relative;
+    margin-top: 25px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .campo {
     width: 100%;
     display: block;
@@ -126,6 +156,22 @@
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
+.campo.otp {
+    width: 50%;                 /* 50% del contenedor */
+    display: block;
+    background: none;
+    border: none;
+    outline: 0;
+    padding-top: 20px;
+    padding-left: 0;
+    color: rgb(230, 130, 130);
+    font-size: 25px;
+    text-align: center;         /* centra los números */
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgb(200, 130, 130);
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
 .lbl {
     position: absolute;
     top: 23px;
@@ -138,8 +184,27 @@
     color: rgb(200, 130, 130);
 }
 
+.lbl.otp {
+    position: absolute;
+    top: 23px;
+    left: 50%;                  /* posición base centrada */
+    transform: translateX(-50%); /* ajustar al centro */
+    font-size: 20px;
+    width: auto;                 /* ancho automático */
+    pointer-events: none;
+    transition: all 0.3s ease;
+    color: rgb(200, 130, 130);
+}
+
 #derecha .campo:focus~.lbl, #derecha .campo:valid~.lbl {
     transform: translateY(-20px);
+    font-size: 15px;
+    color: rgb(230, 130, 130);
+}
+
+#derecha .campo.otp:focus~.lbl,
+#derecha .campo.otp:valid~.lbl {
+    transform: translate(-50%, -20px); /* centro + subir al focus */
     font-size: 15px;
     color: rgb(230, 130, 130);
 }
@@ -227,17 +292,43 @@
     transition: all .3s ease-in-out;
 }
 
+.btn_resend {
+    width: 25%;
+    height: 40px;
+    background: rgb(250, 250, 250);
+    /* position: absolute;
+    z-index: 1; */
+    border: none;
+    border-radius: 15px;
+    color: rgb(80, 80, 80);
+    cursor: pointer;
+    /* overflow: hidden; */
+    transition: all .3s ease-in-out;
+    border: solid 1px #CCCCCC;
+}
+
 .btn_back:hover {
     background: rgb(100, 100, 100);
+}
+
+.btn_resend:hover {
+    background: rgb(220, 220, 220);
 }
 
 .btn_login:hover, .btn_next:hover {
     background: rgba(150, 50, 50, 1);
 }
 
+.btn_resend:disabled {
+    background: rgb(150, 150, 150);
+    color: rgb(100, 100, 100);
+    cursor: initial;
+}
+
 .btn_next:disabled {
     background: hsl(0, 20%, 40%);
     cursor: initial;
+    color: hsl(0, 10%, 70%);
 }
 
 .info_forgot_pass {
@@ -260,7 +351,20 @@
 }
 
 .info_forgot_pass img {
+    max-height: 35px;
     margin: 10px 5px 10px 15px;
+}
+
+#otp-timer {
+    margin-top: 10px;
+    font-size: 16px;
+    color: rgb(200, 130, 130);
+    text-align: center;
+}
+
+#otp-timer span {
+    font-weight: bold;
+    color: rgb(230, 130, 130);
 }
 
 /*******************************************************************************************/
@@ -314,7 +418,11 @@
     }
 
     .logo {
-        padding: 0 0 8% 0;
+        padding: 0;
+    }
+
+    .form_button {
+        margin-top: 30px;
     }
 }
 
@@ -325,7 +433,7 @@
     }
 
     .logo {
-        padding: 0 0 9% 0;
+        padding: 0;
     }
 
     .cuadro {
@@ -340,7 +448,7 @@
     }
 
     .logo {
-        padding: 0 0 10% 0;
+        padding: 0 0 6% 0;
     }
 }
 

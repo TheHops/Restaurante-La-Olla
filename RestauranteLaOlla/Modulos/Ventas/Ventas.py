@@ -73,7 +73,7 @@ def venta(request):
             print()
             print("#################### E X C E P C I O N ########################")
             print("--------------------------'venta'--------------------------")
-            print(traceback.format_exc())
+            print(traceback.format_exc(ex))
             print("########################################################")
             print()
     else:

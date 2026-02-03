@@ -81,7 +81,10 @@ urlpatterns = [
     path("ExportarOrdenes/", Reportes.ExportarOrdenes, name="ExportarOrdenes"),
     path("InicioEditarMesas/", Ventas.InicioEditarMesas, name="InicioEditarMesas"),
     path("DebeCambiarPass/", DebeCambiarPass, name="DebeCambiarPass"),
-    path("ForgotPassword/", ForgotPassword, name="ForgotPassword")
+    path("ForgotPassword/", ForgotPassword, name="ForgotPassword"),
+    path("ValidateEmailForgotPass/", ValidateEmailForgotPass, name="ValidateEmailForgotPass"),
+    path("ReenviarOTPForgotPass/", ReenviarOTPForgotPass, name="ReenviarOTPForgotPass"),
+
 ]
 
 urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
