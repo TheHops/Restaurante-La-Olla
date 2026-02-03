@@ -1,3 +1,4 @@
+// EMPIEZA EL FLUJO DE CAMBIO DE PASS DESDE LOGIN
 function InicioForgotPassword() {
   var contenedor = document.getElementById("derecha");
 
@@ -27,10 +28,12 @@ function InicioForgotPassword() {
 
 ///////////////////////////////////////////////////////////////////
 
+// FUNCION QUE NOS REGRESA AL LOGIN
 function volverALogin() {
   window.location.href = "/";
 }
 
+// SE VALIDA EL CORREO INGRESADO A NIVEL DE FRONT
 function validarCorreoForgotPass() {
   const inputCorreo = document.getElementById("CorreoForgotPass");
   const btnVerificar = document.getElementById(
@@ -51,16 +54,7 @@ function validarCorreoForgotPass() {
   }
 }
 
-function validarOTPForgotPass() {
-  const inputOTP = document.getElementById("OTPForgotPass");
-
-  console.log("VERIFICA OTP");
-
-  if (inputOTP.value.length > 6) {
-    inputOTP.value = inputOTP.value.slice(0, 6); // cortar a 6 dígitos
-  }
-}
-
+// SE VERIFICA SI EL CORREO EXISTE, SI HAY ALGÚN USUARIO CON ESE CORREO Y SI EL USUARIO ES ADMIN
 function verificarCorreo() {
   let correo = document.getElementById("CorreoForgotPass").value.trim();
   var contenedor = document.getElementById("derecha");
@@ -134,6 +128,7 @@ function verificarCorreo() {
   xhr.send(data);
 }
 
+// SE VALIDÓ EL CORREO Y SE ENVIÓ UNA OTP QUE SE GENERÓ Y SE DEBE INGRESAR, SE MUESTRA UN TIMER DE 2 MINUTOS
 function iniciarTimer() {
   let segundos = parseInt(document.getElementById("SegundosRestantes").value);
 
@@ -175,6 +170,7 @@ function iniciarTimer() {
   const intervalo = setInterval(actualizarTimer, 1000);
 }
 
+// REENVIAR OTP
 function reenviarOTP() {
   const idUsuario = document.getElementById("IdUsuarioOTP").value;
   const btnReenviar = document.getElementById("btnReenviarOTP");
@@ -217,4 +213,71 @@ function reenviarOTP() {
   let data = new FormData();
   data.append("idUsuario", idUsuario);
   xhr.send(data);
+}
+
+// VALIDACION DE OTP (FRONT)
+function validarOTPForgotPass() {
+  const inputOTP = document.getElementById("OTPForgotPass");
+  const btnVerificar = document.getElementById("btn_verificar_otp_forgot_pass");
+
+  // Eliminar cualquier cosa que no sea número
+  inputOTP.value = inputOTP.value.replace(/\D/g, "");
+
+  // Limitar a 6 dígitos
+  if (inputOTP.value.length > 6) {
+    inputOTP.value = inputOTP.value.slice(0, 6);
+  }
+
+  // Validar exactamente 6 dígitos
+  if (inputOTP.value.length === 6) {
+    btnVerificar.disabled = false;
+    btnVerificar.classList.add("activo");
+  } else {
+    btnVerificar.disabled = true;
+    btnVerificar.classList.remove("activo");
+  }
+}
+
+// VALIDACION DE OTP (BACKEND)
+function verificarOTPForgotPass() {
+  const otp = document.getElementById("OTPForgotPass").value.trim();
+  const idUsuario = document.getElementById("IdUsuarioOTP").value;
+  const csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+
+  // Validación rápida en frontend
+  if (!/^\d{6}$/.test(otp)) {
+    alert("El OTP debe contener exactamente 6 dígitos");
+    return;
+  }
+
+  let xhr = new XMLHttpRequest();
+  xhr.open("POST", "/ValidarOTPForgotPass/", true);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr.setRequestHeader("X-CSRFToken", csrfToken);
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      // 🔹 Caso OK (HTML renderizado)
+      if (xhr.status === 200) {
+        document.innerHTML = xhr.responseText;
+      }
+
+      // Errores (JSON)
+      else {
+        try {
+          let response = JSON.parse(xhr.responseText);
+          alert(response.message);
+        } catch (e) {
+          alert("Error inesperado al validar el OTP");
+        }
+      }
+    }
+  };
+
+  xhr.send(
+    "otp=" +
+      encodeURIComponent(otp) +
+      "&id_usuario=" +
+      encodeURIComponent(idUsuario),
+  );
 }
