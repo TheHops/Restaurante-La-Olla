@@ -159,10 +159,17 @@ function iniciarTimer() {
       btnVerificar.disabled = true;
 
       Swal.fire({
+        toast: true,
+        position: "top-end",
         icon: "warning",
-        title: "OTP expirado",
-        text: "El código ha expirado. Debes solicitar uno nuevo.",
-        confirmButtonColor: "#ff6464",
+        title: "OTP expirado. Debes solicitar uno nuevo.",
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: false,
+        didOpen: (toast) => {
+          toast.addEventListener("mouseenter", Swal.stopTimer);
+          toast.addEventListener("mouseleave", Swal.resumeTimer);
+        },
       });
     }
 

@@ -15,6 +15,10 @@ import secrets
 import string
 import re
 
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+
 User = get_user_model()
 
 def index(request):
@@ -524,6 +528,60 @@ def ValidarOTPForgotPass(request):
     otp_obj.save()
 
     return render(request, "cambiar_pass_forgot_pass.html")
+
+def CambiarPassForgotPass (request):
+    if request.method != "POST":
+        return JsonResponse({
+            "status": "error",
+            "message": "Método no permitido"
+        })
+    
+    try:
+        new_pass = request.POST.get("NewPass")
+        verify_pass = request.POST.get("VerifyPass")
+
+        user = request.user
+
+        # 🔹 Verificar coincidencia
+        if new_pass != verify_pass:
+            return JsonResponse({
+                "status": "error",
+                "message": "Las contraseñas no coinciden"
+            })
+
+        # 🔹 Validar contraseña con Django
+        try:
+            validate_password(new_pass, user=request.user)
+        except ValidationError as e:
+            return JsonResponse({
+                "status": "error",
+                "message": " ".join(e.messages)
+            })
+
+        # 🔹 Cambiar contraseña
+        user = request.user
+        user.set_password(new_pass)
+        user.DebeCambiarPass = False
+        user.save()
+
+        # 🔹 Mantener sesión activa
+        update_session_auth_hash(request, user)
+
+        return JsonResponse({
+            "status": "ok",
+            "message": "¡La contraseña fue cambiada con éxito!"
+        })
+    except Exception as ex:
+        print()
+        print("#################### E X C E P C I O N ########################")
+        print(ex)
+        print("########################################################")
+        print()
+        
+        return JsonResponse({
+            "status": "error",
+            "message": "Ocurrió un error al intentar cambiar la contraseña"
+        })
 
 #endregion ForgotPassword
 
