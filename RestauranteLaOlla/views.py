@@ -523,10 +523,7 @@ def ValidarOTPForgotPass(request):
     otp_obj.Usado = True
     otp_obj.save()
 
-    return JsonResponse({
-        "ok": True,
-        "message": "OTP válido."
-    })
+    return render(request, "cambiar_pass_forgot_pass.html")
 
 #endregion ForgotPassword
 

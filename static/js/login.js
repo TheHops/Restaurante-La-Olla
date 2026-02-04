@@ -128,6 +128,8 @@ function verificarCorreo() {
   xhr.send(data);
 }
 
+let intervalo = null;
+
 // SE VALIDÓ EL CORREO Y SE ENVIÓ UNA OTP QUE SE GENERÓ Y SE DEBE INGRESAR, SE MUESTRA UN TIMER DE 2 MINUTOS
 function iniciarTimer() {
   let segundos = parseInt(document.getElementById("SegundosRestantes").value);
@@ -153,6 +155,7 @@ function iniciarTimer() {
       btnReenviar.disabled = false;
 
       inputOTP.disabled = true;
+      inputOTP.value = "";
       btnVerificar.disabled = true;
 
       Swal.fire({
@@ -167,13 +170,17 @@ function iniciarTimer() {
   }
 
   actualizarTimer();
-  const intervalo = setInterval(actualizarTimer, 1000);
+  intervalo = setInterval(actualizarTimer, 1000);
 }
+
 
 // REENVIAR OTP
 function reenviarOTP() {
   const idUsuario = document.getElementById("IdUsuarioOTP").value;
   const btnReenviar = document.getElementById("btnReenviarOTP");
+  const inputOTP = document.getElementById("OTPForgotPass");
+
+  inputOTP.disabled = false;
 
   Swal.fire({
     title: "Reenviando código...",
@@ -239,10 +246,21 @@ function validarOTPForgotPass() {
 }
 
 // VALIDACION DE OTP (BACKEND)
-function verificarOTPForgotPass() {
+function verificarOTP() {
   const otp = document.getElementById("OTPForgotPass").value.trim();
   const idUsuario = document.getElementById("IdUsuarioOTP").value;
   const csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+  var contenedor = document.getElementById("derecha");
+
+  contenedor.classList.add("hide");
+
+  Swal.fire({
+    title: "Verificando código...",
+    allowOutsideClick: false,
+    didOpen: () => Swal.showLoading(),
+  });
+
+  console.log("ENTRA A VALIDAR OTP");
 
   // Validación rápida en frontend
   if (!/^\d{6}$/.test(otp)) {
@@ -259,9 +277,25 @@ function verificarOTPForgotPass() {
     if (xhr.readyState === 4) {
       // 🔹 Caso OK (HTML renderizado)
       if (xhr.status === 200) {
-        document.innerHTML = xhr.responseText;
-      }
 
+        setTimeout(() => {
+          Swal.close();
+        }, 800);
+
+        setTimeout(() => {
+          if (contenedor) {
+            contenedor.innerHTML = xhr.responseText;
+            contenedor.classList.remove("hide");
+
+            if (intervalo) {
+              clearInterval(intervalo);
+              intervalo = null;
+            }
+
+            clearInterval(intervalo);
+          }
+        }, 1000);
+      }
       // Errores (JSON)
       else {
         try {
