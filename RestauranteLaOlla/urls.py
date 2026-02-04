@@ -84,6 +84,7 @@ urlpatterns = [
     path("ForgotPassword/", ForgotPassword, name="ForgotPassword"),
     path("ValidateEmailForgotPass/", ValidateEmailForgotPass, name="ValidateEmailForgotPass"),
     path("ReenviarOTPForgotPass/", ReenviarOTPForgotPass, name="ReenviarOTPForgotPass"),
+    path("ValidarOTPForgotPass/", ValidarOTPForgotPass, name="ValidarOTPForgotPass"),
 
 ]
 

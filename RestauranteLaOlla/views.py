@@ -13,6 +13,7 @@ from django.core.mail import send_mail
 from django.utils import timezone
 import secrets
 import string
+import re
 
 User = get_user_model()
 
@@ -476,6 +477,53 @@ def ReenviarOTPForgotPass(request):
             "ok": False,
             "message": "Error al reenviar OTP"
         }, status=500)
+        
+@require_POST
+def ValidarOTPForgotPass(request):
+    otp_ingresado = request.POST.get("otp")
+    id_usuario = request.POST.get("id_usuario")
+
+    # Validar que se envíen los datos
+    if not otp_ingresado or not id_usuario:
+        return JsonResponse({
+            "ok": False,
+            "message": "Datos incompletos."
+        }, status=400)
+
+    # Validar formato del OTP (6 dígitos numéricos)
+    if not re.fullmatch(r"\d{6}", otp_ingresado):
+        return JsonResponse({
+            "ok": False,
+            "message": "El OTP ingresado no es válido."
+        }, status=400)
+
+    try:
+        # Obtener OTP activo del usuario
+        otp_obj = OTP.objects.get(
+            Usuario__Id=id_usuario,
+            Codigo=otp_ingresado,
+            Usado=False
+        )
+    except OTP.DoesNotExist:
+        return JsonResponse({
+            "ok": False,
+            "message": "El OTP es incorrecto o ya fue utilizado."
+        }, status=400)
+
+    # Validar expiración
+    if timezone.now() > otp_obj.FechaExpiracion:
+        return JsonResponse({
+            "ok": False,
+            "message": "El OTP ha expirado."
+        }, status=400)
+
+    # TODO CORRECTO
+    print("OTP CORRECTO")
+    
+    otp_obj.Usado = True
+    otp_obj.save()
+
+    return render(request, "cambiar_pass_forgot_pass.html")
 
 #endregion ForgotPassword
 

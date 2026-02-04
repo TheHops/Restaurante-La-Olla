@@ -1,0 +1,31 @@
+{% load static %}
+
+<form action="">
+    {% csrf_token %}
+</form>
+
+<div id="ContenidoForgotPass">
+    <h2>Ingrese la nueva contraseña</h2>
+    
+    <div class="form_in">
+        <input type="text" name="txtNuevaPassForgotPass" class="campo" id="NuevaPassForgotPass" autocomplete="off" required>
+        <label class="lbl">
+            Nueva contraseña
+        </label>
+    </div>
+
+    <div class="form_in">
+        <input type="text" name="txtVerificarPassForgotPass" class="campo" id="VerificarPassForgotPass" autocomplete="off" required>
+        <label class="lbl">
+            Verificar contraseña
+        </label>
+    </div>
+    
+    <div class="form_button_forgot">
+        <input type="button" name="" class="btn_back" value="Volver"
+            style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 17px; width: 120px" onclick="volverALogin()">
+
+        <input type="button" name="" id="btn_verificar_correo_forgot_pass" class="btn_next" value="Confirmar"
+            style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 17px; width: 120px" disabled>
+    </div>
+</div>
