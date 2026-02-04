@@ -5,23 +5,29 @@
 </form>
 
 <div id="ContenidoForgotPass">
-    <h2>Ingrese la nueva contraseña</h2>
+    <h2 style="font-weight: bolder;text-decoration: underline;text-decoration-thickness: from-font;">Ingrese la nueva contraseña</h2>
     
     <div class="form_in">
-        <input type="text" name="txtNuevaPassForgotPass" class="campo" id="NuevaPassForgotPass" autocomplete="off" required>
+        <input type="password" name="txtNuevaPassForgotPass" class="campo" id="NuevaPassForgotPass" autocomplete="off" required>
         <label class="lbl">
             Nueva contraseña
         </label>
     </div>
 
-    <div class="form_in">
-        <input type="text" name="txtVerificarPassForgotPass" class="campo" id="VerificarPassForgotPass" autocomplete="off" required>
+    <div class="form_in" style="margin-top: 0px; margin-bottom: 20px;">
+        <input type="password" name="txtVerificarPassForgotPass" class="campo" id="VerificarPassForgotPass" autocomplete="off" required>
         <label class="lbl">
             Verificar contraseña
         </label>
     </div>
+
+    <div class="requisitosPass" id="requisitosPassForgot">
+        <small id="fp-length" class="req neutral">• Mínimo 8 caracteres</small><br>
+        <small id="fp-number" class="req neutral">• Al menos un número</small><br>
+        <small id="fp-special" class="req neutral">• Al menos un carácter especial</small>
+    </div>
     
-    <div class="form_button_forgot">
+    <div class="form_button_forgot" style="margin-top: 40px;">
         <input type="button" name="" class="btn_back" value="Volver"
             style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 17px; width: 120px" onclick="volverALogin()">
 

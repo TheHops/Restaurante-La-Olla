@@ -173,7 +173,6 @@ function iniciarTimer() {
   intervalo = setInterval(actualizarTimer, 1000);
 }
 
-
 // REENVIAR OTP
 function reenviarOTP() {
   const idUsuario = document.getElementById("IdUsuarioOTP").value;
@@ -277,7 +276,6 @@ function verificarOTP() {
     if (xhr.readyState === 4) {
       // 🔹 Caso OK (HTML renderizado)
       if (xhr.status === 200) {
-
         setTimeout(() => {
           Swal.close();
         }, 800);
@@ -287,12 +285,12 @@ function verificarOTP() {
             contenedor.innerHTML = xhr.responseText;
             contenedor.classList.remove("hide");
 
+            iniciarValidacionForgotPass();
+
             if (intervalo) {
               clearInterval(intervalo);
               intervalo = null;
             }
-
-            clearInterval(intervalo);
           }
         }, 1000);
       }
@@ -314,4 +312,82 @@ function verificarOTP() {
       "&id_usuario=" +
       encodeURIComponent(idUsuario),
   );
+}
+
+// VALIDACIONES DE CONTRASEÑA INGRESADA
+function iniciarValidacionForgotPass() {
+  const pass1 = document.getElementById("NuevaPassForgotPass");
+  const pass2 = document.getElementById("VerificarPassForgotPass");
+  const btn = document.getElementById("btn_verificar_correo_forgot_pass");
+
+  const reqLength = document.getElementById("fp-length");
+  const reqNumber = document.getElementById("fp-number");
+  const reqSpecial = document.getElementById("fp-special");
+
+  function validar() {
+    const value = pass1.value;
+
+    // Reset si está vacío
+    if (value.length === 0 && pass2.value.length === 0) {
+      limpiar(pass1);
+      limpiar(pass2);
+      resetReqs();
+      btn.disabled = true;
+      return;
+    }
+
+    const okLength = value.length >= 8;
+    const okNumber = /\d/.test(value);
+    const okSpecial = /[!@#$%^&*(),.?":{}|<>_\-+=~`[\]\\\/]/.test(value);
+
+    toggleReq(reqLength, okLength);
+    toggleReq(reqNumber, okNumber);
+    toggleReq(reqSpecial, okSpecial);
+
+    const requisitosOk = okLength && okNumber && okSpecial;
+
+    requisitosOk ? marcarValido(pass1) : marcarInvalido(pass1);
+
+    // Coincidencia
+    if (pass2.value.length > 0) {
+      if (value === pass2.value && requisitosOk) {
+        marcarValido(pass2);
+      } else {
+        marcarInvalido(pass2);
+      }
+    } else {
+      limpiar(pass2);
+    }
+
+    btn.disabled = !(requisitosOk && value === pass2.value);
+  }
+
+  function toggleReq(el, ok) {
+    el.classList.remove("neutral", "valid", "invalid");
+    el.classList.add(ok ? "valid" : "invalid");
+  }
+
+  function marcarValido(input) {
+    input.classList.remove("is-invalid");
+    input.classList.add("is-valid");
+  }
+
+  function marcarInvalido(input) {
+    input.classList.remove("is-valid");
+    input.classList.add("is-invalid");
+  }
+
+  function limpiar(input) {
+    input.classList.remove("is-valid", "is-invalid");
+  }
+
+  function resetReqs() {
+    [reqLength, reqNumber, reqSpecial].forEach((r) => {
+      r.classList.remove("valid", "invalid");
+      r.classList.add("neutral");
+    });
+  }
+
+  pass1.addEventListener("input", validar);
+  pass2.addEventListener("input", validar);
 }
