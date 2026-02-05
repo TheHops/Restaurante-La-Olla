@@ -64,7 +64,7 @@ def loginUser(request):
                 username_real = user_obj.username
             except User.DoesNotExist:
                 messages.error(request, "El correo ingresado no está asociado a ninguna cuenta.")
-                return redirect("loginUser")
+                return render(request, "login.html", {"is_for_incorrect_login":True, "message": "El correo ingresado no está asociado a ninguna cuenta", "icon": "error"})
         else:
             username_real = entrada
 
@@ -72,16 +72,16 @@ def loginUser(request):
 
         if user is None:
             messages.error(request, "Credenciales incorrectas.")
-            return redirect("loginUser")
+            return render(request, "login.html", {"is_for_incorrect_login":True, "message": "Credenciales incorrectas", "icon": "error"})
 
         if user.EsActivo != "1":
             messages.error(request, "Tu cuenta está inactiva.")
-            return redirect("loginUser")
+            return render(request, "login.html", {"is_for_incorrect_login":True, "message": "La cuenta está inactiva", "icon": "error"})
 
         login(request, user)
         return redirect("/")
 
-    return render(request, "login.html")
+    return render(request, "login.html", {"is_for_incorrect_login":False, "message": "", "icon": ""})
 
 def logoutUser(request):
     logout(request)
@@ -567,10 +567,7 @@ def CambiarPassForgotPass (request):
         # 🔹 Mantener sesión activa
         update_session_auth_hash(request, user)
 
-        return JsonResponse({
-            "status": "ok",
-            "message": "¡La contraseña fue cambiada con éxito!"
-        })
+        return render(request, "login.html", {"is_for_change_pass":True, "message": "¡La contraseña fue cambiada con éxito!", "icon": "success"})
     except Exception as ex:
         print()
         print("#################### E X C E P C I O N ########################")
