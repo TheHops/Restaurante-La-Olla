@@ -9,15 +9,15 @@ onsubmit="return validarCambioPass();">
         <h2 style="font-weight: bolder;text-decoration: underline;text-decoration-thickness: from-font;">Ingrese la nueva contraseña</h2>
         
         <div class="form_in">
-            <input type="password" name="txtNuevaPassForgotPass" class="campo" id="NuevaPassForgotPass" autocomplete="off" required>
-            <label class="lbl">
+            <input type="password" name="txtNuevaPassForgotPass" class="campo forgot_pass" id="NuevaPassForgotPass" autocomplete="off" required>
+            <label class="lbl forgot_pass">
                 Nueva contraseña
             </label>
         </div>
 
         <div class="form_in" style="margin-top: 0px; margin-bottom: 20px;">
-            <input type="password" name="txtVerificarPassForgotPass" class="campo" id="VerificarPassForgotPass" autocomplete="off" required>
-            <label class="lbl">
+            <input type="password" name="txtVerificarPassForgotPass" class="campo forgot_pass" id="VerificarPassForgotPass" autocomplete="off" required>
+            <label class="lbl forgot_pass">
                 Verificar contraseña
             </label>
         </div>
@@ -36,4 +36,6 @@ onsubmit="return validarCambioPass();">
                 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 17px; width: 120px" disabled>
         </div>
     </div>
+
+    <input type="hidden" name="userIdValue" value="{{UserId}}">
 </form>

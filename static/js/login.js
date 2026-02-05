@@ -150,8 +150,6 @@ function verificarCorreo() {
           title: "Error",
           text: response.message,
           confirmButtonColor: "#ff6464",
-        }).then(() => {
-          window.location.href = "/";
         });
       }
     }
@@ -458,6 +456,16 @@ function validarCambioPass() {
     });
     return false; // NO envía el form
   }
+
+  Swal.fire({
+    toast: true,
+    position: "top-end",
+    text: "Procesando el cambio de contraseña...",
+    showConfirmButton: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
 
   return true; // deja que Django haga el render
 }

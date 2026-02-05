@@ -156,6 +156,21 @@ input[type=number]::-webkit-inner-spin-button {
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
+.campo.forgot_pass {
+    width: 100%;
+    display: block;
+    background: none;
+    border: none;
+    outline: 0;
+    padding-top: 20px;
+    padding-left: 5px;
+    color: #781414;
+    font-size: 25px;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #781414;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
 .campo.otp {
     width: 50%;                 /* 50% del contenedor */
     display: block;
@@ -184,6 +199,18 @@ input[type=number]::-webkit-inner-spin-button {
     color: rgb(200, 130, 130);
 }
 
+.lbl.forgot_pass {
+    position: absolute;
+    top: 23px;
+    left: 0;
+    font-size: 20px;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    color: #781414;
+}
+
 .lbl.otp {
     position: absolute;
     top: 23px;
@@ -209,9 +236,21 @@ input[type=number]::-webkit-inner-spin-button {
     color: rgb(230, 130, 130);
 }
 
+#derecha .campo.forgot_pass:focus~.lbl,
+#derecha .campo.forgot_pass:valid~.lbl {
+    transform: translateY(-20px); /* centro + subir al focus */
+    font-size: 15px;
+    color: hsl(0, 100%, 30%);
+}
+
 .campo:focus,
 .campo:valid {
     border-bottom: 1px solid rgb(230, 130, 130);
+}
+
+.campo.forgot_pass:focus,
+.campo.forgot_pass:valid {
+    border-bottom: 1px solid hsl(0, 100%, 30%);
 }
 
 .txt {

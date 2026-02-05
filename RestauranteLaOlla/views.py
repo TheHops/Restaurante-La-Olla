@@ -398,7 +398,7 @@ def ValidateEmailForgotPass(request):
         return JsonResponse({
             "ok": False,
             "message": "Debes ingresar un correo electrónico"
-        })
+        }, status=400)
 
     try:
         usuario = Usuario.objects.select_related("IdCargo").get(email=correo)
@@ -406,20 +406,20 @@ def ValidateEmailForgotPass(request):
         return JsonResponse({
             "ok": False,
             "message": "No existe ningún usuario asociado a este correo"
-        }, 400)
+        }, status=400)
 
     try:
         if usuario.EsActivo != "1":
             return JsonResponse({
                 "ok": False,
                 "message": "El usuario asociado a este correo está inactivo"
-            }, 400)
+            }, status=400)
 
         if not usuario.IdCargo or usuario.IdCargo.Nombre != "Administrador":
             return JsonResponse({
                 "ok": False,
                 "message": "Esta función solo está disponible para administradores"
-            }, 400)
+            }, status=400)
 
         # Caso correcto
         print("ESTE USUARIO ES ADMIN")
@@ -435,7 +435,7 @@ def ValidateEmailForgotPass(request):
             return JsonResponse({
                 "ok": False,
                 "message": resultado_envio["message"]
-            })
+            }, status=400)
         
         contexto = {
             "Usuario": usuario,
@@ -454,7 +454,7 @@ def ValidateEmailForgotPass(request):
         return JsonResponse({
             "ok": False,
             "message": "Ocurrió un error al generar el OTP"
-        }, 500)
+        }, status=500)
         
 @require_POST
 def ReenviarOTPForgotPass(request):
@@ -467,7 +467,7 @@ def ReenviarOTPForgotPass(request):
         envio = enviar_otp_correo(usuario, otp)
 
         if not envio["ok"]:
-            return JsonResponse({"ok": False, "message": envio["message"]})
+            return JsonResponse({"ok": False, "message": envio["message"]}, status=400)
 
         segundos = int((expiracion - timezone.now()).total_seconds())
 
@@ -527,27 +527,34 @@ def ValidarOTPForgotPass(request):
     otp_obj.Usado = True
     otp_obj.save()
 
-    return render(request, "cambiar_pass_forgot_pass.html")
+    return render(request, "cambiar_pass_forgot_pass.html", {"UserId": id_usuario})
 
 def CambiarPassForgotPass (request):
     if request.method != "POST":
         return JsonResponse({
             "status": "error",
             "message": "Método no permitido"
-        })
+        }, status=400)
     
     try:
-        new_pass = request.POST.get("NewPass")
-        verify_pass = request.POST.get("VerifyPass")
+        new_pass = request.POST.get("txtNuevaPassForgotPass")
+        verify_pass = request.POST.get("txtVerificarPassForgotPass")
+        id_usuario = request.POST.get("userIdValue")
 
-        user = request.user
+        user = Usuario.objects.get(Id=id_usuario)
+        
+        print(user)
+        
+        print("PASS")
+        print(new_pass)
+        print(verify_pass)
 
         # 🔹 Verificar coincidencia
         if new_pass != verify_pass:
             return JsonResponse({
                 "status": "error",
                 "message": "Las contraseñas no coinciden"
-            })
+            }, status=400)
 
         # 🔹 Validar contraseña con Django
         try:
@@ -556,10 +563,9 @@ def CambiarPassForgotPass (request):
             return JsonResponse({
                 "status": "error",
                 "message": " ".join(e.messages)
-            })
+            }, status=400)
 
         # 🔹 Cambiar contraseña
-        user = request.user
         user.set_password(new_pass)
         user.DebeCambiarPass = False
         user.save()
