@@ -15,6 +15,10 @@ import secrets
 import string
 import re
 
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+
 User = get_user_model()
 
 def index(request):
@@ -60,7 +64,7 @@ def loginUser(request):
                 username_real = user_obj.username
             except User.DoesNotExist:
                 messages.error(request, "El correo ingresado no está asociado a ninguna cuenta.")
-                return redirect("loginUser")
+                return render(request, "login.html", {"is_for_incorrect_login":True, "message": "El correo ingresado no está asociado a ninguna cuenta", "icon": "error"})
         else:
             username_real = entrada
 
@@ -68,16 +72,16 @@ def loginUser(request):
 
         if user is None:
             messages.error(request, "Credenciales incorrectas.")
-            return redirect("loginUser")
+            return render(request, "login.html", {"is_for_incorrect_login":True, "message": "Credenciales incorrectas", "icon": "error"})
 
         if user.EsActivo != "1":
             messages.error(request, "Tu cuenta está inactiva.")
-            return redirect("loginUser")
+            return render(request, "login.html", {"is_for_incorrect_login":True, "message": "La cuenta está inactiva", "icon": "error"})
 
         login(request, user)
         return redirect("/")
 
-    return render(request, "login.html")
+    return render(request, "login.html", {"is_for_incorrect_login":False, "message": "", "icon": ""})
 
 def logoutUser(request):
     logout(request)
@@ -394,7 +398,7 @@ def ValidateEmailForgotPass(request):
         return JsonResponse({
             "ok": False,
             "message": "Debes ingresar un correo electrónico"
-        })
+        }, status=400)
 
     try:
         usuario = Usuario.objects.select_related("IdCargo").get(email=correo)
@@ -402,20 +406,20 @@ def ValidateEmailForgotPass(request):
         return JsonResponse({
             "ok": False,
             "message": "No existe ningún usuario asociado a este correo"
-        }, 400)
+        }, status=400)
 
     try:
         if usuario.EsActivo != "1":
             return JsonResponse({
                 "ok": False,
                 "message": "El usuario asociado a este correo está inactivo"
-            }, 400)
+            }, status=400)
 
         if not usuario.IdCargo or usuario.IdCargo.Nombre != "Administrador":
             return JsonResponse({
                 "ok": False,
                 "message": "Esta función solo está disponible para administradores"
-            }, 400)
+            }, status=400)
 
         # Caso correcto
         print("ESTE USUARIO ES ADMIN")
@@ -431,7 +435,7 @@ def ValidateEmailForgotPass(request):
             return JsonResponse({
                 "ok": False,
                 "message": resultado_envio["message"]
-            })
+            }, status=400)
         
         contexto = {
             "Usuario": usuario,
@@ -450,7 +454,7 @@ def ValidateEmailForgotPass(request):
         return JsonResponse({
             "ok": False,
             "message": "Ocurrió un error al generar el OTP"
-        }, 500)
+        }, status=500)
         
 @require_POST
 def ReenviarOTPForgotPass(request):
@@ -463,7 +467,7 @@ def ReenviarOTPForgotPass(request):
         envio = enviar_otp_correo(usuario, otp)
 
         if not envio["ok"]:
-            return JsonResponse({"ok": False, "message": envio["message"]})
+            return JsonResponse({"ok": False, "message": envio["message"]}, status=400)
 
         segundos = int((expiracion - timezone.now()).total_seconds())
 
@@ -523,7 +527,64 @@ def ValidarOTPForgotPass(request):
     otp_obj.Usado = True
     otp_obj.save()
 
-    return render(request, "cambiar_pass_forgot_pass.html")
+    return render(request, "cambiar_pass_forgot_pass.html", {"UserId": id_usuario})
+
+def CambiarPassForgotPass (request):
+    if request.method != "POST":
+        return JsonResponse({
+            "status": "error",
+            "message": "Método no permitido"
+        }, status=400)
+    
+    try:
+        new_pass = request.POST.get("txtNuevaPassForgotPass")
+        verify_pass = request.POST.get("txtVerificarPassForgotPass")
+        id_usuario = request.POST.get("userIdValue")
+
+        user = Usuario.objects.get(Id=id_usuario)
+        
+        print(user)
+        
+        print("PASS")
+        print(new_pass)
+        print(verify_pass)
+
+        # 🔹 Verificar coincidencia
+        if new_pass != verify_pass:
+            return JsonResponse({
+                "status": "error",
+                "message": "Las contraseñas no coinciden"
+            }, status=400)
+
+        # 🔹 Validar contraseña con Django
+        try:
+            validate_password(new_pass, user=request.user)
+        except ValidationError as e:
+            return JsonResponse({
+                "status": "error",
+                "message": " ".join(e.messages)
+            }, status=400)
+
+        # 🔹 Cambiar contraseña
+        user.set_password(new_pass)
+        user.DebeCambiarPass = False
+        user.save()
+
+        # 🔹 Mantener sesión activa
+        update_session_auth_hash(request, user)
+
+        return render(request, "login.html", {"is_for_change_pass":True, "message": "¡La contraseña fue cambiada con éxito!", "icon": "success"})
+    except Exception as ex:
+        print()
+        print("#################### E X C E P C I O N ########################")
+        print(ex)
+        print("########################################################")
+        print()
+        
+        return JsonResponse({
+            "status": "error",
+            "message": "Ocurrió un error al intentar cambiar la contraseña"
+        })
 
 #endregion ForgotPassword
 

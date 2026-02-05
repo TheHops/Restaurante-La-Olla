@@ -102,7 +102,7 @@ def EditarDatosPerfil (request):
 #endregion EditarPerfil
 
 #region EditarPass
-    
+
 def CambiarPass (request):
     if request.user.is_authenticated:
         if request.method != "POST":

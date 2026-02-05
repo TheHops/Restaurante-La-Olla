@@ -1,3 +1,43 @@
+(function () {
+  // Comprobamos si el tipo de navegación es una recarga ('reload')
+  const navigation = performance.getEntriesByType("navigation")[0];
+
+  if (navigation && navigation.type === "reload") {
+    volverALogin();
+  }
+})();
+
+// FUNCION QUE NOS REGRESA AL LOGIN
+function volverALogin() {
+  window.location.href = "/";
+}
+
+document.addEventListener("DOMContentLoaded", (event) => {
+  PreResultado();
+});
+
+function PreResultado() {
+  var falloLogin = document.getElementById("IsForIncorrectLogin").value;
+  var cambioPass = document.getElementById("IsForChangePass").value;
+  var message = document.getElementById("Message").value;
+  var icon = document.getElementById("Icon").value;
+
+  console.log(falloLogin);
+  console.log(message);
+
+  if ((falloLogin || cambioPass) && message.length > 0) {
+    Swal.fire({
+      icon: icon,
+      text: message,
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: false,
+    });
+  }
+}
+
 // EMPIEZA EL FLUJO DE CAMBIO DE PASS DESDE LOGIN
 function InicioForgotPassword() {
   var contenedor = document.getElementById("derecha");
@@ -27,11 +67,6 @@ function InicioForgotPassword() {
 }
 
 ///////////////////////////////////////////////////////////////////
-
-// FUNCION QUE NOS REGRESA AL LOGIN
-function volverALogin() {
-  window.location.href = "/";
-}
 
 // SE VALIDA EL CORREO INGRESADO A NIVEL DE FRONT
 function validarCorreoForgotPass() {
@@ -115,8 +150,6 @@ function verificarCorreo() {
           title: "Error",
           text: response.message,
           confirmButtonColor: "#ff6464",
-        }).then(() => {
-          window.location.href = "/";
         });
       }
     }
@@ -159,10 +192,17 @@ function iniciarTimer() {
       btnVerificar.disabled = true;
 
       Swal.fire({
+        toast: true,
+        position: "top-end",
         icon: "warning",
-        title: "OTP expirado",
-        text: "El código ha expirado. Debes solicitar uno nuevo.",
-        confirmButtonColor: "#ff6464",
+        title: "OTP expirado. Debes solicitar uno nuevo.",
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: false,
+        didOpen: (toast) => {
+          toast.addEventListener("mouseenter", Swal.stopTimer);
+          toast.addEventListener("mouseleave", Swal.resumeTimer);
+        },
       });
     }
 
@@ -287,6 +327,16 @@ function verificarOTP() {
 
             iniciarValidacionForgotPass();
 
+            Swal.fire({
+              icon: "success",
+              text: "¡OTP verificado correctamente!",
+              toast: true,
+              position: "top-end",
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: false,
+            });
+
             if (intervalo) {
               clearInterval(intervalo);
               intervalo = null;
@@ -390,4 +440,32 @@ function iniciarValidacionForgotPass() {
 
   pass1.addEventListener("input", validar);
   pass2.addEventListener("input", validar);
+}
+
+/////////////////////////////////////////////////////////////
+
+function validarCambioPass() {
+  const pass1 = document.getElementById("NuevaPassForgotPass").value;
+  const pass2 = document.getElementById("VerificarPassForgotPass").value;
+
+  if (pass1 !== pass2) {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Las contraseñas no coinciden",
+    });
+    return false; // NO envía el form
+  }
+
+  Swal.fire({
+    toast: true,
+    position: "top-end",
+    text: "Procesando el cambio de contraseña...",
+    showConfirmButton: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+
+  return true; // deja que Django haga el render
 }
