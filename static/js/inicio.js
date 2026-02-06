@@ -6,38 +6,42 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log(data);
       Chart.defaults.locale = "es";
       var ctx = document.getElementById("myChart").getContext("2d");
-      var gradient = ctx.createLinearGradient(0, 0, 0, 400);
-      gradient.addColorStop(0, "rgba(184,109,62,1)");
-      gradient.addColorStop(1, "rgba(254,218,162, 0.3)");
 
-      console.log(data);
+      // Crear el gradiente para el área debajo de la línea
+      var gradient = ctx.createLinearGradient(0, 0, 0, 400);
+      gradient.addColorStop(0, "rgba(255, 99, 132, 0.5)"); // Color principal (rojo/naranja de tu Figma)
+      gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
 
       var myChart = new Chart(ctx, {
-        type: "bar",
+        type: "line", // CAMBIADO de 'bar' a 'line'
         data: {
           labels: data.dias_semana,
           datasets: [
             {
-              label: "Facturas por día de la semana",
-              data: data.num_facturas,
+              label: "Ingresos Diarios (C$)",
+              data: data.ingresos_v, // Usamos el nuevo array de montos
               fill: true,
               backgroundColor: gradient,
-              borderColor: "#fff",
-              pointBackgroundColor: "“#fff",
+              borderColor: "#FF6384", // El color de la línea
+              borderWidth: 3,
+              tension: 0.4, // Esto hace que la línea sea curva como en Figma
+              pointRadius: 5,
+              pointBackgroundColor: "#FF6384",
             },
           ],
         },
         options: {
           responsive: true,
+          plugins: {
+            legend: { display: false }, // Ocultar leyenda para limpiar el diseño
+          },
           scales: {
             y: {
               beginAtZero: true,
               ticks: {
+                // Formatear como moneda
                 callback: function (value) {
-                  if (Number.isInteger(value)) {
-                    return value;
-                  }
-                  return "";
+                  return "C$" + value.toLocaleString();
                 },
               },
             },

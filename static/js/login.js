@@ -195,7 +195,7 @@ function iniciarTimer() {
         toast: true,
         position: "top-end",
         icon: "warning",
-        title: "OTP expirado. Debes solicitar uno nuevo.",
+        text: "OTP expirado. Debes solicitar uno nuevo.",
         showConfirmButton: false,
         timer: 5000,
         timerProgressBar: false,
@@ -348,9 +348,33 @@ function verificarOTP() {
       else {
         try {
           let response = JSON.parse(xhr.responseText);
-          alert(response.message);
+
+          setTimeout(() => {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: response.message,
+              confirmButtonColor: "#ff6464",
+            });
+          }, 800);
+
+          setTimeout(() => {
+            contenedor.classList.remove("hide");
+          }, 1000);
         } catch (e) {
-          alert("Error inesperado al validar el OTP");
+
+          setTimeout(() => {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Error inesperado al validar el OTP",
+              confirmButtonColor: "#ff6464",
+            });
+          }, 800);
+
+          setTimeout(() => {
+            contenedor.classList.remove("hide");
+          }, 1000);
         }
       }
     }

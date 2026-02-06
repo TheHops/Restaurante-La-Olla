@@ -1,5 +1,5 @@
 # Se importa la funcion para las respuestas del sitio web
-from django.db.models import Case, When, Count
+from django.db.models import Case, When, Count, Sum
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.views.decorators.http import require_POST
@@ -14,6 +14,7 @@ from django.utils import timezone
 import secrets
 import string
 import re
+import json
 
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.password_validation import validate_password
@@ -107,67 +108,49 @@ def GraficarOrdenes(request):
             return redirect("/")
 
     try:
-        hoy_local = timezone.localdate()  # 18/12/2025
-        hace_7_dias_local = hoy_local - timedelta(days=6)
-
-        # Convertir a datetime al inicio y fin del día
-        inicio_rango = timezone.make_aware(
-            datetime.combine(hace_7_dias_local, datetime.min.time()), timezone.get_current_timezone()
-        )
-        fin_rango = timezone.make_aware(
-            datetime.combine(hoy_local, datetime.max.time()), timezone.get_current_timezone()
-        )
-        
-        print() 
-        print("Hace 7 días - Hoy") 
-        print(hace_7_dias_local)
-        print(hoy_local)
-
-        # Órdenes facturadas en los últimos 7 días
-        facturas_7_dias = Orden.objects.filter(
-            Estado="0",
-            UltimaModificacion__range=(inicio_rango, fin_rango)
-        )
-        
-        print() 
-        print("Facturas 7 días") 
-        print(facturas_7_dias)
-
-        # Inicializar diccionario con los últimos 7 días
+        hoy_local = timezone.localdate()
         dias = [(hoy_local - timedelta(days=i)) for i in range(6, -1, -1)]
         
-        print() 
-        print("Días") 
+        print("DIAS")
         print(dias)
         
-        conteo_por_dia = {dia: 0 for dia in dias}
+        # 1. Obtener la suma de ventas por día
+        # Filtramos órdenes pagadas en el rango de los últimos 7 días
+        ventas_7_dias = Orden.objects.filter(
+            Estado="0", # Solo órdenes pagadas
+            EsActivo="1",
+            UltimaModificacion__range=(dias[0], dias[-1])
+        ).values('UltimaModificacion').annotate(total_dia=Sum('TotalPagar'))
+        
+        print("VENTAS 7 DIAS")
+        print(ventas_7_dias)
 
-        for factura in facturas_7_dias:
-            fecha = factura.UltimaModificacion.astimezone(
-                timezone.get_current_timezone()
-            ).date()
-            if fecha in conteo_por_dia:
-                conteo_por_dia[fecha] += 1
-
+        # Creamos un diccionario para mapear fecha -> total
+        mapeo_ventas = {item['UltimaModificacion']: float(item['total_dia']) for item in ventas_7_dias}
+        
+        print(mapeo_ventas)
+        
+        # Rellenamos los datos asegurando que si un día no hay ventas, sea 0
+        ingresos_por_dia = [mapeo_ventas.get(dia, 0) for dia in dias]
         dias_labels = [dias_semana_es[dia.weekday()] for dia in dias]
-        num_facturas = list(conteo_por_dia.values())
 
-        # Top 5 platillos
+        # 2. Top 5 platillos (mantenemos tu lógica pero usamos la suma de cantidades si prefieres)
         platillos_mas_vendidos = (
             Platillo.objects
-            .annotate(num_ventas=Count('detalleorden'))
+            .annotate(num_ventas=Sum('detalleorden__Cantidad')) # Sumar cantidades, no solo registros
             .order_by('-num_ventas')[:5]
         )
 
         data = {
             "dias_semana": dias_labels,
-            "num_facturas": num_facturas,
+            "ingresos_v": ingresos_por_dia, # Ahora son montos de dinero
             "platillos_nombres": [p.Nombre for p in platillos_mas_vendidos],
-            "num_ventas_platillos": [p.num_ventas for p in platillos_mas_vendidos],
+            "num_ventas_platillos": [p.num_ventas or 0 for p in platillos_mas_vendidos],
         }
+        
+        print(json.dumps(data, indent=4, ensure_ascii=False))
 
         return JsonResponse(data)
-
     except Exception as ex:
         print(traceback.format_exc())
         return JsonResponse({"error": str(ex)}, status=500)
