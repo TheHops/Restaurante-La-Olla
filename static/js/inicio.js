@@ -21,11 +21,11 @@ document.addEventListener("DOMContentLoaded", function () {
               data: data.ingresos_v,
               fill: true,
               backgroundColor: gradient,
-              borderColor: "#B86D3E", // Color café de "La Olla"
+              borderColor: "#FF6384", // Color café de "La Olla"
               borderWidth: 3,
               tension: 0.4,
               pointRadius: 4,
-              pointBackgroundColor: "#B86D3E",
+              pointBackgroundColor: "#FF6384",
             },
           ],
         },
@@ -78,6 +78,15 @@ document.addEventListener("DOMContentLoaded", function () {
           },
         },
       });
+
+      document.getElementById("card-hoy-total").innerText =
+        "C$" + data.resumen.hoy_total.toLocaleString();
+      document.getElementById("card-hoy-propinas").innerText =
+        "C$" + data.resumen.hoy_propinas.toLocaleString();
+      document.getElementById("card-mes-total").innerText =
+        "C$" + data.resumen.mes_total.toLocaleString();
+      document.getElementById("card-mes-propinas").innerText =
+        "C$" + data.resumen.mes_propinas.toLocaleString();
     },
   });
 

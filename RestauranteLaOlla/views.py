@@ -141,12 +141,14 @@ def GraficarOrdenes(request):
         dias_labels = [dias_semana_es[dia.weekday()] for dia in dias]
 
         labels_pago, valores_pago = obtener_stats_metodos_pago(30)
+        resumen = obtener_metricas_resumen()
 
         data = {
             "dias_semana": dias_labels,
             "ingresos_v": ingresos_por_dia,
             "metodos_labels": labels_pago,
             "metodos_valores": valores_pago,
+            "resumen": resumen
         }
         
         print(json.dumps(data, indent=4, ensure_ascii=False))
@@ -197,6 +199,40 @@ def obtener_stats_metodos_pago(dias_atras=30):
         valores.append(item['total'])
 
     return labels, valores
+
+def obtener_metricas_resumen():
+    hoy = timezone.localdate()
+    hace_30_dias = hoy - timedelta(days=29)
+    
+    # Límites para los filtros
+    inicio_hoy = timezone.make_aware(datetime.combine(hoy, datetime.min.time()))
+    fin_hoy = timezone.make_aware(datetime.combine(hoy, datetime.max.time()))
+    inicio_30 = timezone.make_aware(datetime.combine(hace_30_dias, datetime.min.time()))
+
+    # 1. Total del día (Ventas + Propinas)
+    stats_hoy = Orden.objects.filter(
+        Estado="0", EsActivo="1",
+        UltimaModificacion__range=(inicio_hoy, fin_hoy)
+    ).aggregate(
+        total_ventas=Sum('TotalPagar'),
+        total_propinas=Sum('Propina')
+    )
+
+    # 2. Total últimos 30 días
+    stats_30 = Orden.objects.filter(
+        Estado="0", EsActivo="1",
+        UltimaModificacion__range=(inicio_30, fin_hoy)
+    ).aggregate(
+        total_periodo=Sum('TotalPagar'),
+        total_propinas_periodo=Sum('Propina')
+    )
+
+    return {
+        "hoy_total": float(stats_hoy['total_ventas'] or 0),
+        "hoy_propinas": float(stats_hoy['total_propinas'] or 0),
+        "mes_total": float(stats_30['total_periodo'] or 0),
+        "mes_propinas": float(stats_30['total_propinas_periodo'] or 0),
+    }
 
 #endregion GraficarOrdenes
 
