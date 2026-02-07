@@ -4,7 +4,7 @@ body ::selection {
 }
 
 body {
-    background-image: url('/static/img/wavebgTest4-1.png');
+    /* background-image: url('/static/img/wavebgTest4-1.png'); */
     background-size: cover; /* o contain */
     background-repeat: no-repeat;
     background-position: center top;

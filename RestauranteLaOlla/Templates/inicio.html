@@ -1,15 +1,26 @@
-{% extends 'index.html' %} {% block content %} {% load static %}
+{% extends 'index.html' %} 
+{% block content %} 
+{% load static %}
+
 <style>
-  #myChart {
-    margin-top: 7vh;
-    width: 100%;
-    height: 60vh;
+  .chart-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-top: 2vh;
+    padding: 20px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Sombra suave como tu diseño */
   }
-  #pieChart {
-    margin-top: 7vh;
-    width: 100%;
-    height: 60vh;
+  
+  canvas {
+    max-height: 60vh;
+    width: 100% !important;
   }
+
   #modal-overlay-ini {
     position: fixed;
     top: 0;
@@ -17,52 +28,66 @@
     width: 100%;
     height: 110vh;
     background-color: rgba(0, 0, 0, 0.5);
-    /* establece el fondo oscuro */
     z-index: 900;
     display: none;
     transform: translateY(-10vh);
   }
 </style>
 
-<!-- <div id="modal-overlay-ini" onclick="desaparecerCapa()"></div> -->
-
-<body>
-  <!-- <div class="funcionesCierre">
-    <button id="BtnCrearCierre" data-toggle="modal" data-target="#RealizarCierre">
-      <span>Realizar cierre</span>
-    </button>
-  </div> -->
-  <div class="container-fluid">
-    <div class="row">
-      <div
-        class="col-sm-8"
-        style="
-          display: flex;
-          flex-direction: column;
-          flex-wrap: wrap;
-          align-content: space-around;
-          justify-content: flex-start;
-        "
-      >
-        <canvas id="myChart"></canvas>
+<div class="container-fluid">
+  <div class="row mb-0 mt-4">
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+        <div class="card-body">
+          <h6 class="text-muted">Total del día</h6>
+          <h3 id="card-hoy-total">C$0</h3>
+        </div>
       </div>
-      <div
-        class="col-sm-4"
-        style="
-          display: flex;
-          flex-direction: column;
-          flex-wrap: wrap;
-          align-content: space-around;
-          justify-content: flex-start;
-        "
-      >
-        <canvas id="pieChart"></canvas>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+        <div class="card-body">
+          <h6 class="text-muted">Propinas hoy</h6>
+          <h3 id="card-hoy-propinas">C$0</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+        <div class="card-body">
+          <h6 class="text-muted">Últimos 30 días</h6>
+          <h4 id="card-mes-total">C$0</h4>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+        <div class="card-body">
+          <h6 class="text-muted">Propinas (30d)</h6>
+          <h4 id="card-mes-propinas">C$0</h4>
+        </div>
       </div>
     </div>
   </div>
-  
-  <script src="{% static 'js/inicio.js' %}"></script>
-</body>
 
+  <div class="row">
+    
+    <div class="col-sm-4">
+      <div class="chart-container" style="height: -webkit-fill-available;">
+        <h5 class="text-muted">Métodos de Pago (30d)</h5>
+        <canvas id="pieChart"></canvas>
+      </div>
+    </div>
 
+    <div class="col-sm-8">
+      <div class="chart-container">
+        <h5 class="text-muted">Ventas de la semana (7d)</h5>
+        <canvas id="myChart"></canvas>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script src="{% static 'js/inicio.js' %}"></script>
 {% endblock %}

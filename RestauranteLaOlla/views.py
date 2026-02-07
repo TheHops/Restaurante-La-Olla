@@ -1,19 +1,21 @@
 # Se importa la funcion para las respuestas del sitio web
-from django.db.models import Case, When, Count
+from django.db.models import Case, When, Count, Sum
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.views.decorators.http import require_POST
 from Application.models  import Orden, Platillo, Usuario, DetalleOrden, MesasPorOrden, OTP
 from django.contrib import messages
 from django.http import JsonResponse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from django.db.models import Q, Prefetch
+from django.db.models.functions import TruncDate
 import traceback
 from django.core.mail import send_mail
 from django.utils import timezone
 import secrets
 import string
 import re
+import json
 
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.password_validation import validate_password
@@ -107,70 +109,130 @@ def GraficarOrdenes(request):
             return redirect("/")
 
     try:
-        hoy_local = timezone.localdate()  # 18/12/2025
-        hace_7_dias_local = hoy_local - timedelta(days=6)
+        hoy_local = timezone.localdate()
+        dias = [(hoy_local - timedelta(days=i)) for i in range(6, -1, -1)]
 
-        # Convertir a datetime al inicio y fin del día
-        inicio_rango = timezone.make_aware(
-            datetime.combine(hace_7_dias_local, datetime.min.time()), timezone.get_current_timezone()
-        )
-        fin_rango = timezone.make_aware(
-            datetime.combine(hoy_local, datetime.max.time()), timezone.get_current_timezone()
-        )
-        
-        print() 
-        print("Hace 7 días - Hoy") 
-        print(hace_7_dias_local)
-        print(hoy_local)
+        # Creamos límites exactos con zona horaria
+        inicio_rango = timezone.make_aware(datetime.combine(dias[0], time.min))
+        fin_rango = timezone.make_aware(datetime.combine(dias[-1], time.max))
 
-        # Órdenes facturadas en los últimos 7 días
-        facturas_7_dias = Orden.objects.filter(
+        # Filtramos con el rango de datetimes "aware"
+        # Quitamos el TruncDate por ahora para ver si la base de datos es la que falla
+        ventas_7_dias = Orden.objects.filter(
             Estado="0",
+            EsActivo="1",
             UltimaModificacion__range=(inicio_rango, fin_rango)
         )
-        
-        print() 
-        print("Facturas 7 días") 
-        print(facturas_7_dias)
 
-        # Inicializar diccionario con los últimos 7 días
-        dias = [(hoy_local - timedelta(days=i)) for i in range(6, -1, -1)]
-        
-        print() 
-        print("Días") 
-        print(dias)
-        
-        conteo_por_dia = {dia: 0 for dia in dias}
+        # Agrupamos manualmente en Python para evitar que el motor de DB nos devuelva None
+        mapeo_ventas = {}
+        for factura in ventas_7_dias:
+            # Convertimos la fecha de la factura a la zona horaria local y sacamos solo el .date()
+            fecha_simplificada = factura.UltimaModificacion.astimezone(timezone.get_current_timezone()).date()
+            
+            # Sumamos al diccionario
+            if fecha_simplificada in mapeo_ventas:
+                mapeo_ventas[fecha_simplificada] += float(factura.TotalPagar)
+            else:
+                mapeo_ventas[fecha_simplificada] = float(factura.TotalPagar)
 
-        for factura in facturas_7_dias:
-            fecha = factura.UltimaModificacion.astimezone(
-                timezone.get_current_timezone()
-            ).date()
-            if fecha in conteo_por_dia:
-                conteo_por_dia[fecha] += 1
-
+        # Ahora mapeamos a la lista final
+        ingresos_por_dia = [mapeo_ventas.get(dia, 0) for dia in dias]
         dias_labels = [dias_semana_es[dia.weekday()] for dia in dias]
-        num_facturas = list(conteo_por_dia.values())
 
-        # Top 5 platillos
-        platillos_mas_vendidos = (
-            Platillo.objects
-            .annotate(num_ventas=Count('detalleorden'))
-            .order_by('-num_ventas')[:5]
-        )
+        labels_pago, valores_pago = obtener_stats_metodos_pago(30)
+        resumen = obtener_metricas_resumen()
 
         data = {
             "dias_semana": dias_labels,
-            "num_facturas": num_facturas,
-            "platillos_nombres": [p.Nombre for p in platillos_mas_vendidos],
-            "num_ventas_platillos": [p.num_ventas for p in platillos_mas_vendidos],
+            "ingresos_v": ingresos_por_dia,
+            "metodos_labels": labels_pago,
+            "metodos_valores": valores_pago,
+            "resumen": resumen
         }
+        
+        print(json.dumps(data, indent=4, ensure_ascii=False))
 
         return JsonResponse(data)
-
     except Exception as ex:
         print(traceback.format_exc())
         return JsonResponse({"error": str(ex)}, status=500)
+    
+def obtener_stats_metodos_pago(dias_atras=30):
+    """
+    Retorna labels y valores de métodos de pago en un rango de días.
+    """
+    hoy_local = timezone.localdate()
+    fecha_inicio = hoy_local - timedelta(days=dias_atras - 1)
+    
+    # Límites con zona horaria
+    inicio_dt = timezone.make_aware(datetime.combine(fecha_inicio, datetime.min.time()))
+    fin_dt = timezone.make_aware(datetime.combine(hoy_local, datetime.max.time()))
+
+    # Consulta agrupada
+    stats = (
+        Orden.objects.filter(
+            Estado="0", 
+            EsActivo="1",
+            UltimaModificacion__range=(inicio_dt, fin_dt)
+        )
+        .values('MetodoPago')
+        .annotate(total=Count('Id'))
+        .order_by('-total')
+    )
+
+    # Diccionario de traducción según tus modelos
+    nombres_map = {
+        "1": "Efectivo",
+        "2": "Tarjeta",
+        "3": "Transferencia",
+        "4": "Efectivo y tarjeta",
+        "5": "N/A"
+    }
+
+    labels = []
+    valores = []
+
+    for item in stats:
+        nombre = nombres_map.get(item['MetodoPago'], "Otro")
+        labels.append(nombre)
+        valores.append(item['total'])
+
+    return labels, valores
+
+def obtener_metricas_resumen():
+    hoy = timezone.localdate()
+    hace_30_dias = hoy - timedelta(days=29)
+    
+    # Límites para los filtros
+    inicio_hoy = timezone.make_aware(datetime.combine(hoy, datetime.min.time()))
+    fin_hoy = timezone.make_aware(datetime.combine(hoy, datetime.max.time()))
+    inicio_30 = timezone.make_aware(datetime.combine(hace_30_dias, datetime.min.time()))
+
+    # 1. Total del día (Ventas + Propinas)
+    stats_hoy = Orden.objects.filter(
+        Estado="0", EsActivo="1",
+        UltimaModificacion__range=(inicio_hoy, fin_hoy)
+    ).aggregate(
+        total_ventas=Sum('TotalPagar'),
+        total_propinas=Sum('Propina')
+    )
+
+    # 2. Total últimos 30 días
+    stats_30 = Orden.objects.filter(
+        Estado="0", EsActivo="1",
+        UltimaModificacion__range=(inicio_30, fin_hoy)
+    ).aggregate(
+        total_periodo=Sum('TotalPagar'),
+        total_propinas_periodo=Sum('Propina')
+    )
+
+    return {
+        "hoy_total": float(stats_hoy['total_ventas'] or 0),
+        "hoy_propinas": float(stats_hoy['total_propinas'] or 0),
+        "mes_total": float(stats_30['total_periodo'] or 0),
+        "mes_propinas": float(stats_30['total_propinas_periodo'] or 0),
+    }
 
 #endregion GraficarOrdenes
 

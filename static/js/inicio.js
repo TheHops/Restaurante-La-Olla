@@ -3,78 +3,90 @@ document.addEventListener("DOMContentLoaded", function () {
     url: "/GraficaOrdenes/",
     dataType: "json",
     success: function (data) {
-      console.log(data);
       Chart.defaults.locale = "es";
+
+      // --- 1. CONFIGURACIÓN GRÁFICO DE LÍNEAS (VENTAS) ---
       var ctx = document.getElementById("myChart").getContext("2d");
       var gradient = ctx.createLinearGradient(0, 0, 0, 400);
-      gradient.addColorStop(0, "rgba(184,109,62,1)");
-      gradient.addColorStop(1, "rgba(254,218,162, 0.3)");
+      gradient.addColorStop(0, "rgba(255, 99, 132, 0.4)");
+      gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
 
-      console.log(data);
-
-      var myChart = new Chart(ctx, {
-        type: "bar",
+      new Chart(ctx, {
+        type: "line",
         data: {
           labels: data.dias_semana,
           datasets: [
             {
-              label: "Facturas por día de la semana",
-              data: data.num_facturas,
+              label: "Ingresos (C$)",
+              data: data.ingresos_v,
               fill: true,
               backgroundColor: gradient,
-              borderColor: "#fff",
-              pointBackgroundColor: "“#fff",
+              borderColor: "#FF6384", // Color café de "La Olla"
+              borderWidth: 3,
+              tension: 0.4,
+              pointRadius: 4,
+              pointBackgroundColor: "#FF6384",
             },
           ],
         },
         options: {
           responsive: true,
+          plugins: { legend: { display: false } },
           scales: {
             y: {
               beginAtZero: true,
               ticks: {
-                callback: function (value) {
-                  if (Number.isInteger(value)) {
-                    return value;
-                  }
-                  return "";
-                },
+                callback: (value) => "C$" + value.toLocaleString(),
               },
             },
           },
         },
       });
 
-      // Gráfico de pastel para los 5 platillos más vendidos
+      // --- 2. CONFIGURACIÓN GRÁFICO DE DONA (MÉTODOS DE PAGO) ---
       var pieCtx = document.getElementById("pieChart").getContext("2d");
-      var pieChart = new Chart(pieCtx, {
-        type: "pie",
+      new Chart(pieCtx, {
+        type: "doughnut", // Cambiado a dona para coincidir con Figma
         data: {
-          labels: data.platillos_nombres,
+          labels: data.metodos_labels, // Ahora usa los métodos de pago
           datasets: [
             {
-              data: data.num_ventas_platillos,
+              data: data.metodos_valores,
               backgroundColor: [
-                "#FF6384",
-                "#36A2EB",
-                "#FFCE56",
-                "#4BC0C0",
-                "#9966FF",
+                "#FF6384", // Rosa/Rojo principal
+                "#FEDA62", // Amarillo/Naranja de tu Figma
+                "#B86D3E", // Café
+                "#4BC0C0", // Cyan
+                "#66ff70", // verde
               ],
-              hoverBackgroundColor: [
-                "#FF6384",
-                "#36A2EB",
-                "#FFCE56",
-                "#4BC0C0",
-                "#9966FF",
-              ],
+              borderWidth: 2,
+              hoverOffset: 10,
             },
           ],
         },
         options: {
           responsive: true,
+          cutout: "70%", // Esto hace que el "hoyo" sea más grande, muy estilo moderno
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: {
+                usePointStyle: true,
+                padding: 20,
+              },
+            },
+          },
         },
       });
+
+      document.getElementById("card-hoy-total").innerText =
+        "C$" + data.resumen.hoy_total.toLocaleString();
+      document.getElementById("card-hoy-propinas").innerText =
+        "C$" + data.resumen.hoy_propinas.toLocaleString();
+      document.getElementById("card-mes-total").innerText =
+        "C$" + data.resumen.mes_total.toLocaleString();
+      document.getElementById("card-mes-propinas").innerText =
+        "C$" + data.resumen.mes_propinas.toLocaleString();
     },
   });
 
@@ -92,7 +104,8 @@ function ConsultaDebeCambiarPass() {
       if (response.status === "ok" && response.DebeCambiarPass) {
         Swal.fire({
           icon: "warning",
-          title: "¡Protege tu cuenta! Cambia tu contraseña temporal por una propia",
+          title:
+            "¡Protege tu cuenta! Cambia tu contraseña temporal por una propia",
           toast: true,
           position: "top-end",
           showConfirmButton: false,
