@@ -3,80 +3,79 @@ document.addEventListener("DOMContentLoaded", function () {
     url: "/GraficaOrdenes/",
     dataType: "json",
     success: function (data) {
-      console.log(data);
       Chart.defaults.locale = "es";
-      var ctx = document.getElementById("myChart").getContext("2d");
 
-      // Crear el gradiente para el área debajo de la línea
+      // --- 1. CONFIGURACIÓN GRÁFICO DE LÍNEAS (VENTAS) ---
+      var ctx = document.getElementById("myChart").getContext("2d");
       var gradient = ctx.createLinearGradient(0, 0, 0, 400);
-      gradient.addColorStop(0, "rgba(255, 99, 132, 0.5)"); // Color principal (rojo/naranja de tu Figma)
+      gradient.addColorStop(0, "rgba(255, 99, 132, 0.4)");
       gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
 
-      var myChart = new Chart(ctx, {
-        type: "line", // CAMBIADO de 'bar' a 'line'
+      new Chart(ctx, {
+        type: "line",
         data: {
           labels: data.dias_semana,
           datasets: [
             {
-              label: "Ingresos Diarios (C$)",
-              data: data.ingresos_v, // Usamos el nuevo array de montos
+              label: "Ingresos (C$)",
+              data: data.ingresos_v,
               fill: true,
               backgroundColor: gradient,
-              borderColor: "#FF6384", // El color de la línea
+              borderColor: "#B86D3E", // Color café de "La Olla"
               borderWidth: 3,
-              tension: 0.4, // Esto hace que la línea sea curva como en Figma
-              pointRadius: 5,
-              pointBackgroundColor: "#FF6384",
+              tension: 0.4,
+              pointRadius: 4,
+              pointBackgroundColor: "#B86D3E",
             },
           ],
         },
         options: {
           responsive: true,
-          plugins: {
-            legend: { display: false }, // Ocultar leyenda para limpiar el diseño
-          },
+          plugins: { legend: { display: false } },
           scales: {
             y: {
               beginAtZero: true,
               ticks: {
-                // Formatear como moneda
-                callback: function (value) {
-                  return "C$" + value.toLocaleString();
-                },
+                callback: (value) => "C$" + value.toLocaleString(),
               },
             },
           },
         },
       });
 
-      // Gráfico de pastel para los 5 platillos más vendidos
+      // --- 2. CONFIGURACIÓN GRÁFICO DE DONA (MÉTODOS DE PAGO) ---
       var pieCtx = document.getElementById("pieChart").getContext("2d");
-      var pieChart = new Chart(pieCtx, {
-        type: "pie",
+      new Chart(pieCtx, {
+        type: "doughnut", // Cambiado a dona para coincidir con Figma
         data: {
-          labels: data.platillos_nombres,
+          labels: data.metodos_labels, // Ahora usa los métodos de pago
           datasets: [
             {
-              data: data.num_ventas_platillos,
+              data: data.metodos_valores,
               backgroundColor: [
-                "#FF6384",
-                "#36A2EB",
-                "#FFCE56",
-                "#4BC0C0",
-                "#9966FF",
+                "#FF6384", // Rosa/Rojo principal
+                "#FEDA62", // Amarillo/Naranja de tu Figma
+                "#B86D3E", // Café
+                "#4BC0C0", // Cyan
+                "#66ff70", // verde
               ],
-              hoverBackgroundColor: [
-                "#FF6384",
-                "#36A2EB",
-                "#FFCE56",
-                "#4BC0C0",
-                "#9966FF",
-              ],
+              borderWidth: 2,
+              hoverOffset: 10,
             },
           ],
         },
         options: {
           responsive: true,
+          cutout: "70%", // Esto hace que el "hoyo" sea más grande, muy estilo moderno
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: {
+                usePointStyle: true,
+                padding: 20,
+              },
+            },
+          },
         },
       });
     },
@@ -96,7 +95,8 @@ function ConsultaDebeCambiarPass() {
       if (response.status === "ok" && response.DebeCambiarPass) {
         Swal.fire({
           icon: "warning",
-          title: "¡Protege tu cuenta! Cambia tu contraseña temporal por una propia",
+          title:
+            "¡Protege tu cuenta! Cambia tu contraseña temporal por una propia",
           toast: true,
           position: "top-end",
           showConfirmButton: false,

@@ -6,8 +6,9 @@ from django.views.decorators.http import require_POST
 from Application.models  import Orden, Platillo, Usuario, DetalleOrden, MesasPorOrden, OTP
 from django.contrib import messages
 from django.http import JsonResponse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from django.db.models import Q, Prefetch
+from django.db.models.functions import TruncDate
 import traceback
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -110,42 +111,42 @@ def GraficarOrdenes(request):
     try:
         hoy_local = timezone.localdate()
         dias = [(hoy_local - timedelta(days=i)) for i in range(6, -1, -1)]
-        
-        print("DIAS")
-        print(dias)
-        
-        # 1. Obtener la suma de ventas por día
-        # Filtramos órdenes pagadas en el rango de los últimos 7 días
-        ventas_7_dias = Orden.objects.filter(
-            Estado="0", # Solo órdenes pagadas
-            EsActivo="1",
-            UltimaModificacion__range=(dias[0], dias[-1])
-        ).values('UltimaModificacion').annotate(total_dia=Sum('TotalPagar'))
-        
-        print("VENTAS 7 DIAS")
-        print(ventas_7_dias)
 
-        # Creamos un diccionario para mapear fecha -> total
-        mapeo_ventas = {item['UltimaModificacion']: float(item['total_dia']) for item in ventas_7_dias}
-        
-        print(mapeo_ventas)
-        
-        # Rellenamos los datos asegurando que si un día no hay ventas, sea 0
+        # Creamos límites exactos con zona horaria
+        inicio_rango = timezone.make_aware(datetime.combine(dias[0], time.min))
+        fin_rango = timezone.make_aware(datetime.combine(dias[-1], time.max))
+
+        # Filtramos con el rango de datetimes "aware"
+        # Quitamos el TruncDate por ahora para ver si la base de datos es la que falla
+        ventas_7_dias = Orden.objects.filter(
+            Estado="0",
+            EsActivo="1",
+            UltimaModificacion__range=(inicio_rango, fin_rango)
+        )
+
+        # Agrupamos manualmente en Python para evitar que el motor de DB nos devuelva None
+        mapeo_ventas = {}
+        for factura in ventas_7_dias:
+            # Convertimos la fecha de la factura a la zona horaria local y sacamos solo el .date()
+            fecha_simplificada = factura.UltimaModificacion.astimezone(timezone.get_current_timezone()).date()
+            
+            # Sumamos al diccionario
+            if fecha_simplificada in mapeo_ventas:
+                mapeo_ventas[fecha_simplificada] += float(factura.TotalPagar)
+            else:
+                mapeo_ventas[fecha_simplificada] = float(factura.TotalPagar)
+
+        # Ahora mapeamos a la lista final
         ingresos_por_dia = [mapeo_ventas.get(dia, 0) for dia in dias]
         dias_labels = [dias_semana_es[dia.weekday()] for dia in dias]
 
-        # 2. Top 5 platillos (mantenemos tu lógica pero usamos la suma de cantidades si prefieres)
-        platillos_mas_vendidos = (
-            Platillo.objects
-            .annotate(num_ventas=Sum('detalleorden__Cantidad')) # Sumar cantidades, no solo registros
-            .order_by('-num_ventas')[:5]
-        )
+        labels_pago, valores_pago = obtener_stats_metodos_pago(30)
 
         data = {
             "dias_semana": dias_labels,
-            "ingresos_v": ingresos_por_dia, # Ahora son montos de dinero
-            "platillos_nombres": [p.Nombre for p in platillos_mas_vendidos],
-            "num_ventas_platillos": [p.num_ventas or 0 for p in platillos_mas_vendidos],
+            "ingresos_v": ingresos_por_dia,
+            "metodos_labels": labels_pago,
+            "metodos_valores": valores_pago,
         }
         
         print(json.dumps(data, indent=4, ensure_ascii=False))
@@ -154,6 +155,48 @@ def GraficarOrdenes(request):
     except Exception as ex:
         print(traceback.format_exc())
         return JsonResponse({"error": str(ex)}, status=500)
+    
+def obtener_stats_metodos_pago(dias_atras=30):
+    """
+    Retorna labels y valores de métodos de pago en un rango de días.
+    """
+    hoy_local = timezone.localdate()
+    fecha_inicio = hoy_local - timedelta(days=dias_atras - 1)
+    
+    # Límites con zona horaria
+    inicio_dt = timezone.make_aware(datetime.combine(fecha_inicio, datetime.min.time()))
+    fin_dt = timezone.make_aware(datetime.combine(hoy_local, datetime.max.time()))
+
+    # Consulta agrupada
+    stats = (
+        Orden.objects.filter(
+            Estado="0", 
+            EsActivo="1",
+            UltimaModificacion__range=(inicio_dt, fin_dt)
+        )
+        .values('MetodoPago')
+        .annotate(total=Count('Id'))
+        .order_by('-total')
+    )
+
+    # Diccionario de traducción según tus modelos
+    nombres_map = {
+        "1": "Efectivo",
+        "2": "Tarjeta",
+        "3": "Transferencia",
+        "4": "Efectivo y tarjeta",
+        "5": "N/A"
+    }
+
+    labels = []
+    valores = []
+
+    for item in stats:
+        nombre = nombres_map.get(item['MetodoPago'], "Otro")
+        labels.append(nombre)
+        valores.append(item['total'])
+
+    return labels, valores
 
 #endregion GraficarOrdenes
 
