@@ -32,7 +32,7 @@ def index(request):
             return redirect("venta/")
         
         # Si el usuario ya inició sesión entonces entrará directamente al sistema sin necesidad de volver a iniciar sesión
-        return render(request, "inicio.html")
+        return render(request, "inicio.html", {"Cargo": request.user.IdCargo.Nombre})
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
@@ -214,7 +214,7 @@ def obtener_metricas_resumen():
         Estado="0", EsActivo="1",
         UltimaModificacion__range=(inicio_hoy, fin_hoy)
     ).aggregate(
-        total_ventas=Sum('TotalPagar'),
+        total_ventas=Sum('Total') + Sum('Descuento'),
         total_propinas=Sum('Propina')
     )
 
@@ -223,8 +223,10 @@ def obtener_metricas_resumen():
         Estado="0", EsActivo="1",
         UltimaModificacion__range=(inicio_30, fin_hoy)
     ).aggregate(
-        total_periodo=Sum('TotalPagar'),
-        total_propinas_periodo=Sum('Propina')
+        total_periodo=Sum('Total') + Sum('Descuento'),
+        total_propinas_periodo=Sum('Propina'),
+        total_gran_total=Sum('TotalPagar'),
+        total_cantidad_ordenes=Count('Id')
     )
 
     return {
@@ -232,6 +234,8 @@ def obtener_metricas_resumen():
         "hoy_propinas": float(stats_hoy['total_propinas'] or 0),
         "mes_total": float(stats_30['total_periodo'] or 0),
         "mes_propinas": float(stats_30['total_propinas_periodo'] or 0),
+        "mes_gran_total": float(stats_30['total_gran_total'] or 0),
+        "mes_cantidad_ordenes": float(stats_30['total_cantidad_ordenes'] or 0),
     }
 
 #endregion GraficarOrdenes

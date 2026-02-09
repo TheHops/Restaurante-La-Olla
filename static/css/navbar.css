@@ -21,9 +21,9 @@ body.modal-open {
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
-html {
+/* html {
     overflow: hidden;
-}
+} */
 
 #navSistema {
     background: #DF362D;
@@ -263,6 +263,21 @@ html::-webkit-scrollbar-thumb {
 
 html {
     overflow-x: hidden;
+
+    background: white;
+
+    background-attachment: fixed;
+}
+
+html::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50vh;
+    background: #DF362D;
+    z-index: -1;
 }
 
 /***************************************************************************************************/
@@ -270,8 +285,9 @@ html {
 /***************************************************************************************************/
 
 .contenido {
-    height: 100vh;
+    height: auto;
     width: 100%;
+    background-color: white;
     position: absolute;
     top: 8vh;
 }

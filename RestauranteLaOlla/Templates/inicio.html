@@ -32,62 +32,88 @@
     display: none;
     transform: translateY(-10vh);
   }
+
+  .container-fluid::-webkit-scrollbar {
+    width: 0;
+  }
 </style>
 
-<div class="container-fluid">
-  <div class="row mb-0 mt-4">
-    <div class="col-md-3">
-      <div class="card border-0 shadow-sm" style="border-radius: 15px;">
-        <div class="card-body">
-          <h6 class="text-muted">Total del día</h6>
-          <h3 id="card-hoy-total">C$0</h3>
+{% if Cargo == "Administrador" %}
+  <div class="container-fluid">
+    <div class="row mb-0 mt-3">
+      <div class="col-6 col-md-2 col-sm-4 mb-2">
+        <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+          <div class="card-body" title="Es el total de las órdenes del día con el descuento ya incluido">
+            <h6 class="text-muted">Total hoy</h6>
+            <h3 id="card-hoy-total">C$0</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-2 col-sm-4 mb-2">
+        <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+          <div class="card-body" title="Es el subtotal de las propinas del día independiente a los subtotales y descuentos">
+            <h6 class="text-muted">Propinas hoy</h6>
+            <h3 id="card-hoy-propinas">C$0</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-2 col-sm-4 mb-2">
+        <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+          <div class="card-body" title="Es el subtotal de las órdenes de los últimos 30 días con el descuento ya incluido">
+            <h6 class="text-muted">Total (30d)</h6>
+            <h4 id="card-mes-total">C$0</h4>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-2 col-sm-4 mb-2">
+        <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+          <div class="card-body" title="Es el total de las propinas de los últimos 30 días independiente a los subtotales y descuentos">
+            <h6 class="text-muted">Propinas (30d)</h6>
+            <h4 id="card-mes-propinas">C$0</h4>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-2 col-sm-4 mb-2">
+        <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+          <div class="card-body" title="Es el total + propina de los últimos 30 días">
+            <h6 class="text-muted">Gran total (30d)</h6>
+            <h4 id="card-mes-gran-total">C$0</h4>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-2 col-sm-4 mb-2">
+        <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+          <div class="card-body" title="Es la cantidad de órdenes registradas en los últimos 30 días">
+            <h6 class="text-muted">Órdenes (30d)</h6>
+            <h4 id="card-mes-cantidad-ordenes">0</h4>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card border-0 shadow-sm" style="border-radius: 15px;">
-        <div class="card-body">
-          <h6 class="text-muted">Propinas hoy</h6>
-          <h3 id="card-hoy-propinas">C$0</h3>
+
+    <div class="row mt-0 pt-0 pb-2">
+      <div class="col-sm-4">
+        <div class="chart-container" style="height: -webkit-fill-available;">
+          <h5 class="text-muted">Métodos de Pago (30d)</h5>
+          <canvas id="pieChart"></canvas>
         </div>
       </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card border-0 shadow-sm" style="border-radius: 15px;">
-        <div class="card-body">
-          <h6 class="text-muted">Últimos 30 días</h6>
-          <h4 id="card-mes-total">C$0</h4>
+
+      <div class="col-sm-8">
+        <div class="chart-container">
+          <h5 class="text-muted">Ventas de la semana (7d)</h5>
+          <canvas id="myChart"></canvas>
         </div>
       </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card border-0 shadow-sm" style="border-radius: 15px;">
-        <div class="card-body">
-          <h6 class="text-muted">Propinas (30d)</h6>
-          <h4 id="card-mes-propinas">C$0</h4>
-        </div>
-      </div>
+      
     </div>
   </div>
-
-  <div class="row">
-    
-    <div class="col-sm-4">
-      <div class="chart-container" style="height: -webkit-fill-available;">
-        <h5 class="text-muted">Métodos de Pago (30d)</h5>
-        <canvas id="pieChart"></canvas>
-      </div>
-    </div>
-
-    <div class="col-sm-8">
-      <div class="chart-container">
-        <h5 class="text-muted">Ventas de la semana (7d)</h5>
-        <canvas id="myChart"></canvas>
-      </div>
-    </div>
-    
-  </div>
-</div>
-
+{% endif %}
+ 
 <script src="{% static 'js/inicio.js' %}"></script>
 {% endblock %}

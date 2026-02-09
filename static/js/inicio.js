@@ -87,6 +87,11 @@ document.addEventListener("DOMContentLoaded", function () {
         "C$" + data.resumen.mes_total.toLocaleString();
       document.getElementById("card-mes-propinas").innerText =
         "C$" + data.resumen.mes_propinas.toLocaleString();
+      document.getElementById("card-mes-gran-total").innerText =
+        "C$" + data.resumen.mes_gran_total.toLocaleString();
+
+      document.getElementById("card-mes-cantidad-ordenes").innerText =
+        data.resumen.mes_cantidad_ordenes.toLocaleString();
     },
   });
 
