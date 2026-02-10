@@ -37,6 +37,7 @@ def venta(request):
                         queryset=Platillo.objects.filter(EsActivo="1").order_by('Nombre')
                     )
                 )
+                .order_by('Nombre')
             )
 
             AreaMesaSeleccionada = AreaMesa.objects.filter(Id = 1).first()
