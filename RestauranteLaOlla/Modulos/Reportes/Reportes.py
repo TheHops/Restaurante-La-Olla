@@ -22,7 +22,7 @@ from openpyxl.utils import get_column_letter
 from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden, AreaMesa, Usuario, MesasPorOrden
 from RestauranteLaOlla import settings
 
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, HRFlowable
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib import colors
@@ -39,7 +39,7 @@ def Reportes (request):
     
     areas = AreaMesa.objects.filter(EsActivo = "1")
     
-    return render(request, "reportes.html", {"Areas": areas})
+    return render(request, "reportes.html", {"Areas": areas, "Cargo": request.user.IdCargo.Nombre})
 
 #endregion Inicio
 
@@ -159,10 +159,21 @@ def ExportarOrdenes(request):
     print(data)
     print(tipo_exportacion)
     
+    if request.user.IdCargo.Nombre == "Cajero":
+        fecha_hoy_local = timezone.localtime(timezone.now()).date()
+        
+        # Convertimos a string para mantener consistencia con el formato que recibes del JSON
+        hoy_str = fecha_hoy_local.isoformat()
+        
+        fecha_inicio_str = hoy_str
+        fecha_fin_str = hoy_str
+    
     try:
         ordenes = filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids, estado)
     except ValidationError as e:
         return JsonResponse({"status": "error", "message": str(e)})
+    
+    print(ordenes)
     
     if tipo_exportacion == "1":
         wb = exportar_excel_ordenes(ordenes, incluir_detalles)
@@ -214,7 +225,7 @@ def exportar_excel_ordenes(ordenes, incluir_detalles=False):
         normal_row.border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
         wb.add_named_style(normal_row)
 
-    columnas = ["N° Orden", "Estado", "Fecha", "Área/Mesas", "Subtotal", "Propina", "Desc.", "Total Pagar", "Método Pago", "Monto", "Cambio", "2do Monto"]
+    columnas = ["N° Orden", "Estado", "Fecha", "Área/Mesas", "Subtotal", "Propina", "Desc.", "Total Pagar", "Método Pago", "Monto", "Cambio", "2do Monto (Pago mixto)", "Creador/Cargo"]
     
     # Título Principal
     ultima_col_letra = get_column_letter(len(columnas))
@@ -235,6 +246,7 @@ def exportar_excel_ordenes(ordenes, incluir_detalles=False):
     for orden in ordenes:
         mesas = " - ".join(f"#{m.IdMesa.Numero}" for m in orden.Mesas.all())
         area_info = f"{orden.IdAreaDeMesa.Nombre if orden.IdAreaDeMesa else 'N/A'} ({mesas})"
+        creador = f"{orden.IdUsuario.Nombres} ({orden.IdUsuario.IdCargo.Nombre})"
         
         # Datos de la fila
         datos_orden = [
@@ -242,7 +254,7 @@ def exportar_excel_ordenes(ordenes, incluir_detalles=False):
             timezone.localtime(orden.Fecha).replace(tzinfo=None),
             area_info, orden.Total, orden.Propina, orden.Descuento, 
             orden.TotalPagar, orden.get_MetodoPago_display(), 
-            orden.Monto, orden.Cambio, orden.SegundoMonto
+            orden.Monto, orden.Cambio, orden.SegundoMonto, creador
         ]
 
         # Llenado de la fila
@@ -346,55 +358,70 @@ def exportar_pdf_ordenes(ordenes, request, incluir_detalles=False, fecha_inicio=
     elementos = []
     styles = getSampleStyleSheet()
     
-    # Estilos de texto
     header_label_style = ParagraphStyle(name="LabelStyle", fontSize=10, fontName="Helvetica-Bold", textColor=colors.HexColor("#8e0000"))
     cell_style = ParagraphStyle(name="CellStyle", fontSize=9, leading=11)
-    # Estilo especial para resaltar el TOTAL
     total_style = ParagraphStyle(name="TotalStyle", fontSize=10, fontName="Helvetica-Bold", textColor=colors.black)
 
     titulo_texto = "REPORTE DETALLADO DE ÓRDENES" if incluir_detalles else "REPORTE GENERAL DE ÓRDENES"
     
     for orden in ordenes:
-        # ======================================================
-        # TABLA 1: RESUMEN DE LA ORDEN (Cabecera Expandida)
-        # ======================================================
+        # 1. Preparación de datos del Creador
+        u = orden.IdUsuario
+        nombre_responsable = f"{u.Nombres} {u.Apellidos}".strip() or u.username
+        cargo_responsable = u.IdCargo.Nombre if u.IdCargo else "No asignado"
+        
+        # 2. Bloque de Identificación y Totales (Se mantiene similar pero ajustamos anchos)
         color_estado = "green" if orden.Estado == "0" else "black"
         estado_html = f'<font color="{color_estado}">●</font> {orden.get_Estado_display()}'
         fecha_fmt = timezone.localtime(orden.Fecha).strftime("%d/%m/%Y %H:%M")
         mesas = " - ".join(f"#{m.IdMesa.Numero}" for m in orden.Mesas.all())
 
-        # Organizamos los datos en 3 bloques (6 filas en total)
+        # Definimos los anchos de columna una sola vez para asegurar consistencia
+        col_widths = [110, 180, 150, 290] # Suma total: 730
+
         data_orden = [
             # Bloque 1: Identificación
             [Paragraph("N° Orden", header_label_style), Paragraph("Fecha / Hora", header_label_style), Paragraph("Estado", header_label_style), Paragraph("Área / Mesas", header_label_style)],
             [orden.Id, fecha_fmt, Paragraph(estado_html, cell_style), f"{orden.IdAreaDeMesa.Nombre if orden.IdAreaDeMesa else 'N/A'} ({mesas})"],
             
-            # Bloque 2: Totales de la Cuenta
+            # Bloque 2: Totales
             [Paragraph("Subtotal", header_label_style), Paragraph("Propina", header_label_style), Paragraph("Descuento", header_label_style), Paragraph("TOTAL A PAGAR", header_label_style)],
             [f"C$ {orden.Total}", f"C$ {orden.Propina}", f"C$ {orden.Descuento}", Paragraph(f"C$ {orden.TotalPagar}", total_style)],
             
-            # Bloque 3: Detalles del Pago (Aquí agregamos los nuevos campos)
+            # Bloque 3: Detalles del Pago
             [Paragraph("Método de Pago", header_label_style), Paragraph("Monto Recibido", header_label_style), Paragraph("Cambio", header_label_style), Paragraph("2do Monto (Pago Mixto)", header_label_style)],
-            [orden.get_MetodoPago_display(), f"C$ {orden.Monto}", f"C$ {orden.Cambio}", f"C$ {orden.SegundoMonto}" if orden.MetodoPago == "4" else "N/A"]
+            [orden.get_MetodoPago_display(), f"C$ {orden.Monto}", f"C$ {orden.Cambio}", f"C$ {orden.SegundoMonto}" if orden.MetodoPago == "4" else "N/A"],
+
+            # Bloque 4: Creador (Alineado con las celdas superiores)
+            # Usamos "" para las celdas que serán "absorbidas" por el SPAN
+            [Paragraph("ATENDIDO POR:", header_label_style), "", Paragraph("CARGO DEL RESPONSABLE:", header_label_style), ""],
+            [Paragraph(nombre_responsable.upper(), cell_style), "", Paragraph(cargo_responsable.upper(), cell_style), ""]
         ]
 
-        tabla_cabecera = Table(data_orden, colWidths=[100, 180, 150, 300])
+        tabla_cabecera = Table(data_orden, colWidths=col_widths)
         tabla_cabecera.setStyle(TableStyle([
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            # Fondos para las filas de etiquetas (0, 2 y 4)
+            # Fondos de etiquetas
             ('BACKGROUND', (0, 0), (-1, 0), colors.whitesmoke),
             ('BACKGROUND', (0, 2), (-1, 2), colors.whitesmoke),
             ('BACKGROUND', (0, 4), (-1, 4), colors.whitesmoke),
+            ('BACKGROUND', (0, 6), (-1, 6), colors.whitesmoke), # Fondo para etiquetas de creador
+            
+            # --- COMBINACIÓN DE CELDAS (SPAN) ---
+            # Combinamos las dos primeras y las dos últimas de las filas 6 y 7
+            ('SPAN', (0, 6), (1, 6)), # Atendido por (Etiqueta)
+            ('SPAN', (2, 6), (3, 6)), # Cargo (Etiqueta)
+            ('SPAN', (0, 7), (1, 7)), # Nombre (Valor)
+            ('SPAN', (2, 7), (3, 7)), # Cargo (Valor)
+            
             ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
             ('TOPPADDING', (0, 0), (-1, -1), 6),
         ]))
         
         elementos.append(tabla_cabecera)
 
-        # ======================================================
         # TABLA 2: DETALLES DE PRODUCTOS
-        # ======================================================
         if incluir_detalles:
             elementos.append(Spacer(1, 5))
             detalles_data = [["Nombre del consumo", "Precio Unitario", "Cantidad",  "Subtotal"]]
@@ -416,15 +443,18 @@ def exportar_pdf_ordenes(ordenes, request, incluir_detalles=False, fecha_inicio=
                 ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#DDDDDD")),
                 ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor("#555555")),
                 ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('ALIGN', (2, 0), (2, -1), 'CENTER'), # Cantidad centrada
-                ('ALIGN', (1, 0), (1, -1), 'RIGHT'),  # Precio derecha
-                ('ALIGN', (3, 0), (3, -1), 'RIGHT'),  # Subtotal derecha
+                ('ALIGN', (2, 0), (2, -1), 'CENTER'),
+                ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+                ('ALIGN', (3, 0), (3, -1), 'RIGHT'),
                 ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
                 ('FONTSIZE', (0, 0), (-1, -1), 10),
             ]))
             elementos.append(tabla_detalle)
 
-        elementos.append(Spacer(1, 25))
+        # --- SEPARADOR ENTRE ÓRDENES ---
+        elementos.append(Spacer(1, 15))
+        elementos.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor("#8e0000"), spaceBefore=5, spaceAfter=15))
+        # -------------------------------
 
     # --- ENCABEZADO Y PIE ---
     # (Se mantiene igual a tu última versión...)
