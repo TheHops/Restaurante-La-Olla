@@ -93,7 +93,7 @@
             <li class="opcion"><a href="{% url 'OrdenesPendientes' %}">Órdenes</a></li>
           {% endif %}
 
-          {% if request.user.IdCargo.Nombre == "Administrador" %}
+          {% if request.user.IdCargo.Nombre == "Administrador" or request.user.IdCargo.Nombre == "Cajero" %}
           <li class="opcion"><a href="{% url 'personal' %}">Personal</a></li>
           <li class="opcion"><a href="{% url 'reportes' %}">Reportes</a></li>
           {% endif %}

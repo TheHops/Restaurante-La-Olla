@@ -10,17 +10,28 @@
 <div id="encabezado_inventario">
     <div id="contenedorIzquierdoEncabezadoInventario">
         
-        <div class="contenedorFechasReportes">
-            <input type="date" id="fechaDesde" name="fecha_desde">
-        </div>
-        
-        <div class="contenedorFechasReportes">
-            <input type="date" id="fechaHasta" name="fecha_hasta">
-        </div>
+        {% if Cargo == "Administrador" %}
 
-        <small id="errorFechas" style="color:#dc3545; display:none;">
-            La fecha <strong>de inicio</strong> no puede ser mayor que la<strong> fecha fin</strong>
-        </small>
+            <div class="contenedorFechasReportes">
+                <input type="date" id="fechaDesde" name="fecha_desde">
+            </div>
+            
+            <div class="contenedorFechasReportes">
+                <input type="date" id="fechaHasta" name="fecha_hasta">
+            </div>
+
+            <small id="errorFechas" style="color:#dc3545; display:none;">
+                La fecha <strong>de inicio</strong> no puede ser mayor que la<strong> fecha fin</strong>
+            </small>
+
+        {% else %}
+            <input type="date" style="display: none;" id="fechaDesde" name="fecha_desde">
+            <input type="date" style="display: none;" id="fechaHasta" name="fecha_hasta">
+
+            <small id="errorFechas" style="color:#dc3545; display:none;">
+                La fecha <strong>de inicio</strong> no puede ser mayor que la<strong> fecha fin</strong>
+            </small>
+        {% endif %}
 
         <select name="" id="listaEstadoOrdenesExportar">
             <option value="0">Pago registrado</option>
@@ -152,73 +163,77 @@
 
                 <!-------------------------------------------->
 
-                <hr>
-                
-                <h5 style="color: #555555; font-size: 20px;">Fechas</h5>
-
-                <div id="fechasFiltro">
-
-                    <div class="form-radio">
-                        <input class="form-radio-input"
-                               type="radio"
-                               name="fecha"
-                               value="1"
-                               id="tipo_fecha_1">
-                
-                        <label class="form-radio-label" for="tipo_fecha_1">
-                            Hoy
-                        </label>
-                    </div>
-                
-                    <div class="form-radio">
-                        <input class="form-radio-input"
-                               type="radio"
-                               name="fecha"
-                               value="2"
-                               id="tipo_fecha_2">
-                
-                        <label class="form-radio-label" for="tipo_fecha_2">
-                            Ayer
-                        </label>
-                    </div>
-
-                    <div class="form-radio">
-                        <input class="form-radio-input"
-                               type="radio"
-                               name="fecha"
-                               value="3"
-                               id="tipo_fecha_3">
-                
-                        <label class="form-radio-label" for="tipo_fecha_3">
-                            Últimos 7 días
-                        </label>
-                    </div>
-
-                    <div class="form-radio">
-                        <input class="form-radio-input"
-                               type="radio"
-                               name="fecha"
-                               value="4"
-                               id="tipo_fecha_4">
-                
-                        <label class="form-radio-label" for="tipo_fecha_4">
-                            Últimos 15 días
-                        </label>
-                    </div>
-
-                    <div class="form-radio">
-                        <input class="form-radio-input"
-                               type="radio"
-                               name="fecha"
-                               value="5"
-                               id="tipo_fecha_5">
-                
-                        <label class="form-radio-label" for="tipo_fecha_5">
-                            Últimos 30 días
-                        </label>
-                    </div>
+                {% if Cargo == "Administrador" %}
                     
-                </div>
+                    <hr>
+
+                    <h5 style="color: #555555; font-size: 20px;">Fechas</h5>
+
+                    <div id="fechasFiltro">
+
+                        <div class="form-radio">
+                            <input class="form-radio-input"
+                                type="radio"
+                                name="fecha"
+                                value="1"
+                                id="tipo_fecha_1">
+                    
+                            <label class="form-radio-label" for="tipo_fecha_1">
+                                Hoy
+                            </label>
+                        </div>
+                    
+                        <div class="form-radio">
+                            <input class="form-radio-input"
+                                type="radio"
+                                name="fecha"
+                                value="2"
+                                id="tipo_fecha_2">
+                    
+                            <label class="form-radio-label" for="tipo_fecha_2">
+                                Ayer
+                            </label>
+                        </div>
+
+                        <div class="form-radio">
+                            <input class="form-radio-input"
+                                type="radio"
+                                name="fecha"
+                                value="3"
+                                id="tipo_fecha_3">
+                    
+                            <label class="form-radio-label" for="tipo_fecha_3">
+                                Últimos 7 días
+                            </label>
+                        </div>
+
+                        <div class="form-radio">
+                            <input class="form-radio-input"
+                                type="radio"
+                                name="fecha"
+                                value="4"
+                                id="tipo_fecha_4">
+                    
+                            <label class="form-radio-label" for="tipo_fecha_4">
+                                Últimos 15 días
+                            </label>
+                        </div>
+
+                        <div class="form-radio">
+                            <input class="form-radio-input"
+                                type="radio"
+                                name="fecha"
+                                value="5"
+                                id="tipo_fecha_5">
+                    
+                            <label class="form-radio-label" for="tipo_fecha_5">
+                                Últimos 30 días
+                            </label>
+                        </div>
+                        
+                    </div>
+
+                {% endif %}
             </div>
 
 
