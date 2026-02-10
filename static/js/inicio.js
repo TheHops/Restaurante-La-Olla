@@ -11,10 +11,12 @@ document.addEventListener("DOMContentLoaded", function () {
       gradient.addColorStop(0, "rgba(255, 99, 132, 0.4)");
       gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
 
+      console.log(data);
+
       new Chart(ctx, {
         type: "line",
         data: {
-          labels: data.dias_semana,
+          labels: data.labels_x,
           datasets: [
             {
               label: "Ingresos (C$)",
@@ -55,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
               backgroundColor: [
                 "#FF6384", // Rosa/Rojo principal
                 "#FEDA62", // Amarillo/Naranja de tu Figma
-                "#B86D3E", // Café
+                "#ffa500", // Naranja
                 "#4BC0C0", // Cyan
                 "#66ff70", // verde
               ],
@@ -79,14 +81,22 @@ document.addEventListener("DOMContentLoaded", function () {
         },
       });
 
-      document.getElementById("card-hoy-total").innerText =
-        "C$" + data.resumen.hoy_total.toLocaleString();
-      document.getElementById("card-hoy-propinas").innerText =
-        "C$" + data.resumen.hoy_propinas.toLocaleString();
-      document.getElementById("card-mes-total").innerText =
-        "C$" + data.resumen.mes_total.toLocaleString();
-      document.getElementById("card-mes-propinas").innerText =
-        "C$" + data.resumen.mes_propinas.toLocaleString();
+      if (data.resumen) {
+        $("#card-hoy-total").text("C$" + data.resumen.hoy_total.toLocaleString());
+        $("#card-hoy-propinas").text("C$" + data.resumen.hoy_propinas.toLocaleString());
+        $("#card-mes-total").text("C$" + data.resumen.mes_total.toLocaleString());
+        $("#card-mes-propinas").text("C$" + data.resumen.mes_propinas.toLocaleString());
+        $("#card-mes-gran-total").text("C$" + data.resumen.mes_gran_total.toLocaleString());
+        $("#card-mes-cantidad-ordenes").text(data.resumen.mes_cantidad_ordenes);
+      }
+
+      // 2. Llenar Cards de Cajero
+      if (data.cajero_stats) {
+        $("#cajero-efectivo-total").text("C$" + data.cajero_stats.hoy_efectivo_total.toLocaleString());
+        $("#cajero-efectivo-propina").text("C$" + data.cajero_stats.hoy_efectivo_propina.toLocaleString());
+        $("#cajero-tarjeta-total").text("C$" + data.cajero_stats.hoy_tarjeta_total.toLocaleString());
+        $("#cajero-tarjeta-propina").text("C$" + data.cajero_stats.hoy_tarjeta_propina.toLocaleString());
+      }
     },
   });
 

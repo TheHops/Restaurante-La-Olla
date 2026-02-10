@@ -32,7 +32,7 @@ def index(request):
             return redirect("venta/")
         
         # Si el usuario ya inició sesión entonces entrará directamente al sistema sin necesidad de volver a iniciar sesión
-        return render(request, "inicio.html")
+        return render(request, "inicio.html", {"Cargo": request.user.IdCargo.Nombre})
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
@@ -109,49 +109,43 @@ def GraficarOrdenes(request):
             return redirect("/")
 
     try:
-        hoy_local = timezone.localdate()
-        dias = [(hoy_local - timedelta(days=i)) for i in range(6, -1, -1)]
+        cargo_usuario = request.user.IdCargo.Nombre
+        data = {}
 
-        # Creamos límites exactos con zona horaria
-        inicio_rango = timezone.make_aware(datetime.combine(dias[0], time.min))
-        fin_rango = timezone.make_aware(datetime.combine(dias[-1], time.max))
-
-        # Filtramos con el rango de datetimes "aware"
-        # Quitamos el TruncDate por ahora para ver si la base de datos es la que falla
-        ventas_7_dias = Orden.objects.filter(
-            Estado="0",
-            EsActivo="1",
-            UltimaModificacion__range=(inicio_rango, fin_rango)
-        )
-
-        # Agrupamos manualmente en Python para evitar que el motor de DB nos devuelva None
-        mapeo_ventas = {}
-        for factura in ventas_7_dias:
-            # Convertimos la fecha de la factura a la zona horaria local y sacamos solo el .date()
-            fecha_simplificada = factura.UltimaModificacion.astimezone(timezone.get_current_timezone()).date()
+        # 1. Datos para el Administrador (7 días)
+        if cargo_usuario == "Administrador":
+            hoy_local = timezone.localdate()
+            dias = [(hoy_local - timedelta(days=i)) for i in range(6, -1, -1)]
+            inicio_rango = timezone.make_aware(datetime.combine(dias[0], time.min))
+            fin_rango = timezone.make_aware(datetime.combine(dias[-1], time.max))
             
-            # Sumamos al diccionario
-            if fecha_simplificada in mapeo_ventas:
-                mapeo_ventas[fecha_simplificada] += float(factura.TotalPagar)
-            else:
-                mapeo_ventas[fecha_simplificada] = float(factura.TotalPagar)
+            ventas_7_dias = Orden.objects.filter(
+                Estado="0", EsActivo="1", 
+                UltimaModificacion__range=(inicio_rango, fin_rango)
+            )
+            
+            mapeo_ventas = {}
+            for factura in ventas_7_dias:
+                fecha = factura.UltimaModificacion.astimezone(timezone.get_current_timezone()).date()
+                mapeo_ventas[fecha] = mapeo_ventas.get(fecha, 0) + float(factura.TotalPagar)
+                
+            print(dias)
+            
+            data["ingresos_v"] = [mapeo_ventas.get(dia, 0) for dia in dias]
+            data["labels_x"] = [dias_semana_es[dia.weekday()] for dia in dias]
+            data["resumen"] = obtener_metricas_resumen()
 
-        # Ahora mapeamos a la lista final
-        ingresos_por_dia = [mapeo_ventas.get(dia, 0) for dia in dias]
-        dias_labels = [dias_semana_es[dia.weekday()] for dia in dias]
+        # 2. Datos para el Cajero (Hoy por horas)
+        elif cargo_usuario == "Cajero":
+            labels_h, valores_h = obtener_ventas_por_horas()
+            data["labels_x"] = labels_h
+            data["ingresos_v"] = valores_h
+            data["cajero_stats"] = obtener_metricas_cajero()
 
-        labels_pago, valores_pago = obtener_stats_metodos_pago(30)
-        resumen = obtener_metricas_resumen()
-
-        data = {
-            "dias_semana": dias_labels,
-            "ingresos_v": ingresos_por_dia,
-            "metodos_labels": labels_pago,
-            "metodos_valores": valores_pago,
-            "resumen": resumen
-        }
-        
-        print(json.dumps(data, indent=4, ensure_ascii=False))
+        # 3. Métodos de Pago (Común para ambos, pero podrías filtrar 
+        # que el cajero solo vea lo de HOY y el admin 30 días)
+        dias_metodos = 1 if cargo_usuario == "Cajero" else 30
+        data["metodos_labels"], data["metodos_valores"] = obtener_stats_metodos_pago(dias_metodos)
 
         return JsonResponse(data)
     except Exception as ex:
@@ -200,6 +194,42 @@ def obtener_stats_metodos_pago(dias_atras=30):
 
     return labels, valores
 
+def obtener_ventas_por_horas():
+    hoy = timezone.localdate()
+    inicio_hoy = timezone.make_aware(datetime.combine(hoy, time.min))
+    fin_hoy = timezone.make_aware(datetime.combine(hoy, time.max))
+
+    bloques = [6, 8, 10, 12, 14, 16, 18, 20, 22]
+    labels_horas = ["6AM", "8AM", "10AM", "12MD", "2PM", "4PM", "6PM", "8PM", "10PM"]
+    
+    # Inicializamos un diccionario para acumular: {6: 0, 8: 0, ...}
+    acumulador = {hora: 0.0 for hora in bloques}
+
+    ordenes_hoy = Orden.objects.filter(
+        Estado="0", 
+        EsActivo="1", 
+        UltimaModificacion__range=(inicio_hoy, fin_hoy)
+    )
+
+    tz_local = timezone.get_current_timezone()
+
+    for orden in ordenes_hoy:
+        # 1. Convertimos la hora de la orden a la zona horaria de Nicaragua
+        hora_local = orden.UltimaModificacion.astimezone(tz_local).hour
+        
+        # 2. Buscamos en qué bloque cae (si es 7:45, entra en el bloque del 6 porque 6 <= 7 < 8)
+        # O en tu caso, si usas bloques de 2 horas:
+        for hora_bloque in bloques:
+            if hora_bloque <= hora_local < (hora_bloque + 2):
+                acumulador[hora_bloque] += float(orden.TotalPagar)
+                break
+
+    # Convertimos el diccionario a la lista que espera la gráfica
+    ventas_por_hora = [acumulador[h] for h in bloques]
+    
+    print("Ventas procesadas por hora local:", ventas_por_hora)
+    return labels_horas, ventas_por_hora
+
 def obtener_metricas_resumen():
     hoy = timezone.localdate()
     hace_30_dias = hoy - timedelta(days=29)
@@ -214,7 +244,7 @@ def obtener_metricas_resumen():
         Estado="0", EsActivo="1",
         UltimaModificacion__range=(inicio_hoy, fin_hoy)
     ).aggregate(
-        total_ventas=Sum('TotalPagar'),
+        total_ventas=Sum('Total') + Sum('Descuento'),
         total_propinas=Sum('Propina')
     )
 
@@ -223,8 +253,10 @@ def obtener_metricas_resumen():
         Estado="0", EsActivo="1",
         UltimaModificacion__range=(inicio_30, fin_hoy)
     ).aggregate(
-        total_periodo=Sum('TotalPagar'),
-        total_propinas_periodo=Sum('Propina')
+        total_periodo=Sum('Total') + Sum('Descuento'),
+        total_propinas_periodo=Sum('Propina'),
+        total_gran_total=Sum('TotalPagar'),
+        total_cantidad_ordenes=Count('Id')
     )
 
     return {
@@ -232,6 +264,27 @@ def obtener_metricas_resumen():
         "hoy_propinas": float(stats_hoy['total_propinas'] or 0),
         "mes_total": float(stats_30['total_periodo'] or 0),
         "mes_propinas": float(stats_30['total_propinas_periodo'] or 0),
+        "mes_gran_total": float(stats_30['total_gran_total'] or 0),
+        "mes_cantidad_ordenes": float(stats_30['total_cantidad_ordenes'] or 0),
+    }
+    
+def obtener_metricas_cajero():
+    hoy = timezone.localdate()
+    inicio_hoy = timezone.make_aware(datetime.combine(hoy, time.min))
+    fin_hoy = timezone.make_aware(datetime.combine(hoy, time.max))
+
+    # Filtramos órdenes de hoy
+    ordenes_hoy = Orden.objects.filter(Estado="0", EsActivo="1", UltimaModificacion__range=(inicio_hoy, fin_hoy))
+
+    # Métricas específicas (Efectivo es ID "1", Tarjeta es ID "2")
+    efectivo = ordenes_hoy.filter(MetodoPago="1").aggregate(v=Sum('TotalPagar'), p=Sum('Propina'))
+    tarjeta = ordenes_hoy.filter(MetodoPago="2").aggregate(v=Sum('TotalPagar'), p=Sum('Propina'))
+
+    return {
+        "hoy_efectivo_total": float(efectivo['v'] or 0),
+        "hoy_efectivo_propina": float(efectivo['p'] or 0),
+        "hoy_tarjeta_total": float(tarjeta['v'] or 0),
+        "hoy_tarjeta_propina": float(tarjeta['p'] or 0),
     }
 
 #endregion GraficarOrdenes

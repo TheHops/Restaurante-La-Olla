@@ -94,13 +94,16 @@ async function FacturarOrden() {
       DescuentoOrden.value = 0;
       PorcentajeDescuentoOrden.value = 0;
     } 
-  
+
     let Monto = MontoOrden.value || 0;
     let Cambio = CambioOrden.value || 0;
     let Propina = PropinaOrden.value || 0;
     let Descuento = DescuentoOrden.value || 0;
     let PorcentajePropina = PorcentajePropinaOrden.value || 0;
     let PorcentajeDescuento = PorcentajeDescuentoOrden.value || 0;
+    
+    if (MetodoDePago.value == "2" || MetodoDePago.value == "3")
+      Cambio = 0;
 
     console.log(Monto);
     console.log(Cambio);
