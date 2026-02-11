@@ -22,7 +22,7 @@ def personal(request):
             personal = Usuario.objects.filter(EsActivo="1")
             cargos = Cargo.objects.filter(EsActivo="1")
 
-            return render(request, "personal.html", {'Personal': personal, 'Cargos': cargos})
+            return render(request, "personal.html", {'Personal': personal, 'Cargos': cargos, 'User': request.user.username})
         except Exception as ex:
             print()
             print("#################### E X C E P C I O N ########################")

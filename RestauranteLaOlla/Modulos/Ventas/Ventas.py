@@ -37,6 +37,7 @@ def venta(request):
                         queryset=Platillo.objects.filter(EsActivo="1").order_by('Nombre')
                     )
                 )
+                .order_by('Nombre')
             )
 
             AreaMesaSeleccionada = AreaMesa.objects.filter(Id = 1).first()
@@ -65,7 +66,8 @@ def venta(request):
                 'Platillos': platillo,
                 'Mesas': mesa,
                 'AreaMesa': AreaM,
-                'ordenesPendientes': ordenesPendientes
+                'ordenesPendientes': ordenesPendientes,
+                'User': request.user.username
             }
 
             return render(request, "venta.html", contexto)
@@ -208,7 +210,8 @@ def OrdenesPendientes(request):
             contexto = {
                 "Ordenes": ordenes,
                 "Platillos": platillos,
-                "CargoUsuario": cargo_usuario
+                "CargoUsuario": cargo_usuario,
+                "User": request.user.username
             }
 
             return render(request, "ordenes.html", contexto)

@@ -39,7 +39,7 @@ def Reportes (request):
     
     areas = AreaMesa.objects.filter(EsActivo = "1")
     
-    return render(request, "reportes.html", {"Areas": areas, "Cargo": request.user.IdCargo.Nombre})
+    return render(request, "reportes.html", {"Areas": areas, "Cargo": request.user.IdCargo.Nombre, "User": request.user.username})
 
 #endregion Inicio
 
@@ -338,6 +338,8 @@ def exportar_excel_ordenes(ordenes, incluir_detalles=False):
                         max_length = longitud
         
         ws.column_dimensions[column_letter].width = min(max_length + 5, 60)
+        
+    ws.freeze_panes = "B3"
 
     return wb
 

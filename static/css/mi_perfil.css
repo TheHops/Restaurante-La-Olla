@@ -14,6 +14,8 @@
 
     margin-top: 8vh;
 
+    /* padding: 25px 0 25px 0; */
+
     display: flex;
     
     border-width: 2px;
@@ -115,5 +117,17 @@ input.is-invalid {
     #izquierdaEditarPerfil {
         width: 100%;
         padding-right: 30px;
+    }
+}
+
+@media (max-width: 600px) {
+    #btnConfirmarCambiosEditarPerfil {
+        line-height: 15px;
+    }
+}
+
+@media (max-width: 1380px) {
+    #cuadroEditarPerfil{
+        padding: 25px 0 25px 0;
     }
 }

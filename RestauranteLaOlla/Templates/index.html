@@ -115,7 +115,11 @@
             </div>
           </li>
 
-          <li class="logo">
+          <li class="logo" style="width: 120px;
+            display: flex;
+            margin-left: 15px;
+            position: relative;
+            padding: 0;">
             <a href="{% url 'index' %}"
               ><img src="{% static 'img/LogoNav.png' %}" alt=""
             /></a>
@@ -123,10 +127,14 @@
           </li>
 
           <!-- <li id="userConfig">
-                    <a href="#">
-                        <img src="{% static 'img/Icon_UserSet.png' %}" alt="">
-                    </a>
-                </li> -->
+              <a href="#">
+                  <img src="{% static 'img/Icon_UserSet.png' %}" alt="">
+              </a>
+          </li> -->
+
+          <li id="UserName" style="margin-right: 15px; padding: 5px 0 0 0;">
+            <h4 style="color: white;">{{ User }}</h4>
+          </li>
 
           <li id="logout">
             <a href="{% url 'logoutUser' %}">

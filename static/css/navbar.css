@@ -54,21 +54,19 @@ a:hover {
     text-decoration: none;
 }
 
+.logo a{
+    width: 120px;
+}
+
 .menu li {
     font-size: 20px;
     padding: 10px 5px;
     white-space: nowrap;
 }
 
-.logo a{
-    margin: 0 0 0 2%;
-}
-
 .logo a img {
-    height: 38px;
+    width: 100%;
     padding: 0;
-    position: absolute;
-    transform: translate(5px, -6px)
 }
 
 /* Mobile menu */
@@ -99,7 +97,7 @@ a:hover {
     }
 
     .logo {
-        transform: translate(-18px, -2px);
+        margin-left: 0;
     }
 }
 
@@ -364,3 +362,9 @@ body .modal-open {
 .uwy .userway_p1 {
     transform: translate(-20px, 80px);
 }
+
+@media (max-width: 470px) {
+    #UserName {
+      display: none;
+    }
+  }
