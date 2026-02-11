@@ -39,7 +39,7 @@ def Reportes (request):
     
     areas = AreaMesa.objects.filter(EsActivo = "1")
     
-    return render(request, "reportes.html", {"Areas": areas, "Cargo": request.user.IdCargo.Nombre})
+    return render(request, "reportes.html", {"Areas": areas, "Cargo": request.user.IdCargo.Nombre, "User": request.user.username})
 
 #endregion Inicio
 

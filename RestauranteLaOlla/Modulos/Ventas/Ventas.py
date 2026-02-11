@@ -66,7 +66,8 @@ def venta(request):
                 'Platillos': platillo,
                 'Mesas': mesa,
                 'AreaMesa': AreaM,
-                'ordenesPendientes': ordenesPendientes
+                'ordenesPendientes': ordenesPendientes,
+                'User': request.user.username
             }
 
             return render(request, "venta.html", contexto)
@@ -209,7 +210,8 @@ def OrdenesPendientes(request):
             contexto = {
                 "Ordenes": ordenes,
                 "Platillos": platillos,
-                "CargoUsuario": cargo_usuario
+                "CargoUsuario": cargo_usuario,
+                "User": request.user.username
             }
 
             return render(request, "ordenes.html", contexto)
