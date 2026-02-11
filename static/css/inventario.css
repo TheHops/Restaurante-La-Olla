@@ -10,6 +10,28 @@
     width: 70%;
 }
 
+#contenedorDerechoEncabezadoInventario
+{
+    width: 30%;
+    display: flex;
+    justify-content: end;
+}
+
+.btnExportar {
+    margin-left: 20px;
+    background-color: white;
+    border-radius: 7px;
+    padding: 0 15px;
+    border-color: rgb(255, 130, 150);
+    color: #d92644;
+
+    transition: background-color ease .3s;
+}
+
+.btnExportar:hover {
+    background-color: hsl(359, 89%, 97%);
+}
+
 .btn_confirmation_mi_color {
     background-color: #ff6464 !important;
     border-color: #ff6464 !important;
@@ -55,6 +77,13 @@
     border-radius: 10px;
     cursor: pointer;
     box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: background-color ease .3s;
 }
 
 #agregar:hover {
@@ -292,28 +321,70 @@ a .paginate_button .current {
 }
 
 
-/**** MODAL****/
+/**** AUTO DROPDOWN ****/
 
-/* .modal-backdrop + .show {
-    display: none;
-} */
+/* Contenedor principal del dropdown */
+.custom-dropdown {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
 
-/* .modal-backdrop {
-    display: none;
-    z-index: 10;
-} */
-
-/* .modal-open .modal-backdrop{
-    z-index: 1;
+    margin-left: 20px;
 }
 
-.modal-dialog {
-    z-index: 100;
-} */
+/* El botón que parece un select */
+.dropdown-trigger {
+    background-color: white;
+    color: hsl(350, 70%, 40%);
+    border: 2px solid hsl(350, 100%, 45%);
+    padding: 8px 15px;
+    border-radius: 7px;
+    min-width: 160px;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-/* .modal-content {
-    z-index: 10;
-} */
- /* #AgregarInsumo {
-    z-index: 10;
- } */
+/* La lista de opciones (oculta por defecto) */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 100%;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 100;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Elementos de la lista */
+.dropdown-menu li a {
+    color: black;
+    padding: 10px 15px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-menu li a:hover {
+    background-color: #f1f1f1;
+}
+
+/* MAGIA: Mostrar al pasar el mouse sobre el contenedor */
+.custom-dropdown:hover .dropdown-menu,
+.custom-dropdown.is-active .dropdown-menu {
+    display: block;
+}
+
+.dropdown-trigger:focus {
+    outline: 2px solid #9C090B; /* Color rojo como tu icono */
+}
+
+.dropdown-menu li a:focus {
+    background-color: #9C090B; /* El rojo de tu icono */
+    color: white;
+    outline: none;
+}
