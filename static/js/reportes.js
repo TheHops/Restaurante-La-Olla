@@ -2,6 +2,7 @@ const fechaDesde = document.getElementById("fechaDesde");
 const fechaHasta = document.getElementById("fechaHasta");
 const errorFechas = document.getElementById("errorFechas");
 const listaEstado = document.getElementById("listaEstadoOrdenesExportar");
+const btnAplicarFiltros = document.getElementById("btnAplicarFiltrosOrdenes");
 
 document.addEventListener("DOMContentLoaded", () => {
   $(".tablaInventario").DataTable({
@@ -65,7 +66,12 @@ fechaDesde.addEventListener("change", () => {
 
   actualizarIndicadorFiltros();
 
-  if (validarFechas()) filtrarOrdenesFecha();
+  if (validarFechas())
+  {
+    btnAplicarFiltros.disabled = false;
+    filtrarOrdenesFecha();
+  }
+  else btnAplicarFiltros.disabled = true;
 });
 
 fechaHasta.addEventListener("change", () => {
@@ -79,7 +85,12 @@ fechaHasta.addEventListener("change", () => {
 
   actualizarIndicadorFiltros();
   
-  if (validarFechas()) filtrarOrdenesFecha();
+  if (validarFechas()) 
+  {
+    btnAplicarFiltros.disabled = false;
+    filtrarOrdenesFecha();
+  }
+  else btnAplicarFiltros.disabled = true;
 });
 
 listaEstado.addEventListener("change", () => {
