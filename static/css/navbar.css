@@ -368,3 +368,23 @@ body .modal-open {
       display: none;
     }
   }
+
+/*****************************************************/
+
+.badge-red {
+    background-color: #DF362D;
+    padding: 5px 7px;
+    color: white;
+}
+
+.badge-green {
+    background-color: green;
+    padding: 5px 7px;
+    color: white;
+}
+
+.badge-dark-gray {
+    background-color: #555555;
+    padding: 5px 7px;
+    color: white;
+}
