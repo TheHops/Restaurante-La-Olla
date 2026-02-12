@@ -48,7 +48,7 @@
     height: 35px;
     color: white;
     background: hsl(24, 100%, 65%);
-    border-color: hsl(24, 100%, 80%);;
+    border-color: hsl(24, 100%, 80%);
     border-radius: 7px;
     cursor: pointer;
     box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
@@ -63,4 +63,34 @@
     justify-content: center;
 
     transition: background-color ease .3s;
+}
+
+#btnAplicarFiltrosOrdenes:hover {
+    background: hsl(24, 100%, 60%);
+    border-color: hsl(24, 100%, 70%);
+}
+
+.btnMostrarOrden {
+    background-color: white;
+    border: solid 3px hsl(200 80% 60% / 1);
+    border-radius: 10px;
+    color: hsl(200 80% 60% / 1);
+    font-weight: 600;
+    padding: 5px 15px;
+    line-height: 16px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: background-color ease .3s;
+}
+
+.btnMostrarOrden span {
+    margin-left: 8px;
+    text-align: center;
+}
+
+.btnMostrarOrden:hover {
+    background-color: hsl(200 80% 95% / 1);;
 }
