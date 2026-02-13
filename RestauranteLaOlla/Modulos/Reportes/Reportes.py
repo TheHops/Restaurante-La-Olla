@@ -225,7 +225,7 @@ def exportar_excel_ordenes(ordenes, incluir_detalles=False):
         normal_row.border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
         wb.add_named_style(normal_row)
 
-    columnas = ["N° Orden", "Estado", "Fecha", "Área/Mesas", "Subtotal", "Propina", "Desc.", "Total Pagar", "Método Pago", "Monto", "Cambio", "2do Monto (Pago mixto)", "Creador/Cargo"]
+    columnas = ["N° Orden", "Estado", "Fecha", "Área/Mesas", "Subtotal", "Propina", "Descuento", "Total pagado", "Método Pago", "Monto", "Cambio", "2do Monto (Pago mixto)", "Creador/Cargo"]
     
     # Título Principal
     ultima_col_letra = get_column_letter(len(columnas))
@@ -893,6 +893,13 @@ def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids, est
     # Ajustar horas
     fecha_inicio = timezone.make_aware(datetime.combine(fecha_inicio_date, time.min), timezone.get_current_timezone())   # 00:00:00
     fecha_fin = timezone.make_aware(datetime.combine(fecha_fin_date, time.max), timezone.get_current_timezone())         # 23:59:59.999999
+    
+    print("#################################")
+    print("FILTRO DE FECHAS 30D en REPORTES")
+    print("INICIO")
+    print(fecha_inicio)
+    print("FIN")
+    print(fecha_fin)
     
     filtros = Q(
         EsActivo="1",

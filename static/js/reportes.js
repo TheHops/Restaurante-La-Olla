@@ -247,6 +247,9 @@ function aplicarFechaPredefinidaTemp(tipo) {
   filtrosTemp.fechaDesde = formatLocalDate(desde);
   filtrosTemp.fechaHasta = formatLocalDate(hasta);
 
+  console.log(filtrosTemp.fechaDesde);
+  console.log(filtrosTemp.fechaHasta);
+
   // fechaDesde.value = filtrosTemp.fechaDesde;
   // fechaHasta.value = filtrosTemp.fechaHasta;
 }

@@ -94,3 +94,18 @@
 .btnMostrarOrden:hover {
     background-color: hsl(200 80% 95% / 1);;
 }
+
+#contenedorBtnAplicarFiltros {
+    position: relative;
+}
+
+#indicadorFiltros {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    background-color: orange;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: solid 1px white;
+}
