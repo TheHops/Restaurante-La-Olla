@@ -232,12 +232,15 @@ def obtener_ventas_por_horas():
 
 def obtener_metricas_resumen():
     hoy = timezone.localdate()
-    hace_30_dias = hoy - timedelta(days=29)
+    hace_30_dias = hoy - timedelta(days=30)
     
     # Límites para los filtros
     inicio_hoy = timezone.make_aware(datetime.combine(hoy, datetime.min.time()))
     fin_hoy = timezone.make_aware(datetime.combine(hoy, datetime.max.time()))
     inicio_30 = timezone.make_aware(datetime.combine(hace_30_dias, datetime.min.time()))
+    # inicio_hoy = datetime.combine(hoy, datetime.min.time())
+    # fin_hoy = datetime.combine(hoy, datetime.max.time())
+    # inicio_30 = datetime.combine(hace_30_dias, datetime.min.time())
 
     # 1. Total del día (Ventas + Propinas)
     stats_hoy = Orden.objects.filter(
@@ -247,6 +250,13 @@ def obtener_metricas_resumen():
         total_ventas=Sum('Total') + Sum('Descuento'),
         total_propinas=Sum('Propina')
     )
+    
+    print("#################################")
+    print("FILTRO DE FECHAS 30D en DASHBOARD")
+    print("INICIO")
+    print(inicio_30)
+    print("FIN")
+    print(fin_hoy)
 
     # 2. Total últimos 30 días
     stats_30 = Orden.objects.filter(
