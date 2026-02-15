@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const check = document.getElementById("checkVerConsumosInactivos");
+  const check = document.getElementById("checkVerConsumiblesInactivos");
   const key = "verEliminadosPlatillos";
 
   // Restaurar estado guardado
@@ -131,7 +131,7 @@ function ActualizarPlatillo() {
       if (response.status === "ok") {
         Swal.fire({
           icon: "success",
-          title: response.message || "¡Consumo modificado exitosamente!",
+          title: response.message || "¡Consumible modificado exitosamente!",
           confirmButtonColor: "#ff6464",
         }).then(() => location.reload());
       } else {
@@ -163,7 +163,7 @@ function ActualizarPlatillo() {
 async function DarBaja_Platillo(idPlatillo) {
   // Confirmación
   const confirmacion = await Swal.fire({
-    title: "¿Realmente desea desactivar este consumo?",
+    title: "¿Realmente desea desactivar este consumible?",
     icon: "question",
     iconColor: "#ff964e",
     showCancelButton: true,
@@ -203,7 +203,7 @@ async function DarBaja_Platillo(idPlatillo) {
 
     if (data.status === "ok") {
       await Swal.fire({
-        title: data.message || "¡Consumo desactivado exitosamente!",
+        title: data.message || "¡Consumible desactivado exitosamente!",
         icon: "success",
         confirmButtonColor: "#ff6464",
       });
@@ -211,7 +211,7 @@ async function DarBaja_Platillo(idPlatillo) {
     } else {
       await Swal.fire({
         title: "Error",
-        text: data.message || "No se pudo desactivar el consumo.",
+        text: data.message || "No se pudo desactivar el consumible.",
         icon: "error",
         confirmButtonColor: "#ff6464",
       });
@@ -250,7 +250,7 @@ function AgregarPlatillo() {
       if (response.status === "ok") {
         Swal.fire({
           icon: "success",
-          title: response.message || "¡Consumo agregado exitosamente!",
+          title: response.message || "¡Consumible agregado exitosamente!",
           confirmButtonColor: "#ff6464",
         }).then(() => location.reload());
       } else {
@@ -429,79 +429,5 @@ function ExportarPlatillos(tipo) {
 
   xhr.send();
 }
-
-//*** AUTO DROPDOWN ***//
-
-const dropdown = document.getElementById("dropdownInventario");
-const trigger = dropdown.querySelector(".dropdown-trigger");
-const menu = dropdown.querySelector(".dropdown-menu");
-const links = dropdown.querySelectorAll(".dropdown-menu a");
-
-// Abrir cuando el botón recibe el foco (Teclado)
-trigger.addEventListener("focus", () => {
-  dropdown.classList.add("is-active");
-});
-
-// Cerrar si el usuario presiona la tecla Escape
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    dropdown.classList.remove("is-active");
-    trigger.blur(); // Quita el foco del botón
-  }
-});
-
-// Cerrar si el foco sale del menú completo (Tab fuera del último link)
-dropdown.addEventListener("focusout", (e) => {
-  // Si el nuevo elemento con foco NO está dentro del dropdown, cerramos
-  if (!dropdown.contains(e.relatedTarget)) {
-    dropdown.classList.remove("is-active");
-  }
-});
-
-// Función para cerrar
-const closeMenu = () => {
-    dropdown.classList.remove('is-active');
-    trigger.setAttribute('aria-expanded', 'false');
-};
-
-// Abrir al enfocar el botón
-trigger.addEventListener('focus', () => {
-    dropdown.classList.add('is-active');
-    trigger.setAttribute('aria-expanded', 'true');
-});
-
-// Manejo de teclas
-dropdown.addEventListener('keydown', (e) => {
-    const items = Array.from(links);
-    const currentIndex = items.indexOf(document.activeElement);
-
-    if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        // Si estamos en el botón, vamos al primer item. Si no, al siguiente.
-        const nextIndex = (currentIndex + 1) % items.length;
-        items[nextIndex].focus();
-    } 
-    else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        // Si estamos en el primero, vamos al último.
-        const prevIndex = (currentIndex - 1 + items.length) % items.length;
-        items[prevIndex].focus();
-    } 
-    else if (e.key === 'Escape') {
-        closeMenu();
-        trigger.focus();
-    }
-});
-
-// Cerrar si el mouse sale o el foco se va a otro lado de la página
-dropdown.addEventListener('mouseleave', closeMenu);
-dropdown.addEventListener('focusout', (e) => {
-    if (!dropdown.contains(e.relatedTarget)) {
-        closeMenu();
-    }
-});
-
-
-
 
 

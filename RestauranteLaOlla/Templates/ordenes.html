@@ -17,9 +17,12 @@
         <option value="1">Pendientes</option>
         <option value="4">En preparación</option>
       {% endif %}
+
+      {% if CargoUsuario != "Armador" %}
+        <option value="3">Preparadas</option>
+      {% endif %}
   
       {% if CargoUsuario == "Cajero" or CargoUsuario == "Administrador" %}
-        <option value="3">Preparadas</option>
         <option value="0">Pago registrado</option>
         <option value="2">Anuladas</option>
       {% endif %}
@@ -29,8 +32,12 @@
       {% endif %}
   
       <!-- TODO: Filtrar solo para Armador y mesero -->
-      {% if CargoUsuario == "Mesero" or CargoUsuario == "Armador" %}
+      {% if CargoUsuario == "Armador" %}
         <option value="6">Ambas</option>
+      {% endif %}
+      
+      {% if CargoUsuario == "Mesero" %}
+        <option value="7">Las tres</option>
       {% endif %}
     </select>
   </div>
@@ -53,7 +60,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Registrar orden</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Registrar pago</h5>
         <button
           type="button"
           class="close"
@@ -275,7 +282,7 @@
   <div class="modal-dialog modal-incluir-detalle" role="document">
     <div class="modal-content" id="contenidoIncluirDetalle">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Incluir consumo a orden</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Incluir consumible a orden</h5>
       
         <button
           type="button"
@@ -289,7 +296,7 @@
       
       <div class="alert alert-info alert-dismissible mb-0">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
-        Puedes seleccionar uno o más consumos
+        Puedes seleccionar uno o más consumibles
       </div>
 
       <div class="modal-body" id="contenidoModalBodyIncluirPlatillosEditar">

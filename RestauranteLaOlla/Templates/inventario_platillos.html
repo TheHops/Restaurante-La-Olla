@@ -7,25 +7,25 @@
 <div id="encabezado_inventario">
     <div id="contenedorIzquierdoEncabezadoInventario">
         <button id="agregar" data-toggle="modal" data-target="#AgregarPlatillo">
-                <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px; margin-right: 10px;" title="Añadir platillo">Agregar consumo
+                <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px; margin-right: 10px;" title="Añadir platillo">Agregar consumible
         </button>
     
         <!-- <input type="text" id="buscar" placeholder="Buscar"> -->
     
         <!--
         <select name="" id="listaInventario">
-            <option value="">Consumos</option>
-            <option value="{% url 'inventario_tipoplatillo' %}">Tipos de consumo</option>
+            <option value="">Consumibles</option>
+            <option value="{% url 'inventario_tipoplatillo' %}">Tipos de consumible</option>
         </select>
         -->
 
         <div class="custom-dropdown" id="dropdownInventario">
             <button class="dropdown-trigger" aria-haspopup="true" aria-expanded="false">
-                Consumos <span style="margin-left: 10px;">▼</span>
+                Consumibles <span style="margin-left: 10px;">▼</span>
             </button>
             <ul class="dropdown-menu" role="menu">
-                <li role="none"><a href="#" role="menuitem">Consumos</a></li>
-                <li role="none"><a href="{% url 'inventario_tipoplatillo' %}" role="menuitem">Tipos de consumo</a></li>
+                <li role="none"><a href="#" role="menuitem">Consumibles</a></li>
+                <li role="none"><a href="{% url 'inventario_tipoplatillo' %}" role="menuitem">Tipos de consumible</a></li>
             </ul>
         </div>
     
@@ -43,8 +43,8 @@
     <div id="contenedorDerechoEncabezadoInventario">
         <!-- Botón para mostrar u ocultar los registros inactivos -->
         <div class="btnVerInactivos">
-            <label for="checkVerConsumosInactivos">Incluir inactivos</label>
-            <input type="checkbox" id="checkVerConsumosInactivos" class="checkVerInactivos">
+            <label for="checkVerConsumiblesInactivos">Incluir inactivos</label>
+            <input type="checkbox" id="checkVerConsumiblesInactivos" class="checkVerInactivos">
         </div>
     </div>
 </div>
@@ -59,7 +59,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title " id="exampleModalLabel" >Exportar consumo</h5>
+          <h5 class="modal-title " id="exampleModalLabel" >Exportar consumible</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -88,7 +88,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title " id="exampleModalLabel" >Modificar consumo</h5>
+          <h5 class="modal-title " id="exampleModalLabel" >Modificar consumible</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -103,7 +103,7 @@
                         <input type="text" class="form-control" id="NombrePlatillo" placeholder="Ej: Frijoles" required>
                     </div>
                     <div class="col-md-6 mb-2">
-                        <h4 style="font-size: 20px; margin-bottom: 3px;">Tipo de consumo<span class="asterisco">*</span></h4>
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Tipo de consumible<span class="asterisco">*</span></h4>
                         <select class="form-control" id="TipoPlatillo">
                             {% for tipoplatillo in TypePlatillo %}
                             {% if tipoplatillo.EsActivo == "1" %}
@@ -164,7 +164,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title " id="exampleModalLabel" >Agregar consumo</h5>
+          <h5 class="modal-title " id="exampleModalLabel" >Agregar consumible</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -177,7 +177,7 @@
 
                 <div class="row">
                     <div class="col-md-6">
-                        <h4 style="font-size: 20px; margin-bottom: 3px;">Tipo de consumo<span class="asterisco">*</span></h4>
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Tipo de consumible<span class="asterisco">*</span></h4>
                         <select class="form-control mb-2" id="TipoPlatilloAgregar">
                             {% for tipoplatillo in TypePlatillo %}
                                 {% if tipoplatillo.EsActivo == "1" %}

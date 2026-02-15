@@ -282,7 +282,7 @@ def exportar_excel_ordenes(ordenes, incluir_detalles=False):
 
         # --- DETALLES (OPCIONAL) ---
         if incluir_detalles:
-            det_headers = ["", "CONSUMO", "CANTIDAD", "PRECIO UNITARIO", "SUBTOTAL"]
+            det_headers = ["", "CONSUMIBLE", "CANTIDAD", "PRECIO UNITARIO", "SUBTOTAL"]
             for col_det, text in enumerate(det_headers, start=1):
                 if text: # No pintar la primera celda vacía
                     c_h = ws.cell(row=row_idx, column=col_det, value=text)
@@ -426,7 +426,7 @@ def exportar_pdf_ordenes(ordenes, request, incluir_detalles=False, fecha_inicio=
         # TABLA 2: DETALLES DE PRODUCTOS
         if incluir_detalles:
             elementos.append(Spacer(1, 5))
-            detalles_data = [["Nombre del consumo", "Precio Unitario", "Cantidad",  "Subtotal"]]
+            detalles_data = [["Nombre del consumible", "Precio Unitario", "Cantidad",  "Subtotal"]]
             detalles_activos = orden.Detalles.filter(EsActivo="1")
 
             for det in detalles_activos:
@@ -532,11 +532,11 @@ def ExportarPlatillo(request):
         print()
         return JsonResponse({
             "status": "error",
-            "message": "Error interno al exportar consumos"
+            "message": "Error interno al exportar consumibles"
         }, status=500)
         
 def exportar_excel_platillos():
-    columnas = ['Nombre consumo', 'Precio', 'Tipo de consumo', 'Descripcion', 'Estado']
+    columnas = ['Nombre consumible', 'Precio', 'Tipo de consumible', 'Descripcion', 'Estado']
     datos = []
 
     for nombre, precio, tipo, desc, es_activo in Platillo.objects.values_list(
@@ -551,14 +551,14 @@ def exportar_excel_platillos():
             estado_symbol
         ])
 
-    wb = exportar_excel_datos("CONSUMOS", columnas, datos, "Consumos")
+    wb = exportar_excel_datos("CONSUMIBLES", columnas, datos, "Consumibles")
 
     # Preparar respuesta
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
     
-    filename = 'Consumos_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
+    filename = 'Consumibles_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     
     wb.save(response)
@@ -566,7 +566,7 @@ def exportar_excel_platillos():
     return response
 
 def exportar_pdf_platillo(request):
-    columnas = ['Nombre consumo', 'Precio', 'Tipo de consumo', 'Descripcion', 'Estado']
+    columnas = ['Nombre consumible', 'Precio', 'Tipo de consumible', 'Descripcion', 'Estado']
     filas = []
 
     for nombre, precio, tipo, desc, es_activo in Platillo.objects.values_list('Nombre', 'Precio', 'IdTipoPlatillo__Nombre', 'Descripcion', 'EsActivo'):
@@ -580,10 +580,10 @@ def exportar_pdf_platillo(request):
         ])
 
     return generar_pdf_tabla(
-        titulo="CONSUMOS",
+        titulo="CONSUMIBLES",
         columnas=columnas,
         filas=filas,
-        nombre_archivo="Consumos",
+        nombre_archivo="Consumibles",
         ancho_columnas=[100, 50, 100, 200, 70],
         wrap_columns=[0, 2, 3],
         usuario=request.user.username
@@ -631,7 +631,7 @@ def ExportarTipoPlatillo(request):
         
         return JsonResponse({
             "status": "error",
-            "message": "Error interno al exportar consumos"
+            "message": "Error interno al exportar consumibles"
         }, status=500)
         
 def exportar_excel_tipo_platillo():
@@ -645,12 +645,12 @@ def exportar_excel_tipo_platillo():
             estado_symbol
         ])
 
-    wb = exportar_excel_datos("TIPO DE CONSUMO", columnas, datos, "Tipos de consumo")
+    wb = exportar_excel_datos("TIPO DE CONSUMIBLE", columnas, datos, "Tipos de consumible")
 
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
-    filename = 'TipoConsumo_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
+    filename = 'TipoConsumible_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     wb.save(response)
     return response
@@ -664,10 +664,10 @@ def exportar_pdf_tipo_platillo(request):
         filas.append([nombre, estado])
 
     return generar_pdf_tabla(
-        titulo="TIPOS DE CONSUMO",
+        titulo="TIPOS DE CONSUMIBLE",
         columnas=columnas,
         filas=filas,
-        nombre_archivo="TipoConsumo",
+        nombre_archivo="TipoConsumible",
         ancho_columnas=[300, 150],
         usuario=request.user.username
     )

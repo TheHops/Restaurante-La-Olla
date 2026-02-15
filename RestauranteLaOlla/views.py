@@ -303,14 +303,14 @@ def obtener_metricas_cajero():
 
 OPCIONES_DISPONIBLES = {
     "Administrador": ["0", "1", "2", "3", "4", "5"],
-    "Mesero": ["1", "4", "6"],
+    "Mesero": ["1", "4", "3", "7"],
     "Armador": ["1", "4", "6"],
     "Cajero": ["0", "2", "3"]
 }
 
 VALORES_POR_DEFECTO = {
     "Administrador": "5",
-    "Mesero": "6",
+    "Mesero": "7",
     "Armador": "6",
     "Cajero": "3"
 }
@@ -354,7 +354,7 @@ def FiltrarOrdenes(request):
             ordenes = ordenes.filter(IdUsuario=request.user)
 
         # FILTROS POR ESTADO
-        if EstadoOrden == "5":
+        if EstadoOrden == "5": 
             ordenes = ordenes.order_by(
                 Case(
                     When(Estado='1', then=0),
@@ -376,11 +376,26 @@ def FiltrarOrdenes(request):
                 ),
                 '-UltimaModificacion'
             )
+            
+        elif EstadoOrden == "7":
+            ordenes = ordenes.filter(
+                Estado__in=["1", "4", "3"]
+            ).order_by(
+                Case(
+                    When(Estado='1', then=0),
+                    When(Estado='4', then=1),
+                    When(Estado='3', then=2),
+                ),
+                '-UltimaModificacion'
+            )
 
         else:
             ordenes = ordenes.filter(
                 Estado=EstadoOrden
             ).order_by('-UltimaModificacion')
+            
+        print("ESTADO ORDEN")
+        print(EstadoOrden)
 
         platillos = Platillo.objects.all().values()
 

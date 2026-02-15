@@ -10,7 +10,7 @@
         <!-- Se muestra un platillo -->
         <div class="vplatillo" id="platillo{{platillo.Id}}">
             <div class="datoPlatillo">
-                <button data-toggle="modal" data-target="#MostrarDetalleConsumo" style="position: absolute; align-self: end;" onclick="PonerInfoConsumo('{{platillo.ImagenUrl}}', '{{platillo.Nombre}}', '{{platillo.IdTipoPlatillo.Nombre}}', '{{platillo.Descripcion}}', '{{platillo.Precio}}')">Info</button>
+                <button data-toggle="modal" data-target="#MostrarDetalleConsumible" style="position: absolute; align-self: end;" onclick="PonerInfoConsumible('{{platillo.ImagenUrl}}', '{{platillo.Nombre}}', '{{platillo.IdTipoPlatillo.Nombre}}', '{{platillo.Descripcion}}', '{{platillo.Precio}}')">Info</button>
 
                 {% if platillo.ImagenUrl != "" %}
                     <img src="/media/{{ platillo.ImagenUrl }}" alt="Imagen de {{platillo.Nombre}}">

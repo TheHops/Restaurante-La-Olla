@@ -444,6 +444,12 @@ def FacturarOrden(request):
                 "message": "La orden ya fue facturada"
             })
             
+        if orden.Estado == "2":
+            return JsonResponse({
+                "status": "error",
+                "message": "La orden fué anulada"
+            })
+            
         total       = orden.Total
         
         if total <= 0:
@@ -996,21 +1002,21 @@ def obtenerMensajeEdicion (edicionDescripcion, detalleNuevo, detalleEditado, det
         
         mensajeEditados = "hubo una modificación" if cantidadEditados == 1 else f"hubieron {cantidadEditados} modificaciones"
         
-        mensajeNuevos = "se agregó un nuevo consumo" if cantidadNuevos == 1 else f"se agregaron {cantidadNuevos} nuevos consumos"
+        mensajeNuevos = "se agregó un nuevo consumible" if cantidadNuevos == 1 else f"se agregaron {cantidadNuevos} nuevos consumibles"
         
         mensaje = f"Se editó la descripción de la orden, {mensajeNuevos} a la orden y {mensajeEditados} junto con {mensajeEliminados} de los detalles ya existentes"
     
     elif edicionDescripcion and detalleNuevo and detalleEliminado:
         mensajeEliminados = "hubo una eliminación" if cantidadEliminados == 1 else f"hubieron {cantidadEliminados} eliminaciones"
         
-        mensajeNuevos = "se agregó un nuevo consumo" if cantidadNuevos == 1 else f"se agregaron {cantidadNuevos} nuevos consumos"
+        mensajeNuevos = "se agregó un nuevo consumible" if cantidadNuevos == 1 else f"se agregaron {cantidadNuevos} nuevos consumibles"
         
         mensaje = f"Se editó la descripción de la orden, {mensajeNuevos} a la orden y {mensajeEliminados} de los detalles ya existentes"
     
     elif edicionDescripcion and detalleNuevo and detalleEditado:
         mensajeEditados = "hubo una modificación" if cantidadEditados == 1 else f"hubieron {cantidadEditados} modificaciones"
         
-        mensajeNuevos = "se agregó un nuevo consumo" if cantidadNuevos == 1 else f"se agregaron {cantidadNuevos} nuevos consumos"
+        mensajeNuevos = "se agregó un nuevo consumible" if cantidadNuevos == 1 else f"se agregaron {cantidadNuevos} nuevos consumibles"
         
         mensaje = f"Se editó la descripción de la orden, {mensajeNuevos} a la orden y {mensajeEditados} de los detalles ya existentes"
     
@@ -1022,7 +1028,7 @@ def obtenerMensajeEdicion (edicionDescripcion, detalleNuevo, detalleEditado, det
         mensaje = f"Se editó la descripción de la orden y {mensajeEditados} junto con {mensajeEliminados} de los detalles ya existentes"
     
     elif edicionDescripcion and detalleNuevo:
-        mensajeNuevos = "se agregó un nuevo consumo" if cantidadNuevos == 1 else f"se agregaron {cantidadNuevos} nuevos consumos"
+        mensajeNuevos = "se agregó un nuevo consumible" if cantidadNuevos == 1 else f"se agregaron {cantidadNuevos} nuevos consumibles"
         
         mensaje = f"Se editó la descripción de la orden y {mensajeNuevos} a la orden"
     
@@ -1044,21 +1050,21 @@ def obtenerMensajeEdicion (edicionDescripcion, detalleNuevo, detalleEditado, det
         
         mensajeEditados = "hubo una modificación" if cantidadEditados == 1 else f"hubieron {cantidadEditados} modificaciones"
         
-        mensajeNuevos = "Se agregó un nuevo consumo" if cantidadNuevos == 1 else f"Se agregaron {cantidadNuevos} nuevos consumos"
+        mensajeNuevos = "Se agregó un nuevo consumible" if cantidadNuevos == 1 else f"Se agregaron {cantidadNuevos} nuevos consumibles"
         
         mensaje = f"{mensajeNuevos} a la orden y {mensajeEditados} junto con {mensajeEliminados} de los detalles ya existentes"
         
     elif detalleNuevo and detalleEliminado:
         mensajeEliminados = "hubo una eliminación" if cantidadEliminados == 1 else f"hubieron {cantidadEliminados} eliminaciones"
         
-        mensajeNuevos = "Se agregó un nuevo consumo" if cantidadNuevos == 1 else f"Se agregaron {cantidadNuevos} nuevos consumos"
+        mensajeNuevos = "Se agregó un nuevo consumible" if cantidadNuevos == 1 else f"Se agregaron {cantidadNuevos} nuevos consumibles"
         
         mensaje = f"{mensajeNuevos} a la orden y {mensajeEliminados} de los detalles ya existentes"
     
     elif detalleNuevo and detalleEditado:
         mensajeEditados = "hubo una modificación" if cantidadEditados == 1 else f"hubieron {cantidadEditados} modificaciones"
         
-        mensajeNuevos = "Se agregó un nuevo consumo" if cantidadNuevos == 1 else f"Se agregaron {cantidadNuevos} nuevos consumos"
+        mensajeNuevos = "Se agregó un nuevo consumible" if cantidadNuevos == 1 else f"Se agregaron {cantidadNuevos} nuevos consumibles"
         
         mensaje = f"{mensajeNuevos} a la orden y {mensajeEditados} de los detalles ya existentes"
     
@@ -1070,7 +1076,7 @@ def obtenerMensajeEdicion (edicionDescripcion, detalleNuevo, detalleEditado, det
         mensaje = f"{mensajeEditados} junto con {mensajeEliminados} de los detalles ya existentes"
     
     elif detalleNuevo:
-        mensajeNuevos = "Se agregó un nuevo consumo" if cantidadNuevos == 1 else f"Se agregaron {cantidadNuevos} nuevos consumos"
+        mensajeNuevos = "Se agregó un nuevo consumible" if cantidadNuevos == 1 else f"Se agregaron {cantidadNuevos} nuevos consumibles"
         
         mensaje = f"{mensajeNuevos} a la orden"
     

@@ -8,25 +8,25 @@
     <button id="agregar" data-toggle="modal" data-target="#AgregarTipoPlatillo" style="font-size: 15px;">
         <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px; margin-right: 10px;" title="Añadir el tipo de platillo">
     
-        <span style="width: 100px; display: inline-block; line-height: 13px;">Agregar tipo de consumo</span>
+        <span style="width: 100px; display: inline-block; line-height: 13px;">Agregar tipo de consumible</span>
     </button>
   
     <!-- <input type="text" id="buscar" placeholder="Buscar"> -->
   
     <!--
     <select name="" id="listaInventario">
-        <option value="">Tipos de consumo</option>
-        <option value="{% url 'inventario_platillos' %}">Consumos</option>
+        <option value="">Tipos de consumible</option>
+        <option value="{% url 'inventario_platillos' %}">Consumibles</option>
     </select>
     -->
 
     <div class="custom-dropdown" id="dropdownInventario">
       <button class="dropdown-trigger" aria-haspopup="true" aria-expanded="false">
-          Tipos de consumo <span style="margin-left: 10px;">▼</span>
+          Tipos de consumible <span style="margin-left: 10px;">▼</span>
       </button>
       <ul class="dropdown-menu" role="menu">
-          <li role="none"><a href="{% url 'inventario_platillos' %}" role="menuitem">Consumos</a></li>
-          <li role="none"><a href="#" role="menuitem">Tipos de consumo</a></li>
+          <li role="none"><a href="{% url 'inventario_platillos' %}" role="menuitem">Consumibles</a></li>
+          <li role="none"><a href="#" role="menuitem">Tipos de consumible</a></li>
       </ul>
     </div>
   
@@ -44,8 +44,8 @@
   <div id="contenedorDerechoEncabezadoInventario">
     <!-- Botón para mostrar u ocultar los registros inactivos -->
     <div class="btnVerInactivos">
-        <label for="checkVerTipoConsumosInactivos">Incluir inactivos</label>
-        <input type="checkbox" id="checkVerTipoConsumosInactivos" class="checkVerInactivos">
+        <label for="checkVerTipoConsumiblesInactivos">Incluir inactivos</label>
+        <input type="checkbox" id="checkVerTipoConsumiblesInactivos" class="checkVerInactivos">
     </div>
   </div>
 </div>
@@ -58,7 +58,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title " id="exampleModalLabel" >Exportar tipo de consumo</h5>
+        <h5 class="modal-title " id="exampleModalLabel" >Exportar tipo de consumible</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -87,7 +87,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title " id="exampleModalLabel" >Modificar tipo de consumo</h5>
+          <h5 class="modal-title " id="exampleModalLabel" >Modificar tipo de consumible</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -118,7 +118,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title " id="exampleModalLabel" >Agregar tipo de consumo</h5>
+          <h5 class="modal-title " id="exampleModalLabel" >Agregar tipo de consumible</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>

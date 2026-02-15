@@ -1,14 +1,14 @@
 {% csrf_token %} {% load static %} 
 
 <!-- TABLA CON SU RESPECTIVO CONTENIDO -->
-    <table class="display tablaInventario" style="width:100%;">
+    <table class="hover tablaInventario" style="width:100%;">
         <thead>
             <!-- Columnas -->
             <tr>
-                <th>Tipo de consumo</th>
+                <th>Tipo de consumible</th>
 
                 {% if VerEliminados == "1" %}
-                    <th style="text-align: center">Estado</th>
+                    <th>Estado</th>
                 {% endif %}
                 
                 <th>Acciones</th>
@@ -22,11 +22,15 @@
                 <td style="text-transform: capitalize; ">{{tipoplatillo.Nombre}}</td>
 
                 {% if VerEliminados == "1" %}
-                    <td style="text-align: center">
+                    <td>
                     {% if tipoplatillo.EsActivo == "1" %} 
-                        &#9989;
+                    <span class="badge-green">
+                        Activo
+                    </span>
                     {% else %}
-                        &#9940;
+                    <span class="badge-red">
+                        Inactivo
+                    </span>
                     {% endif %}
                     </td>
                 {% endif %}

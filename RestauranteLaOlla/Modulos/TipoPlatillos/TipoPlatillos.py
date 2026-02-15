@@ -36,7 +36,7 @@ def Actualizar_TipoPlatillo(request):
             if not nombre:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'El nombre del tipo de consumo es obligatorio'
+                    'message': 'El nombre del tipo de consumible es obligatorio'
                 }, status=400)
 
             # Verificar existencia
@@ -45,14 +45,14 @@ def Actualizar_TipoPlatillo(request):
             except TipoPlatillo.DoesNotExist:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'El tipo de consumo no existe'
+                    'message': 'El tipo de consumible no existe'
                 }, status=404)
 
             # Evitar duplicados con otro registro
             if TipoPlatillo.objects.exclude(Id=id_tipo).filter(Nombre__iexact=nombre).exists():
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'Ya existe otro tipo de consumo con ese nombre'
+                    'message': 'Ya existe otro tipo de consumible con ese nombre'
                 }, status=409)
 
             # Actualizar
@@ -65,7 +65,7 @@ def Actualizar_TipoPlatillo(request):
 
             return JsonResponse({
                 'status': 'ok',
-                'message': '¡Tipo de consumo actualizado correctamente!'
+                'message': '¡Tipo de consumible actualizado correctamente!'
             })
 
     except Exception as ex:
@@ -98,7 +98,7 @@ def DarBaja_TipoPlatillo(request):
             # Obtener el tipo de platillo
             tipoplatillo = TipoPlatillo.objects.filter(Id=id).first()
             if not tipoplatillo:
-                return JsonResponse({"status": "error", "message": "El tipo de consumo no existe"}, status=404)
+                return JsonResponse({"status": "error", "message": "El tipo de consumible no existe"}, status=404)
 
             # Marcar como inactivo
             tipoplatillo.EsActivo = "0"
@@ -109,7 +109,7 @@ def DarBaja_TipoPlatillo(request):
 
             return JsonResponse({
                 "status": "ok",
-                "message": "¡Tipo de consumo y consumos asociados dados de baja correctamente!"
+                "message": "¡Tipo de consumible y consumibles asociados dados de baja correctamente!"
             })
 
         return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
@@ -141,14 +141,14 @@ def Agregar_TipoPlatillo(request):
             if not nombre:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'El nombre del tipo de consumo es obligatorio'
+                    'message': 'El nombre del tipo de consumible es obligatorio'
                 }, status=400)
 
             # Verificar si ya existe
             if TipoPlatillo.objects.filter(Nombre__iexact=nombre).exists():
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'Este tipo de consumo ya existe'
+                    'message': 'Este tipo de consumible ya existe'
                 }, status=409)
 
             tipo = TipoPlatillo(
@@ -159,7 +159,7 @@ def Agregar_TipoPlatillo(request):
 
             return JsonResponse({
                 'status': 'ok',
-                'message': 'Tipo de consumo agregado correctamente'
+                'message': 'Tipo de consumible agregado correctamente'
             })
 
     except Exception as ex:

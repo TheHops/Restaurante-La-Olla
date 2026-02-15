@@ -93,9 +93,12 @@
             <li class="opcion"><a href="{% url 'OrdenesPendientes' %}">Órdenes</a></li>
           {% endif %}
 
+          {% if request.user.IdCargo.Nombre == "Administrador" %}
+            <li class="opcion"><a href="{% url 'personal' %}">Personal</a></li>
+          {% endif %}
+
           {% if request.user.IdCargo.Nombre == "Administrador" or request.user.IdCargo.Nombre == "Cajero" %}
-          <li class="opcion"><a href="{% url 'personal' %}">Personal</a></li>
-          <li class="opcion"><a href="{% url 'reportes' %}">Reportes</a></li>
+            <li class="opcion"><a href="{% url 'reportes' %}">Reportes</a></li>
           {% endif %}
 
           <li class="opcion"><a href="{% url 'MiPerfil' %}">Mi perfil</a></li>
@@ -219,24 +222,24 @@
       <a href="https://userway.org">website accessibility</a>
     </noscript>
 
-    <div class="modal fade" id="MostrarDetalleConsumo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="MostrarDetalleConsumible" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title ">Detalle del consumo</h5>
+            <h5 class="modal-title ">Detalle del consumible</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body" style="display: flex; flex-direction: column;">
-              <img src="" alt="" id="ImagenDetalleConsumo" class="detalleConsumoElemento" style="width: 70%; align-self: center;">
+              <img src="" alt="" id="ImagenDetalleConsumible" class="detalleConsumibleElemento" style="width: 70%; align-self: center;">
               <hr>
-              <h4 id="NombreDetalleConsumo" class="detalleConsumoElemento"></h4>
-              <h6 id="NombreDetalleTipoConsumo" class="detalleConsumoElemento"></h6>
+              <h4 id="NombreDetalleConsumible" class="detalleConsumibleElemento"></h4>
+              <h6 id="NombreDetalleTipoConsumible" class="detalleConsumibleElemento"></h6>
               <hr>
-              <h6 id="DescripcionDetalleConsumo" class="detalleConsumoElemento"></h6>
+              <h6 id="DescripcionDetalleConsumible" class="detalleConsumibleElemento"></h6>
               <hr>
-              <h4>Precio C$<span id="PrecioDetalleConsumo" class="detalleConsumoElemento"></span></h4>
+              <h4>Precio C$<span id="PrecioDetalleConsumible" class="detalleConsumibleElemento"></span></h4>
           </div>
         </div>
       </div>
@@ -253,13 +256,13 @@
           </div>
           <div class="modal-body" style="display: flex; flex-direction: column;">
               <h5 class="subTItuloInfoCrearOrden">Crear orden</h5>
-              <h6 class="textoInfoCrearOrden">Realiza el proceso de creación de la orden una vez haya agregado al menos un consumo</h6>
+              <h6 class="textoInfoCrearOrden">Realiza el proceso de creación de la orden una vez haya agregado al menos un consumible</h6>
               <hr>
               <h5 class="subTItuloInfoCrearOrden">Limpiar</h5>
-              <h6 class="textoInfoCrearOrden">Elimina todos los consumos que han sido agregados a la orden, volviendo a dejarla vacía para poder agregar nuevos consumos</h6>
+              <h6 class="textoInfoCrearOrden">Elimina todos los consumibles que han sido agregados a la orden, volviendo a dejarla vacía para poder agregar nuevos consumibles</h6>
               <hr>
               <h5 class="subTItuloInfoCrearOrden">Quitar</h5>
-              <h6 class="textoInfoCrearOrden">Es similar al anterior pero elimina la orden de forma individual por consumo</h6>
+              <h6 class="textoInfoCrearOrden">Es similar al anterior pero elimina la orden de forma individual por consumible</h6>
               <hr>
               <h5 class="subTItuloInfoCrearOrden">Al crear la orden</h5>
               <h6 class="textoInfoCrearOrden">Podrá ser capaz de escribir alguna información adicional que podrá ver el personal de cocina cuando se genere la orden</h6>

@@ -127,23 +127,38 @@
       <!-- Preparado -->
       {% elif Orden.Estado == "3" %}
       
-        <!-- Anular orden -->
-        <button
-          class="btnCancelarOrden"
-          onclick="CancelarOrden('{{Orden.Id}}')"
-        >
-          <i class="fa-solid fa-ban"></i> Anular
-        </button>
+        {% if CargoUsuario == "Mesero" or CargoUsuario == "Administrador" %}
+          <!-- Anular orden -->
+          <button
+            class="btnCancelarOrden"
+            onclick="CancelarOrden('{{Orden.Id}}')"
+          >
+            <i class="fa-solid fa-ban"></i> Anular
+          </button>
+        {% endif %}
 
-        <!-- Registrar la orden -->
-        <button
-          class="btnFacturarOrden"
-          data-toggle="modal"
-          data-target="#FacturarOrden"
-          onclick="rellenarParaFacturar('{{Orden.Id}}', '{{Orden.Total}}')"
-        >
-          <i class="fa-solid fa-file-invoice-dollar"></i> Registrar pago
-        </button>
+        {% if CargoUsuario == "Mesero" or CargoUsuario == "Administrador" %}
+          <!-- Editar la orden -->
+          <button
+            class="btnEditarOrden"
+            data-toggle="modal"
+            data-target="#EditarOrden"
+            onclick="rellenarParaEditarOrden('{{Orden.Id}}')"
+            >Modificar
+          </button>
+        {% endif %}
+
+        {% if CargoUsuario != "Mesero" %}
+          <!-- Registrar la orden -->
+          <button
+            class="btnFacturarOrden"
+            data-toggle="modal"
+            data-target="#FacturarOrden"
+            onclick="rellenarParaFacturar('{{Orden.Id}}', '{{Orden.Total}}')"
+          >
+            <i class="fa-solid fa-file-invoice-dollar"></i> Registrar pago
+          </button>
+        {% endif %}
 
       <!-- Anulada -->
       {% elif Orden.Estado == "2" %}

@@ -61,9 +61,9 @@ combinarCheckbox.addEventListener("change", function () {
   cambioTipoDeSeleccion(this);
 });
 
-function PonerInfoConsumo(imagenUrl, nombre, tipoConsumo, descripcion, precio) {
+function PonerInfoConsumible(imagenUrl, nombre, tipoConsumible, descripcion, precio) {
   // Imagen
-  const img = document.getElementById("ImagenDetalleConsumo");
+  const img = document.getElementById("ImagenDetalleConsumible");
   if (imagenUrl && imagenUrl !== "") {
     img.src = `/media/${imagenUrl}`;
   } else {
@@ -72,22 +72,22 @@ function PonerInfoConsumo(imagenUrl, nombre, tipoConsumo, descripcion, precio) {
 
   console.log(imagenUrl);
   console.log(nombre);
-  console.log(tipoConsumo);
+  console.log(tipoConsumible);
   console.log(descripcion);
   console.log(precio);
 
   // Nombre del platillo
-  document.getElementById("NombreDetalleConsumo").textContent = nombre;
+  document.getElementById("NombreDetalleConsumible").textContent = nombre;
 
-  // Tipo de consumo
-  document.getElementById("NombreDetalleTipoConsumo").textContent = tipoConsumo;
+  // Tipo de consumible
+  document.getElementById("NombreDetalleTipoConsumible").textContent = tipoConsumible;
 
   // Descripción
-  document.getElementById("DescripcionDetalleConsumo").textContent =
+  document.getElementById("DescripcionDetalleConsumible").textContent =
     descripcion && descripcion !== "" ? descripcion : "Sin descripción";
 
   // Precio
-  document.getElementById("PrecioDetalleConsumo").textContent = precio;
+  document.getElementById("PrecioDetalleConsumible").textContent = precio;
 }
 
 function cambioTipoDeSeleccion(check) {

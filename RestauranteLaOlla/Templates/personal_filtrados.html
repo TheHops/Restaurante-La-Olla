@@ -1,7 +1,7 @@
 {% csrf_token %} {% load static %} 
 
 <!-- TABLA CON SU RESPECTIVO CONTENIDO -->
-    <table class="display tablaInventario" style="width:100%;">
+    <table class="hover tablaInventario" style="width:100%;">
         <thead>
             <!-- Columnas -->
             <tr>
@@ -44,11 +44,15 @@
                 <td>{{personal.IdCargo.Nombre}}</td>
 
                 {% if VerEliminados == "1" %}
-                    <td class="estadoPersonalFila" style="text-align: center;">
+                    <td class="estadoPersonalFila">
                         {% if personal.EsActivo == '1'%}
-                            &#9989;
+                        <span class="badge-green">
+                            Activo
+                        </span>
                         {% else %}
-                            &#9940;
+                        <span class="badge-red" style="display: inline-block">
+                            Dado de baja
+                        </span>
                         {% endif %}
                     </td>
                 {% endif %}
