@@ -224,7 +224,7 @@
   <hr>
 
   <div class="col-12">
-    <button data-toggle="modal" data-target="#IncluirDetalle" onclick="agregarPlatillosIncluir('{{Orden.Id}}')" id="btnIncluirConsumo">Incluir consumo</button>
+    <button data-toggle="modal" data-target="#IncluirDetalle" onclick="agregarPlatillosIncluir('{{Orden.Id}}')" id="btnIncluirConsumible">Incluir consumible</button>
 
     <button onclick="rellenarParaEditarOrden('{{Orden.Id}}')">Reiniciar</button>
   </div>
@@ -238,7 +238,7 @@
       <thead>
         <!-- Columnas -->
         <tr>
-            <th><h5>Consumo</h5></th>
+            <th><h5>Consumible</h5></th>
             <th><h5>Precio unitario</h5></th>
             <th style="text-align: center; min-width: 100px;"><h5>Cantidad</h5></th>
 
@@ -263,7 +263,7 @@
                   <td style="text-align: center;">
                     <button style="min-width: 30px;" class="btnControlCantidad" onclick="bajarCantidad('{{detalle.IdPlatillo.Id}}')">-</button>
 
-                    <span id="cantidadDetalle-{{detalle.IdPlatillo.Id}}" class="cantidadConsumoEditar">{{detalle.Cantidad}}</span>
+                    <span id="cantidadDetalle-{{detalle.IdPlatillo.Id}}" class="cantidadConsumibleEditar">{{detalle.Cantidad}}</span>
                     
                     <button style="min-width: 30px;" class="btnControlCantidad" onclick="subirCantidad('{{detalle.IdPlatillo.Id}}')">+</button>
                   </td>

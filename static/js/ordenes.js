@@ -566,14 +566,14 @@ function iniciarTimers() {
 
 const opcionesDisponibles = {
   Administrador: ["0", "1", "2", "3", "4", "5"],
-  Mesero: ["1", "4", "6"],
+  Mesero: ["1", "4", "3", "7"],
   Armador: ["1", "4", "6"],
   Cajero: ["0", "2", "3"],
 };
 
 const valoresPorDefecto = {
   Administrador: "5",
-  Mesero: "6",
+  Mesero: "7",
   Armador: "6",
   Cajero: "3",
 };
@@ -714,6 +714,8 @@ function CambioEstadoOrdenes(cadena)
 
 function filtrarOrdenes(cadena) {
   const contenedor = document.getElementById("listaOrdenesPoFoC");
+
+  console.log(contenedor.value);
 
   const request = new XMLHttpRequest();
 

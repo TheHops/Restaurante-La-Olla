@@ -39,7 +39,7 @@ def Actualizar_Platillos(request):
             except Platillo.DoesNotExist:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'El consumo no existe'
+                    'message': 'El consumible no existe'
                 }, status=404)
 
             try:
@@ -47,7 +47,7 @@ def Actualizar_Platillos(request):
             except TipoPlatillo.DoesNotExist:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'Tipo de consumo no válido'
+                    'message': 'Tipo de consumible no válido'
                 }, status=404)
 
             # Asignar campos
@@ -66,7 +66,7 @@ def Actualizar_Platillos(request):
 
             return JsonResponse({
                 'status': 'ok',
-                'message': '¡Consumo modificado exitosamente!'
+                'message': '¡Consumible modificado exitosamente!'
             })
 
     except Exception as ex:
@@ -94,7 +94,7 @@ def DarBaja_Platillo(request):
             if not id_platillo:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'ID de consumo no proporcionado'
+                    'message': 'ID de consumible no proporcionado'
                 }, status=400)
 
             try:
@@ -102,7 +102,7 @@ def DarBaja_Platillo(request):
             except Platillo.DoesNotExist:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'El consumo no existe'
+                    'message': 'El consumible no existe'
                 }, status=404)
 
             platillo.EsActivo = "0"
@@ -110,7 +110,7 @@ def DarBaja_Platillo(request):
 
             return JsonResponse({
                 'status': 'ok',
-                'message': '¡Consumo desactivado exitosamente!'
+                'message': '¡Consumible desactivado exitosamente!'
             })
 
         return JsonResponse({
@@ -160,7 +160,7 @@ def Agregar_Platillo(request):
             except TipoPlatillo.DoesNotExist:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'Tipo de consumo no válido'
+                    'message': 'Tipo de consumible no válido'
                 }, status=404)
 
             platillo = Platillo(
@@ -180,7 +180,7 @@ def Agregar_Platillo(request):
 
             return JsonResponse({
                 'status': 'ok',
-                'message': '¡Consumo agregado exitosamente!'
+                'message': '¡Consumible agregado exitosamente!'
             })
 
     except Exception as ex:

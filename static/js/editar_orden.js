@@ -110,7 +110,7 @@ function mostrarPopover(btn, e) {
       sanitize: false,
       content: `
         <div class="text-center">
-          <p class="mb-2">¿Quitar consumo?</p>
+          <p class="mb-2">¿Quitar consumible?</p>
           <button type="button" class="btn btn-sm btn-secondary mr-1">No</button>
           <button type="button" class="btn btn-sm btn-danger" onclick="confirmarQuitar(${btn.dataset.idPlatillo})">Sí</button>
         </div>
@@ -305,13 +305,13 @@ function enviarDatosEditar(idOrden) {
   });
 }
 
-/* * * * * * * * *  INCLUIR CONSUMO  * * * * * * * * * * */
+/* * * * * * * * *  INCLUIR CONSUMIBLE  * * * * * * * * * * */
 
 // Selecciona o deselecciona un platillo
 $(document).on("keyup", "#buscarPlatilloEditar", function () {
   const texto = $(this).val().toLowerCase().trim();
 
-  $("#contenidoIncluirPlatillosEditar .nombreConsumoIncluir").each(function () {
+  $("#contenidoIncluirPlatillosEditar .nombreConsumibleIncluir").each(function () {
     const nombre = $(this).find(".chkPlatilloEditar").data("nombre");
 
     if (texto === "" || nombre.includes(texto)) {
@@ -339,7 +339,7 @@ function obtenerPlatillosSeleccionadosEditar() {
   return seleccionados;
 }
 
-// Verifica si hay consumos seleccionados
+// Verifica si hay consumibles seleccionados
 $(document).on("change", ".chkPlatilloEditar", function () {
   const haySeleccionados = $(".chkPlatilloEditar:checked").length > 0;
 
@@ -350,7 +350,7 @@ $("#IncluirDetalle").on("hidden.bs.modal", function () {
   $(".chkPlatilloEditar").prop("checked", false);
   $("#btnConfirmarIncluirDetalles").prop("disabled", true);
   $("#buscarPlatilloEditar").val("");
-  $(".nombreConsumoIncluir").show();
+  $(".nombreConsumibleIncluir").show();
 });
 
 $("#IncluirDetalle").on("hide.bs.modal", function () {
@@ -400,7 +400,7 @@ function agregarFilaDetalleEditar(platillo) {
           onclick="bajarCantidad('${platillo.id}')">-</button>
 
         <span id="cantidadDetalle-${platillo.id}"
-              class="cantidadConsumoEditar">1</span>
+              class="cantidadConsumibleEditar">1</span>
 
         <button class="btnControlCantidad" style="min-width: 30px;"
           onclick="subirCantidad('${platillo.id}')">+</button>

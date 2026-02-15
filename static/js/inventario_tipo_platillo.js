@@ -74,12 +74,12 @@ function DarBajaImpresion(id) {
 async function DarBajaTipoPlatillo(idTipo) {
   // Confirmación inicial
   const confirmacion = await Swal.fire({
-    title: "¿Realmente desea desactivar este tipo de consumo?",
+    title: "¿Realmente desea desactivar este tipo de consumible?",
     icon: "question",
     html: `
       <div style="margin-top:10px; padding:10px; background:#fff3cd; color:#856404; border-radius:6px;">
-        Si desactiva un tipo de consumo, dejarán de estar disponibles en el menú
-        todos aquellos consumos relacionados.
+        Si desactiva un tipo de consumible, dejarán de estar disponibles en el menú
+        todos aquellos consumibles relacionados.
       </div>
     `,
     iconColor: "#ff964e",
@@ -117,7 +117,7 @@ async function DarBajaTipoPlatillo(idTipo) {
 
     if (json.status === "ok") {
       await Swal.fire({
-        title: "¡Tipo de consumo desactivado correctamente!",
+        title: "¡Tipo de consumible desactivado correctamente!",
         icon: "success",
         confirmButtonColor: "#ff6464",
       });
@@ -196,7 +196,7 @@ function Agregar_TipoPlatillo() {
 ////////////////////////////////////////////////
 
 document.addEventListener("DOMContentLoaded", () => {
-  const check = document.getElementById("checkVerTipoConsumosInactivos");
+  const check = document.getElementById("checkVerTipoConsumiblesInactivos");
   const key = "verEliminadosTipoPlatillos";
 
   // Restaurar estado guardado

@@ -1,15 +1,15 @@
 {% csrf_token %} {% load static %} 
 
-<table class="display tablaInventario" style="width:100%;">
+<table class="tablaInventario hover" style="width:100%;">
     <thead>
         <!-- Columnas -->
         <tr>
-            <th>Consumo</th>
-            <th>Tipo de consumo</th>
+            <th>Consumible</th>
+            <th>Tipo de consumible</th>
             <th>Precio</th>
             
             {% if VerEliminados == "1" %}
-                <th id="estadoPlatilloColumna" style="text-align: center">Estado</th>
+                <th id="estadoPlatilloColumna">Estado</th>
             {% endif %}
             
             <th>Acciones</th>
@@ -25,11 +25,15 @@
             <td>C${{platillo.Precio}}</td>
 
             {% if VerEliminados == "1" %}
-                <td class="estadoPlatilloFila" style="text-align: center;">
+                <td class="estadoPlatilloFila">
                     {% if platillo.EsActivo == "1" %} 
-                    &#9989;
+                    <span class="badge-green">
+                        Activo
+                    </span>
                     {% else %}
-                    &#9940;
+                    <span class="badge-red">
+                        Inactivo
+                    </span>
                     {% endif %}
                 </td>
             {% endif %}
