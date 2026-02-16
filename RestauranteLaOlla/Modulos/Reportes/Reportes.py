@@ -175,12 +175,14 @@ def ExportarOrdenes(request):
     
     print(ordenes)
     
+    nombreArchivo = f"ORDENES_{fecha_inicio_str}_{fecha_fin_str}" if not incluir_detalles else f"ORDENES_DETALLES_{fecha_inicio_str}_{fecha_fin_str}"
+    
     if tipo_exportacion == "1":
         wb = exportar_excel_ordenes(ordenes, incluir_detalles)
-        return descargar_excel(wb, f"ordenes_{fecha_inicio_str}_{fecha_fin_str}.xlsx")
+        return descargar_excel(wb, f"{nombreArchivo}.xlsx")
     
     if tipo_exportacion == "2":
-        return exportar_pdf_ordenes(ordenes, request, incluir_detalles, fecha_inicio_str)
+        return exportar_pdf_ordenes(ordenes, request, incluir_detalles, nombreArchivo)
     
     return JsonResponse({
             "status": "error",
@@ -343,7 +345,7 @@ def exportar_excel_ordenes(ordenes, incluir_detalles=False):
 
     return wb
 
-def exportar_pdf_ordenes(ordenes, request, incluir_detalles=False, fecha_inicio=""):
+def exportar_pdf_ordenes(ordenes, request, incluir_detalles=False, nombre_archivo="ORDENES"):
     buffer = io.BytesIO()
     pagesize = landscape(letter)
     width, height = pagesize
@@ -442,8 +444,8 @@ def exportar_pdf_ordenes(ordenes, request, incluir_detalles=False, fecha_inicio=
 
             tabla_detalle = Table(detalles_data, colWidths=[420, 120, 70, 120])
             tabla_detalle.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#DDDDDD")),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor("#555555")),
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#f5f0f0")),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor("#a05047")),
                 ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
                 ('ALIGN', (2, 0), (2, -1), 'CENTER'),
                 ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
@@ -489,7 +491,7 @@ def exportar_pdf_ordenes(ordenes, request, incluir_detalles=False, fecha_inicio=
     
     buffer.seek(0)
     response = HttpResponse(buffer, content_type="application/pdf")
-    response["Content-Disposition"] = f'attachment; filename="Reporte_Ordenes_{fecha_inicio}.pdf"'
+    response["Content-Disposition"] = f'attachment; filename="{nombre_archivo}.pdf"'
     return response
 
 #region Platillos
@@ -558,7 +560,7 @@ def exportar_excel_platillos():
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
     
-    filename = 'Consumibles_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
+    filename = 'CONSUMIBLES_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     
     wb.save(response)
@@ -583,7 +585,7 @@ def exportar_pdf_platillo(request):
         titulo="CONSUMIBLES",
         columnas=columnas,
         filas=filas,
-        nombre_archivo="Consumibles",
+        nombre_archivo="CONSUMIBLES_" + timezone.localtime().strftime('%d-%m-%Y'),
         ancho_columnas=[100, 50, 100, 200, 70],
         wrap_columns=[0, 2, 3],
         usuario=request.user.username
@@ -650,7 +652,7 @@ def exportar_excel_tipo_platillo():
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
-    filename = 'TipoConsumible_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
+    filename = 'TIPO_CONSUMIBLE_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     wb.save(response)
     return response
@@ -667,7 +669,7 @@ def exportar_pdf_tipo_platillo(request):
         titulo="TIPOS DE CONSUMIBLE",
         columnas=columnas,
         filas=filas,
-        nombre_archivo="TipoConsumible",
+        nombre_archivo="TIPO_CONSUMIBLE_" + timezone.localtime().strftime('%d-%m-%Y'),
         ancho_columnas=[300, 150],
         usuario=request.user.username
     )
@@ -816,7 +818,7 @@ def CreacionPlatillos_PDF(request):
             pdf = pdfkit.from_string(html, False, configuration=config)
 
             response = HttpResponse(content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename="platillos.pdf"'
+            response['Content-Disposition'] = 'attachment; filename="CONSUMIBLES.pdf"'
             response.write(pdf)
 
             return response
@@ -855,7 +857,7 @@ def CreacionTipoPlatillos_PDF(request):
             pdf = pdfkit.from_string(html, False, configuration=config)
 
             response = HttpResponse(content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename="Tipo_platillos.pdf"'
+            response['Content-Disposition'] = 'attachment; filename="TIPO_CONSUMIBLES.pdf"'
             response.write(pdf)
             return response
         except Exception as ex:
