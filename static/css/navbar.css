@@ -395,3 +395,168 @@ body .modal-open {
     padding: 5px 7px;
     color: white;
 }
+
+/* * * * * * * * * * CHECK TOGGLE * * * * * * * * * */
+
+/* Contenedor principal para alinear texto y switch */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: sans-serif;
+    color: #6c757d; /* Color del texto similar a la imagen */
+
+    border: solid 2px hsl(208, 7%, 70%);
+    padding: 0 10px;
+    border-radius: 30px;
+}
+
+.toggle-container:has(.label-toggle:hover) {
+    background-color: #f5f0f0; /* Color de fondo sutil */
+    transition: background-color ease-in-out 0.2s;
+}
+
+/* Ocultamos el checkbox original */
+.check-toggle {
+    display: none;
+}
+
+/* Estilo del carril (el fondo ovalado) */
+.label-toggle {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    margin: 0;
+}
+
+.label-toggle::after {
+    content: "";
+    width: 50px;
+    height: 24px;
+    background-color: #ffffff;
+    border: 2px solid #dee2e6;
+    border-radius: 20px;
+    display: inline-block;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Estilo del círculo (el switch) */
+.label-toggle::before {
+    content: "";
+    position: absolute;
+    right: 28px; /* Posición inicial (apagado) */
+    width: 18px;
+    height: 18px;
+    background-color: #adb5bd; /* Gris cuando está inactivo */
+    border-radius: 50%;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+/* --- ESTADOS ACTIVOS --- */
+
+/* Cuando el checkbox está marcado: movemos el círculo y cambiamos color */
+.check-toggle:checked + .label-toggle::before {
+    transform: translateX(22px);
+    background-color: #e35d5d; /* Rojo de tu imagen */
+}
+
+/* Opcional: cambiar el borde del carril cuando esté activo */
+.check-toggle:checked + .label-toggle::after {
+    border-color: #ced4da;
+}
+
+/* * * * * * * * * ESTADOS TIPO PASTILLAS * * * * * * * * * */
+
+:root {
+    --color-activo: #63c963;   /* Verde de tu imagen */
+    --color-inactivo: #ce6d6d; /* Rojo de tu imagen */
+    --color-texto-off: #888;
+}
+
+/* Título */
+.titulo-estado {
+    font-size: 20px;
+    margin-bottom: 5px;
+    color: #444;
+}
+.required { color: #ff8a8a; }
+
+/* Contenedor del Switch */
+.switch-segmentado {
+    display: flex;
+    position: relative;
+    width: 100%; /* Ajusta el ancho según necesites */
+    height: 50px;
+    background-color: #fff;
+    border: 2px solid #e9ecef;
+    border-radius: 50px;
+    overflow: hidden;
+}
+
+/* Ocultamos los radios reales */
+.switch-segmentado input {
+    display: none;
+}
+
+/* Estilo de las etiquetas (Texto) */
+.switch-segmentado label {
+    flex: 1;
+    text-align: center;
+    line-height: 46px; /* Centrado vertical */
+    z-index: 2;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 18px;
+    color: var(--color-texto-off);
+    transition: color 0.3s ease;
+    margin: 0;
+}
+
+/* La pastilla deslizante */
+.slider-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    border-radius: 40px;
+    transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    z-index: 1;
+}
+
+/* --- LÓGICA DE ESTADOS --- */
+
+/* Si ACTIVO está seleccionado */
+#activo:checked ~ .slider-bg {
+    left: 0;
+    background-color: var(--color-activo);
+}
+#activo:checked + label {
+    color: white;
+}
+
+/* Si INACTIVO está seleccionado */
+#inactivo:checked ~ .slider-bg {
+    left: 50%;
+    background-color: var(--color-inactivo);
+}
+#inactivo:checked + label {
+    color: white;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -99,11 +99,13 @@ function Impresion(
   $("#NombrePlatillo").val(nombre);
   $("#TipoPlatillo").val(tipoPlatillo);
   $("#PrecioPlatillo").val(precio);
-  $("#EstadoPlatillo").val(estado);
   $("#DescripcionPlatillo").val(descripcion);
   $("#TipoPlatillo").val(idTipoPLatillo);
-
-  $("#EstadoPlatillo").val(estado === "1" ? 1 : 0);
+  
+  if (estado == "1")
+    $("#switch-estado #activo").checked = true;
+  else
+    $("#switch-estado #inactivo").checked = true;
 }
 
 function ActualizarPlatillo() {

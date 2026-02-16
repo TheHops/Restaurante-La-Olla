@@ -42,9 +42,9 @@
 
     <div id="contenedorDerechoEncabezadoInventario">
         <!-- Botón para mostrar u ocultar los registros inactivos -->
-        <div class="btnVerInactivos">
-            <label for="checkVerConsumiblesInactivos">Incluir inactivos</label>
-            <input type="checkbox" id="checkVerConsumiblesInactivos" class="checkVerInactivos">
+        <div class="toggle-container">
+            <input type="checkbox" id="checkVerConsumiblesInactivos" class="check-toggle">
+            <label for="checkVerConsumiblesInactivos" class="label-toggle">Incluir inactivos</label>
         </div>
     </div>
 </div>
@@ -119,12 +119,29 @@
                         <input type="text" inputmode="numeric" class="form-control" id="PrecioPlatillo" placeholder="Ej: 150" onkeypress="return soloNumeros(event)" required>
                     </div>
 
+                    <!--
+                        <div class="col-md-6 mb-2">
+                            <h4 style="font-size: 20px; margin-bottom: 3px;">Estado</h4>
+                            <select class="form-control" id="EstadoPlatillo">
+                                <option value="1">Activo</option>
+                                <option value="0">Inactivo</option>
+                            </select>
+                        </div>
+                    -->
+
+                    <!-- Selector tipo pastilla -->
                     <div class="col-md-6 mb-2">
-                        <h4 style="font-size: 20px; margin-bottom: 3px;">Estado</h4>
-                        <select class="form-control" id="EstadoPlatillo">
-                            <option value="1">Activo</option>
-                            <option value="0">Inactivo</option>
-                        </select>
+                        <h4 class="titulo-estado">Estado<span class="required">*</span></h4>
+                        
+                        <div class="switch-segmentado" id="switch-estado">
+                            <input type="radio" name="estado" id="activo" value="1">
+                            <label for="activo">Activo</label>
+                    
+                            <input type="radio" name="estado" id="inactivo" value="0">
+                            <label for="inactivo">Inactivo</label>
+                    
+                            <span class="slider-bg"></span>
+                        </div>
                     </div>
 
                     <div class="col-md-6 mb-2">
