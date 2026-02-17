@@ -78,7 +78,13 @@ function ImpresionPersonal(
   $("#NombreUsuarioMod").val(nombre);
   $("#ApellidosUsuarioMod").val(apellido);
   $("#idCargoModificar").val(idCargo);
-  $("#idEstadoModificar").val(estado === "1" ? 1 : 0);
+  // $("#idEstadoModificar").val(estado === "1" ? 1 : 0);
+
+  if (estado == "1" || estado == 1) {
+    $("#activo").prop("checked", true);
+  } else {
+    $("#inactivo").prop("checked", true);
+  }
 }
 
 function Agregar_Personal() {
@@ -145,7 +151,7 @@ function ModificarPersonal() {
     Telefono: $("#NumberUsuario").val(),
     Cargo: $("#idCargoModificar").val(),
     IDPersonal: $("#IdPersonal").val(),
-    Estado: $("#idEstadoModificar").val(),
+    Estado: $('input[name="estado"]:checked').val(),
     NameUsuario: $("#NombreUsuarioMod").val(),
     LastNameUsuario: $("#ApellidosUsuarioMod").val(),
     csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),

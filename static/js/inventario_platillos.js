@@ -99,11 +99,14 @@ function Impresion(
   $("#NombrePlatillo").val(nombre);
   $("#TipoPlatillo").val(tipoPlatillo);
   $("#PrecioPlatillo").val(precio);
-  $("#EstadoPlatillo").val(estado);
   $("#DescripcionPlatillo").val(descripcion);
   $("#TipoPlatillo").val(idTipoPLatillo);
-
-  $("#EstadoPlatillo").val(estado === "1" ? 1 : 0);
+  
+  if (estado == "1" || estado == 1) {
+    $("#activo").prop("checked", true);
+  } else {
+    $("#inactivo").prop("checked", true);
+  }
 }
 
 function ActualizarPlatillo() {
@@ -112,7 +115,7 @@ function ActualizarPlatillo() {
   formData.append("Nombre", $("#NombrePlatillo").val());
   formData.append("tipoplatillo", $("#TipoPlatillo").val());
   formData.append("Precio", parseFloat($("#PrecioPlatillo").val()));
-  formData.append("estado", $("#EstadoPlatillo").val());
+  formData.append("estado", $('input[name="estado"]:checked').val());
   formData.append("Descripcion", $("#DescripcionPlatillo").val());
   formData.append("Imagen", $("#archivoModal_dos")[0].files[0]);
   formData.append(
