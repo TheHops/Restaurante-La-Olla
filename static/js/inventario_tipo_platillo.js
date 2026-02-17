@@ -1,7 +1,13 @@
 function Impresion(id, nombre, estado) {
   $("#NameTipoPlatillo").val(nombre);
-  $("#EstadoTipoPlatillo").val(estado === "1" ? 1 : 0);
+  // $("#EstadoTipoPlatillo").val(estado === "1" ? 1 : 0);
   $("#IDTipoPlatillo").val(id);
+
+  if (estado == "1" || estado == 1) {
+    $("#activo").prop("checked", true);
+  } else {
+    $("#inactivo").prop("checked", true);
+  }
 }
 
 // document.getElementById("listaInventario").addEventListener(
@@ -14,7 +20,7 @@ function Impresion(id, nombre, estado) {
 
 function ActualizarTipoPlatillo() {
   const nombre = $("#NameTipoPlatillo").val();
-  const estado = $("#EstadoTipoPlatillo").val();
+  const estado = $('input[name="estado"]:checked').val();
   const Id = $("#IDTipoPlatillo").val();
 
   Swal.fire({

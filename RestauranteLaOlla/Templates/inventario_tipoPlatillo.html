@@ -102,14 +102,36 @@
         <div class="modal-body">
             <form method="POST">
                 {% csrf_token %}
-                <h4 style="font-size: 20px;">Nombre<span class="asterisco">*</span></h4>
-                <input type="text" class="form-control" id="NameTipoPlatillo" placeholder="Ej: Aperitivos" required>
-                <h4 style="font-size: 20px;">Estado</h4>
-                <select class="form-control" id="EstadoTipoPlatillo">
-                    <option value = "1">Activo</option>
-                    <option value = "0">Inactivo</option>
-                  </select>
-                  <input type="hidden" class="form-control" id="IDTipoPlatillo" required>
+                <div class="row">
+                  <div class="col-md-6 mb-2">
+                    <h4 style="font-size: 20px;">Nombre<span class="asterisco">*</span></h4>
+                    <input type="text" class="form-control" id="NameTipoPlatillo" placeholder="Ej: Aperitivos" required>
+                  </div>
+                  
+                  <!--
+                    <h4 style="font-size: 20px;">Estado</h4>
+                    <select class="form-control" id="EstadoTipoPlatillo">
+                      <option value = "1">Activo</option>
+                      <option value = "0">Inactivo</option>
+                    </select>
+                  -->
+  
+                  <div class="col-md-6 mb-2">
+                    <h4 class="titulo-estado">Estado<span class="required">*</span></h4>
+                        
+                    <div class="switch-segmentado" id="switch-estado">
+                        <input type="radio" name="estado" id="activo" value="1">
+                        <label for="activo">Activo</label>
+                
+                        <input type="radio" name="estado" id="inactivo" value="0">
+                        <label for="inactivo">Inactivo</label>
+                
+                        <span class="slider-bg"></span>
+                    </div>
+                  </div>
+                </div>
+                
+                <input type="hidden" class="form-control" id="IDTipoPlatillo" required>
             </form>
                
         </div>
