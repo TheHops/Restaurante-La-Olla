@@ -274,11 +274,22 @@ a .paginate_button .current {
 
 /* E X P O R T A R */
 
-.exportar .excel,
+.exportar .excel
+{
+    height: 40px;
+    background: hsl(120, 52%, 98%);
+    border-color: #66CC66;
+    color: #66CC66;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+}
+
 .exportar .pdf {
     height: 40px;
-    background: rgb(255, 255, 255);
+    background: hsl(0, 100%, 98%);
     border-color: rgb(230, 150, 150);
+    color: #e69696;
     border-radius: 10px;
     cursor: pointer;
     box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
@@ -290,11 +301,11 @@ a .paginate_button .current {
 }
 
 .exportar .pdf:hover {
-    background: rgb(255, 240, 240);
+    background: hsl(0, 100%, 96%);
 }
 
 .exportar .excel:hover {
-    background: rgb(255, 240, 240);
+    background: hsl(120, 52%, 95%);;
 }
 
 .exportarP {
