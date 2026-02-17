@@ -429,11 +429,13 @@ body .modal-open {
     gap: 10px;
     position: relative;
     margin: 0;
+    line-height: 15px;
 }
 
 .label-toggle::after {
     content: "";
     width: 50px;
+    min-width: 50px;
     height: 24px;
     background-color: #ffffff;
     border: 2px solid #dee2e6;
@@ -460,7 +462,7 @@ body .modal-open {
 
 /* Cuando el checkbox está marcado: movemos el círculo y cambiamos color */
 .check-toggle:checked + .label-toggle::before {
-    transform: translateX(22px);
+    transform: translateX(130%);
     background-color: #e35d5d; /* Rojo de tu imagen */
 }
 
