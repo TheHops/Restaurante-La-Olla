@@ -21,7 +21,7 @@ def inventario_platillos(request):
             )
             PlatilloType = TipoPlatillo.objects.all()
             
-            return render(request, "inventario_platillos.html", {'Platillos': Platillos, 'TypePlatillo': PlatilloType, "User": request.user.username})
+            return render(request, "inventario_platillos.html", {'Platillos': Platillos, 'TypePlatillo': PlatilloType, "User": request.user})
         except Exception as ex:
             print()
             print("#################### E X C E P C I O N ########################")
@@ -65,7 +65,7 @@ def inventario_tipoplatillo(request):
         
         try:
             PlatilloType = TipoPlatillo.objects.all()
-            return render(request, "inventario_tipoPlatillo.html", {'TypePlatillo': PlatilloType, "User": request.user.username})
+            return render(request, "inventario_tipoPlatillo.html", {'TypePlatillo': PlatilloType, "User": request.user})
         except Exception as ex:
             print()
             print("#################### E X C E P C I O N ########################")
