@@ -392,14 +392,14 @@ a .paginate_button .current {
 /* Elementos de la lista */
 .dropdown-menu li a {
     color: black;
-    padding: 10px 15px;
+    /* padding: 5px 15px; */
     text-decoration: none;
     display: block;
 }
 
-.dropdown-menu li a:hover {
+/* .dropdown-menu li a:hover {
     background-color: #f1f1f1;
-}
+} */
 
 /* MAGIA: Mostrar al pasar el mouse sobre el contenedor */
 .custom-dropdown:hover .dropdown-menu,
@@ -411,8 +411,11 @@ a .paginate_button .current {
     outline: 2px solid #9C090B; /* Color rojo como tu icono */
 }
 
-.dropdown-menu li a:focus {
+.dropdown-menu li:has(a:focus) {
     background-color: #9C090B; /* El rojo de tu icono */
+}
+
+.dropdown-menu li:has(a:focus) a {
     color: white;
     outline: none;
 }

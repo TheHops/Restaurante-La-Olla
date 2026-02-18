@@ -157,10 +157,16 @@
 }
 
 /* El efecto de oscurecer un poco el fondo que querías */
-.dropdown-menu li:hover, 
-.dropdown-menu li:focus {
-    background-color: #e2e2e2; 
+.dropdown-menu li:hover 
+{
+    background-color: #e2e2e2;
     color: #000;
+}
+
+.dropdown-menu li:focus {
+    background-color: #9C090B;
+    color: white;
+    outline: none;
 }
 
 /* Aseguramos que el contenedor no mueva otros elementos al abrirse */
