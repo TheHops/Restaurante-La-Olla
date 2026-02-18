@@ -33,11 +33,27 @@
             </small>
         {% endif %}
 
-        <select name="" id="listaEstadoOrdenesExportar">
-            <option value="0">Pago registrado</option>
-            <option value="2">Anuladas</option>
-            <option value="0,2">Ambas</option>
-        </select>
+        <!--
+            <select name="" id="listaEstadoOrdenesExportar">
+                <option value="0">Pago registrado</option>
+                <option value="2">Anuladas</option>
+                <option value="0,2">Ambas</option>
+            </select>
+        -->
+
+        <div class="custom-dropdown" style="margin-left: 0;" id="dropdownEstadoOrdenes">
+            <input type="hidden" id="listaEstadoOrdenesExportar" value="0">
+            
+            <button class="dropdown-trigger" style="padding: 4px 15px;" type="button" aria-haspopup="listbox">
+                <span id="textoSeleccionado">Pago registrado</span> <span>▼</span>
+            </button>
+            
+            <ul class="dropdown-menu" role="listbox">
+                <li role="option" data-value="0">Pago registrado</li>
+                <li role="option" data-value="2">Anuladas</li>
+                <li role="option" data-value="0,2">Ambas</li>
+            </ul>
+        </div>
 
         <div id="contenedorBtnAplicarFiltros">
             <button id="btnAplicarFiltrosOrdenes" data-toggle="modal" data-target="#FiltrarOrdenes">
@@ -57,7 +73,15 @@
 
     <div id="contenedorDerechoEncabezadoInventario">
         <!-- Botón para mostrar u ocultar los registros inactivos -->
-        <button data-toggle="modal" data-target="#ExportarOrdenes" style="margin-left: 20px;" id="btnExportarOrdenes" disabled>Exportar</button>
+        <button class="btnExportarOrdenes" data-toggle="modal" data-target="#ExportarOrdenes" style="margin-left: 20px;" id="btnExportarOrdenes" disabled>
+            <svg width="18" height="24" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2.04167 29.7135L0 27.6354L4.30208 23.3333H1.02083V20.4167H9.26042V28.6562H6.34375V25.4115L2.04167 29.7135ZM12.1771 29.1667V26.25H20.9271V10.2083H13.6354V2.91667H3.42708V17.5H0.510417V2.91667C0.510417 2.11458 0.796007 1.42795 1.36719 0.856771C1.93837 0.28559 2.625 0 3.42708 0H15.0937L23.8438 8.75V26.25C23.8438 27.0521 23.5582 27.7387 22.987 28.3099C22.4158 28.8811 21.7292 29.1667 20.9271 29.1667H12.1771Z" fill="#ffffff"/>
+            </svg>
+                    
+            &nbsp;
+            
+            Exportar
+        </button>
     </div>
 </div>
 

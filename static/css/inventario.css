@@ -25,11 +25,25 @@
     border-color: rgb(255, 130, 150);
     color: #d92644;
 
+    cursor: pointer;
+
     transition: background-color ease .3s;
 }
 
 .btnExportar:hover {
     background-color: hsl(359, 89%, 97%);
+}
+
+.btnExportar:disabled {
+    background-color: hsl(359, 10%, 97%);
+    border-color: hsl(350, 10%, 75%);
+    color: hsl(350, 10%, 70%);
+    cursor: initial;
+}
+
+.btnExportar:disabled svg path {
+    fill: hsl(350, 10%, 70%) !important;
+    cursor: initial;
 }
 
 .btn_confirmation_mi_color {
