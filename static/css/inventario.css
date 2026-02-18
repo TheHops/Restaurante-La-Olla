@@ -25,11 +25,25 @@
     border-color: rgb(255, 130, 150);
     color: #d92644;
 
+    cursor: pointer;
+
     transition: background-color ease .3s;
 }
 
 .btnExportar:hover {
     background-color: hsl(359, 89%, 97%);
+}
+
+.btnExportar:disabled {
+    background-color: hsl(359, 10%, 97%);
+    border-color: hsl(350, 10%, 75%);
+    color: hsl(350, 10%, 70%);
+    cursor: initial;
+}
+
+.btnExportar:disabled svg path {
+    fill: hsl(350, 10%, 70%) !important;
+    cursor: initial;
 }
 
 .btn_confirmation_mi_color {
@@ -174,8 +188,12 @@
     flex-direction: column;
 }
 
+#cuerpoInventario::-webkit-scrollbar {
+    width: 0;
+}
+
 .dataTables_scrollBody::-webkit-scrollbar {
-    width: 10px;
+    width: 0;
     background: #ffffff;
 }
 
@@ -374,14 +392,14 @@ a .paginate_button .current {
 /* Elementos de la lista */
 .dropdown-menu li a {
     color: black;
-    padding: 10px 15px;
+    /* padding: 5px 15px; */
     text-decoration: none;
     display: block;
 }
 
-.dropdown-menu li a:hover {
+/* .dropdown-menu li a:hover {
     background-color: #f1f1f1;
-}
+} */
 
 /* MAGIA: Mostrar al pasar el mouse sobre el contenedor */
 .custom-dropdown:hover .dropdown-menu,
@@ -393,8 +411,13 @@ a .paginate_button .current {
     outline: 2px solid #9C090B; /* Color rojo como tu icono */
 }
 
-.dropdown-menu li a:focus {
+.dropdown-menu li:has(a:focus) {
     background-color: #9C090B; /* El rojo de tu icono */
+}
+
+.dropdown-menu li:has(a:focus) a {
     color: white;
     outline: none;
 }
+
+/* - - - - - - - - - - - - - - FIXES - - - - - - - - - - - - - - - - */

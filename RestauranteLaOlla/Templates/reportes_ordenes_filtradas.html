@@ -38,7 +38,17 @@
 
                 <td>C${{Orden.TotalPagar}}</td>
 
-                <td>{{Orden.get_Estado_display}}</td>
+                <td>
+                    {% if Orden.Estado == "0" %}
+                    <span class="badge-green">
+                        {{Orden.get_Estado_display}}
+                    </span>
+                    {% else %}
+                    <span class="badge-dark-gray">
+                        {{Orden.get_Estado_display}}
+                    </span>
+                    {% endif %}
+                </td>
 
                 <!-- Acciones -->
                 <td class="actions">

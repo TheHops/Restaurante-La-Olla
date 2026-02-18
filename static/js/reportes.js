@@ -463,4 +463,62 @@ function verificarFilasTabla() {
   }
 }
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * AUTO SELECT * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+const dropdown = document.getElementById("dropdownEstadoOrdenes");
+const inputOculto = document.getElementById("listaEstadoOrdenesExportar");
+const trigger = dropdown.querySelector(".dropdown-trigger");
+const label = document.getElementById("textoSeleccionado");
+const options = dropdown.querySelectorAll(".dropdown-menu li");
+
+options.forEach((option) => {
+  // Al hacer clic en una opción
+  option.addEventListener("click", () => {
+    const val = option.getAttribute("data-value");
+    const txt = option.innerText;
+
+    // 1. Actualizar el input oculto y el texto visual
+    inputOculto.value = val;
+    label.innerText = txt;
+
+    // 2. Cerrar el menú
+    dropdown.classList.remove("is-active");
+
+    // 3. Ejecutar tu lógica original
+    // Ahora filtrarOrdenesFecha() leerá el valor correcto desde inputOculto.value
+    if (typeof validarFechas === "function" && validarFechas()) {
+      filtrarOrdenesFecha();
+    }
+  });
+
+  // Permitir que las opciones sean enfocables para el teclado
+  option.setAttribute("tabindex", "0");
+});
+
+// Lógica de apertura/cierre
+trigger.addEventListener("focus", () => dropdown.classList.add("is-active"));
+dropdown.addEventListener("mouseleave", () =>
+  dropdown.classList.remove("is-active"),
+);
+
+// Soporte para teclado (Enter y Flechas)
+dropdown.addEventListener("keydown", (e) => {
+  const items = Array.from(options);
+  let focusedElement = document.activeElement;
+  let index = items.indexOf(focusedElement);
+
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    items[(index + 1) % items.length].focus();
+  } else if (e.key === "ArrowUp") {
+    e.preventDefault();
+    items[(index - 1 + items.length) % items.length].focus();
+  } else if (e.key === "Enter") {
+    if (index !== -1) items[index].click();
+  } else if (e.key === "Escape") {
+    dropdown.classList.remove("is-active");
+    trigger.focus();
+  }
+});
