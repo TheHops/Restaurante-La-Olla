@@ -67,9 +67,30 @@
                 </fieldset>
 
                 <div id="AccionesPrimerPagina">
-                    <label>
+                    <!--
+                        <label>
+                            <input type="checkbox" id="check_combinar_mesas" name="combinar_mesas" value="true">
+                            Combinar mesas
+                        </label>
+                    -->
+
+                    <!--
+                        <div class="toggle-container-cuadrado">
+                            <input type="checkbox" id="check_combinar_mesas" name="combinar_mesas" class="check-toggle" value="true">
+                            <label for="check_combinar_mesas" class="label-toggle-cuadrado">
+                                Combinar mesas
+                            </label>
+                        </div>
+                    -->
+
+                    <label class="custom-checkbox">
                         <input type="checkbox" id="check_combinar_mesas" name="combinar_mesas" value="true">
-                        Combinar mesas
+                        <span class="checkmark">
+                            <svg width="22" height="15" viewBox="0 0 28 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.5 20.0417L0 10.5417L2.375 8.16667L9.5 15.2917L24.7917 0L27.1667 2.375L9.5 20.0417Z" fill="white"/>
+                                </svg>                                
+                        </span>
+                        <span class="label-text">Combinar mesas</span>
                     </label>
     
                     <button id="btn_siguiente" onclick="pagina2()" disabled>

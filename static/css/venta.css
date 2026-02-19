@@ -898,6 +898,87 @@ legend {
   transform: translate(-10px, 4px);
 }
 
+/* CHECKS */
+/* TOGGLE */
+
+:root {
+  --color-primary: #d66161; /* El color rojizo de tus imágenes */
+  --color-bg-light: #fff5f5; /* Fondo muy tenue para el estado desmarcado */
+  --color-border-unchecked: hsl(0, 40%, 65%);
+  --color-border-checked: hsl(0, 70%, 60%);
+}
+
+.custom-checkbox {
+  display: inline-flex;
+  height: 40px;
+  width: auto;
+  align-items: center;
+  cursor: pointer;
+  border: 3px solid var(--color-border-unchecked);
+  border-radius: 12px;
+  padding: 10px 5px;
+  margin-top: 15px;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+/* Ocultar el checkbox original */
+.custom-checkbox input {
+  display: none;
+}
+
+/* El cuadro del checkbox */
+.checkmark {
+  width: 30px;
+  height: 30px;
+  border: 3px solid var(--color-border-unchecked);
+  border-radius: 7px;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg-light);
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+.checkmark svg {
+  opacity: 0;
+}
+
+/* El texto "Combinar mesas" */
+.label-text {
+  font-family: sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-border-unchecked);
+}
+
+/* --- ESTADO ACTIVADO (Checked) --- */
+
+/* Cambiar fondo del cuadro al marcar */
+.custom-checkbox input:checked + .checkmark {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.custom-checkbox:has(input:checked) .label-text {
+  color: var(--color-primary);
+}
+
+.custom-checkbox:has(input:checked) {
+  border-color: var(--color-primary);
+}
+
+.custom-checkbox input:checked + .checkmark svg {
+  opacity: 100%;
+}
+
+/* Mostrar el check cuando está marcado */
+.custom-checkbox input:checked + .checkmark:after {
+  display: block;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * */
 /* * * * * * * R E S P N S I V I D A D * * * * * */
 /* * * * * * * * * * * * * * * * * * * * * * * * */
