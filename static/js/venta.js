@@ -396,7 +396,18 @@ function debouncedFiltrarPlatillos(cadena) {
 
 document
   .getElementById("accionesBusqueda")
-  .addEventListener("change", function () {
+  .addEventListener("change", function (event) {
+    if (event.target.type === "checkbox" && event.target.checked) {
+      const checkboxes = this.querySelectorAll('input[type="checkbox"]');
+
+      // Desmarcamos todos los que NO sean el actual
+      checkboxes.forEach((cb) => {
+        if (cb !== event.target) {
+          cb.checked = false;
+        }
+      });
+    }
+
     const texto = document.getElementById("InputBuscarPlatillo").value || "";
     debouncedFiltrarPlatillos(texto);
   });
@@ -408,6 +419,7 @@ function obtenerTiposSeleccionados() {
   const tiposSeleccionados = Array.from(checkboxes).map(
     (checkbox) => checkbox.value
   );
+  
   return tiposSeleccionados;
 }
 
