@@ -187,3 +187,71 @@
 .custom-dropdown.is-active .dropdown-menu {
     display: block;
 }
+
+/* TOGGLE */
+
+/* Contenedor principal para alinear texto y switch */
+.toggle-container-reportes {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: sans-serif;
+    color: hsl(208, 7%, 70%); /* Color del texto similar a la imagen */
+
+    border: solid 2px hsl(208, 7%, 70%);
+    padding: 0 10px;
+    border-radius: 10px;
+    height: 35px;
+}
+
+.toggle-container-reportes:has(.label-toggle-reportes:hover) {
+    background-color: hsl(0, 10%, 98%); /* Color de fondo sutil */
+    transition: background-color ease-in-out 0.2s;
+}
+
+/* Estilo del carril (el fondo ovalado) */
+.label-toggle-reportes {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    margin: 0;
+    line-height: 15px;
+}
+
+.label-toggle-reportes::after {
+    content: "";
+    width: 50px;
+    min-width: 50px;
+    height: 25px;
+    background-color: #ffffff;
+    border: 2px solid #dee2e6;
+    border-radius: 9px;
+    display: inline-block;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Estilo del círculo (el switch) */
+.label-toggle-reportes::before {
+    content: "";
+    position: absolute;
+    right: 28px; /* Posición inicial (apagado) */
+    width: 18px;
+    height: 18px;
+    background-color: #adb5bd; /* Gris cuando está inactivo */
+    border-radius: 30%;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.check-toggle:checked + .label-toggle-reportes::before {
+    transform: translateX(130%);
+    background-color: #e35d5d; /* Rojo de tu imagen */
+}
+
+/* Opcional: cambiar el borde del carril cuando esté activo */
+.check-toggle:checked + .label-toggle-reportes::after {
+    border-color: #ced4da;
+}

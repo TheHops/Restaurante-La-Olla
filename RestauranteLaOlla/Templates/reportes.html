@@ -166,10 +166,19 @@
                 </div>
             </div>
             <div class="modal-footer d-flex justify-content-between">
-                <label>
-                    <input type="checkbox" id="check_incluir_detalles" name="incluir_detalles" value="false">
-                    Incluir detalles
-                </label>
+                <!--
+                    <label>
+                        <input type="checkbox" id="check_incluir_detalles" name="incluir_detalles" value="false">
+                        Incluir detalles
+                    </label>
+                -->
+
+                <div class="toggle-container-reportes">
+                    <input type="checkbox" id="check_incluir_detalles" name="incluir_detalles" class="check-toggle" value="false">
+                    <label for="check_incluir_detalles" class="label-toggle-reportes">
+                        Incluir detalles
+                    </label>
+                </div>
                 
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
             </div>
