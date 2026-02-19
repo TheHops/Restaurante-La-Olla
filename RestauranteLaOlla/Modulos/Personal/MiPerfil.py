@@ -16,7 +16,7 @@ User = get_user_model()
 def MiPerfil(request):
     if request.user.is_authenticated:
         try:
-            return render(request, "mi_perfil.html", {'Usuario': request.user, "User": request.user.username})
+            return render(request, "mi_perfil.html", {'Usuario': request.user, "User": request.user})
         except Exception as ex:
             print()
             print("#################### E X C E P C I O N ########################")

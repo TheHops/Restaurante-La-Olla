@@ -26,7 +26,11 @@ body.modal-open {
 } */
 
 #navSistema {
+    position: fixed;
+    top: 0;
+    left: 0;
     background: #DF362D;
+    width: 100vw;
 }
 
 nav {
@@ -75,6 +79,7 @@ a:hover {
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: left;
+    margin-bottom: 0;
 }
 
 /* Tablet menu */
@@ -232,6 +237,10 @@ a:hover {
     background: rgba(255, 255, 255, .2);
 }
 
+.imagenCargo {
+    transform: translateY(-3px);
+}
+
 /***************************************************************************************************/
 /********************************************** C A P A ********************************************/
 /***************************************************************************************************/
@@ -267,16 +276,16 @@ html {
     background-attachment: fixed;
 }
 
-html::before {
+/* html::before {
     content: "";
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 50vh;
+    height: 7vh;
     background: #DF362D;
     z-index: -1;
-}
+} */
 
 /***************************************************************************************************/
 /************************************** C O N T E N I D O ******************************************/
@@ -287,7 +296,7 @@ html::before {
     width: 100%;
     background-color: white;
     position: absolute;
-    top: 8vh;
+    top: 7.5vh;
 }
 
 .modal {

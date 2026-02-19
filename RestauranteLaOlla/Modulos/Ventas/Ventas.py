@@ -211,7 +211,7 @@ def OrdenesPendientes(request):
                 "Ordenes": ordenes,
                 "Platillos": platillos,
                 "CargoUsuario": cargo_usuario,
-                "User": request.user.username
+                "User": request.user
             }
 
             return render(request, "ordenes.html", contexto)

@@ -32,7 +32,7 @@ def index(request):
             return redirect("venta/")
         
         # Si el usuario ya inició sesión entonces entrará directamente al sistema sin necesidad de volver a iniciar sesión
-        return render(request, "inicio.html", {"Cargo": request.user.IdCargo.Nombre, "User": request.user.username})
+        return render(request, "inicio.html", {"Cargo": request.user.IdCargo.Nombre, "User": request.user})
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
