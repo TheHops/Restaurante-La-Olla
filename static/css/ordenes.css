@@ -170,7 +170,7 @@
     justify-self: center;
     align-items: center;
 
-    padding: 5px 15px 0;
+    padding: 7px 15px;
 }
 
 .timer {
@@ -187,6 +187,11 @@
 
 .seccionDerecha {
     display: flex;
+    width: auto;
+    flex-wrap: wrap;
+    justify-content: end;
+    gap: 10px;
+    margin-left: 15px;
     /* flex-direction: column; */
 }
 
@@ -282,9 +287,9 @@
 }
 
 .btnCancelarOrden {
-    width: 130px;
+    min-width: 120px;
     height: 30px;
-    margin-right: 5%;
+    /* margin-right: 5%; */
     background: hsl(0, 0%, 30%);
     border-color: hsl(350, 0%, 35%);
     color: #ffffff;
@@ -609,6 +614,54 @@
     color: #AAAAAA;
 }
 
+/* * * * * * * BTN * * * * * * * */
+
+.btnEditarOrden {
+    background-color: #66CC66;
+    border-color: hsl(120, 50%, 65%);
+    color: white;
+    width: 120px;
+    border-radius: 10px;
+}
+
+.btnPrepararOrden {
+    background-color: #FD7418;
+    border-color: hsl(24, 98%, 60%);
+    color: white;
+    width: 120px;
+    border-radius: 10px;
+}
+
+.btnPrepararOrden:hover {
+    background-color: hsl(24, 98%, 50%);
+}
+
+.btnFinalizarOrden {
+    background-color: #FFAA00;
+    border-color: hsl(40, 100%, 60%);
+    color: white;
+    width: 120px;
+    border-radius: 10px;
+}
+
+.btnFinalizarOrden:hover {
+    background-color: hsl(40, 100%, 45%);
+}
+
+.btnIcono {
+    padding-bottom: 4px;
+    /* margin-right: 3px; */
+}
+
+.btnEditarOrden:hover {
+    background-color: hsl(120, 50%, 55%);
+}
+
+.encabezadoPoFoC h4 {
+    margin-left: 15px;
+    text-align: end;
+}
+
 /***************************************************/
 
 @media (max-width: 900px)
@@ -628,10 +681,10 @@
         font-size: medium;
     }
 
-    .encabezadoPoFoC h3 {
-        font-size: large;
+    .encabezadoPoFoC h5 {
+        font-size: medium;
     }
-
+    
     .seccionIzquierda h4 {
         font-size: large;
     }
@@ -642,6 +695,19 @@
 
     .btnCancelarOrden, .btnFacturarOrden {
         font-size: 15px;
-        width: 100px;
+    }
+}
+
+@media (max-width: 620px)
+{
+    #listaOrdenesPoFoC {
+        padding: 0 10% 50px;
+    }
+}
+
+@media (max-width: 500px)
+{
+    #listaOrdenesPoFoC {
+        padding: 0 5% 50px;
     }
 }
