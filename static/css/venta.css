@@ -316,11 +316,16 @@ legend {
   width: calc(100% - 300px);
   z-index: 999;
   background-color: white;
-  padding-bottom: 15px;
-  /* border-bottom: #df362d solid 1px; */
+  padding-bottom: 10px;
+}
 
-  /* border-bottom-left-radius: 15px; */
-  /* border-bottom-right-radius: 15px; */
+#acciones_pag2_foot {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  z-index: 999;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), #df362d 50%, rgba(255, 255, 255, 0));
 }
 
 #accionesGenerales{

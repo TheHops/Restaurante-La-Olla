@@ -88,13 +88,24 @@
           data-toggle="modal"
           data-target="#EditarOrden"
           onclick="rellenarParaEditarOrden('{{Orden.Id}}')"
-          >Modificar
+          >
+          <svg width="20" height="20" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg" class="btnIcono">
+            <path d="M2.91667 23.3333H4.99479L19.25 9.07812L17.1719 7L2.91667 21.2552V23.3333ZM0 26.25V20.0521L19.25 0.838542C19.5417 0.571181 19.8637 0.364583 20.2161 0.21875C20.5686 0.0729167 20.9392 0 21.3281 0C21.717 0 22.0938 0.0729167 22.4583 0.21875C22.8229 0.364583 23.1389 0.583333 23.4062 0.875L25.4115 2.91667C25.7031 3.18403 25.9158 3.5 26.0495 3.86458C26.1832 4.22917 26.25 4.59375 26.25 4.95833C26.25 5.34722 26.1832 5.71788 26.0495 6.07031C25.9158 6.42274 25.7031 6.74479 25.4115 7.03646L6.19792 26.25H0ZM18.1927 8.05729L17.1719 7L19.25 9.07812L18.1927 8.05729Z" fill="white"/>
+          </svg>
+
+          Modificar
         </button>
         {% endif %}
 
         {% if CargoUsuario == "Armador" or CargoUsuario == "Administrador" %}
           <!-- Cambiar el estado de la orden a 'En preparación' -->
-          <button onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAEnPreparacion' %}', 'Cambiando a En preparación')">Empezar preparación</button>
+          <button class="btnPrepararOrden" onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAEnPreparacion' %}', 'Cambiando a En preparación')">
+            <svg width="30" height="18" viewBox="0 0 30 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="btnIcono">
+              <path d="M0 17.5V0H2.91667V17.5H0ZM20.4167 17.5L18.3385 15.4583L23.5885 10.2083H5.83333V7.29167H23.5885L18.375 2.04167L20.4167 0L29.1667 8.75L20.4167 17.5Z" fill="white"/>
+              </svg>
+              
+            Preparar
+          </button>
         {% endif %}
 
       <!-- En preparación -->
@@ -115,13 +126,23 @@
             data-toggle="modal"
             data-target="#EditarOrden"
             onclick="rellenarParaEditarOrden('{{Orden.Id}}')"
-            >Modificar
+            >
+              <svg width="20" height="20" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg" class="btnIcono">
+                <path d="M2.91667 23.3333H4.99479L19.25 9.07812L17.1719 7L2.91667 21.2552V23.3333ZM0 26.25V20.0521L19.25 0.838542C19.5417 0.571181 19.8637 0.364583 20.2161 0.21875C20.5686 0.0729167 20.9392 0 21.3281 0C21.717 0 22.0938 0.0729167 22.4583 0.21875C22.8229 0.364583 23.1389 0.583333 23.4062 0.875L25.4115 2.91667C25.7031 3.18403 25.9158 3.5 26.0495 3.86458C26.1832 4.22917 26.25 4.59375 26.25 4.95833C26.25 5.34722 26.1832 5.71788 26.0495 6.07031C25.9158 6.42274 25.7031 6.74479 25.4115 7.03646L6.19792 26.25H0ZM18.1927 8.05729L17.1719 7L19.25 9.07812L18.1927 8.05729Z" fill="white"/>
+              </svg>
+
+              Modificar
           </button>
         {% endif %}
 
         {% if CargoUsuario == "Armador" or CargoUsuario == "Administrador" %}
           <!-- Cambiar el estado de la orden a 'Preparada' -->
-          <button onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAPreparado' %}', 'Cambiando a Preparada')">Confirmar preparado</button>
+          <button class="btnFinalizarOrden" onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAPreparado' %}', 'Cambiando a Preparada')">
+            <svg width="22" height="22" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" class="btnIcono">
+              <path d="M11.25 33.75C8.125 33.75 5.46875 32.6562 3.28125 30.4688C1.09375 28.2812 0 25.625 0 22.5V11.25C0 8.125 1.09375 5.46875 3.28125 3.28125C5.46875 1.09375 8.125 0 11.25 0H22.5C25.625 0 28.2812 1.09375 30.4688 3.28125C32.6562 5.46875 33.75 8.125 33.75 11.25V22.5C33.75 25.625 32.6562 28.2812 30.4688 30.4688C28.2812 32.6562 25.625 33.75 22.5 33.75H11.25ZM15 24.375L26.25 13.125L23.625 10.5L15 19.125L10.875 15L8.25 17.625L15 24.375ZM11.25 30H22.5C24.5625 30 26.3281 29.2656 27.7969 27.7969C29.2656 26.3281 30 24.5625 30 22.5V11.25C30 9.1875 29.2656 7.42188 27.7969 5.95312C26.3281 4.48438 24.5625 3.75 22.5 3.75H11.25C9.1875 3.75 7.42188 4.48438 5.95312 5.95312C4.48438 7.42188 3.75 9.1875 3.75 11.25V22.5C3.75 24.5625 4.48438 26.3281 5.95312 27.7969C7.42188 29.2656 9.1875 30 11.25 30Z" fill="white"/>
+              </svg>
+              Finalizar
+            </button>
         {% endif %}
 
       <!-- Preparado -->
@@ -144,7 +165,11 @@
             data-toggle="modal"
             data-target="#EditarOrden"
             onclick="rellenarParaEditarOrden('{{Orden.Id}}')"
-            >Modificar
+            >
+            <svg width="20" height="20" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg" class="btnIcono">
+              <path d="M2.91667 23.3333H4.99479L19.25 9.07812L17.1719 7L2.91667 21.2552V23.3333ZM0 26.25V20.0521L19.25 0.838542C19.5417 0.571181 19.8637 0.364583 20.2161 0.21875C20.5686 0.0729167 20.9392 0 21.3281 0C21.717 0 22.0938 0.0729167 22.4583 0.21875C22.8229 0.364583 23.1389 0.583333 23.4062 0.875L25.4115 2.91667C25.7031 3.18403 25.9158 3.5 26.0495 3.86458C26.1832 4.22917 26.25 4.59375 26.25 4.95833C26.25 5.34722 26.1832 5.71788 26.0495 6.07031C25.9158 6.42274 25.7031 6.74479 25.4115 7.03646L6.19792 26.25H0ZM18.1927 8.05729L17.1719 7L19.25 9.07812L18.1927 8.05729Z" fill="white"/>
+            </svg>
+            Modificar
           </button>
         {% endif %}
 
