@@ -1,31 +1,53 @@
 document.addEventListener("DOMContentLoaded", function () {
   const select = document.getElementById("listaEstadoOrdenes");
-  
+  const labelProceso = document.getElementById("textoSeleccionadoProceso");
+
   const contenedor = document.getElementById("listaOrdenesPoFoC");
   contenedor.style.opacity = "0";
 
   setTimeout(() => {
     MP(1);
-  
+
     obtenerValorOrden().then((valorGuardado) => {
       if (valorGuardado) {
         select.value = valorGuardado;
+        labelProceso.innerText = GetNombreEstadoOrden(valorGuardado);
         filtrarOrdenes(valorGuardado);
       } else {
         filtrarOrdenes(select.value);
       }
-  
+
       // Guardar cambios
-      select.addEventListener("change", function () {
-        localStorage.setItem("estadoOrdenSeleccionado", this.value);
-      });
-  
+      // select.addEventListener("change", function () {
+      //   localStorage.setItem("estadoOrdenSeleccionado", this.value);
+      // });
+
       iniciarPolling();
     });
   }, 300);
 
   ConsultaDebeCambiarPass();
 });
+
+function GetNombreEstadoOrden (estado)
+{
+  if (estado == "0")
+    return "Pago registrado"
+  else if (estado == "1")
+    return "Pendientes"
+  else if (estado == "2")
+    return "Anuladas"
+  else if (estado == "3")
+    return "Preparadas"
+  else if (estado == "4")
+    return "En preparación"
+  else if (estado == "5")
+    return "Todas"
+  else if (estado == "6")
+    return "Ambas"
+  else if (estado == "7")
+    return "Las tres"
+}
 
 function ConsultaDebeCambiarPass() {
   console.log("INICIA CONSULA DEBE CAMBIAR PASS");
@@ -56,7 +78,7 @@ function ConsultaDebeCambiarPass() {
 
 async function FacturarOrden() {
   const { value: isConfirmed } = await Swal.fire({
-    target: document.getElementById('FacturarOrden'),
+    target: document.getElementById("FacturarOrden"),
     title: "¿Los datos están correctos?",
     showCancelButton: true,
     cancelButtonText: "Cancelar",
@@ -67,15 +89,18 @@ async function FacturarOrden() {
     reverseButtons: true,
   });
 
-  if (isConfirmed)
-  {
+  if (isConfirmed) {
     let idOrdenF = document.getElementById("idOrdenFactura");
     let CambioOrden = document.getElementById("CambioOrden");
     let MontoOrden = document.getElementById("MontoOrden");
     let PropinaOrden = document.getElementById("txtValorPorcentajePropina");
     let DescuentoOrden = document.getElementById("txtValorPorcentajeDescuento");
-    let PorcentajePropinaOrden = document.getElementById("txtPorcentajePropina");
-    let PorcentajeDescuentoOrden = document.getElementById("txtPorcentajeDescuento");
+    let PorcentajePropinaOrden = document.getElementById(
+      "txtPorcentajePropina",
+    );
+    let PorcentajeDescuentoOrden = document.getElementById(
+      "txtPorcentajeDescuento",
+    );
     let Total = document.getElementById("totalOrdenFactura");
     let MetodoDePago = document.getElementById("SelectMetodoPago");
     let Banco = document.getElementById("SelectBanco");
@@ -85,15 +110,15 @@ async function FacturarOrden() {
     let propinaCheck = document.getElementById("checkPropina");
     let descuentoCheck = document.getElementById("checkDescuento");
 
-    if (!propinaCheck.checked){
+    if (!propinaCheck.checked) {
       PropinaOrden.value = 0;
       PorcentajePropinaOrden.value = 0;
-    } 
-      
-    if (!descuentoCheck.checked){
+    }
+
+    if (!descuentoCheck.checked) {
       DescuentoOrden.value = 0;
       PorcentajeDescuentoOrden.value = 0;
-    } 
+    }
 
     let Monto = MontoOrden.value || 0;
     let Cambio = CambioOrden.value || 0;
@@ -101,9 +126,8 @@ async function FacturarOrden() {
     let Descuento = DescuentoOrden.value || 0;
     let PorcentajePropina = PorcentajePropinaOrden.value || 0;
     let PorcentajeDescuento = PorcentajeDescuentoOrden.value || 0;
-    
-    if (MetodoDePago.value == "2" || MetodoDePago.value == "3")
-      Cambio = 0;
+
+    if (MetodoDePago.value == "2" || MetodoDePago.value == "3") Cambio = 0;
 
     console.log(Monto);
     console.log(Cambio);
@@ -111,12 +135,12 @@ async function FacturarOrden() {
     console.log(Descuento);
     console.log(PorcentajePropina);
     console.log(PorcentajeDescuento);
-  
+
     let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
-  
+
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "/FacturarOrden/", true);
-  
+
     let datos = new FormData();
     datos.append("csrfmiddlewaretoken", token);
     datos.append("idOrden", idOrdenF.value);
@@ -130,13 +154,13 @@ async function FacturarOrden() {
     datos.append("metodoPago", MetodoDePago.value);
     datos.append("banco", Banco.value);
     datos.append("numRef", numRef.value);
-  
+
     console.log(MontoOrden.value);
-  
+
     xhr.onreadystatechange = function () {
       if (this.readyState === 4) {
         let response = JSON.parse(this.responseText);
-  
+
         if (this.status === 200 && response.status === "ok") {
           Swal.fire({
             confirmButtonColor: "#ff6464",
@@ -153,7 +177,7 @@ async function FacturarOrden() {
         }
       }
     };
-  
+
     xhr.send(datos);
   }
 }
@@ -190,7 +214,7 @@ function MP(valor) {
     // contMonto.classList.remove("mb-2");
     h4.innerHTML = 'Monto (C$)<span class="asterisco">*</span>';
     h4Cambio.innerHTML = 'Cambio<span class="asterisco">*</span>';
-    
+
     BtnRegistrar.disabled = true;
   } else if (valor == 2) {
     // TARJETA
@@ -201,7 +225,7 @@ function MP(valor) {
     infoMetodoMixto.style.display = "none";
 
     bancoh4.innerHTML = "Banco";
-    
+
     BtnRegistrar.disabled = false;
   } else if (valor == 3) {
     // TRANSFERENCIA
@@ -212,11 +236,10 @@ function MP(valor) {
     infoMetodoMixto.style.display = "none";
 
     bancoh4.innerHTML = "Banco";
-    
+
     BtnRegistrar.disabled = false;
-  }
-  else {
-    // EFECTIVO Y TARJETA    
+  } else {
+    // EFECTIVO Y TARJETA
     CambioOrden.style.display = "initial";
     MontoOrden.style.display = "initial";
     NumRefOrden.style.display = "none";
@@ -224,8 +247,8 @@ function MP(valor) {
     infoMetodoMixto.style.display = "initial";
 
     inputCambio.disabled = false;
-    inputCambio.placeholder = "Ej: 50"
-    
+    inputCambio.placeholder = "Ej: 50";
+
     contMonto.classList.add("mb-2");
     h4.innerHTML = "Monto en efectivo (C$)<span class='asterisco'>*</span>";
     h4Cambio.innerHTML = "Cambio en efectivo<span class='asterisco'>*</span>";
@@ -239,9 +262,11 @@ function MP(valor) {
 
 ///////////////////////////// EXTRAS /////////////////////////////////////
 
-document.getElementById("txtPorcentajePropina").addEventListener("input", function () {
-  CalcularPropina(); // Reutilización directa
-});
+document
+  .getElementById("txtPorcentajePropina")
+  .addEventListener("input", function () {
+    CalcularPropina(); // Reutilización directa
+  });
 
 function CalcularPropina() {
   // Validación del campo porcentaje
@@ -264,7 +289,7 @@ function CalcularPropina() {
   let total = parseFloat($("#totalOrdenFactura").val().replace(",", ".")) || 0;
 
   // Primero se aplica el descuento (regla de negocio)
-  total += valorDescuento; // DESCUENTO APLICADO AQUÍ 
+  total += valorDescuento; // DESCUENTO APLICADO AQUÍ
 
   // Porcentaje de propina
   let porcentaje = parseFloat(txtPorcentajePropina.value) || 0;
@@ -280,24 +305,26 @@ function CalcularPropina() {
 
 let debounceDescuentos = null;
 
-document.getElementById("txtPorcentajeDescuento").addEventListener("input", function () {
-  clearTimeout(debounceDescuentos);
+document
+  .getElementById("txtPorcentajeDescuento")
+  .addEventListener("input", function () {
+    clearTimeout(debounceDescuentos);
 
-  let total = parseFloat($("#totalOrdenFactura").val().replace(",", ".")) || 0;
-  
-  debounceDescuentos = setTimeout(() => {
-    validarCampoNumero(this, 10, 30);
-    
+    let total =
+      parseFloat($("#totalOrdenFactura").val().replace(",", ".")) || 0;
+
+    debounceDescuentos = setTimeout(() => {
+      validarCampoNumero(this, 10, 30);
+
+      calculosDescuento(this, total);
+
+      CalcularTotal();
+    }, 1000);
+
     calculosDescuento(this, total);
+  });
 
-    CalcularTotal();
-  }, 1000);
-  
-  calculosDescuento(this, total);
-});
-    
-function calculosDescuento(input, total)
-{
+function calculosDescuento(input, total) {
   let porcentaje = parseFloat(input.value) || 0;
   let resultado = (total * porcentaje) / 100;
 
@@ -306,7 +333,7 @@ function calculosDescuento(input, total)
   $("#txtValorPorcentajeDescuento").val(resultado);
 }
 
-function validarCampoNumero (input, minimo, maximo){
+function validarCampoNumero(input, minimo, maximo) {
   let dato = parseFloat(input.value);
 
   if (isNaN(dato)) {
@@ -343,57 +370,66 @@ function rellenarParaFacturar(id, total) {
 ////////////////////////////////////////////////////////////////////
 
 document.getElementById("MontoOrden").addEventListener("input", CalcularTotal);
-document.getElementById("txtPorcentajeDescuento").addEventListener("input", CalcularTotal);
-document.getElementById("txtPorcentajePropina").addEventListener("input", CalcularTotal);
+document
+  .getElementById("txtPorcentajeDescuento")
+  .addEventListener("input", CalcularTotal);
+document
+  .getElementById("txtPorcentajePropina")
+  .addEventListener("input", CalcularTotal);
 document.getElementById("checkPropina").addEventListener("change", function () {
   let propinaCheck = document.getElementById("checkPropina");
   let descuentoCheck = document.getElementById("checkDescuento");
-  
-  $("#infoCalculoPropina").toggle(propinaCheck.checked && descuentoCheck.checked);
-  
-  CalcularTotal();
-});
-document.getElementById("checkDescuento").addEventListener("change", function () {
-  let propinaCheck = document.getElementById("checkPropina");
-  let descuentoCheck = document.getElementById("checkDescuento");
-  
-  $("#infoCalculoPropina").toggle(propinaCheck.checked && descuentoCheck.checked);
+
+  $("#infoCalculoPropina").toggle(
+    propinaCheck.checked && descuentoCheck.checked,
+  );
 
   CalcularTotal();
 });
+document
+  .getElementById("checkDescuento")
+  .addEventListener("change", function () {
+    let propinaCheck = document.getElementById("checkPropina");
+    let descuentoCheck = document.getElementById("checkDescuento");
+
+    $("#infoCalculoPropina").toggle(
+      propinaCheck.checked && descuentoCheck.checked,
+    );
+
+    CalcularTotal();
+  });
 
 function redondear(valor, decimales = 2) {
   return Number(Math.round(valor + "e" + decimales) + "e-" + decimales);
 }
 
-function CalcularTotal ()
-{
+function CalcularTotal() {
   let MetodoPago = document.getElementById("SelectMetodoPago");
 
   let txtTotalOrden = document.getElementById("totalOrdenMonto");
 
   // Se obtiene el valor de lo que se ingresa cada vez que se escribe algo
   let MontoIngresado = document.getElementById("MontoOrden").value;
-  let DescuentoCalculado = document.getElementById("txtValorPorcentajeDescuento").value;
-  
+  let DescuentoCalculado = document.getElementById(
+    "txtValorPorcentajeDescuento",
+  ).value;
+
   let valorPropina = CalcularPropina(); // Se guarda la propina calculada
 
   MontoIngresado = MontoIngresado == "" ? 0 : MontoIngresado;
   let valorDescuento = DescuentoCalculado == "" ? 0 : DescuentoCalculado;
-  
+
   let propinaCheck = document.getElementById("checkPropina");
   let descuentoCheck = document.getElementById("checkDescuento");
-  
-  if (!propinaCheck.checked)
-    valorPropina = 0;
-  
-  if (!descuentoCheck.checked)
-    valorDescuento = 0;
+
+  if (!propinaCheck.checked) valorPropina = 0;
+
+  if (!descuentoCheck.checked) valorDescuento = 0;
 
   let MensajeMonto = document.getElementById("MensajeMonto");
   let CambioOrden = document.getElementById("CambioOrden");
   let btnFacturar = document.getElementById("btnFacturar");
-  
+
   try {
     let totalGlobalNumero = parseFloat(TotalGlobal);
     let valorDescuentoNumero = parseFloat(valorDescuento);
@@ -415,7 +451,7 @@ function CalcularTotal ()
     console.log("Total a pagar: " + totalPagar);
 
     txtTotalOrden.textContent = `Total: C$${totalPagar}`;
-    
+
     // Se verifica si el monto está bien ingresado
     if (MontoNumero < totalPagar && MetodoPago.value == "1") {
       MensajeMonto.style.display = "initial";
@@ -438,8 +474,7 @@ function CalcularTotal ()
       btnFacturar.disabled = false;
     }
   } catch (error) {
-    if (MetodoPago.value == "1")
-      MensajeMonto.style.display = "initial";
+    if (MetodoPago.value == "1") MensajeMonto.style.display = "initial";
 
     CambioOrden.value = "";
 
@@ -653,7 +688,7 @@ async function CancelarOrden(idOrden) {
     iconColor: "#ff964e",
     didOpen: () => {
       const input = document.getElementById("motivo");
-      if (input) input.blur(); 
+      if (input) input.blur();
     },
     preConfirm: () => document.getElementById("motivo").value.trim(),
     reverseButtons: true,
@@ -701,12 +736,11 @@ async function CancelarOrden(idOrden) {
 
 /////////////////////////////////////////////////////////////////////
 
-function CambioEstadoOrdenes(cadena)
-{
+function CambioEstadoOrdenes(cadena) {
   const contenedor = document.getElementById("listaOrdenesPoFoC");
 
   contenedor.style.opacity = "0";
-  
+
   setTimeout(() => {
     filtrarOrdenes(cadena);
   }, 300);
@@ -721,7 +755,7 @@ function filtrarOrdenes(cadena) {
 
   request.open(
     "GET",
-    "/FiltrarOrdenes?SelectFiltrarOrdenes=" + encodeURIComponent(cadena)
+    "/FiltrarOrdenes?SelectFiltrarOrdenes=" + encodeURIComponent(cadena),
   );
   request.send();
 
@@ -729,9 +763,9 @@ function filtrarOrdenes(cadena) {
     if (this.readyState === 4) {
       if (this.status === 200) {
         contenedor.innerHTML = this.responseText;
-        
+
         restaurarDespliegues();
-        
+
         iniciarTimers();
 
         contenedor.style.opacity = "100%";
@@ -874,4 +908,45 @@ $("#checkPropina").on("change", function () {
 
 $("#checkDescuento").on("change", function () {
   $("#inputPorcentajeDescuento").toggle(this.checked);
+});
+
+/* DROPDOWN */
+
+const dropdownProceso = document.getElementById("dropdownEstadoOrdenesProceso");
+const inputEstado = document.getElementById("listaEstadoOrdenes");
+const labelProceso = document.getElementById("textoSeleccionadoProceso");
+const optionsProceso = dropdownProceso.querySelectorAll(".dropdown-menu li");
+
+optionsProceso.forEach((option) => {
+  option.addEventListener("click", () => {
+    const val = option.getAttribute("data-value");
+    const txt = option.innerText;
+
+    // 1. Actualizamos visualmente
+    inputEstado.value = val;
+    labelProceso.innerText = txt;
+
+    // 2. Cerramos el menú
+    dropdownProceso.classList.remove("is-active");
+
+    // 3. EJECUTAMOS TU FUNCIÓN ORIGINAL
+    // Esto reemplaza al onchange="CambioEstadoOrdenes(this.value)"
+    if (typeof CambioEstadoOrdenes === "function") {
+      localStorage.setItem("estadoOrdenSeleccionado", val);
+      CambioEstadoOrdenes(val);
+    }
+  });
+
+  option.setAttribute("tabindex", "0");
+});
+
+// Reutilizamos la lógica de apertura por hover/foco
+dropdownProceso
+  .querySelector(".dropdown-trigger")
+  .addEventListener("focus", () => {
+    dropdownProceso.classList.add("is-active");
+  });
+
+dropdownProceso.addEventListener("mouseleave", () => {
+  dropdownProceso.classList.remove("is-active");
 });
