@@ -2,10 +2,20 @@
 .EncabezadoOrdenesList {
     background-color: white;
     height: auto;
-    border: #DF362D solid 1px;
+    border: #DF362D solid 0px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
+}
+
+#EncabezadoOrdenesList_foot {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: 0;
+    z-index: 10;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0), #df362d 50%, rgba(255, 255, 255, 0));
 }
 
 .EncabezadoOrdenesListIzquierda {
@@ -243,8 +253,8 @@
 
     background-color: hsl(0, 100%, 80%);
     display: inline-block;
-    transform: translateY(-4px);
-    margin-left: 6px;
+    /* transform: translateY(-4px); */
+    margin-left: 4px;
 }
 
 .EstF {
@@ -255,19 +265,25 @@
 
     background-color: hsl(120, 100%, 45%);
     display: inline-block;
-    transform: translateY(-4px);
-    margin-left: 6px;
+    /* transform: translateY(-4px); */
+    margin-left: 4px;
 }
 
 #btnFacturar {
     transition: all .2s ease;
+    background-color: hsl(120, 50%, 60%);
+    border: solid 1px hsl(120, 50%, 70%);
+}
+
+#btnFacturar:hover {
+    background-color: hsl(120, 50%, 55%);
 }
 
 .btnFacturarOrden {
     width: 130px;
     height: 30px; /*hsl(39, 100%, 55%)*/
-    background: hsl(24, 100%, 55%);
-    border-color: hsl(17, 100%, 56%);
+    background: hsl(120, 50%, 60%);
+    border-color: hsl(120, 50%, 55%);
     color: white;
     border-radius: 10px;
     cursor: pointer;
@@ -282,8 +298,7 @@
 }
 
 .btnFacturarOrden:hover {
-    background: hsl(29, 100%, 67%);
-    border-color: hsl(35, 100%, 68%);
+    background: hsl(120, 50%, 55%);
 }
 
 .btnCancelarOrden {
@@ -318,11 +333,39 @@
     cursor: pointer;
 }
 
+.descripcionOrden {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    background-color: white;
+    width: calc(100% - 20px);
+    margin: 0 10px;
+    border-radius: 0 0 5px 5px;
+    border: hsl(3, 74%, 60%) solid 1px;
+    color: #CC6666;
+}
+
+.descripcionEdicionOrden {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    background-color: white;
+    width: calc(100% - 30px);
+    margin: 0 15px;
+    border-radius: 0 0 5px 5px;
+    border: hsl(200, 20%, 60%) solid 1px;
+    color: hsl(200, 20%, 60%);
+}
+
+.descripcionEdicionOrden span {
+    line-height: 18px;
+}
+
 .detallitoOrden {
     overflow: hidden;
-    width: calc(100% - 20px);
+    width: calc(100% - 40px);
     background-color: white;
-    margin: 0 10px;
+    margin: 0 20px;
     padding: 0 0 0 15px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
@@ -367,6 +410,12 @@
 
 #btnConfirmarCambiosEditarOrden {
     transition: all .3s ease;
+    background-color: hsl(200, 50%, 60%);
+    border-color: hsl(200, 50%, 65%);
+}
+
+#btnConfirmarCambiosEditarOrden:hover {
+    background-color: hsl(200, 50%, 55%);
 }
 
 .filaDetalleOrden {
@@ -617,8 +666,8 @@
 /* * * * * * * BTN * * * * * * * */
 
 .btnEditarOrden {
-    background-color: #66CC66;
-    border-color: hsl(120, 50%, 65%);
+    background-color: hsl(200, 50%, 60%);
+    border-color: hsl(200, 50%, 65%);
     color: white;
     width: 120px;
     border-radius: 10px;
@@ -654,7 +703,7 @@
 }
 
 .btnEditarOrden:hover {
-    background-color: hsl(120, 50%, 55%);
+    background-color: hsl(200, 50%, 55%);
 }
 
 .encabezadoPoFoC h4 {
