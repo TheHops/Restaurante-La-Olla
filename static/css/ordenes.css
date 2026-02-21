@@ -333,11 +333,39 @@
     cursor: pointer;
 }
 
+.descripcionOrden {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    background-color: white;
+    width: calc(100% - 20px);
+    margin: 0 10px;
+    border-radius: 0 0 5px 5px;
+    border: hsl(3, 74%, 60%) solid 1px;
+    color: #CC6666;
+}
+
+.descripcionEdicionOrden {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    background-color: white;
+    width: calc(100% - 30px);
+    margin: 0 15px;
+    border-radius: 0 0 5px 5px;
+    border: hsl(200, 20%, 60%) solid 1px;
+    color: hsl(200, 20%, 60%);
+}
+
+.descripcionEdicionOrden span {
+    line-height: 18px;
+}
+
 .detallitoOrden {
     overflow: hidden;
-    width: calc(100% - 20px);
+    width: calc(100% - 40px);
     background-color: white;
-    margin: 0 10px;
+    margin: 0 20px;
     padding: 0 0 0 15px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
@@ -382,6 +410,12 @@
 
 #btnConfirmarCambiosEditarOrden {
     transition: all .3s ease;
+    background-color: hsl(200, 50%, 60%);
+    border-color: hsl(200, 50%, 65%);
+}
+
+#btnConfirmarCambiosEditarOrden:hover {
+    background-color: hsl(200, 50%, 55%);
 }
 
 .filaDetalleOrden {
