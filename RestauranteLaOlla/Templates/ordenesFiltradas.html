@@ -208,14 +208,14 @@
       <path d="M5 15H20V12.5H5V15ZM5 11.25H20V8.75H5V11.25ZM5 7.5H20V5H5V7.5ZM25 25L20 20H2.5C1.8125 20 1.22396 19.7552 0.734375 19.2656C0.244792 18.776 0 18.1875 0 17.5V2.5C0 1.8125 0.244792 1.22396 0.734375 0.734375C1.22396 0.244792 1.8125 0 2.5 0H22.5C23.1875 0 23.776 0.244792 24.2656 0.734375C24.7552 1.22396 25 1.8125 25 2.5V25ZM2.5 17.5H21.0625L22.5 18.9062V2.5H2.5V17.5Z" fill="#CC6666"/>
       </svg>
       
-    <!-- TODO: RECORDAR PONER ICONO DE COMENTARIO -->
     <span>{{ Orden.Descripcion }}</span>
   </div>  
 {% endif %}
 
 {% if Orden.DescripcionEdicion is not none and Orden.DescripcionEdicion != '' %}
   <div class="descripcionEdicionOrden">
-    <!-- TODO: RECORDAR PONER ICONO DE ALERTA -->
+    <img style="width: 20px; margin-right: 10px;" src="{% static 'img/comment_pen_blue_thick.png' %}" alt="">
+
     <span>{{ Orden.DescripcionEdicion }}</span>
   </div>  
 {% endif %}

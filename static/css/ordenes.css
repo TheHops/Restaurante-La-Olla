@@ -353,7 +353,7 @@
     width: calc(100% - 30px);
     margin: 0 15px;
     border-radius: 0 0 5px 5px;
-    border: hsl(200, 20%, 60%) solid 1px;
+    border: #85a0ad solid 1px;
     color: hsl(200, 20%, 60%);
 }
 
