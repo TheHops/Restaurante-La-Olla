@@ -56,6 +56,25 @@
     color: #888888;
 }
 
+#btnEnviarPorCorreo {
+    width: 190px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    /* line-height: 6px; */
+    justify-content: center;
+    background: hsl(24, 98%, 54%);
+    border-color: hsl(24, 98%, 50%);
+    color: white;
+    border-radius: 10px;
+    padding: 4px 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
+    transition: ease .2s;
+}
+
 /********************************************************************/
 /**************************** A G R E G A R ****************************/
 /********************************************************************/

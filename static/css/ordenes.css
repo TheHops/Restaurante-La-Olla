@@ -271,13 +271,11 @@
 
 #btnFacturar {
     transition: all .2s ease;
-    background-color: hsl(120, 50%, 60%);
-    border: solid 1px hsl(120, 50%, 70%);
 }
 
-#btnFacturar:hover {
+/* #btnFacturar:hover {
     background-color: hsl(120, 50%, 55%);
-}
+} */
 
 .btnFacturarOrden {
     width: 130px;
@@ -341,19 +339,23 @@
     width: calc(100% - 20px);
     margin: 0 10px;
     border-radius: 0 0 5px 5px;
-    border: hsl(3, 74%, 60%) solid 1px;
+    border-bottom: hsl(3, 74%, 60%) solid 1px;
+    border-right: hsl(3, 74%, 60%) solid 1px;
+    border-left: hsl(3, 74%, 60%) solid 1px;
     color: #CC6666;
 }
 
 .descripcionEdicionOrden {
     display: flex;
     align-items: center;
-    padding: 0 15px;
+    padding: 2px 15px;
     background-color: white;
     width: calc(100% - 30px);
     margin: 0 15px;
     border-radius: 0 0 5px 5px;
-    border: #85a0ad solid 1px;
+    border-bottom: #85a0ad solid 1px;
+    border-right: #85a0ad solid 1px;
+    border-left: #85a0ad solid 1px;
     color: hsl(200, 20%, 60%);
 }
 
@@ -410,13 +412,11 @@
 
 #btnConfirmarCambiosEditarOrden {
     transition: all .3s ease;
-    background-color: hsl(200, 50%, 60%);
-    border-color: hsl(200, 50%, 65%);
 }
 
-#btnConfirmarCambiosEditarOrden:hover {
+/* #btnConfirmarCambiosEditarOrden:hover {
     background-color: hsl(200, 50%, 55%);
-}
+} */
 
 .filaDetalleOrden {
     transition: opacity 0.3s ease-in, background-color 0.1s ease-in;
