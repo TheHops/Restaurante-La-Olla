@@ -126,9 +126,9 @@ class Orden(models.Model):
     
     AreaDeMesa = models.CharField(max_length=30, null=True, blank=True, db_column='area_de_mesa')
     
-    Descripcion = models.CharField(max_length=100, null=True, blank=True, db_column='descripcion')
+    Descripcion = models.CharField(max_length=150, null=True, blank=True, db_column='descripcion')
     
-    Motivo = models.CharField(max_length=70, null=True, blank=True, db_column='motivo')
+    Motivo = models.CharField(max_length=150, null=True, blank=True, db_column='motivo')
     
     NumRef = models.CharField(max_length=15, null=True, blank=True, db_column='num_ref')
     

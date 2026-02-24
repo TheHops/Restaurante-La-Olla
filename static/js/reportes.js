@@ -3,6 +3,7 @@ const fechaHasta = document.getElementById("fechaHasta");
 const errorFechas = document.getElementById("errorFechas");
 const listaEstado = document.getElementById("listaEstadoOrdenesExportar");
 const btnAplicarFiltros = document.getElementById("btnAplicarFiltrosOrdenes");
+const incluirCheckbox = document.getElementById("check_incluir_detalles");
 
 document.addEventListener("DOMContentLoaded", () => {
   $(".tablaInventario").DataTable({

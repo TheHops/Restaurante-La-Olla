@@ -673,7 +673,7 @@ async function CancelarOrden(idOrden) {
   const { value: motivo } = await Swal.fire({
     title: "¿Realmente desea anular la orden?",
     html: `
-        <input id="motivo" class="swal2-input" placeholder="Escribe el motivo de la anulación (opcional)" maxlength="70" style="
+        <input id="motivo" class="swal2-input" placeholder="Escribe el motivo de la anulación (opcional)" maxlength="150" style="
         width: 100%;
         margin-left: 0px;
         margin-right: 0px;
