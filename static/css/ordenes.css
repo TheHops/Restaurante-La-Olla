@@ -433,7 +433,7 @@
 }
 
 .filaDetalleOrden:hover {
-    background-color: rgb(245, 245, 245);
+    background-color: rgb(252, 252, 252);
 }
 
 .btnQuitarEditar{
@@ -719,6 +719,20 @@
     padding: 0px 15px 0px 5px;
     display: flex;
     align-items: center;
+}
+
+.btnControlCantidad {
+    transition: background-color ease .3s;
+    background-color: rgba(255, 255, 255, 0);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+}
+
+.btnControlCantidad:hover {
+    background-color: #EEEEEE;
+    border: none;
 }
 
 /***************************************************/
