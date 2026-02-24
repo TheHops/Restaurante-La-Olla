@@ -198,6 +198,7 @@
 .seccionDerecha {
     display: flex;
     width: auto;
+    max-width: 70%;
     flex-wrap: wrap;
     justify-content: end;
     gap: 10px;
@@ -709,6 +710,15 @@
 .encabezadoPoFoC h4 {
     margin-left: 15px;
     text-align: end;
+}
+
+.motivoOrden {
+    border: solid 3px #CC6666;
+    color: #CC6666;
+    border-radius: 20px;
+    padding: 0px 15px 0px 5px;
+    display: flex;
+    align-items: center;
 }
 
 /***************************************************/

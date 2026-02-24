@@ -487,7 +487,7 @@ async function agregarOrden() {
     input: "text",
     inputPlaceholder: "Agrega una descripción a tu orden (opcional)",
     inputAttributes: {
-      maxlength: 100,
+      maxlength: 150,
     },
     showCancelButton: true,
     cancelButtonText: "Cancelar",

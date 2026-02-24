@@ -190,68 +190,81 @@
 
 /* TOGGLE */
 
-/* Contenedor principal para alinear texto y switch */
-.toggle-container-reportes {
-    display: flex;
+:root {
+  --color-primary: #d66161; /* El color rojizo de tus imágenes */
+  --color-bg-light: #fff5f5; /* Fondo muy tenue para el estado desmarcado */
+  --color-border-unchecked: hsl(0, 7%, 70%);
+  --color-border-checked: hsl(0, 40%, 70%);
+}
+
+.custom-checkbox-report {
+    display: inline-flex;
+    height: 34px;
+    width: auto;
     align-items: center;
-    gap: 10px;
-    font-family: sans-serif;
-    color: hsl(208, 7%, 70%); /* Color del texto similar a la imagen */
-
-    border: solid 2px hsl(208, 7%, 70%);
-    padding: 0 10px;
-    border-radius: 10px;
-    height: 35px;
-}
-
-.toggle-container-reportes:has(.label-toggle-reportes:hover) {
-    background-color: hsl(0, 10%, 98%); /* Color de fondo sutil */
-    transition: background-color ease-in-out 0.2s;
-}
-
-/* Estilo del carril (el fondo ovalado) */
-.label-toggle-reportes {
     cursor: pointer;
+    border: 2px solid var(--color-border-unchecked);
+    border-radius: 8px;
+    padding: 10px 5px 10px 3px;
+    margin-top: 0px;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+/* Ocultar el checkbox original */
+.custom-checkbox-report input {
+  display: none;
+}
+
+/* El cuadro del checkbox */
+.checkmark-report {
+    width: 25px;
+    height: 25px;
+    border: 2px solid var(--color-border-unchecked);
+    border-radius: 5px;
+    margin-right: 7px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    position: relative;
-    margin: 0;
-    line-height: 15px;
-}
-
-.label-toggle-reportes::after {
-    content: "";
-    width: 50px;
-    min-width: 50px;
-    height: 25px;
-    background-color: #ffffff;
-    border: 2px solid #dee2e6;
-    border-radius: 9px;
-    display: inline-block;
-    transition: all 0.3s ease;
+    justify-content: center;
+    background-color: var(--color-bg-light);
+    transition: background-color 0.2s ease;
     position: relative;
 }
 
-/* Estilo del círculo (el switch) */
-.label-toggle-reportes::before {
-    content: "";
-    position: absolute;
-    right: 28px; /* Posición inicial (apagado) */
-    width: 18px;
-    height: 18px;
-    background-color: #adb5bd; /* Gris cuando está inactivo */
-    border-radius: 30%;
-    z-index: 1;
-    transition: all 0.3s ease;
+.checkmark-report svg {
+  opacity: 0;
 }
 
-.check-toggle:checked + .label-toggle-reportes::before {
-    transform: translateX(130%);
-    background-color: #e35d5d; /* Rojo de tu imagen */
+/* El texto "Combinar mesas" */
+.label-text-report {
+  font-family: sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-border-unchecked);
+  transition: color 0.2s ease;
 }
 
-/* Opcional: cambiar el borde del carril cuando esté activo */
-.check-toggle:checked + .label-toggle-reportes::after {
-    border-color: #ced4da;
+/* --- ESTADO ACTIVADO (Checked) --- */
+
+/* Cambiar fondo del cuadro al marcar */
+.custom-checkbox-report input:checked + .checkmark-report {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.custom-checkbox-report:has(input:checked) .label-text-report {
+  color: var(--color-primary);
+}
+
+.custom-checkbox-report:has(input:checked) {
+  border-color: var(--color-primary);
+}
+
+.custom-checkbox-report input:checked + .checkmark-report svg {
+  opacity: 100%;
+}
+
+/* Mostrar el check cuando está marcado */
+.custom-checkbox-report input:checked + .checkmark-report:after {
+  display: block;
 }
