@@ -24,175 +24,189 @@
 
   {% if Modo != "Editar" %}
 
-  <!-- ¿Quién creó la orden? -->
-  <div class="col-12">
-    <div class="row">
+    <!-- ¿Quién creó la orden? -->
+    <div class="col-12">
+      <div class="row">
 
+        <!-- Detalles del que hizo la orden -->
+        <h4 style="font-size: 18px; margin-bottom: 3px;" class="col-12">¿Quién creó la orden?</h4>
+    
+        <div class="col-6 mb-2" id="nombreCreadorDiv">
+          <div class="nombreCreadorTxt">
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Nombre</h4>
+          </div>
+          <input type="text" class="form-control" id="nombreCreador" value="{{NombreCreador}}" readonly/>
+        </div>
+    
+        <div class="col-3 mb-2" id="cargoCreadorDiv">
+          <div class="cargoCreadorTxt">
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Cargo</h4>
+          </div>
+          <input type="text" class="form-control" id="cargoCreador" value="{{CargoCreador}}" readonly/>
+        </div>
+        
+      </div>
+    </div>
+    <!-- ¿Quién creó la orden? -->
+
+    <hr class="separadorMostrarOrden">
+
+    {% if Orden.Estado == "0" %}
+    <!-- Detalles de pago de la orden -->
+    <div class="col-12">
+      <div class="row">
+
+        <!-- Detalles del que hizo la orden -->
+        <h4 style="font-size: 18px; margin-bottom: 3px;" class="col-12">Detalles de pago</h4>
+        
+        {% if Orden.Total > 0 %}
+        <!-- Total base -->
+        <div class="col-3 mb-2" id="totalBaseOrdenDiv">
+          <div class="totalBaseOrdenTxt">
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Subtotal</h4>
+          </div>
+          <input type="text" class="form-control" id="totalBaseOrden" value="{{Orden.Total}}" readonly/>
+        </div>
+        {% endif %}
+        
+        {% if Orden.Descuento < 0 %}
+        <!-- Descuento -->
+        <div class="col-3 mb-2" id="descuentoOrdenDiv">
+          <div class="descuentoOrdenTxt">
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Descuento</h4>
+          </div>
+          <input type="text" class="form-control" id="descuentoOrden" value="{{Orden.Descuento}}" readonly/>
+        </div>
+        {% endif %}
+    
+        {% if Orden.Propina > 0 %}
+        <!-- Propina -->
+        <div class="col-3 mb-2" id="propinaOrdenDiv">
+          <div class="propinaOrdenTxt">
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Propina</h4>
+          </div>
+          <input type="text" class="form-control" id="propinaOrden" value="{{Orden.Propina}}" readonly/>
+        </div>
+        {% endif %}
+    
+        {% if Orden.TotalPagar > 0 %}
+        <!-- Total pagado -->
+        <div class="col-3 mb-2" id="totalPagadoOrdenDiv">
+          <div class="totalPagadoOrdenTxt">
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Total pagado</h4>
+          </div>
+          <input type="text" class="form-control" id="totalPagadoOrden" value="{{Orden.TotalPagar}}" readonly/>
+        </div>
+        {% endif %}
+    
+        {% if Orden.Monto > 0 %}
+        <!-- Monto -->
+        <div class="col-3 mb-2" id="montoOrdenDiv">
+          <div class="montoOrdenTxt">
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Monto</h4>
+          </div>
+          <input type="text" class="form-control" id="montoOrden" value="{{Orden.Monto}}" readonly/>
+        </div>
+        {% endif %}
+    
+        {% if Orden.Cambio > 0 %}
+        <!-- Cambio -->
+        <div class="col-3 mb-2" id="cambioOrdenDiv">
+          <div class="cambioOrdenTxt">
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Cambio</h4>
+          </div>
+          <input type="text" class="form-control" id="cambioOrden" value="{{Orden.Cambio}}" readonly/>
+        </div>
+        {% endif %}
+    
+        {% if Orden.SegundoMonto > 0 %}
+        <!-- Segundo monto -->
+        <div class="col-3 mb-2" id="segundoMontoOrdenDiv">
+          <div class="segundoMontoOrdenTxt">
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Segundo monto</h4>
+          </div>
+          <input type="text" class="form-control" id="segundoMontoOrden" value="{{Orden.SegundoMonto}}" readonly/>
+        </div>
+        {% endif %}
+    
+        <!-- Metodo de pago -->
+        <div class="col-3 mb-2" id="metodoPagoOrdenDiv">
+          <div class="metodoPagoOrdenTxt">
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Método de pago</h4>
+          </div>
+          <input type="text" class="form-control" id="metodoPagoOrden" value="{{Orden.get_MetodoPago_display }}" readonly/>
+        </div>
+
+      </div>
+      
+    </div>
+
+    <!-- Detalles de pago -->
+    {% else %}
+    <!-- Motivo de la anulación -->
+    <div class="col-12">
+      <div class="row">
+
+        <!-- Detalles del que hizo la orden -->
+        <h4 style="font-size: 18px; margin-bottom: 3px;" class="col-12">Detalles de la anulación</h4>
+    
+        <!-- Metodo de pago -->
+        <div class="col-12 mb-2" id="motivoAnulacionOrdenDiv">
+          <div class="motivoAnulacionOrdenTxt">
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Motivo</h4>
+          </div>
+          <input type="text" class="form-control" id="metodoPagoOrden" value="{{Orden.Motivo }}" placeholder="Sin motivo" readonly/>
+        </div>
+      
+      </div>
+      
+    </div>
+    <!-- Motivo de anulacion -->
+    {% endif %}
+    
+    <hr class="separadorMostrarOrden">
+
+  {% else %}
+
+  <div class="col-12 d-flex justify-content-between">
+    <div class="col-6 row" id="izquierdaEditarMesas">
       <!-- Detalles del que hizo la orden -->
-      <h4 style="font-size: 18px; margin-bottom: 3px;" class="col-12">¿Quién creó la orden?</h4>
+      <h4 style="font-size: 18px; margin-bottom: 3px;" class="col-12 pl-0">Area de mesa</h4>
   
-      <div class="col-6 mb-2" id="nombreCreadorDiv">
-        <div class="nombreCreadorTxt">
+      <!-- Area de mesa -->
+      <div class="col-6 mb-2 pl-0" id="NombreAreaMesaOrdenDiv">
+        <div class="NombreAreaMesaOrdenTxt">
           <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Nombre</h4>
         </div>
-        <input type="text" class="form-control" id="nombreCreador" value="{{NombreCreador}}" readonly/>
-      </div>
-  
-      <div class="col-3 mb-2" id="cargoCreadorDiv">
-        <div class="cargoCreadorTxt">
-          <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Cargo</h4>
-        </div>
-        <input type="text" class="form-control" id="cargoCreador" value="{{CargoCreador}}" readonly/>
+        <input type="text" class="form-control" id="NombreAreaMesaOrden" value="{{Orden.AreaDeMesa}}" readonly/>
       </div>
       
-    </div>
-  </div>
-  <!-- ¿Quién creó la orden? -->
-
-  <hr class="separadorMostrarOrden">
-
-  {% if Orden.Estado == "0" %}
-  <!-- Detalles de pago de la orden -->
-  <div class="col-12">
-    <div class="row">
-
-      <!-- Detalles del que hizo la orden -->
-      <h4 style="font-size: 18px; margin-bottom: 3px;" class="col-12">Detalles de pago</h4>
-      
-      {% if Orden.Total > 0 %}
-      <!-- Total base -->
-      <div class="col-3 mb-2" id="totalBaseOrdenDiv">
-        <div class="totalBaseOrdenTxt">
-          <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Subtotal</h4>
+      <!-- Mesas -->
+      <div class="col-6 mb-2" id="MesasOrdenDiv">
+        <div class="MesasOrdenTxt">
+          <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Mesas</h4>
         </div>
-        <input type="text" class="form-control" id="totalBaseOrden" value="{{Orden.Total}}" readonly/>
-      </div>
-      {% endif %}
-      
-      {% if Orden.Descuento < 0 %}
-      <!-- Descuento -->
-      <div class="col-3 mb-2" id="descuentoOrdenDiv">
-        <div class="descuentoOrdenTxt">
-          <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Descuento</h4>
-        </div>
-        <input type="text" class="form-control" id="descuentoOrden" value="{{Orden.Descuento}}" readonly/>
-      </div>
-      {% endif %}
   
-      {% if Orden.Propina > 0 %}
-      <!-- Propina -->
-      <div class="col-3 mb-2" id="propinaOrdenDiv">
-        <div class="propinaOrdenTxt">
-          <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Propina</h4>
-        </div>
-        <input type="text" class="form-control" id="propinaOrden" value="{{Orden.Propina}}" readonly/>
+        {% with "" as mesas_str %}
+          <input type="text" class="form-control" id="MesasOrden" readonly
+            value="{% for mesa in Orden.Mesas.all %}#{{ mesa.IdMesa.Numero }}{% if not forloop.last %} - {% endif %}{% endfor %}">
+        {% endwith %}
       </div>
-      {% endif %}
-  
-      {% if Orden.TotalPagar > 0 %}
-      <!-- Total pagado -->
-      <div class="col-3 mb-2" id="totalPagadoOrdenDiv">
-        <div class="totalPagadoOrdenTxt">
-          <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Total pagado</h4>
-        </div>
-        <input type="text" class="form-control" id="totalPagadoOrden" value="{{Orden.TotalPagar}}" readonly/>
-      </div>
-      {% endif %}
-  
-      {% if Orden.Monto > 0 %}
-      <!-- Monto -->
-      <div class="col-3 mb-2" id="montoOrdenDiv">
-        <div class="montoOrdenTxt">
-          <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Monto</h4>
-        </div>
-        <input type="text" class="form-control" id="montoOrden" value="{{Orden.Monto}}" readonly/>
-      </div>
-      {% endif %}
-  
-      {% if Orden.Cambio > 0 %}
-      <!-- Cambio -->
-      <div class="col-3 mb-2" id="cambioOrdenDiv">
-        <div class="cambioOrdenTxt">
-          <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Cambio</h4>
-        </div>
-        <input type="text" class="form-control" id="cambioOrden" value="{{Orden.Cambio}}" readonly/>
-      </div>
-      {% endif %}
-  
-      {% if Orden.SegundoMonto > 0 %}
-      <!-- Segundo monto -->
-      <div class="col-3 mb-2" id="segundoMontoOrdenDiv">
-        <div class="segundoMontoOrdenTxt">
-          <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Segundo monto</h4>
-        </div>
-        <input type="text" class="form-control" id="segundoMontoOrden" value="{{Orden.SegundoMonto}}" readonly/>
-      </div>
-      {% endif %}
-  
-      <!-- Metodo de pago -->
-      <div class="col-3 mb-2" id="metodoPagoOrdenDiv">
-        <div class="metodoPagoOrdenTxt">
-          <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Método de pago</h4>
-        </div>
-        <input type="text" class="form-control" id="metodoPagoOrden" value="{{Orden.get_MetodoPago_display }}" readonly/>
-      </div>
-
-    </div>
-    
-  </div>
-  <!-- Detalles de pago -->
-  {% else %}
-  <!-- Motivo de la anulación -->
-  <div class="col-12">
-    <div class="row">
-
-      <!-- Detalles del que hizo la orden -->
-      <h4 style="font-size: 18px; margin-bottom: 3px;" class="col-12">Detalles de la anulación</h4>
-  
-      <!-- Metodo de pago -->
-      <div class="col-12 mb-2" id="motivoAnulacionOrdenDiv">
-        <div class="motivoAnulacionOrdenTxt">
-          <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Motivo</h4>
-        </div>
-        <input type="text" class="form-control" id="metodoPagoOrden" value="{{Orden.Motivo }}" placeholder="Sin motivo" readonly/>
-      </div>
-    
-    </div>
-    
-  </div>
-  <!-- Motivo de anulacion -->
-  {% endif %}
-  
-  <hr class="separadorMostrarOrden">
-  {% else %}
-
-  <div class="col-12 row">
-    <!-- Detalles del que hizo la orden -->
-    <h4 style="font-size: 18px; margin-bottom: 3px;" class="col-12">Area de mesa</h4>
-
-    <!-- Area de mesa -->
-    <div class="col-3 mb-2" id="NombreAreaMesaOrdenDiv">
-      <div class="NombreAreaMesaOrdenTxt">
-        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Nombre</h4>
-      </div>
-      <input type="text" class="form-control" id="NombreAreaMesaOrden" value="{{Orden.AreaDeMesa}}" readonly/>
-    </div>
-    
-    <!-- Mesas -->
-    <div class="col-3 mb-2" id="MesasOrdenDiv">
-      <div class="MesasOrdenTxt">
-        <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Mesas</h4>
-      </div>
-
-      {% with "" as mesas_str %}
-        <input type="text" class="form-control" id="MesasOrden" readonly
-          value="{% for mesa in Orden.Mesas.all %}#{{ mesa.IdMesa.Numero }}{% if not forloop.last %} - {% endif %}{% endfor %}">
-      {% endwith %}
     </div>
 
-    <div class="col-3">
-      <button data-toggle="modal" data-target="#EditarMesas" onclick="editarMesas('{{Orden.Id}}')" id="btnEditarMesas">Editar mesas</button>
+    <div class="col-6 d-flex justify-content-end pr-0 mb-2" id="derechaEditarMesas">
+        <button data-toggle="modal" data-target="#EditarMesas" onclick="editarMesas('{{Orden.Id}}')" id="btnEditarMesas">
+  
+          <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 16L5.5 12.25C5.65 11.8667 5.89167 11.5625 6.225 11.3375C6.55833 11.1125 6.93333 11 7.35 11H9V6.975C6.45 6.89167 4.3125 6.51667 2.5875 5.85C0.8625 5.18333 0 4.4 0 3.5C0 2.53333 0.975 1.70833 2.925 1.025C4.875 0.341667 7.23333 0 10 0C12.7833 0 15.1458 0.341667 17.0875 1.025C19.0292 1.70833 20 2.53333 20 3.5C20 4.4 19.1375 5.18333 17.4125 5.85C15.6875 6.51667 13.55 6.89167 11 6.975V11H12.65C13.05 11 13.4208 11.1125 13.7625 11.3375C14.1042 11.5625 14.35 11.8667 14.5 12.25L16 16H14L12.8 13H7.2L6 16H4ZM10 5C11.6167 5 13.1417 4.85833 14.575 4.575C16.0083 4.29167 17.0583 3.93333 17.725 3.5C17.0583 3.06667 16.0083 2.70833 14.575 2.425C13.1417 2.14167 11.6167 2 10 2C8.38333 2 6.85833 2.14167 5.425 2.425C3.99167 2.70833 2.94167 3.06667 2.275 3.5C2.94167 3.93333 3.99167 4.29167 5.425 4.575C6.85833 4.85833 8.38333 5 10 5Z" fill="white"/>
+          </svg>
+  
+          &nbsp;
+  
+          Editar mesas
+        </button>
     </div>
+
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Datos generales de mesas en la orden -->
@@ -224,7 +238,15 @@
   <hr>
 
   <div class="col-12">
-    <button data-toggle="modal" data-target="#IncluirDetalle" onclick="agregarPlatillosIncluir('{{Orden.Id}}')" id="btnIncluirConsumible">Incluir consumible</button>
+    <button data-toggle="modal" data-target="#IncluirDetalle" onclick="agregarPlatillosIncluir('{{Orden.Id}}')" id="btnIncluirConsumible">
+      <svg width="18" height="18" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 8H0V6H6V0H8V6H14V8H8V14H6V8Z" fill="white"/>
+      </svg>
+
+      &nbsp;
+        
+      Incluir consumible
+    </button>
 
     <button onclick="rellenarParaEditarOrden('{{Orden.Id}}')">Reiniciar</button>
   </div>

@@ -721,6 +721,8 @@
     align-items: center;
 }
 
+/* BOTONES DE EDITAR ORDEN */
+
 .btnControlCantidad {
     transition: background-color ease .3s;
     background-color: rgba(255, 255, 255, 0);
@@ -734,6 +736,28 @@
     background-color: #EEEEEE;
     border: none;
 }
+
+
+#btnEditarMesas {
+    background-color: #FD7418;
+    border-color: hsl(24, 98%, 60%);
+    color: white;
+    width: 150px;
+    height: 40px;
+    align-self: flex-end;
+    border-radius: 10px;
+}
+
+#btnIncluirConsumible {
+    background: hsl(120, 50%, 60%);
+    border-color: hsl(120, 50%, 55%);
+    color: white;
+    width: 180px;
+    height: 40px;
+    align-self: flex-end;
+    border-radius: 10px;
+}
+
 
 /***************************************************/
 
