@@ -209,12 +209,25 @@
             <div class="col-12">
               <div id="contenedorExtras">
                 <div class="col-6 pl-0" id="contenedorDescuento">
-                  <div class="col-12 px-0">
-                    <label for="checkDescuento" style="font-size: 20px;">
-                      Descuento
+
+                  <!--
+                    <div class="col-12 px-0">
+                      <label for="checkDescuento" style="font-size: 20px;">
+                        Descuento
+                      </label>
+                      
+                      <input type="checkbox" name="inputCheckDescuento" id="checkDescuento">
+                    </div>
+                  -->
+
+                  <div class="col-12 px-0" id="contenedorCheckDescuento">
+                    <label class="switch-container">
+                      <span class="switch-label">Descuento</span>
+                      <div class="switch-wrapper">
+                        <input type="checkbox" id="checkDescuento" name="inputCheckDescuento">
+                        <span class="slider"></span>
+                      </div>
                     </label>
-  
-                    <input type="checkbox" name="inputCheckDescuento" id="checkDescuento">
                   </div>
 
                   <div class="col-12 px-0 contenedorPorcentaje" id="inputPorcentajeDescuento">
@@ -235,12 +248,24 @@
                 </div>
                 
                 <div class="col-6 pr-0" id="contenedorPropina">
-                  <div class="col-12 px-0" id="contenedorCheckPropina">
-                    <label for="checkPropina" style="font-size: 20px;">
-                      Propina
-                    </label>
+                  <!--
+                    <div class="col-12 px-0" id="contenedorCheckPropina">
+                      <label for="checkPropina" style="font-size: 20px;">
+                        Propina
+                      </label>
                     
-                    <input type="checkbox" name="inputCheckPropina" id="checkPropina">
+                      <input type="checkbox" name="inputCheckPropina" id="checkPropina">
+                    </div>
+                  -->
+
+                  <div class="col-12 px-0" id="contenedorCheckPropina">
+                    <label class="switch-container">
+                      <span class="switch-label">Propina</span>
+                      <div class="switch-wrapper">
+                        <input type="checkbox" id="checkPropina" name="inputCheckPropina">
+                        <span class="slider"></span>
+                      </div>
+                    </label>
                   </div>
 
                   <div class="col-12 px-0 contenedorPorcentaje" id="inputPorcentajePropina">

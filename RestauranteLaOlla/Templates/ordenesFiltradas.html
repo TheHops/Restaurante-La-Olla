@@ -221,12 +221,14 @@
   </div>  
 {% endif %}
 
-{% if Orden.DescripcionEdicion is not none and Orden.DescripcionEdicion != '' %}
-  <div class="descripcionEdicionOrden">
-    <img style="width: 20px; margin-right: 10px;" src="{% static 'img/comment_pen_blue_thick.png' %}" alt="">
+{% if Orden.Estado == "1" or Orden.Estado == "4" or Orden.Estado == "3" %}
+  {% if Orden.DescripcionEdicion is not none and Orden.DescripcionEdicion != '' %}
+    <div class="descripcionEdicionOrden">
+      <img style="width: 20px; margin-right: 10px;" src="{% static 'img/comment_pen_blue_thick.png' %}" alt="">
 
-    <span>{{ Orden.DescripcionEdicion }}</span>
-  </div>  
+      <span>{{ Orden.DescripcionEdicion }}</span>
+    </div>  
+  {% endif %}
 {% endif %}
 
 <div class="detalleOrdenPoFoC">
