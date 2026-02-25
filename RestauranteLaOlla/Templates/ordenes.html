@@ -80,8 +80,14 @@
   </div>
 
   <div class="EncabezadoOrdenesListDerecha">
-    <button id="btnInfoOrdenes" data-toggle="modal" data-target="#InfoDetalleOrden">
-      <img style="width: 15px; padding-bottom: 3px;" src="{% static 'img/info2.png' %}" alt="Información de los íconos que se presentan">
+    <button id="btnInfoOrdenes" data-toggle="modal" data-target="#InfoDetalleOrden" title="Conoce que significan algunos íconos">
+      <!--
+        <img style="width: 15px; padding-bottom: 3px;" src="{% static 'img/info2.png' %}" alt="Información de los íconos que se presentan">
+      -->
+    
+      <svg width="4" height="18" viewBox="0 0 4 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0.5875 3.4125C0.195833 3.02083 0 2.55 0 2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0C2.55 0 3.02083 0.195833 3.4125 0.5875C3.80417 0.979167 4 1.45 4 2C4 2.55 3.80417 3.02083 3.4125 3.4125C3.02083 3.80417 2.55 4 2 4C1.45 4 0.979167 3.80417 0.5875 3.4125ZM0.5 18V6H3.5V18H0.5Z" fill="white"/>
+      </svg>
     </button>
   </div>
 
