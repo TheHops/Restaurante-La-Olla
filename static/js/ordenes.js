@@ -768,12 +768,30 @@ function filtrarOrdenes(cadena) {
 
         iniciarTimers();
 
+        validarMostrarEmptyState();
+
         contenedor.style.opacity = "100%";
       } else {
         console.error("Error al cargar órdenes:", this.status);
       }
     }
   };
+}
+
+function validarMostrarEmptyState (){
+  const contenedor = document.getElementById("listaOrdenesPoFoC");
+  const emptyState = document.getElementById("emptyStateOrdenes");
+
+  // Buscamos si existen elementos con la clase 'ordenPoFoC' dentro del contenedor
+  const tieneOrdenes = contenedor.querySelectorAll(".ordenPoFoC").length > 0;
+
+  if (tieneOrdenes) {
+    // Si hay órdenes, ocultamos el empty state
+    emptyState.style.display = "none";
+  } else {
+    // Si está vacío, mostramos el empty state
+    emptyState.style.display = "flex"; // Usamos flex para centrar contenido si es necesario
+  }
 }
 
 /////////////////////////////////////////////////////////////////////

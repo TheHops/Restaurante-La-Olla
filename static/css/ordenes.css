@@ -865,6 +865,32 @@ input:checked + .slider {
   border-color: #5b92d4;
 }
 
+#emptyStateOrdenes {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20vh;
+    display: none;
+}
+
+#logodecoESOrdenes {
+    margin-top: auto;
+    width: 120px;
+    height: 120px;
+    opacity: 15%;
+    user-select: none;
+}
+
+#textoEmptyStateOrdenes {
+    color: hsl(0, 30%, 60%);
+    opacity: 40%;
+    font-family: cursive;
+    margin-top: 10px;
+    font-style: oblique;
+}
+
 /***************************************************/
 
 @media (max-width: 900px)
