@@ -441,7 +441,7 @@ def FacturarOrden(request):
         if orden.Estado == "0":
             return JsonResponse({
                 "status": "error",
-                "message": "La orden ya fue facturada"
+                "message": "El pago de la orden ya fue registrado"
             })
             
         if orden.Estado == "2":
@@ -881,6 +881,18 @@ def EditarOrden (request):
     with transaction.atomic():
         # Se obtiene la orden
         orden = get_object_or_404(Orden, Id=data["idOrden"], EsActivo="1")
+        
+        if orden.Estado == "0":
+            return JsonResponse({
+                "status": "error",
+                "message": "El pago de la orden ya fue registrado"
+            })
+            
+        if orden.Estado == "2":
+            return JsonResponse({
+                "status": "error",
+                "message": "La orden fué anulada"
+            })
 
         # Se actualiza la información de la orden
         descripcionOrden = data.get("descripcion", orden.Descripcion)

@@ -38,7 +38,7 @@
     height: 35px;
     background: hsl(0, 0%, 50%);
     border: solid 0px black;
-    border-radius: 40%;
+    border-radius: 50%;
     cursor: pointer;
     box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
     display: inline-block;
@@ -653,6 +653,7 @@
 #contenedorExtras {
     display: flex;
     width: 100%;
+    margin-top: 15px;
 }
 
 #contenedorCheckPropina {
@@ -721,6 +722,8 @@
     align-items: center;
 }
 
+/* BOTONES DE EDITAR ORDEN */
+
 .btnControlCantidad {
     transition: background-color ease .3s;
     background-color: rgba(255, 255, 255, 0);
@@ -731,8 +734,135 @@
 }
 
 .btnControlCantidad:hover {
-    background-color: #EEEEEE;
+    background-color: rgba(0, 0, 0, 0.08);
     border: none;
+}
+
+#columnasDetallesEditarOrden {
+    position: sticky; top: 0; background-color: white;
+}
+
+#contenedorTablaEditarOrden::-webkit-scrollbar {
+    width: 0;
+}
+
+#btnEditarMesas {
+    background-color: #FD7418;
+    border-color: hsl(24, 98%, 60%);
+    color: white;
+    width: 150px;
+    height: 40px;
+    align-self: flex-end;
+    border-radius: 10px;
+    transition: background-color ease .3s;
+}
+
+#btnEditarMesas:hover {
+    background-color: hsl(24, 98%, 45%);
+}
+
+#btnIncluirConsumible {
+    background: hsl(120, 50%, 60%);
+    border-color: hsl(120, 50%, 55%);
+    color: white;
+    width: 180px;
+    height: 40px;
+    align-self: flex-end;
+    border-radius: 10px;
+    transition: background-color ease .3s;
+}
+
+#btnIncluirConsumible:hover {
+    background: hsl(120, 50%, 50%);
+}
+
+#btnReiniciarEdición {
+    background-color: hsl(200, 50%, 60%);
+    border-color: hsl(200, 50%, 65%);
+    color: white;
+    width: 120px;
+    height: 40px;
+    border-radius: 10px;
+    transition: background-color ease .3s;
+}
+
+#btnReiniciarEdición:hover {
+    background-color: hsl(200, 50%, 50%);
+}
+
+/* CHECK TOGGLE DE PROPINA Y DESCUENTO */
+
+/* Contenedor principal para alinear texto y switch */
+.switch-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 2px 5px;
+    border: 2px solid #e0e0e0;
+    border-radius: 20px;
+    width: 100%;
+    min-width: 180px;
+}
+
+.switch-label {
+  font-size: 20px;
+  font-weight: bold;
+  color: #666;
+  margin-right: 15px;
+  margin-left: 10px;
+}
+
+/* El contenedor del interruptor */
+.switch-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+/* Esconder el checkbox original */
+.switch-wrapper input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* El fondo del interruptor (píldora pequeña interna) */
+.slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent;
+  border: 1px solid #ddd;
+  border-radius: 34px;
+  transition: .4s;
+}
+
+/* El círculo (bolita) */
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 2px;
+  background-color: #a0a0a0; /* Color gris de tu imagen 1 */
+  border-radius: 50%;
+  transition: .1s;
+}
+
+/* Cuando el checkbox está marcado (Checked) */
+input:checked + .slider:before {
+  transform: translateX(24px);
+  background-color: #5b92d4; /* El azul de tu imagen 2 */
+}
+
+/* Opcional: cambiar el borde del slider al estar activo */
+input:checked + .slider {
+  border-color: #5b92d4;
 }
 
 /***************************************************/

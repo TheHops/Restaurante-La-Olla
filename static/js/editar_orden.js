@@ -160,9 +160,10 @@ function confirmarQuitar(idPlatillo) {
 
   let esNuevo = dataFinal.data("is-new") == 1;
 
+  fila.addClass("quitar");
+
   if (esNuevo) {
     // Nunca existió → eliminar del DOM
-    fila.addClass("quitar");
 
     setTimeout(() => {
       fila.remove();
@@ -176,9 +177,9 @@ function confirmarQuitar(idPlatillo) {
 
   setTimeout(() => {
     fila.hide();
-  }, 500);
 
-  cerrarPopover();
+    cerrarPopover();
+  }, 500);
 }
 
 async function ConfirmarEditarOrden(idOrden) {
