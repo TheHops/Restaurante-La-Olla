@@ -88,7 +88,7 @@
                         <span class="checkmark">
                             <svg width="22" height="15" viewBox="0 0 28 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M9.5 20.0417L0 10.5417L2.375 8.16667L9.5 15.2917L24.7917 0L27.1667 2.375L9.5 20.0417Z" fill="white"/>
-                                </svg>                                
+                                </svg>
                         </span>
                         <span class="label-text">Combinar mesas</span>
                     </label>
@@ -157,7 +157,11 @@
 
                 {% for Tipo in Tipos %}
 
-                <h3 style="justify-self: center;">{{Tipo.Nombre}}</h3>
+                <h3 class="tipoNombre">
+                    <div class="tipoNombreHead"></div>
+                    {{Tipo.Nombre}}
+                    <div class="tipoNombreFoot"></div>
+                </h3>
 
                 <div id="PlatillosVenta">
                     {% for platillo in Tipo.Platillos.all %}

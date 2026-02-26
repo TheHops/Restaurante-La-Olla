@@ -34,7 +34,7 @@ body.modal-open {
 }
 
 nav {
-    padding: 8px 20px 0px 20px;
+    padding: 8px 20px 5px 20px;
 }
 
 body > header > nav > ul::selection {
@@ -296,7 +296,7 @@ html {
     width: 100%;
     background-color: white;
     position: absolute;
-    top: 7.5vh;
+    top: 8vh;
 }
 
 .modal {

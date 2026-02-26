@@ -2,7 +2,7 @@
 
 {% for Tipo in Tipos %}
 
-    <h3 style="justify-self: center;">{{Tipo.Nombre}}</h3>
+    <h3 class="tipoNombre">{{Tipo.Nombre}}</h3>
 
     <div id="PlatillosVenta">
         {% for platillo in Tipo.PlatillosFiltrados %}

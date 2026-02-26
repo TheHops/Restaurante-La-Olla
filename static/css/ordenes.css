@@ -876,18 +876,23 @@ input:checked + .slider {
 }
 
 #logodecoESOrdenes {
-    margin-top: auto;
-    width: 120px;
-    height: 120px;
+    width: 180px;
+    height: 180px;
     opacity: 15%;
     user-select: none;
 }
 
+#svgCurvoOrdenes {
+    margin-top: -10px; /* Ajusta esto para acercar el texto al logo */
+}
+
 #textoEmptyStateOrdenes {
-    color: hsl(0, 30%, 60%);
+    fill: hsl(0, 30%, 60%); 
+    font-size: 17px; /* Ajusta según prefieras */
+    
+    /* Tus estilos originales */
     opacity: 40%;
     font-family: cursive;
-    margin-top: 10px;
     font-style: oblique;
 }
 
