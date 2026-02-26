@@ -13,7 +13,6 @@ from decimal import Decimal, ROUND_HALF_UP
 
 from Application.models import AreaMesa, DetalleOrden, Orden, Mesa, Usuario, Platillo, MesasPorOrden, TipoPlatillo
 
-
 # region VENTAS
 def venta(request):
     if request.user.is_authenticated:
@@ -67,7 +66,7 @@ def venta(request):
                 'Mesas': mesa,
                 'AreaMesa': AreaM,
                 'ordenesPendientes': ordenesPendientes,
-                'User': request.user.username
+                'User': request.user
             }
 
             return render(request, "venta.html", contexto)
@@ -213,6 +212,9 @@ def OrdenesPendientes(request):
                 "CargoUsuario": cargo_usuario,
                 "User": request.user
             }
+            
+            print(request.user)
+            print(contexto)
 
             return render(request, "ordenes.html", contexto)
         except Exception as ex:

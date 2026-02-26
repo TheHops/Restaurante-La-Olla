@@ -2,7 +2,11 @@
 
 {% for Tipo in Tipos %}
 
-    <h3 class="tipoNombre">{{Tipo.Nombre}}</h3>
+    <span class="tipoNombre">
+        <div class="tipoNombreHead"></div>
+        {{Tipo.Nombre}}
+        <div class="tipoNombreFoot"></div>
+    </span>
 
     <div id="PlatillosVenta">
         {% for platillo in Tipo.PlatillosFiltrados %}

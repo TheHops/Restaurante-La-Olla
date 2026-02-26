@@ -417,6 +417,8 @@ legend {
   display: flex;
   align-items: center;
   justify-content: center;
+
+  position: relative;
 }
 
 .encabezado_ordenes span {
@@ -435,6 +437,25 @@ legend {
   cursor: pointer;
 
   justify-self: flex-start;
+}
+
+#btnInfoCrearOrden {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 20px;
+  background-color: #FF7878;
+  border: solid 1px #FFB3B2;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  padding-bottom: 2px;
+
+  transition: background-color ease .3s;
+}
+
+#btnInfoCrearOrden:hover {
+  background-color: hsl(0, 100%, 70%);
 }
 
 .orden {
@@ -459,6 +480,8 @@ legend {
   height: 1px;
   background: white;
   position: absolute;
+  top: 0;
+  z-index: 3;
 }
 
 .detalleorden {
@@ -614,7 +637,12 @@ legend {
 .tipoNombre {
   justify-self: center;
   position: relative;
-  margin: 10px 0;
+  display: flex;
+  justify-content: center;
+  width: 50%;
+  margin: 15px 0;
+  color: #D49191;
+  font-size: 25px;
 }
 
 .tipoNombreHead {
@@ -622,7 +650,7 @@ legend {
   width: 100%;
   height: 2px;
   top: 0;
-  background: linear-gradient(to right, rgba(255, 255, 255, 0), #000000 50%, rgba(255, 255, 255, 0));
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), #D49191 50%, rgba(255, 255, 255, 0));
 }
 
 .tipoNombreFoot {
@@ -630,7 +658,7 @@ legend {
   width: 100%;
   height: 2px;
   bottom: 0;
-  background: linear-gradient(to right, rgba(255, 255, 255, 0), #000000 50%, rgba(255, 255, 255, 0));
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), #D49191 50%, rgba(255, 255, 255, 0));
 }
 
 #PlatillosVenta {
