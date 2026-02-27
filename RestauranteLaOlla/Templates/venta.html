@@ -163,7 +163,7 @@
                     <div class="tipoNombreFoot"></div>
                 </span>
 
-                <div id="PlatillosVenta">
+                <div class="PlatillosVenta">
                     {% for platillo in Tipo.Platillos.all %}
                     
                     <!-- Se muestra un platillo -->
@@ -196,10 +196,6 @@
                             </fieldset>
                             
                             <div class="botonesPlatillo">
-                                <button class="btninfoPlatillo">
-                                    <img src="{% static 'img/info2.png' %}" alt="" style="width: 15px; height: 15px; padding: 1px;">
-                                </button>
-                            
                                 <button class="btnaddCarrito" id="addcarrito{{platillo.Id}}"
                                     onclick='addCarrito("{{platillo.Id}}", "{{platillo.Nombre}}", "{{platillo.Precio}}")' disabled>
                                     <img src="{% static 'img/carrito.png' %}" alt="" style="width: 20px; height: 20px;">

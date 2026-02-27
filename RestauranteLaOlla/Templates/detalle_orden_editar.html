@@ -63,7 +63,7 @@
         <!-- Total base -->
         <div class="col-3 mb-2" id="totalBaseOrdenDiv">
           <div class="totalBaseOrdenTxt">
-            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Subtotal</h4>
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Subtotal (C$)</h4>
           </div>
           <input type="text" class="form-control" id="totalBaseOrden" value="{{Orden.Total}}" readonly/>
         </div>
@@ -73,7 +73,7 @@
         <!-- Descuento -->
         <div class="col-3 mb-2" id="descuentoOrdenDiv">
           <div class="descuentoOrdenTxt">
-            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Descuento</h4>
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Descuento (C$)</h4>
           </div>
           <input type="text" class="form-control" id="descuentoOrden" value="{{Orden.Descuento}}" readonly/>
         </div>
@@ -83,7 +83,7 @@
         <!-- Propina -->
         <div class="col-3 mb-2" id="propinaOrdenDiv">
           <div class="propinaOrdenTxt">
-            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Propina</h4>
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Propina (C$)</h4>
           </div>
           <input type="text" class="form-control" id="propinaOrden" value="{{Orden.Propina}}" readonly/>
         </div>
@@ -93,7 +93,7 @@
         <!-- Total pagado -->
         <div class="col-3 mb-2" id="totalPagadoOrdenDiv">
           <div class="totalPagadoOrdenTxt">
-            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Total pagado</h4>
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Total pagado (C$)</h4>
           </div>
           <input type="text" class="form-control" id="totalPagadoOrden" value="{{Orden.TotalPagar}}" readonly/>
         </div>
@@ -103,7 +103,7 @@
         <!-- Monto -->
         <div class="col-3 mb-2" id="montoOrdenDiv">
           <div class="montoOrdenTxt">
-            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Monto</h4>
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Monto (C$)</h4>
           </div>
           <input type="text" class="form-control" id="montoOrden" value="{{Orden.Monto}}" readonly/>
         </div>
@@ -113,7 +113,7 @@
         <!-- Cambio -->
         <div class="col-3 mb-2" id="cambioOrdenDiv">
           <div class="cambioOrdenTxt">
-            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Cambio</h4>
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Cambio (C$)</h4>
           </div>
           <input type="text" class="form-control" id="cambioOrden" value="{{Orden.Cambio}}" readonly/>
         </div>
@@ -123,7 +123,7 @@
         <!-- Segundo monto -->
         <div class="col-3 mb-2" id="segundoMontoOrdenDiv">
           <div class="segundoMontoOrdenTxt">
-            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Segundo monto</h4>
+            <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Segundo monto (C$)</h4>
           </div>
           <input type="text" class="form-control" id="segundoMontoOrden" value="{{Orden.SegundoMonto}}" readonly/>
         </div>
@@ -313,7 +313,7 @@
                   
                   <td style="text-align: center;">{{detalle.Cantidad}}</td>
                   
-                  <td>{{detalle.SubTotal}}</td>
+                  <td>C${{detalle.SubTotal}}</td>
                 
                 {% endif %}
                 
