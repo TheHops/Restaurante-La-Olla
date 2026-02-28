@@ -692,7 +692,7 @@ legend {
 }
 
 #VPlatillos::-webkit-scrollbar {
-  width: 10px;
+  width: 0px;
 }
 
 #VPlatillos::-webkit-scrollbar-thumb {
@@ -1029,6 +1029,22 @@ legend {
   display: block;
 }
 
+#emptyStateCrearOrden {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #BBBBBB;
+  /* display: none; */
+}
+
+#emptyStateCrearOrden span {
+  text-align: center;
+  color: #BBBBBB;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * */
 /* * * * * * * R E S P N S I V I D A D * * * * * */
 /* * * * * * * * * * * * * * * * * * * * * * * * */
@@ -1053,20 +1069,20 @@ legend {
         border-radius: 0;
     } */
 
-  #PlatillosVenta {
+  /* #PlatillosVenta {
     grid-template-columns: auto;
-  }
+  } */
 
-  .vplatillo {
+  /* .vplatillo {
     display: flex;
     width: 100%;
     justify-content: center;
     align-items: center;
 
     padding: 10px 0;
-  }
+  } */
 
-  .datoPlatillo img {
+  /* .datoPlatillo img {
     width: 150px;
     height: 150px;
   }
@@ -1080,8 +1096,8 @@ legend {
 
   .accionesPlatillo {
     width: 60%;
-  }
-
+  } */
+/* 
   .accionesPlatillo .nombrePlatillo {
     font-size: 16px;
   }
@@ -1101,13 +1117,13 @@ legend {
 
   .accionesPlatillo .btnaddCarrito span {
     font-size: 15px;
-  }
+  } */
 }
 
 @media (max-width: 730px) {
-  /* #notiPlatillosOrden {
-        display: inline-block;
-    } */
+  #notiPlatillosOrden {
+    display: inline-block;
+  }
 
   #acciones_pag2 {
     width: 100%;

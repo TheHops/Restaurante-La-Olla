@@ -30,6 +30,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
   obtenerAlturaAccionesBusqueda();
 
   ConsultaDebeCambiarPass();
+
+  validarMostrarEmptyStateCrearOrden();
 });
 
 function ConsultaDebeCambiarPass() {
@@ -55,6 +57,22 @@ function ConsultaDebeCambiarPass() {
       }
     },
   });
+}
+
+function validarMostrarEmptyStateCrearOrden() {
+  const contenedor = document.getElementById("cuerpo_ordenes");
+  const emptyState = document.getElementById("emptyStateCrearOrden");
+
+  // Buscamos si existen elementos con la clase 'ordenPoFoC' dentro del contenedor
+  const tieneOrdenes = contenedor.querySelectorAll(".orden").length > 0;
+
+  if (tieneOrdenes) {
+    // Si hay órdenes, ocultamos el empty state
+    emptyState.style.display = "none";
+  } else {
+    // Si está vacío, mostramos el empty state
+    emptyState.style.display = "flex"; // Usamos flex para centrar contenido si es necesario
+  }
 }
 
 combinarCheckbox.addEventListener("change", function () {
@@ -275,6 +293,8 @@ function addCarrito(id, nombre, precio) {
   // console.log(ordenP);
 
   calcularTotal(1, subtotal);
+
+  validarMostrarEmptyStateCrearOrden();
 }
 
 function notiPlatillos() {
@@ -335,6 +355,8 @@ function limpiarOrdenes() {
   LabelTotal.innerHTML = total;
 
   notiPlatillos();
+
+  validarMostrarEmptyStateCrearOrden();
 }
 
 function quitarOrden(idOrden, subtotalOrden) {
@@ -379,6 +401,8 @@ function quitarOrden(idOrden, subtotalOrden) {
   console.log("Cantidad de ordenes: " + cantOrdenes);
 
   notiPlatillos();
+
+  validarMostrarEmptyStateCrearOrden();
 }
 
 /* PLATILLOS FILTRADOS */
