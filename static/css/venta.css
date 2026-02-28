@@ -340,8 +340,8 @@ legend {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
-
-  padding: 15px 5px 0 5px;
+  padding: 15px 10px 0 10px;
+  justify-content: center;
 }
 
 #Ordenes {
@@ -368,7 +368,6 @@ legend {
 .form-radio-input {
   display: none;
 }
-
 
 .form-check-label {
   background-color: #FFBEBE;
@@ -418,6 +417,8 @@ legend {
   display: flex;
   align-items: center;
   justify-content: center;
+
+  position: relative;
 }
 
 .encabezado_ordenes span {
@@ -436,6 +437,25 @@ legend {
   cursor: pointer;
 
   justify-self: flex-start;
+}
+
+#btnInfoCrearOrden {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 20px;
+  background-color: #FF7878;
+  border: solid 1px #FFB3B2;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  padding-bottom: 2px;
+
+  transition: background-color ease .3s;
+}
+
+#btnInfoCrearOrden:hover {
+  background-color: hsl(0, 100%, 70%);
 }
 
 .orden {
@@ -460,7 +480,8 @@ legend {
   height: 1px;
   background: white;
   position: absolute;
-  transform: translateY(1px);
+  top: 0;
+  z-index: 3;
 }
 
 .detalleorden {
@@ -613,13 +634,39 @@ legend {
 
 /* ***************************** P L A T I L L O S ******************************** */
 
-#PlatillosVenta {
-  display: grid;
-  grid-template-columns: auto auto auto;
+.tipoNombre {
+  justify-self: center;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 50%;
+  margin: 25px 0 15px 0;
+  color: #D49191;
+  font-size: 25px;
+}
+
+.tipoNombreHead {
+  position: absolute;
   width: 100%;
-  padding-right: 20px;
-  padding-left: 20px;
-  padding-top: 20px;
+  height: 2px;
+  top: 0;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), #D49191 50%, rgba(255, 255, 255, 0));
+}
+
+.tipoNombreFoot {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), #D49191 50%, rgba(255, 255, 255, 0));
+}
+
+.PlatillosVenta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  width: 100%;
+
+  gap: 20px;
 
   justify-items: center;
 }
@@ -642,7 +689,7 @@ legend {
 }
 
 #VPlatillos::-webkit-scrollbar {
-  width: 10px;
+  width: 0px;
 }
 
 #VPlatillos::-webkit-scrollbar-thumb {
@@ -651,20 +698,21 @@ legend {
 }
 
 .vplatillo {
-  margin: 10px;
-  width: 40vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  
+  width: 200px;
   height: auto;
+  /* background-color: rgb(220, 100, 90); */
+  background-color: #FFE6E6;
+  /* border-color: hsl(0, 50%, 50%); */
 
-  padding-top: 7px;
+  border: solid 1px #B44646;
 
-  background-color: rgb(220, 100, 90);
-  /* background-color: rgb(255, 230, 230); */
-  border-style: solid;
-  border-width: 2px;
-  border-color: hsl(0, 50%, 50%);
-  /* box-shadow: ; */
   box-shadow: 7px 7px 8px 1px hsla(0, 100%, 20%, 0.2);
-  border-radius: 20px;
+  border-radius: 15px;
+  overflow: hidden;
 }
 
 .textoInfoCrearOrden {
@@ -693,26 +741,25 @@ legend {
 }
 
 .datoPlatillo img {
-  width: 200px;
-  height: 200px;
-  margin: 5%;
+  width: 100%;
+  height: 150px;
   object-fit: cover;
-  border-radius: 10px;
+  /* border-radius: 19px; */
   border-style: solid;
-  border-width: 3px;
-  /* border-color: rgb(200, 100, 100); */
-  border-color: #ffeeee;
+  border-width: 0 0 2px 0;
+  border-color: #B44646;
 }
 
 .accionesPlatillo .nombrePlatillo {
-  color: rgb(255, 230, 230);
+  color: #B44646;
   font-size: 18px;
   text-align: center;
-  margin: 0 5%;
+  margin-top: 15px;
+  font-size: 15px;
 }
 
 .accionesPlatillo .precioPlatillo {
-  color: rgb(255, 230, 230);
+  color: #B44646;
   font-size: 17px;
   margin: 0 5%;
   display: block;
@@ -738,16 +785,37 @@ legend {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 10px;
+  width: 80%;
+  border-radius: 20px;
+  overflow: hidden;
+  border: solid 1px #B44646;
+}
+
+.btnLessPlus {
+  width: 30%;
+  height: 30px;
+
+  background-color: #FFBEBE;
+
+  border: none;
+}
+
+.cantBox:disabled {
+  width: 40%;
+  height: 30px;
+  border-radius: 0;
+
+  background-color: #FFE6E600;
+  border: none;
 }
 
 .cantidad button {
-  width: 30px;
-  height: 30px;
   /* background: rgba(255, 110, 110, 0.1); */
   /* background-color: #FFBEBE; */
-  background-color: #ffffff;
-  border-color: rgba(255, 140, 160, 0.1);
-  border-radius: 5px;
+  /* background-color: #ffffff; */
+  /* border-color: rgba(255, 140, 160, 0.1);
+  border-radius: 5px; */
   cursor: pointer;
   /* box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px; */
   display: inline-block;
@@ -766,25 +834,32 @@ legend {
 }
 
 .cantidad button:hover {
-  background-color: #ffdede;
+  background-color: hsl(0, 100%, 83%);
   /* color: #821414; */
 }
 
 .cantidad input {
-  width: 50px;
   text-align: center;
-  margin: 0 10px;
-  border-radius: 5px;
-}
-
-.cantidad input:disabled {
-  /* background-color: #FFBEBE; */
-  background-color: #ffffff;
 }
 
 /***************************************************************************************/
 /***************************************************************************************/
 /***************************************************************************************/
+
+.btnDetalleConsumible {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  border-radius: 10px;
+  width: 32px;
+  border-color: #B44646;
+  height: 32px;
+  border-style: solid;
+  background-color: rgba(255, 255, 255, 85%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .btninfoPlatillo {
   width: 40px;
@@ -808,30 +883,29 @@ legend {
 }
 
 .btnaddCarrito {
-  width: 130px;
-  height: 30px;
-  margin-right: 5%;
+  width: 100%;
+  height: 40px;
+  margin: 0;
+  border: none;
   background: hsl(0, 100%, 70%);
   border-color: hsl(350, 100%, 75%);
-  border-radius: 10px;
+  border-radius: 2px 2px 19px 19px;
   cursor: pointer;
   color: white;
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
-  display: inline-block;
   transition: 0.2s ease;
 }
 
 .btnaddCarrito:disabled {
   background: hsl(0, 50%, 70%);
   border-color: hsl(350, 50%, 75%);
-  border-radius: 10px;
+  border-radius: 2px 2px 19px 19px;
   cursor: auto;
 }
 
 .btnaddCarrito:disabled:hover {
   background: hsl(0, 50%, 71%);
   border-color: hsl(350, 50%, 76%);
-  border-radius: 10px;
+  border-radius: 2px 2px 19px 19px;
   cursor: auto;
 }
 
@@ -857,7 +931,7 @@ legend {
   margin-top: 13px;
   display: flex;
   justify-content: end;
-  margin-bottom: 15px;
+  margin-bottom: 0;
 }
 
 #btn_abrirListaOrdenes {
@@ -984,14 +1058,30 @@ legend {
   display: block;
 }
 
+#emptyStateCrearOrden {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #BBBBBB;
+  /* display: none; */
+}
+
+#emptyStateCrearOrden span {
+  text-align: center;
+  color: #BBBBBB;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * */
 /* * * * * * * R E S P N S I V I D A D * * * * * */
 /* * * * * * * * * * * * * * * * * * * * * * * * */
 
 @media (max-width: 1200px) {
-  #PlatillosVenta {
+  /* #PlatillosVenta {
     grid-template-columns: auto auto;
-  }
+  } */
 }
 
 @media (max-width: 900px) {
@@ -1008,20 +1098,20 @@ legend {
         border-radius: 0;
     } */
 
-  #PlatillosVenta {
+  /* #PlatillosVenta {
     grid-template-columns: auto;
-  }
+  } */
 
-  .vplatillo {
+  /* .vplatillo {
     display: flex;
     width: 100%;
     justify-content: center;
     align-items: center;
 
     padding: 10px 0;
-  }
+  } */
 
-  .datoPlatillo img {
+  /* .datoPlatillo img {
     width: 150px;
     height: 150px;
   }
@@ -1035,8 +1125,8 @@ legend {
 
   .accionesPlatillo {
     width: 60%;
-  }
-
+  } */
+/* 
   .accionesPlatillo .nombrePlatillo {
     font-size: 16px;
   }
@@ -1056,13 +1146,13 @@ legend {
 
   .accionesPlatillo .btnaddCarrito span {
     font-size: 15px;
-  }
+  } */
 }
 
 @media (max-width: 730px) {
-  /* #notiPlatillosOrden {
-        display: inline-block;
-    } */
+  #notiPlatillosOrden {
+    display: inline-block;
+  }
 
   #acciones_pag2 {
     width: 100%;
@@ -1099,7 +1189,7 @@ legend {
     max-height: 60vh;
   }
 
-  .vplatillo {
+  /* .vplatillo {
     display: flex;
     flex-direction: column;
 
@@ -1112,7 +1202,7 @@ legend {
 
   #PlatillosVenta {
     grid-template-columns: auto auto;
-  }
+  } */
 
   .accionesPlatillo .nombrePlatillo {
     font-size: 18px;
@@ -1145,10 +1235,10 @@ legend {
     width: 100%;
   }
 
-  .datoPlatillo img {
+  /* .datoPlatillo img {
     width: 200px;
     height: 200px;
-  }
+  } */
 
   .botonesPlatillo {
     margin-bottom: 5px;
