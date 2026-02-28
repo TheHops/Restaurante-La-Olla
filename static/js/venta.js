@@ -32,6 +32,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
   ConsultaDebeCambiarPass();
 
   validarMostrarEmptyStateCrearOrden();
+
+  notiPlatillos();
 });
 
 function ConsultaDebeCambiarPass() {
@@ -300,6 +302,9 @@ function addCarrito(id, nombre, precio) {
 function notiPlatillos() {
   let noti = document.getElementById("notiPlatillosOrden");
 
+  const contenedor = document.getElementById("cuerpo_ordenes");
+  const cantOrdenes = contenedor.querySelectorAll(".orden").length;
+
   let newWidth = window.innerWidth;
 
   if (newWidth < 730) {
@@ -309,6 +314,10 @@ function notiPlatillos() {
     } else {
       noti.style.display = "none";
     }
+  }
+  else
+  {
+    noti.style.display = "none";
   }
 }
 
