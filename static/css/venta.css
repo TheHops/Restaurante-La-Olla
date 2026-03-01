@@ -24,6 +24,8 @@
   display: flex;
   margin-top: 12px;
   padding: 25px 50px;
+
+  transition: all ease 3s;
 }
 
 #btnver_ordenes {
@@ -142,7 +144,7 @@ fieldset {
   width: 50%;
   margin-top: 15px;
 
-  transition: ease 2s;
+  transition: ease 0.3s;
 }
 
 legend {
@@ -197,11 +199,14 @@ legend {
   display: flex;
   justify-content: space-between;
   width: 50%;
+
+  transition: all ease .3s;
 }
 
 #btn_siguiente {
   margin-top: 15px;
-  margin-left: auto;
+  margin-left: 10px;
+  
   width: 150px;
   height: 40px;
   background: hsl(0, 100%, 70%);
@@ -286,6 +291,7 @@ legend {
 #acciones_pag2 input {
   width: 50%;
   margin-top: 15px;
+  margin-right: 20px;
   border-radius: 10px;
   border: #821414 solid 1px;
   outline: none;
@@ -710,7 +716,7 @@ legend {
 
   border: solid 1px #B44646;
 
-  box-shadow: 7px 7px 8px 1px hsla(0, 100%, 20%, 0.2);
+  box-shadow: 1px 5px 5px 1px hsla(0, 100%, 20%, 0.2);
   border-radius: 15px;
   overflow: hidden;
 }
@@ -740,6 +746,13 @@ legend {
   align-items: center;
 }
 
+.infoGenPlatillo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
 .datoPlatillo img {
   width: 100%;
   height: 150px;
@@ -750,15 +763,14 @@ legend {
   border-color: #B44646;
 }
 
-.accionesPlatillo .nombrePlatillo {
+.nombrePlatillo {
   color: #B44646;
-  font-size: 18px;
   text-align: center;
-  margin-top: 15px;
-  font-size: 15px;
+  /* margin-top: 15px; */
+  font-size: 16px;
 }
 
-.accionesPlatillo .precioPlatillo {
+.precioPlatillo {
   color: #B44646;
   font-size: 17px;
   margin: 0 5%;
@@ -889,7 +901,7 @@ legend {
   border: none;
   background: hsl(0, 100%, 70%);
   border-color: hsl(350, 100%, 75%);
-  border-radius: 2px 2px 19px 19px;
+  border-radius: 2px 2px 0px 0px;
   cursor: pointer;
   color: white;
   transition: 0.2s ease;
@@ -898,7 +910,6 @@ legend {
 .btnaddCarrito:disabled {
   background: hsl(0, 50%, 70%);
   border-color: hsl(350, 50%, 75%);
-  border-radius: 2px 2px 19px 19px;
   cursor: auto;
 }
 
@@ -939,6 +950,7 @@ legend {
   margin-left: auto;
   margin-right: 15px;
   width: 40px;
+  min-width: 40px;
   height: 40px;
   background: hsl(0, 100%, 70%);
   border-color: hsl(350, 100%, 75%);
@@ -1127,11 +1139,11 @@ legend {
     width: 60%;
   } */
 /* 
-  .accionesPlatillo .nombrePlatillo {
+  .nombrePlatillo {
     font-size: 16px;
   }
 
-  .accionesPlatillo .precioPlatillo {
+  .precioPlatillo {
     font-size: 14px;
   }
 
@@ -1157,6 +1169,7 @@ legend {
   #acciones_pag2 {
     width: 100%;
     padding-right: 10px;
+    z-index: 2;
   }
 
   .separador {
@@ -1180,7 +1193,7 @@ legend {
     position: absolute;
 
     right: 0;
-    top: 10vh;
+    /* top: 10vh; */
 
     display: none;
   }
@@ -1204,13 +1217,13 @@ legend {
     grid-template-columns: auto auto;
   } */
 
-  .accionesPlatillo .nombrePlatillo {
-    font-size: 18px;
+  .nombrePlatillo {
+    font-size: 16px;
     text-align: center;
     margin: 0 5%;
   }
 
-  .accionesPlatillo .precioPlatillo {
+  .precioPlatillo {
     font-size: 17px;
     margin: 0 5%;
     display: block;
@@ -1239,10 +1252,6 @@ legend {
     width: 200px;
     height: 200px;
   } */
-
-  .botonesPlatillo {
-    margin-bottom: 5px;
-  }
 }
 
 @media (max-width: 700px) {
@@ -1250,17 +1259,21 @@ legend {
     width: 66%;
   }
 
-  #btn_siguiente {
-    margin-right: 17%;
+  #AccionesPrimerPagina{
+    width: 66%;
   }
+
+  /* #btn_siguiente {
+    margin-right: 17%;
+  } */
 }
 
 @media (max-width: 600px) {
-  #PlatillosVenta {
+  /* #PlatillosVenta {
     grid-template-columns: auto;
-  }
+  } */
 
-  .vplatillo {
+  /* .vplatillo {
     display: flex;
     flex-direction: row;
 
@@ -1283,9 +1296,13 @@ legend {
     flex-direction: column;
 
     width: 50%;
-  }
+  } */
 
   fieldset {
+    width: 75%;
+  }
+
+  #AccionesPrimerPagina{
     width: 75%;
   }
 }
@@ -1295,17 +1312,29 @@ legend {
     width: 80%;
   }
 
-  #btn_siguiente {
-    margin-right: 10%;
+  #AccionesPrimerPagina{
+    width: 80%;
   }
 
-  .accionesPlatillo .nombrePlatillo {
+  #encabezadoVenta_pag1 {
+    padding-left: 10%;
+  }
+
+  .vplatillo{
+    width: 170px;
+  }
+
+  .PlatillosVenta {
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  }
+
+  /* .nombrePlatillo {
     font-size: 18px;
     text-align: center;
     margin: 0 5%;
   }
 
-  .accionesPlatillo .precioPlatillo {
+  .precioPlatillo {
     font-size: 17px;
     margin: 0 5%;
     display: block;
@@ -1338,13 +1367,13 @@ legend {
 
   .accionesPlatillo {
     width: 60%;
+  } */
+
+  .nombrePlatillo {
+    font-size: 15px;
   }
 
-  .accionesPlatillo .nombrePlatillo {
-    font-size: 16px;
-  }
-
-  .accionesPlatillo .precioPlatillo {
+  .precioPlatillo {
     font-size: 14px;
   }
 
@@ -1360,16 +1389,32 @@ legend {
   .accionesPlatillo .btnaddCarrito span {
     font-size: 15px;
   }
+
+  #txtbtn_volver {
+    display: none;
+  }
 }
 
 @media (max-width: 400px) {
   #mesas {
     grid-template-columns: auto auto auto auto;
   }
+
+  #txtbtn_siguiente {
+    display: none;
+  }
 }
 
 @media (max-width: 370px) {
   #mesas {
     grid-template-columns: auto auto auto;
+  }
+
+  .vplatillo{
+    width: 250px;
+  }
+
+  .PlatillosVenta {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
 }

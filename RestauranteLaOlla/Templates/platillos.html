@@ -29,18 +29,21 @@
                 {% endif %}
             </div>
 
-            <div class="accionesPlatillo">
+            <div class="infoGenPlatillo">
                 <span class="nombrePlatillo">{{ platillo.Nombre }}</span>
                 <span class="precioPlatillo">C${{ platillo.Precio }}</span>
+            </div>
 
-                    <div class="cantidad">
+            <div class="accionesPlatillo">
                 
-                        <!-- Botones input para cantidad -->
-                        <button id="less" style="border-right: solid 1px #B44646;" class="btnLessPlus" onclick="cambio('{{platillo.Id}}', 0)">-</button>
-                        <input type="number" class="cantBox" id="{{platillo.Id}}" value="0" disabled>
-                        <button id="plus" style="border-left: solid 1px #B44646;" class="btnLessPlus" onclick="cambio('{{platillo.Id}}', 1)">+</button>
-                
-                    </div>
+                <div class="cantidad">
+            
+                    <!-- Botones input para cantidad -->
+                    <button id="less" style="border-right: solid 1px #B44646;" class="btnLessPlus" onclick="cambio('{{platillo.Id}}', 0)">-</button>
+                    <input type="number" class="cantBox" id="{{platillo.Id}}" value="0" disabled>
+                    <button id="plus" style="border-left: solid 1px #B44646;" class="btnLessPlus" onclick="cambio('{{platillo.Id}}', 1)">+</button>
+            
+                </div>
                 
                 <div class="botonesPlatillo">
                     <button class="btnaddCarrito" id="addcarrito{{platillo.Id}}"
