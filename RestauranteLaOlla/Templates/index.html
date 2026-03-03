@@ -39,7 +39,8 @@
     <title>Inicio</title>
   </head>
   <body>
-    <div id="capa" onclick="cerrar()"></div>
+    <div id="capa" style="z-index: 18;
+    position: fixed;" onclick="cerrar()"></div>
     
     <!-- jQuery completo -->
     <script src="{% static 'js/lib/jquery-3.7.1.min.js' %}"></script>
@@ -68,7 +69,7 @@
     <script src="{% static 'js/opciones.js' %}"></script>
 
     <header>
-      <div id="opciones">
+      <div id="opciones" style="position: fixed; z-index: 20;">
         <div id="btnopciones2" onclick="cerrar()">
           <div class="burger2-1"></div>
           <div class="burger2-2"></div>
