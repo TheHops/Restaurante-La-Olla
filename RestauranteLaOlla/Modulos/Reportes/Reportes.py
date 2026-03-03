@@ -243,12 +243,20 @@ def exportar_excel_ordenes(ordenes, incluir_detalles=False):
 
     # --- VARIABLES PARA ACUMULAR TOTALES ---
     sum_subtotal = sum_propina = sum_desc = sum_total = sum_monto = sum_cambio = sum_2do = Decimal(0)
+    
+    # Diccionario para agrupar propinas por usuario
+    propinas_por_usuario = {}
 
     row_idx = 3
     for orden in ordenes:
         mesas = " - ".join(f"#{m.IdMesa.Numero}" for m in orden.Mesas.all())
         area_info = f"{orden.IdAreaDeMesa.Nombre if orden.IdAreaDeMesa else 'N/A'} ({mesas})"
+        
         creador = f"{orden.IdUsuario.Nombres} ({orden.IdUsuario.IdCargo.Nombre})"
+        
+        # --- NUEVA LÓGICA: Acumular propina por usuario ---
+        propina_valor = Decimal(str(orden.Propina or 0))
+        propinas_por_usuario[creador] = propinas_por_usuario.get(creador, Decimal(0)) + propina_valor
         
         # Datos de la fila
         datos_orden = [
@@ -324,6 +332,43 @@ def exportar_excel_ordenes(ordenes, incluir_detalles=False):
         cell.fill = PatternFill("solid", fgColor=gris_totales)
         cell.number_format = '"C$"#,##0.00'
         cell.border = Border(top=Side(style='medium'))
+        
+    # --- NUEVA SECCIÓN: TABLA EXTRA DE PROPINAS POR USUARIO ---
+    row_idx += 3  # Espacio después de los totales generales
+    col_inicio = 12 # Columna L
+    col_fin = 13    # Columna M
+    
+    # Título del Resumen Combinado (Desplazado 11 celdas a la derecha)
+    ws.merge_cells(start_row=row_idx, start_column=col_inicio, end_row=row_idx, end_column=col_fin)
+    celda_titulo_resumen = ws.cell(row=row_idx, column=col_inicio, value="RESUMEN DE PROPINAS POR USUARIO")
+    celda_titulo_resumen.style = "header_style"
+    ws.row_dimensions[row_idx].height = 20 
+    
+    row_idx += 1
+    
+    # Encabezados de la mini tabla (L y M)
+    headers_resumen = ["Usuario/Cargo", "Total de propinas"]
+    for i, h in enumerate(headers_resumen):
+        c = ws.cell(row=row_idx, column=col_inicio + i, value=h)
+        c.style = "header_style"
+        c.font = Font(bold=True, size=10, color=blanco)
+
+    row_idx += 1
+    
+    # Datos del resumen
+    for usuario, total_p in propinas_por_usuario.items():
+        # Celda de Nombre de Usuario (Columna L)
+        c_user = ws.cell(row=row_idx, column=col_inicio, value=usuario)
+        c_user.border = borde_detalle
+        c_user.alignment = Alignment(horizontal="left")
+        
+        # Celda de Monto (Columna M)
+        c_monto = ws.cell(row=row_idx, column=col_fin, value=total_p)
+        c_monto.number_format = '"C$"#,##0.00'
+        c_monto.border = borde_detalle
+        c_monto.alignment = Alignment(horizontal="right")
+        
+        row_idx += 1
 
     # --- AJUSTE AUTOMÁTICO DE COLUMNAS (Tu método solicitado) ---
     for col_idx in range(1, len(columnas) + 1):
