@@ -174,7 +174,7 @@ function obtenerAreasSeleccionadas() {
 /****************************************************************************/
 
 let filtrosAplicados = {
-  fechaPredefinida: null,
+  fechaPredefinida: "1",
   areas: [],
   fechaDesde: null,
   fechaHasta: null,

@@ -77,6 +77,22 @@ function validarMostrarEmptyStateCrearOrden() {
   }
 }
 
+function validarMostrarEmptyStateFiltroPlatillos() {
+  const contenedor = document.getElementById("VPlatillos");
+  const emptyState = document.getElementById("emptyStatePlatillos");
+
+  // Buscamos si existen elementos con la clase 'ordenPoFoC' dentro del contenedor
+  const tieneOrdenes = contenedor.querySelectorAll(".PlatillosVenta").length > 0;
+
+  if (tieneOrdenes) {
+    // Si hay órdenes, ocultamos el empty state
+    emptyState.style.display = "none";
+  } else {
+    // Si está vacío, mostramos el empty state
+    emptyState.style.display = "flex"; // Usamos flex para centrar contenido si es necesario
+  }
+}
+
 combinarCheckbox.addEventListener("change", function () {
   cambioTipoDeSeleccion(this);
 });
@@ -477,6 +493,8 @@ function filtrarPlatillos(cadena) {
 
       if (contenedor) {
         contenedor.innerHTML = this.responseText;
+
+        validarMostrarEmptyStateFiltroPlatillos();
       }
 
       console.log(
