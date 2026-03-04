@@ -20,6 +20,16 @@
   /* transition: 1s ease; */
 }
 
+#emptyStatePlatillos {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20vh;
+  display: none;
+}
+
 #encabezadoVenta_pag1 {
   display: flex;
   margin-top: 12px;
@@ -221,16 +231,16 @@ legend {
 }
 
 #btn_siguiente:disabled {
-  background: hsl(0, 50%, 70%);
-  border-color: hsl(350, 50%, 75%);
+  background: hsl(0, 20%, 75%);
+  border-color: hsl(350, 20%, 80%);
   color: white;
   border-radius: 10px;
   cursor: auto;
 }
 
 #btn_siguiente:disabled:hover {
-  background: hsl(0, 50%, 71%);
-  border-color: hsl(350, 50%, 76%);
+  background: hsl(0, 20%, 76%);
+  border-color: hsl(350, 20%, 81%);
   color: white;
   border-radius: 10px;
   cursor: auto;
@@ -902,22 +912,22 @@ legend {
   border: none;
   background: hsl(0, 100%, 70%);
   border-color: hsl(350, 100%, 75%);
-  border-radius: 2px 2px 0px 0px;
+  /* border-radius: 2px 2px 0px 0px; */
   cursor: pointer;
   color: white;
   transition: 0.2s ease;
 }
 
 .btnaddCarrito:disabled {
-  background: hsl(0, 50%, 70%);
-  border-color: hsl(350, 50%, 75%);
+  background: hsl(0, 20%, 75%);
+  border-color: hsl(350, 20%, 80%);
   cursor: auto;
 }
 
 .btnaddCarrito:disabled:hover {
-  background: hsl(0, 50%, 71%);
-  border-color: hsl(350, 50%, 76%);
-  border-radius: 2px 2px 19px 19px;
+  background: hsl(0, 20%, 76%);
+  border-color: hsl(350, 20%, 81%);
+  /* border-radius: 2px 2px 19px 19px; */
   cursor: auto;
 }
 
