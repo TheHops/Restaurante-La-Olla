@@ -235,6 +235,9 @@ function addCarrito(id, nombre, precio) {
   // Se calcula el subtotal
   let subtotal = cant.value * parseInt(precio);
 
+  let activar = "addcarrito" + id;
+  addbtn = document.getElementById(activar);
+
   // Se recorre el arreglo para verificar si existe el platillo dentro de las órdenes
   while (indice < ordenP.length) {
     if (ordenP[indice].id == id) {
@@ -300,7 +303,7 @@ function addCarrito(id, nombre, precio) {
       subtotal +
       ")'>Quitar</button></div>";
 
-    contOrdenes.appendChild(tempDiv);
+    contOrdenes.prepend(tempDiv);
 
     cantOrdenes += 1;
 
@@ -313,6 +316,9 @@ function addCarrito(id, nombre, precio) {
   calcularTotal(1, subtotal);
 
   validarMostrarEmptyStateCrearOrden();
+
+  cant.value = 0;
+  addbtn.disabled = true;
 }
 
 function notiPlatillos() {
@@ -534,15 +540,16 @@ function filtrarMesas(idAreaMesa) {
 
 async function agregarOrden() {
   const { value: descripcion, isConfirmed } = await Swal.fire({
-    title: "¿Realmente desea crear la orden?",
+    title: "¿Los datos de la orden están correctos?",
+    html: '<div class="lblDescripcionOrdenCrear" style="text-align: left; margin-left: 7px; font-weight: bold;">Descripción de la orden (opcional)</div>',
     input: "text",
-    inputPlaceholder: "Agrega una descripción a tu orden (opcional)",
+    inputPlaceholder: "Ej: Agregar salsa ranch",
     inputAttributes: {
       maxlength: 150,
     },
     showCancelButton: true,
     cancelButtonText: "Cancelar",
-    confirmButtonText: "Crear orden",
+    confirmButtonText: "Confirmar",
     confirmButtonColor: "#ff6464",
     icon: "question",
     iconColor: "#ff964e",

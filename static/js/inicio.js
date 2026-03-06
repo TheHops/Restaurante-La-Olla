@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
           labels: data.labels_x,
           datasets: [
             {
-              label: "Ingresos (C$)",
+              label: "Total (C$)",
               data: data.ingresos_v,
               fill: true,
               backgroundColor: gradient,

@@ -915,13 +915,14 @@ legend {
   /* border-radius: 2px 2px 0px 0px; */
   cursor: pointer;
   color: white;
-  transition: 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .btnaddCarrito:disabled {
   background: hsl(0, 20%, 75%);
   border-color: hsl(350, 20%, 80%);
   cursor: auto;
+  transition: all 0.2s ease;
 }
 
 .btnaddCarrito:disabled:hover {
@@ -1095,6 +1096,10 @@ legend {
 #emptyStateCrearOrden span {
   text-align: center;
   color: #BBBBBB;
+}
+
+#swal2-input {
+  margin-top: 0;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * */
