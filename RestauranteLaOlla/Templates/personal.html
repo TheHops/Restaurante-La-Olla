@@ -5,11 +5,11 @@
 
 <div id="encabezado_inventario">
     <div id="contenedorIzquierdoEncabezadoInventario">
-        <button id="agregar"  data-toggle="modal" data-target="#AgregarPersonal" onclick="resetFormAgregarPersonal();">
-            <img src="{% static 'img/Add_user.png' %}" style="width: 30px; height: 30px; margin-right: 5px;" title="Agregar personal">Agregar personal
+        <button id="agregar"  data-toggle="modal" data-target="#AgregarPersonal" onclick="resetFormAgregarPersonal();" title="Agrega un nuevo usuario | personal al sistema">
+            <img src="{% static 'img/Add_user.png' %}" style="width: 30px; height: 30px; margin-right: 5px;">Agregar personal
         </button>
     
-        <button class="btnExportar" data-toggle="modal" data-target="#ExportarPersonal" style="margin-left: 20px;">
+        <button class="btnExportar" data-toggle="modal" data-target="#ExportarPersonal" style="margin-left: 20px;" title="Exporta un archivo excel o pdf a todos los usuarios | personal activos y dados de baja">
             <svg width="18" height="24" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2.04167 29.7135L0 27.6354L4.30208 23.3333H1.02083V20.4167H9.26042V28.6562H6.34375V25.4115L2.04167 29.7135ZM12.1771 29.1667V26.25H20.9271V10.2083H13.6354V2.91667H3.42708V17.5H0.510417V2.91667C0.510417 2.11458 0.796007 1.42795 1.36719 0.856771C1.93837 0.28559 2.625 0 3.42708 0H15.0937L23.8438 8.75V26.25C23.8438 27.0521 23.5582 27.7387 22.987 28.3099C22.4158 28.8811 21.7292 29.1667 20.9271 29.1667H12.1771Z" fill="#d92644"/>
             </svg>
@@ -20,7 +20,7 @@
         </button>
     </div>
 
-    <div id="contenedorDerechoEncabezadoInventario">
+    <div id="contenedorDerechoEncabezadoInventario" title="Si se activa incluirá los usuarios | personal dados de baja a la tabla además de una nueva columna para saber cuáles están activos o no">
         <!-- Botón para mostrar u ocultar los registros inactivos -->
         <!--
             <div class="btnVerInactivos">
@@ -53,7 +53,7 @@
         </div>
         <div class="modal-body row exportar col-12">
             <div class="col-6">
-                <button class="excel w-100" onclick="ExportarPersonal('1')">
+                <button class="excel w-100" onclick="ExportarPersonal('1')" title="Exportará los usuarios | personal en un archivo de formato excel (.xlsx)">
                     <!--
                         <img src="{% static 'img/Export_excel_2.png' %}">
                     -->
@@ -71,7 +71,7 @@
             </div>
     
             <div class="col-6">
-                <button class="pdf w-100" onclick="ExportarPersonal('2')">
+                <button class="pdf w-100" onclick="ExportarPersonal('2')" title="Exportará los usuarios | personal en un archivo de formato PDF (.pdf)">
                     <!--
                         <img src="{% static 'img/Export_pdf_2.png' %}">
                     -->
@@ -99,7 +99,7 @@
             </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a exportar nada solo cancele">Cancelar</button>
         </div>
       </div>
     </div>
@@ -125,37 +125,37 @@
                 <form method="POST" action="" id="formAgregarPersonal">
                     {% csrf_token %}
                     <div class="row">
-                        <div class="col-6 mb-2">
+                        <div class="col-6 mb-2" title="El nombre real de la persona que estará asociada a este nuevo usuario (Solo nombres)">
                             <h4 style="font-size: 20px; margin-bottom: 3px;">Nombres<span class="asterisco">*</span></h4>
                             <input type="text" class="form-control" id="Fullname" placeholder="Ej: Juan Carlos" required>
                         </div>
 
-                        <div class="col-6 mb-2">
+                        <div class="col-6 mb-2" title="Los apellidos reales de la persona asociada al nuevo usuario">
                             <h4 style="font-size: 20px; margin-bottom: 3px;">Apellidos<span class="asterisco">*</span></h4>
                             <input type="text" class="form-control" id="Apellidos" placeholder="Ej: Perez Lopez" required>
                         </div>
                         
-                        <div class="col-6 mb-2">
+                        <div class="col-6 mb-2" title="El nuevo nombre de usuario que va a tener la persona (Como recomendación tiene que ser algo que lo represente y pueda recordar fácilmente)">
                             <h4 style="font-size: 20px; margin-bottom: 3px;">Nombre de usuario<span class="asterisco">*</span></h4>
                             <input type="text" class="form-control" id="User" placeholder="Ej: JCLopez" required autocomplete="off">
                         </div>
                         
-                        <div class="col-6 mb-2">
+                        <div class="col-6 mb-2" title="Es una contraseña que el admin va a definirle al usuario para que luego el nuevo usuario proceda a cambiarsela cuando inicie sesión">
                             <h4 style="font-size: 20px; margin-bottom: 3px;">Contraseña temporal<span class="asterisco">*</span></h4>
                             <input type="Password" class="form-control" id="Pass" placeholder="Ej: JC123*" required autocomplete="off">
                         </div>
                         
-                        <div class="col-12 mb-2">
+                        <div class="col-12 mb-2" title="Es recomendable que tenga un correo válido para casos de cambio de contraseña">
                             <h4 style="font-size: 20px; margin-bottom: 3px;">Correo</h4>
                             <input type="email" class="form-control" placeholder="Ej: juanpl@gmail.om" id="e-mail">
                         </div>
 
-                        <div class="col-6 mb-2">
+                        <div class="col-6 mb-2" title="Número de teléfono del personal">
                             <h4 style="font-size: 20px; margin-bottom: 3px;">Teléfono</h4>
                             <input type="text"inputmode="numeric" class="form-control" maxlength="8" id="telefono" onkeypress="return soloNumeros(event)" placeholder="Ej: 88888888">
                         </div>
 
-                        <div class="col-6 mb-2">
+                        <div class="col-6 mb-2" title="Por defecto será mesero pero si tendrá otro cargo solo se selecciona otro en la lista">
                             <h4 style="font-size: 20px; margin-bottom: 3px;">Cargo<span class="asterisco">*</span></h4>
                             <select class="form-control" id="idCargo" required>
                                 {% for cargo in Cargos %}
@@ -172,8 +172,8 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn_confirmation_mi_color" onclick="Agregar_Personal();">Agregar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a realizar ninguna acción de agregar usuario | personal solo cancele">Cancelar</button>
+                <button type="button" class="btn btn_confirmation_mi_color" onclick="Agregar_Personal();" title="Luego de confirmar se validan los datos y si todo está bien se creará el usuario con éxito">Agregar</button>
             </div>
         </div>
     </div>
@@ -199,32 +199,32 @@
 
                     <input type="hidden" class="form-control" id="IdPersonal">
                 
-                    <div class="col-6 mb-2">
+                    <div class="col-6 mb-2" title="Si acaso ocurrió algún error al escribir el nombre se cambia acá">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Nombres<span class="asterisco">*</span></h4>
                         <input type="text" class="form-control" id="NombreUsuarioMod" placeholder="Ej: Juan Carlos" required>
                     </div>
 
-                    <div class="col-6 mb-2">
+                    <div class="col-6 mb-2" title="Si ocurrió algún error al ingresar los apellidos se cambian acá">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Apellidos<span class="asterisco">*</span></h4>
                         <input type="text" class="form-control" id="ApellidosUsuarioMod" placeholder="Ej: Perez Lopez" required>
                     </div>
                 
-                    <div class="col-6 mb-2">
+                    <div class="col-6 mb-2" title="Asegurar que el usuario no se repita">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Usuario<span class="asterisco">*</span></h4>
                         <input type="text" class="form-control" id="NameUsuario" placeholder="Ej: JCLopez" required autocomplete="off">
                     </div>
 
-                    <div class="col-6 mb-2">
+                    <div class="col-6 mb-2" title="Actualizar el número de teléfono">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Teléfono</h4>
                         <input type="text" inputmode="numeric" class="form-control" placeholder="Ej: 88888888" maxlength="8" id="NumberUsuario" onkeypress="return soloNumeros(event)"  required>
                     </div>
                 
-                    <div class="col-12 mb-2">
+                    <div class="col-12 mb-2" title="Asegurar que el correo no se repita con el de otro usuario">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Correo</h4>
                         <input type="email" class="form-control" id="CorreoUsuario" placeholder="Ej: juanpl@gmail.com" required>
                     </div>
              
-                    <div class="col-6 mb-2">
+                    <div class="col-6 mb-2" title="Como admin si quiere puede cambiar su cargo a otro diferente">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Cargo<span class="asterisco">*</span></h4>
                         <select class="form-control" id="idCargoModificar" required>
                             {% for cargo in Cargos %}
@@ -243,7 +243,7 @@
                         </div>
                     -->
 
-                    <div class="col-md-6 mb-2">
+                    <div class="col-md-6 mb-2" title="Se puede cambiar su estado a dado de baja o revertirlo dependiendo de los casos que se presenten">
                         <h4 class="titulo-estado">Estado<span class="required">*</span></h4>
                         
                         <div class="switch-segmentado" id="switch-estado">
@@ -261,8 +261,8 @@
                
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn_confirmation_mi_color" onclick="ModificarPersonal();">Modificar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a modificar nada solo cancele">Cancelar</button>
+          <button type="submit" class="btn btn_confirmation_mi_color" onclick="ModificarPersonal();" title="Si los cambios están correctos se validarán los datos y si todo está bien entonces se actualizará el usuario | personal correctamente">Modificar</button>
         </div>
       </div>
     </div>
@@ -280,13 +280,13 @@
         </div>
 
         <div class="modal-body row">
-            <div class="col-10">
+            <div class="col-10" title="Esta es la nueva contraseña temporal del usuario, que la utilice para iniciar sesión y se la cambie en la sección 'Mi perfil'">
                 <input type="text" id="nuevaPassTemporal" class="form-control" readonly>
             </div>
 
             <input type="hidden" id="IdPersonalRestablecerPass">
 
-            <div class="col-2">
+            <div class="col-2" title="Botón que sirve para copiar la nueva contraseña temporal del usuario">
                 <div class="input-group">
                     <button class="actionButton btnCopiarPass" id="btnCopiarPass"
                         data-img-check="{% static 'img/check.png' %}"
@@ -299,7 +299,7 @@
             </div>
         </div>
 
-        <div class="modal-footer">
+        <div class="modal-footer" title="Si el usuario tiene un correo válido, se le enviará la nueva contraseña temporal por correo">
             <button type="button" id="btnEnviarPorCorreo" data-bs-dismiss="modal" onclick="EnviarCorreo()">
                 <svg width="22" height="28" viewBox="0 0 31 28" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 5px;">
                     <path d="M14.5833 13.125L2.91667 5.83333V20.4167H16.0417V23.3333H2.91667C2.11458 23.3333 1.42795 23.0477 0.856771 22.4766C0.28559 21.9054 0 21.2188 0 20.4167V2.91667C0 2.11458 0.28559 1.42795 0.856771 0.856771C1.42795 0.28559 2.11458 0 2.91667 0H26.25C27.0521 0 27.7387 0.28559 28.3099 0.856771C28.8811 1.42795 29.1667 2.11458 29.1667 2.91667V13.125H26.25V5.83333L14.5833 13.125ZM14.5833 10.2083L26.25 2.91667H2.91667L14.5833 10.2083ZM24.7917 27.7083L22.75 25.6667L25.0469 23.3333H18.9583V20.4167H25.0469L22.7135 18.0833L24.7917 16.0417L30.625 21.875L24.7917 27.7083ZM2.91667 5.83333V21.875V13.125V13.2344V2.91667V5.83333Z" fill="white"/>
