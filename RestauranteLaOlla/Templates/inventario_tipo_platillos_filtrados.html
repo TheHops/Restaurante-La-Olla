@@ -5,13 +5,13 @@
         <thead>
             <!-- Columnas -->
             <tr>
-                <th>Tipo de consumible</th>
+                <th title="Columna de los nombres de los tipos de consumible">Tipo de consumible</th>
 
                 {% if VerEliminados == "1" %}
-                    <th>Estado</th>
+                    <th title="Estado de los tipos de consumibles">Estado</th>
                 {% endif %}
                 
-                <th>Acciones</th>
+                <th title="Columna de acciones que se pueden realizar sobre los tipos de consumibles">Acciones</th>
             </tr>
         </thead>
 
@@ -19,10 +19,10 @@
         <tbody>
             {% for tipoplatillo in TypePlatillo%}
             <tr>
-                <td style="text-transform: capitalize; ">{{tipoplatillo.Nombre}}</td>
+                <td style="text-transform: capitalize; " title="Nombre del tipo de consumible">{{tipoplatillo.Nombre}}</td>
 
                 {% if VerEliminados == "1" %}
-                    <td>
+                    <td title="Estado del tipo de consumible (Activo | Inactivo)">
                     {% if tipoplatillo.EsActivo == "1" %} 
                     <span class="badge-green">
                         Activo
@@ -37,19 +37,19 @@
 
                 <td class="actions">
 
-                    <button class="actionButton btnEditar" data-toggle="modal" data-target="#ModificarTipoPlatillo" onclick="Impresion('{{tipoplatillo.Id}}', '{{tipoplatillo.Nombre}}','{{tipoplatillo.EsActivo}}');" id="Editar{{tipoplatillo.Id}}">
+                    <button class="actionButton btnEditar" data-toggle="modal" data-target="#ModificarTipoPlatillo" onclick="Impresion('{{tipoplatillo.Id}}', '{{tipoplatillo.Nombre}}','{{tipoplatillo.EsActivo}}');" id="Editar{{tipoplatillo.Id}}" title="Permite modificar los datos del tipo de consumible">
                         <a >
                             <!-- <i class="fa-sharp fa-solid fa-pen fa-lg" style="color: #ffBA4A; padding: 5px 5px;"></i> -->
-                            <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar el tipo de platillo">
+                            <img src="{% static 'img/Edit1.png' %}" alt="Editar">
                         </a>
                     </button>
 
                     {% if tipoplatillo.EsActivo == "1" %}
                       <button class="actionButton btnEliminar"
                       onclick="DarBajaTipoPlatillo('{{ tipoplatillo.Id }}')"
-                      id="Eliminar{{ tipoplatillo.Id }}">
+                      id="Eliminar{{ tipoplatillo.Id }}" title="Permite desactivar un tipo de consumible">
                         <a>
-                            <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar el tipo de platillo">
+                            <img src="{% static 'img/delete1.png' %}" alt="Eliminar">
                         </a>
                     </button>
                     {% endif %}

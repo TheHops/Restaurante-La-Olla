@@ -4,15 +4,15 @@
     <thead>
         <!-- Columnas -->
         <tr>
-            <th>Consumible</th>
-            <th>Tipo de consumible</th>
-            <th>Precio</th>
+            <th title="Columna del nombre de los consumibles">Consumible</th>
+            <th title="Tipo al que pertenecen los consumibles">Tipo de consumible</th>
+            <th title="Columna para conocer el precio de cada consumible">Precio</th>
             
             {% if VerEliminados == "1" %}
-                <th id="estadoPlatilloColumna">Estado</th>
+                <th id="estadoPlatilloColumna" title="Estado del consumible">Estado</th>
             {% endif %}
             
-            <th>Acciones</th>
+            <th title="Columna de acciones que se puedan realizar sobre los consumibles">Acciones</th>
         </tr>
     </thead>
 
@@ -20,12 +20,12 @@
     <tbody>
         {% for platillo in Platillos %}
         <tr>
-            <td style="text-transform: capitalize; ">{{platillo.Nombre|lower}}</td>
-            <td>{{platillo.IdTipoPlatillo.Nombre}}</td>
-            <td>C${{platillo.Precio}}</td>
+            <td style="text-transform: capitalize; " title="Nombre del consumible">{{platillo.Nombre|lower}}</td>
+            <td title="Tipo del consumible">{{platillo.IdTipoPlatillo.Nombre}}</td>
+            <td title="Precio del consumible">C${{platillo.Precio}}</td>
 
             {% if VerEliminados == "1" %}
-                <td class="estadoPlatilloFila">
+                <td class="estadoPlatilloFila" title="Estado del consumible (Activo | Inactivo)">
                     {% if platillo.EsActivo == "1" %} 
                     <span class="badge-green">
                         Activo
@@ -41,16 +41,16 @@
             <td class="actions">
 
                 <button class="actionButton btnEditar" data-toggle="modal" data-target="#ModificarPlatillo" 
-                onclick='Impresion("{{platillo.Id}}" , "{{platillo.Nombre}}", "{{platillo.IdTipoPlatillo.Nombre}}", "{{platillo.IdTipoPlatillo.Id}}","{{platillo.Precio}}","{{platillo.EsActivo}}", "{{platillo.Descripcion}}" );'  id="Editar{{platillo.Id}}">
+                onclick='Impresion("{{platillo.Id}}" , "{{platillo.Nombre}}", "{{platillo.IdTipoPlatillo.Nombre}}", "{{platillo.IdTipoPlatillo.Id}}","{{platillo.Precio}}","{{platillo.EsActivo}}", "{{platillo.Descripcion}}" );'  id="Editar{{platillo.Id}}" title="Permite modificar los datos del consumible">
                     <a>
-                        <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar platillo">
+                        <img src="{% static 'img/Edit1.png' %}" alt="Editar">
                     </a>
                 </button>
 
                 {% if platillo.EsActivo == "1" %}
-                    <button class="actionButton btnEliminar" onclick="DarBaja_Platillo({{platillo.Id}});" id="Eliminar{{platillo.Id}}">
+                    <button class="actionButton btnEliminar" onclick="DarBaja_Platillo({{platillo.Id}});" id="Eliminar{{platillo.Id}}" title="Permite desactivar un consumible">
                         <a>
-                            <img src="{% static 'img/delete1.png' %}" alt="Eliminar" title="Eliminar platillo">
+                            <img src="{% static 'img/delete1.png' %}" alt="Eliminar">
                         </a>
                     </button>
                 {% endif %}

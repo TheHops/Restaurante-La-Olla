@@ -7,7 +7,7 @@
 <div id="encabezado_inventario">
     <div id="contenedorIzquierdoEncabezadoInventario">
         <button id="agregar" data-toggle="modal" data-target="#AgregarPlatillo">
-                <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px; margin-right: 10px;" title="Añadir platillo">Agregar consumible
+                <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px; margin-right: 10px;" title="Agrega un nuevo consumible al catálogo">Agregar consumible
         </button>
     
         <!-- <input type="text" id="buscar" placeholder="Buscar"> -->
@@ -20,16 +20,16 @@
         -->
 
         <div class="custom-dropdown" id="dropdownInventario">
-            <button class="dropdown-trigger" aria-haspopup="true" aria-expanded="false">
+            <button class="dropdown-trigger" aria-haspopup="true" aria-expanded="false" title="Puedes cambiar el contenido de la tabla entre consumibles y sus tipos">
                 Consumibles <span style="margin-left: 10px;">▼</span>
             </button>
             <ul class="dropdown-menu" role="menu">
-                <li role="none"><a href="#" role="menuitem">Consumibles</a></li>
-                <li role="none"><a href="{% url 'inventario_tipoplatillo' %}" role="menuitem">Tipos de consumible</a></li>
+                <li role="none" title="Contenido de consumibles"><a href="#" role="menuitem">Consumibles</a></li>
+                <li role="none" title="Contenido de los tipos de consumibles"><a href="{% url 'inventario_tipoplatillo' %}" role="menuitem">Tipos de consumible</a></li>
             </ul>
         </div>
     
-        <button class="btnExportar" data-toggle="modal" data-target="#ExportarPlatillo">
+        <button class="btnExportar" data-toggle="modal" data-target="#ExportarPlatillo" title="Exporta todos los consumibles en un archivo excel o pdf">
             <svg width="18" height="24" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2.04167 29.7135L0 27.6354L4.30208 23.3333H1.02083V20.4167H9.26042V28.6562H6.34375V25.4115L2.04167 29.7135ZM12.1771 29.1667V26.25H20.9271V10.2083H13.6354V2.91667H3.42708V17.5H0.510417V2.91667C0.510417 2.11458 0.796007 1.42795 1.36719 0.856771C1.93837 0.28559 2.625 0 3.42708 0H15.0937L23.8438 8.75V26.25C23.8438 27.0521 23.5582 27.7387 22.987 28.3099C22.4158 28.8811 21.7292 29.1667 20.9271 29.1667H12.1771Z" fill="#d92644"/>
                 </svg>
@@ -40,7 +40,7 @@
         </button>
     </div>
 
-    <div id="contenedorDerechoEncabezadoInventario">
+    <div id="contenedorDerechoEncabezadoInventario" title="Si se activa incluirá los consumibles inactivos a la tabla además de una nueva columna para saber cuáles están activos o no">
         <!-- Botón para mostrar u ocultar los registros inactivos -->
         <div class="toggle-container">
             <input type="checkbox" id="checkVerConsumiblesInactivos" class="check-toggle">
@@ -66,7 +66,7 @@
         </div>
         <div class="modal-body row exportar col-12">
             <div class="col-6">
-                <button type="button" class="excel w-100" onclick="ExportarPlatillos('1')">
+                <button type="button" class="excel w-100" onclick="ExportarPlatillos('1')" title="Exportará los consumibles en un archivo de formato excel (.xlsx)">
                     <!--
                         <img src="{% static 'img/Export_excel_2.png' %}">
                     -->
@@ -84,7 +84,7 @@
             </div>
     
             <div class="col-6">
-                <button type="button" class="pdf w-100" onclick="ExportarPlatillos('2')">
+                <button type="button" class="pdf w-100" onclick="ExportarPlatillos('2')" title="Exportará los consumibles en un archivo de formato PDF (.pdf)">
                     <!--
                         <img src="{% static 'img/Export_pdf_2.png' %}">
                     -->
@@ -112,7 +112,7 @@
             </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a exportar nada solo cancele">Cancelar</button>
         </div>
       </div>
     </div>
@@ -132,23 +132,25 @@
                 {% csrf_token %}
                 <div class="row">
                     
-                    <div class="col-md-12 mb-2">
+                    <div class="col-md-12 mb-2" title="Nombre para reconocer el consumible">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Nombre<span class="asterisco">*</span></h4>
                         <input type="text" class="form-control" id="NombrePlatillo" placeholder="Ej: Frijoles" required>
                     </div>
-                    <div class="col-md-6 mb-2">
+                    <div class="col-md-6 mb-2" title="Tipo de consumible para agruparlos donde pertenezcan">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Tipo de consumible<span class="asterisco">*</span></h4>
                         <select class="form-control" id="TipoPlatillo">
                             {% for tipoplatillo in TypePlatillo %}
                             {% if tipoplatillo.EsActivo == "1" %}
                                 <option value="{{ tipoplatillo.Id }}">{{ tipoplatillo.Nombre }}</option>
-                            {% else %}
+                            <!--
+                                {% else %}
                                 <option value="{{ tipoplatillo.Id }}" disabled>{{ tipoplatillo.Nombre }}</option>
+                            -->
                             {% endif %}
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-6 mb-2">
+                    <div class="col-md-6 mb-2" title="Cuánto es lo que va a costar el consumible">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Precio (C$)<span class="asterisco">*</span></h4>
                         <input type="text" inputmode="numeric" class="form-control" id="PrecioPlatillo" placeholder="Ej: 150" onkeypress="return soloNumeros(event)" required>
                     </div>
@@ -164,7 +166,7 @@
                     -->
 
                     <!-- Selector tipo pastilla -->
-                    <div class="col-md-6 mb-2">
+                    <div class="col-md-6 mb-2" title="Estado activo o inactivo del consumible">
                         <h4 class="titulo-estado">Estado<span class="required">*</span></h4>
                         
                         <div class="switch-segmentado" id="switch-estado">
@@ -178,7 +180,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6 mb-2">
+                    <div class="col-md-6 mb-2" title="Imagen representativa del consumible">
                         <h4 style="font-size: 20px; margin-bottom: 6px;">Imagen</h4>
                         <label for="archivoModal_dos"
                         class="LabelArchivo">
@@ -201,7 +203,7 @@
 
                     <input type="hidden" class="form-control" id="IDPlatillo">
                     
-                    <div class="col-md-12 mb-2">
+                    <div class="col-md-12 mb-2" title="Descripción del consumible para detallar más cosas sobre el consumible">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Descripción</h4>
                         <textarea class="form-control" id="DescripcionPlatillo" placeholder="Ej: Acompañado con salsa ranch. (Opcional)"></textarea>
                     </div>
@@ -210,8 +212,8 @@
                
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn_confirmation_mi_color" onclick="ActualizarPlatillo();">Modificar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Cerrar el modal si acaso ya no va a realizar ninguna acción">Cancelar</button>
+          <button type="button" class="btn btn_confirmation_mi_color" onclick="ActualizarPlatillo();" title="Se confirman los cambios para el consumible">Modificar</button>
         </div>
       </div>
     </div>
@@ -229,29 +231,31 @@
         <div class="modal-body">
             <form method="POST">
                 {% csrf_token %}
-                <h4 style="font-size: 20px; margin-bottom: 3px;">Nombre<span class="asterisco">*</span></h4>
+                <h4 style="font-size: 20px; margin-bottom: 3px;" title="Nombre para conocer el nuevo consumible">Nombre<span class="asterisco">*</span></h4>
                 <input type="text" placeholder="Ej: Frijoles" class="form-control mb-2" id="NombrePlatilloAgregar" required>
 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-6" title="Cómo va a estar categorizado este nuevo consumible seleccionando un tipo">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Tipo de consumible<span class="asterisco">*</span></h4>
                         <select class="form-control mb-2" id="TipoPlatilloAgregar">
                             {% for tipoplatillo in TypePlatillo %}
                                 {% if tipoplatillo.EsActivo == "1" %}
                                     <option value="{{ tipoplatillo.Id }}">{{ tipoplatillo.Nombre }}</option>
-                                 {% else %}
-                                    <option value="{{ tipoplatillo.Id }}" disabled>{{ tipoplatillo.Nombre }}</option>
+                                    <!--
+                                        {% else %}
+                                        <option value="{{ tipoplatillo.Id }}" disabled>{{ tipoplatillo.Nombre }}</option>
+                                    -->
                                 {% endif %}
                             {% endfor %}
                         </select>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6" title="Precio que va a tener el consumible para sus próximas órdenes">
                         <h4 style="font-size: 20px; margin-bottom: 3px;" >Precio (C$)<span class="asterisco">*</span></h4>
                         <input type="number" class="form-control mb-2" placeholder="Ej: 150" id="PrecioPlatilloAgregar" required>
                     </div>
 
-                    <div class="col-md-12 mb-2">
+                    <div class="col-md-12 mb-2" title="Imagen representativa del consumible para visualizarla">
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Imagen</h4>
                         <label for="iconoCargarImagen"
                         class="LabelArchivo">
@@ -275,7 +279,7 @@
                             cursor: pointer;">
                     </div>
 
-                    <div class="col-md-12">
+                    <div class="col-md-12" title="Descripción para incluir más detalles sobre este nuevo consumible">
                       <h4 style="font-size: 20px; margin-bottom: 3px;">Descripción</h4>
                       <textarea class="form-control mb-2" placeholder="Ej: Acompañado con salsa ranch. (Opcional)" id="DescripcionPlatilloAgregar" ></textarea>
                     </div>
@@ -284,8 +288,8 @@
                
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn_confirmation_mi_color" onclick="AgregarPlatillo();">Agregar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si ya no va a realizar la acción solo cancele">Cancelar</button>
+          <button type="button" class="btn btn_confirmation_mi_color" onclick="AgregarPlatillo();" title="Si todo está bien puede agregar este nuevo consumible">Agregar</button>
         </div>
       </div>
     </div>
