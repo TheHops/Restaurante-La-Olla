@@ -18,17 +18,17 @@
                                 <h5>Datos de perfil</h5>
                             </div>
                 
-                            <div class="col-12 mb-2 d-flex flex-column">
+                            <div class="col-12 mb-2 d-flex flex-column" title="Nombre de la persona (No es editable, solo el administrador puede modificar)">
                                 <label>Nombre</label>
                                 <input type="text" class="form-control mt-auto" id="FullNameEditarPerfil" value="{{ Usuario.Nombres }} {{ Usuario.Apellidos }}" readonly>
                             </div>
                 
-                            <div class="col-6 d-flex flex-column">
+                            <div class="col-6 d-flex flex-column" title="Correo de la persona (Si va a actualizarlo asegurese de que no vaya a estar ocupado por otro usuario)">
                                 <label>Correo</label>
                                 <input type="email" name="txtCorreoEditarPerfil" class="form-control mt-auto" id="CorreoEditarPerfil" value="{{ Usuario.email }}">
                             </div>
                 
-                            <div class="col-6 d-flex flex-column">
+                            <div class="col-6 d-flex flex-column" title="Número de teléfono de la persona">
                                 <label>Teléfono</label>
                                 <input type="text"
                                     name = "txtTelefonoEditarPerfil"
@@ -55,12 +55,12 @@
                                 <h5>Datos de usuario</h5>
                             </div>
                 
-                            <div class="col-6 mb-2 d-flex flex-column">
+                            <div class="col-6 mb-2 d-flex flex-column" title="Nombre de usuario (Asegúrese de no repetirlo con otro usuario)">
                                 <label>Nombre de usuario</label>
                                 <input type="text" name="txtUserNameEditarPerfil" class="form-control mt-auto" id="UserNameEditarPerfil" value="{{ Usuario.username }}">
                             </div>
                 
-                            <div class="col-6 mb-2 d-flex flex-column">
+                            <div class="col-6 mb-2 d-flex flex-column" title="Cargo del personal (No es editable, solo el administrador puede)">
                                 <label>Cargo</label>
                                 <input type="text" class="form-control mt-auto" id="CargoEditarPerfil" value="{{ Usuario.IdCargo.Nombre }}" readonly>
                             </div>
@@ -75,14 +75,14 @@
                         <div class="col-6 mb-2 d-flex flex-column">
                                 <label>Contraseña</label>
 
-                                <div class="input-group">
+                                <div class="input-group" title="El cambio de la contraseña es independiente de los otros datos del perfil">
                                     <input type="password" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2"
                                     readonly
                                     style="border-radius: 15px 0 0 15px"
                                     value="*********"
-                                    >
+                                    title="Contraseña del usuario">
                                     <div class="input-group-append" data-toggle="modal" data-target="#CambiarPass">
-                                      <button id="btnCambiarPassEditarPerfil" class="btn" type="button" title="Cambiar contraseña"><img style="width: 20px; height: 20px;" src="{% static 'img/Edit2.png' %}" alt="Cambiar contraseña"></button>
+                                      <button id="btnCambiarPassEditarPerfil" class="btn" type="button" title="Cambiar contraseña" title="Permite abrir un modal que es donde podremos cambiar la contraseña"><img style="width: 20px; height: 20px;" src="{% static 'img/Edit2.png' %}" alt="Cambiar contraseña"></button>
                                     </div>
                                 </div>
                             </div>
@@ -91,7 +91,7 @@
                             <div class="col-6 mb-2 d-flex flex-column">
                                 <span class="invisible">.</span>
 
-                                <button type="submit" style="border-radius: 15px; height: 38px; line-height: 15px;" class="btn btn-danger mt-auto d-flex align-items-center justify-content-center gap-2" id="btnConfirmarCambiosEditarPerfil">
+                                <button type="submit" style="border-radius: 15px; height: 38px; line-height: 15px;" class="btn btn-danger mt-auto d-flex align-items-center justify-content-center gap-2" id="btnConfirmarCambiosEditarPerfil" title="Se actualizan los datos que se pueden modificar (Menos la contraseña)">
                                     <img src="{% static 'img/user_check_fill.png' %}" alt="">
                                     Confirmar cambios
                                 </button>
@@ -111,7 +111,7 @@
 
         <!-- DERECHA -->
         <div id="derechaEditarPerfil">
-            <img id="imagenEditarPerfil" src="{% static 'img/edit_user_ilustration.webp' %}" alt="Editar perfil" loading="lazy">
+            <img id="imagenEditarPerfil" src="{% static 'img/edit_user_ilustration.webp' %}" alt="Editar perfil" loading="lazy" title="Editar perfil">
         </div>
     </div>
 </div>
@@ -135,12 +135,12 @@
                 <form method="POST" action="">
                     {% csrf_token %}
                     <div class="row">
-                        <div class="col-12 mb-2">
+                        <div class="col-12 mb-2" title="Ingresa la contraseña actual, ya sea una propia o una temporal por haber sido restablecida">
                             <h4 style="font-size: 20px; margin-bottom: 3px;">Contraseña actual<span class="asterisco">*</span></h4>
                             <input type="Password" name="OldPassEditarPerfil" class="form-control" id="OldPassEditarPerfil" placeholder="Ej: JC12345*" required autocomplete="off">
                         </div>
                         
-                        <div class="col-12 mb-2">
+                        <div class="col-12 mb-2" title="Ingresa la nueva contraseña que quiera utilizar">
                             <h4 style="font-size: 20px; margin-bottom: 3px;">Nueva contraseña<span class="asterisco">*</span></h4>
                             <input type="Password" name="NuevaPassEditarPerfil" class="form-control" id="NuevaPassEditarPerfil" placeholder="Ej: JC12345*" required autocomplete="off">
                         </div>
@@ -151,7 +151,7 @@
                             <small id="req-special" class="req neutral">• Al menos un carácter especial</small>
                         </div>
 
-                        <div class="col-12 mb-2">
+                        <div class="col-12 mb-2" title="Se vuelve a ingresar la nueva contraseña para verificar">
                             <h4 style="font-size: 20px; margin-bottom: 3px; line-height: 15px;">Verificar contraseña<span class="asterisco">*</span></h4>
                             <input type="Password" name="VerificarPassEditarPerfil" class="form-control" id="VerificarPassEditarPerfil" placeholder="Ej: JC12345*" required autocomplete="off">
                         </div>
@@ -160,8 +160,8 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" id="btnCambiarPassword" class="btn btn_confirmation_mi_color" onclick="cambiarPass()" disabled>Cambiar contraseña</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a cambiar la contraseña solo cancele">Cancelar</button>
+                <button type="button" id="btnCambiarPassword" class="btn btn_confirmation_mi_color" onclick="cambiarPass()" title="Se procede a hacer el cambio de contraseña una vez validado que todo esté correcto" disabled>Cambiar contraseña</button>
             </div>
         </div>
     </div>
