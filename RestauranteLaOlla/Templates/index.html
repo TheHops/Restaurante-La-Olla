@@ -69,7 +69,7 @@
     <script src="{% static 'js/opciones.js' %}"></script>
 
     <header>
-      <div id="opciones" style="position: fixed; z-index: 20;">
+      <div id="opciones" style="position: fixed; z-index: 20;" title="Secciones disponibles para el usuario (Varían según el cargo)">
         <div id="btnopciones2" onclick="cerrar()">
           <div class="burger2-1"></div>
           <div class="burger2-2"></div>
@@ -81,30 +81,30 @@
         <!-- Se encontrarán todas las opciones para este apartado -->
         <ul class="listaOpciones">
           {% if request.user.IdCargo.Nombre == "Administrador" or request.user.IdCargo.Nombre == "Cajero" %}
-            <li class="opcion"><a href="{% url 'index' %}">Inicio</a></li>
+            <li class="opcion" title="Inicio donde se ve el dashboard para ver métricas generales y gráficas con información de las órdenes que se registran"><a href="{% url 'index' %}">Inicio</a></li>
           {% endif %}
 
           {% if request.user.IdCargo.Nombre == "Administrador" %}
-            <li class="opcion"><a href="{% url 'inventario' %}">Menú</a></li>
+            <li class="opcion" title="Menú donde se ven las tablas catálogo donde conoceremos los consumibles y sus tipos"><a href="{% url 'inventario' %}">Menú</a></li>
           {% endif %}
 
           <!-- <li class="opcion"><a href="">Compra</a></li> -->
 
           {% if request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Administrador" %}
-            <li class="opcion"><a href="{% url 'venta' %}">Órdenes</a></li>
+            <li class="opcion" title="Sección donde se gestionan las órdenes (Creación, Modificación, Cambio de estado, Anulación y Registro de pago)"><a href="{% url 'venta' %}">Órdenes</a></li>
           {% else %}
-            <li class="opcion"><a href="{% url 'OrdenesPendientes' %}">Órdenes</a></li>
+            <li class="opcion" title="Sección donde se gestionan las órdenes (Modificación, Cambio de estado, Anulación y Registro de pago)"><a href="{% url 'OrdenesPendientes' %}">Órdenes</a></li>
           {% endif %}
 
           {% if request.user.IdCargo.Nombre == "Administrador" %}
-            <li class="opcion"><a href="{% url 'personal' %}">Personal</a></li>
+            <li class="opcion" title="Tabla catálogo que muestra todos los usuarios tanto activos como dados de baja"><a href="{% url 'personal' %}">Personal</a></li>
           {% endif %}
 
           {% if request.user.IdCargo.Nombre == "Administrador" or request.user.IdCargo.Nombre == "Cajero" %}
-            <li class="opcion"><a href="{% url 'reportes' %}">Reportes</a></li>
+            <li class="opcion" title="Tabla donde se pueden filtrar las órdenes y ser exportadas en archivos de formato excel (.xlsx) o PDF (.pdf)"><a href="{% url 'reportes' %}">Reportes</a></li>
           {% endif %}
 
-          <li class="opcion"><a href="{% url 'MiPerfil' %}">Mi perfil</a></li>
+          <li class="opcion" title="Permite gestionar el perfil propio del usuario en sesión"><a href="{% url 'MiPerfil' %}">Mi perfil</a></li>
           <!-- <li class="opcion"><a href="">Configuraciones</a></li> -->
         </ul>
 
@@ -139,25 +139,28 @@
           </li> -->
 
           <li id="UserName" style="margin-right: 15px; padding: 5px 0 0 0;">
-            <h4 style="color: white;">
+            <h4 style="color: white;" title="Eres el {{User.IdCargo.Nombre}}">
               {% if User.IdCargo.Nombre == "Administrador" %}
-                <svg width="25" height="23" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="imagenCargo">
+                <svg width="25" height="23" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="imagenCargo" title="Eres el administrador">
                   <path d="M3 18V16H17V18H3ZM3 14.5L1.725 6.475C1.69167 6.475 1.65417 6.47917 1.6125 6.4875C1.57083 6.49583 1.53333 6.5 1.5 6.5C1.08333 6.5 0.729167 6.35417 0.4375 6.0625C0.145833 5.77083 0 5.41667 0 5C0 4.58333 0.145833 4.22917 0.4375 3.9375C0.729167 3.64583 1.08333 3.5 1.5 3.5C1.91667 3.5 2.27083 3.64583 2.5625 3.9375C2.85417 4.22917 3 4.58333 3 5C3 5.11667 2.9875 5.225 2.9625 5.325C2.9375 5.425 2.90833 5.51667 2.875 5.6L6 7L9.125 2.725C8.94167 2.59167 8.79167 2.41667 8.675 2.2C8.55833 1.98333 8.5 1.75 8.5 1.5C8.5 1.08333 8.64583 0.729167 8.9375 0.4375C9.22917 0.145833 9.58333 0 10 0C10.4167 0 10.7708 0.145833 11.0625 0.4375C11.3542 0.729167 11.5 1.08333 11.5 1.5C11.5 1.75 11.4417 1.98333 11.325 2.2C11.2083 2.41667 11.0583 2.59167 10.875 2.725L14 7L17.125 5.6C17.0917 5.51667 17.0625 5.425 17.0375 5.325C17.0125 5.225 17 5.11667 17 5C17 4.58333 17.1458 4.22917 17.4375 3.9375C17.7292 3.64583 18.0833 3.5 18.5 3.5C18.9167 3.5 19.2708 3.64583 19.5625 3.9375C19.8542 4.22917 20 4.58333 20 5C20 5.41667 19.8542 5.77083 19.5625 6.0625C19.2708 6.35417 18.9167 6.5 18.5 6.5C18.4667 6.5 18.4292 6.49583 18.3875 6.4875C18.3458 6.47917 18.3083 6.475 18.275 6.475L17 14.5H3ZM4.7 12.5H15.3L15.95 8.325L13.325 9.475L10 4.9L6.675 9.475L4.05 8.325L4.7 12.5Z" fill="white"/>
                 </svg>
               {% elif User.IdCargo.Nombre == "Mesero" %}
-                <svg width="25" height="23" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="imagenCargo">
+                <svg width="25" height="23" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="imagenCargo" title="Eres el mesero">
                   <path d="M0 11V9H2.025C2.25833 6.88333 3.11667 5.08333 4.6 3.6C6.08333 2.11667 7.88333 1.25833 10 1.025V0H12V1.025C14.1167 1.25833 15.9167 2.11667 17.4 3.6C18.8833 5.08333 19.7417 6.88333 19.975 9H22V11H0ZM4.075 9H17.925C17.6917 7.28333 16.9208 5.85417 15.6125 4.7125C14.3042 3.57083 12.7667 3 11 3C9.23333 3 7.69583 3.57083 6.3875 4.7125C5.07917 5.85417 4.30833 7.28333 4.075 9ZM13.375 11H7V17H12.55C12.9 17 13.2375 16.9417 13.5625 16.825C13.8875 16.7083 14.1833 16.5333 14.45 16.3L18.6 12.875C18.4667 12.7417 18.3167 12.6417 18.15 12.575C17.9833 12.5083 17.8083 12.4583 17.625 12.425C17.3417 12.375 17.0667 12.3833 16.8 12.45C16.5333 12.5167 16.2833 12.6417 16.05 12.825L13.35 15H9V13H12.65L13.75 12.1C13.8333 12.05 13.8958 11.9833 13.9375 11.9C13.9792 11.8167 14 11.725 14 11.625C14 11.4583 13.9375 11.3125 13.8125 11.1875C13.6875 11.0625 13.5417 11 13.375 11ZM5 11H3V18H5V11ZM5 20H3C2.45 20 1.97917 19.8042 1.5875 19.4125C1.19583 19.0208 1 18.55 1 18V11C1 10.45 1.19583 9.97917 1.5875 9.5875C1.97917 9.19583 2.45 9 3 9H13.375C14.7917 9 16.1583 9.24167 17.475 9.725C18.7917 10.2083 19.85 11.025 20.65 12.175L21.325 13.2L15.75 17.85C15.3 18.2333 14.8 18.5208 14.25 18.7125C13.7 18.9042 13.1333 19 12.55 19H6.725C6.54167 19.3 6.3 19.5417 6 19.725C5.7 19.9083 5.36667 20 5 20Z" fill="white"/>
                 </svg>
               {% elif User.IdCargo.Nombre == "Armador" %}
-                <svg width="21" height="23" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="imagenCargo">
+                <svg width="21" height="23" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="imagenCargo" title="Eres el armador">
                   <path d="M2 20C1.45 20 0.979167 19.8042 0.5875 19.4125C0.195833 19.0208 0 18.55 0 18V4C0 3.45 0.195833 2.97917 0.5875 2.5875C0.979167 2.19583 1.45 2 2 2H6.2C6.41667 1.4 6.77917 0.916667 7.2875 0.55C7.79583 0.183333 8.36667 0 9 0C9.63333 0 10.2042 0.183333 10.7125 0.55C11.2208 0.916667 11.5833 1.4 11.8 2H16C16.55 2 17.0208 2.19583 17.4125 2.5875C17.8042 2.97917 18 3.45 18 4V18C18 18.55 17.8042 19.0208 17.4125 19.4125C17.0208 19.8042 16.55 20 16 20H2ZM2 18H16V4H2V18ZM4 16H11V14H4V16ZM4 12H14V10H4V12ZM4 8H14V6H4V8ZM9.5375 3.0375C9.67917 2.89583 9.75 2.71667 9.75 2.5C9.75 2.28333 9.67917 2.10417 9.5375 1.9625C9.39583 1.82083 9.21667 1.75 9 1.75C8.78333 1.75 8.60417 1.82083 8.4625 1.9625C8.32083 2.10417 8.25 2.28333 8.25 2.5C8.25 2.71667 8.32083 2.89583 8.4625 3.0375C8.60417 3.17917 8.78333 3.25 9 3.25C9.21667 3.25 9.39583 3.17917 9.5375 3.0375Z" fill="white"/>
                 </svg>
               {% elif User.IdCargo.Nombre == "Cajero" %}
-                <svg width="23" height="23" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="imagenCargo">
+                <svg width="23" height="23" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="imagenCargo" title="Eres el cajero">
                   <path d="M5 6C4.45 6 3.97917 5.80417 3.5875 5.4125C3.19583 5.02083 3 4.55 3 4V2C3 1.45 3.19583 0.979167 3.5875 0.5875C3.97917 0.195833 4.45 0 5 0H15C15.55 0 16.0208 0.195833 16.4125 0.5875C16.8042 0.979167 17 1.45 17 2V4C17 4.55 16.8042 5.02083 16.4125 5.4125C16.0208 5.80417 15.55 6 15 6H5ZM5 4H15V2H5V4ZM2 20C1.45 20 0.979167 19.8042 0.5875 19.4125C0.195833 19.0208 0 18.55 0 18V17H20V18C20 18.55 19.8042 19.0208 19.4125 19.4125C19.0208 19.8042 18.55 20 18 20H2ZM0 16L3.475 8.175C3.64167 7.80833 3.89167 7.52083 4.225 7.3125C4.55833 7.10417 4.91667 7 5.3 7H14.7C15.0833 7 15.4417 7.10417 15.775 7.3125C16.1083 7.52083 16.3583 7.80833 16.525 8.175L20 16H0ZM6.5 14H7.5C7.63333 14 7.75 13.95 7.85 13.85C7.95 13.75 8 13.6333 8 13.5C8 13.3667 7.95 13.25 7.85 13.15C7.75 13.05 7.63333 13 7.5 13H6.5C6.36667 13 6.25 13.05 6.15 13.15C6.05 13.25 6 13.3667 6 13.5C6 13.6333 6.05 13.75 6.15 13.85C6.25 13.95 6.36667 14 6.5 14ZM6.5 12H7.5C7.63333 12 7.75 11.95 7.85 11.85C7.95 11.75 8 11.6333 8 11.5C8 11.3667 7.95 11.25 7.85 11.15C7.75 11.05 7.63333 11 7.5 11H6.5C6.36667 11 6.25 11.05 6.15 11.15C6.05 11.25 6 11.3667 6 11.5C6 11.6333 6.05 11.75 6.15 11.85C6.25 11.95 6.36667 12 6.5 12ZM6.5 10H7.5C7.63333 10 7.75 9.95 7.85 9.85C7.95 9.75 8 9.63333 8 9.5C8 9.36667 7.95 9.25 7.85 9.15C7.75 9.05 7.63333 9 7.5 9H6.5C6.36667 9 6.25 9.05 6.15 9.15C6.05 9.25 6 9.36667 6 9.5C6 9.63333 6.05 9.75 6.15 9.85C6.25 9.95 6.36667 10 6.5 10ZM9.5 14H10.5C10.6333 14 10.75 13.95 10.85 13.85C10.95 13.75 11 13.6333 11 13.5C11 13.3667 10.95 13.25 10.85 13.15C10.75 13.05 10.6333 13 10.5 13H9.5C9.36667 13 9.25 13.05 9.15 13.15C9.05 13.25 9 13.3667 9 13.5C9 13.6333 9.05 13.75 9.15 13.85C9.25 13.95 9.36667 14 9.5 14ZM9.5 12H10.5C10.6333 12 10.75 11.95 10.85 11.85C10.95 11.75 11 11.6333 11 11.5C11 11.3667 10.95 11.25 10.85 11.15C10.75 11.05 10.6333 11 10.5 11H9.5C9.36667 11 9.25 11.05 9.15 11.15C9.05 11.25 9 11.3667 9 11.5C9 11.6333 9.05 11.75 9.15 11.85C9.25 11.95 9.36667 12 9.5 12ZM9.5 10H10.5C10.6333 10 10.75 9.95 10.85 9.85C10.95 9.75 11 9.63333 11 9.5C11 9.36667 10.95 9.25 10.85 9.15C10.75 9.05 10.6333 9 10.5 9H9.5C9.36667 9 9.25 9.05 9.15 9.15C9.05 9.25 9 9.36667 9 9.5C9 9.63333 9.05 9.75 9.15 9.85C9.25 9.95 9.36667 10 9.5 10ZM12.5 14H13.5C13.6333 14 13.75 13.95 13.85 13.85C13.95 13.75 14 13.6333 14 13.5C14 13.3667 13.95 13.25 13.85 13.15C13.75 13.05 13.6333 13 13.5 13H12.5C12.3667 13 12.25 13.05 12.15 13.15C12.05 13.25 12 13.3667 12 13.5C12 13.6333 12.05 13.75 12.15 13.85C12.25 13.95 12.3667 14 12.5 14ZM12.5 12H13.5C13.6333 12 13.75 11.95 13.85 11.85C13.95 11.75 14 11.6333 14 11.5C14 11.3667 13.95 11.25 13.85 11.15C13.75 11.05 13.6333 11 13.5 11H12.5C12.3667 11 12.25 11.05 12.15 11.15C12.05 11.25 12 11.3667 12 11.5C12 11.6333 12.05 11.75 12.15 11.85C12.25 11.95 12.3667 12 12.5 12ZM12.5 10H13.5C13.6333 10 13.75 9.95 13.85 9.85C13.95 9.75 14 9.63333 14 9.5C14 9.36667 13.95 9.25 13.85 9.15C13.75 9.05 13.6333 9 13.5 9H12.5C12.3667 9 12.25 9.05 12.15 9.15C12.05 9.25 12 9.36667 12 9.5C12 9.63333 12.05 9.75 12.15 9.85C12.25 9.95 12.3667 10 12.5 10Z" fill="white"/>
                 </svg>                
               {% endif %}
-              {{ User.username }}
+
+              <a href="{% url 'MiPerfil' %}" id="userNameText" title="Nombre de usuario">  
+                {{ User.username }}
+              </a>
             </h4>
           </li>
 

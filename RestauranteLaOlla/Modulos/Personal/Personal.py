@@ -105,7 +105,8 @@ def AgregarPersonal(request):
             password=passw,
             email=correo,
             Telefono=telefono,
-            IdCargo=tipoCargo
+            IdCargo=tipoCargo,
+            DebeCambiarPass=True
         )
         personal.set_password(passw)
         personal.save()

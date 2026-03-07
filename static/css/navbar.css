@@ -14,6 +14,11 @@ body.modal-open {
     height: 100vh;
 }
 
+#userNameText:hover {
+    text-decoration: none;
+    color: white;
+}
+
 /* Basic styling */
 * {
     padding: 0;
