@@ -5,17 +5,17 @@
         <thead>
             <!-- Columnas -->
             <tr>
-                <th>Usuario</th>
-                <th>Nombre</th>
-                <th>Correo</th>
-                <th>Teléfono</th>
-                <th>Cargo</th>
+                <th title="Nombre de los usuarios">Usuario</th>
+                <th title="Nombre completo de las personas">Nombre</th>
+                <th title="Correo de los usuarios">Correo</th>
+                <th title="Número de teléfono de las personas">Teléfono</th>
+                <th title="Cargo de los usuarios">Cargo</th>
                 
                 {% if VerEliminados == "1" %}
-                    <th>Estado</th>
+                    <th title="Estado del personal (Activo | Dado de baja)">Estado</th>
                 {% endif %}
                 
-                <th>Acciones</th>
+                <th title="Acciones que se pueden hacer en los usuarios (Editar, Dar de baja y Restablecer contraseña)">Acciones</th>
             </tr>
         </thead>
 
@@ -23,10 +23,10 @@
         <tbody>
             {% for personal in Personal %}
             <tr>
-                <td>{{personal.username}}</td>
-                <td>{{personal.Nombres}} {{personal.Apellidos}}</td>
+                <td title="Nombre de usuario">{{personal.username}}</td>
+                <td title="Nombres y apellidos de la persona">{{personal.Nombres}} {{personal.Apellidos}}</td>
                 
-                <td>
+                <td title="Correo de la persona">
                     {% if personal.email %}
                         {{personal.email}}
                     {% else %}
@@ -34,17 +34,18 @@
                     {% endif %}
                 </td>
                 
-                <td>
+                <td title="Número de teléfono de la persona (Se puede redirigir a su whatsapp si le da click al número)">
                     {% if personal.Telefono %}
                         <a href="https://wa.me/+505{{personal.Telefono}}" target="_blank" style="color:black;">  {{personal.Telefono}} </a>
                     {% else %}
                         N/A
                     {% endif %}
                 </td>
-                <td>{{personal.IdCargo.Nombre}}</td>
+
+                <td title="Cargo del personal">{{personal.IdCargo.Nombre}}</td>
 
                 {% if VerEliminados == "1" %}
-                    <td class="estadoPersonalFila">
+                    <td class="estadoPersonalFila" title="Estado del personal">
                         {% if personal.EsActivo == '1'%}
                         <span class="badge-green">
                             Activo
@@ -57,21 +58,21 @@
                     </td>
                 {% endif %}
 
-                <td class="actions" style="display: flex; justify-content: start; align-items: center; padding: 12% 15px;">
+                <td class="actions" style="display: flex; justify-content: start; align-items: center; padding: 12% 15px;" title="Acciones para manipular los datos del personal">
 
-                    <button class="actionButton btnEditar" id="{{personal.Id}}" data-toggle="modal"  data-target="#ModificarPersonal" 
-                    onclick="ImpresionPersonal('{{personal.username}}', '{{personal.email}}', '{{personal.Telefono}}', {{personal.IdCargo.Id}}, '{{personal.Id}}', '{{personal.EsActivo}}', '{{personal.Nombres}}', '{{personal.Apellidos}}')" >
+                    <button class="actionButton btnEditar" id="{{personal.Id}}" data-toggle="modal" data-target="#ModificarPersonal" 
+                    onclick="ImpresionPersonal('{{personal.username}}', '{{personal.email}}', '{{personal.Telefono}}', {{personal.IdCargo.Id}}, '{{personal.Id}}', '{{personal.EsActivo}}', '{{personal.Nombres}}', '{{personal.Apellidos}}')" title="Permite modificar los datos del usuario">
                         <a >
                             <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar personal">
                         </a>
                     </button>
                     
                     {% if personal.EsActivo == '1' %}
-                        <button class="actionButton btnEliminar" id="{{personal.Id}}" onclick="ConfirmarBaja('{{personal.Id}}')">
+                        <button class="actionButton btnEliminar" id="{{personal.Id}}" onclick="ConfirmarBaja('{{personal.Id}}')" title="Permite cambiar el estado del usuario | personal a 'Dado de baja'">
                             <img src="{% static 'img/delete1.png' %}" alt="Dar baja" title="Dar baja personal">
                         </button>
                         
-                        <button class="actionButton btnRestablecerPass" id="{{personal.Id}}" onclick="ConfirmarRestablecer('{{personal.Id}}')">
+                        <button class="actionButton btnRestablecerPass" id="{{personal.Id}}" onclick="ConfirmarRestablecer('{{personal.Id}}')" title="Permite restablecer la contraseña del usuario, generando una nueva que deberá compartir al usuario">
                             <img src="{% static 'img/restablecer_pass.png' %}" alt="Restablecer contraseña" title="Restablecer contraseña">
                         </button>
                     {% endif %}

@@ -12,15 +12,15 @@
         
         {% if Cargo == "Administrador" %}
 
-            <div class="contenedorFechasReportes">
+            <div class="contenedorFechasReportes" title="Fecha de inicio (Si se modifica una fecha manualmente los filtros adicionales de fechas se desactivarán)">
                 <input type="date" id="fechaDesde" name="fecha_desde">
             </div>
             
-            <div class="contenedorFechasReportes">
+            <div class="contenedorFechasReportes" title="Fecha fin (Si se modifica una fecha manualmente los filtros adicionales de fechas se desactivarán)">
                 <input type="date" id="fechaHasta" name="fecha_hasta">
             </div>
 
-            <small id="errorFechas" style="color:#dc3545; display:none;">
+            <small id="errorFechas" style="color:#dc3545; display:none;" title="Mensaje de error por fechas mal ingresadas">
                 La fecha <strong>de inicio</strong> no puede ser mayor que la<strong> fecha fin</strong>
             </small>
 
@@ -28,7 +28,7 @@
             <input type="date" style="display: none;" id="fechaDesde" name="fecha_desde">
             <input type="date" style="display: none;" id="fechaHasta" name="fecha_hasta">
 
-            <small id="errorFechas" style="color:#dc3545; display:none;">
+            <small id="errorFechas" style="color:#dc3545; display:none;" title="Mensaje de error por fechas mal ingresadas">
                 La fecha <strong>de inicio</strong> no puede ser mayor que la<strong> fecha fin</strong>
             </small>
         {% endif %}
@@ -44,19 +44,19 @@
         <div class="custom-dropdown" style="margin-left: 0;" id="dropdownEstadoOrdenes">
             <input type="hidden" id="listaEstadoOrdenesExportar" value="0">
             
-            <button class="dropdown-trigger" style="padding: 4px 15px;" type="button" aria-haspopup="listbox">
+            <button class="dropdown-trigger" style="padding: 4px 15px;" type="button" aria-haspopup="listbox" title="Selecciona el estado de las órdenes que se quieren filtrar para los reportes">
                 <span id="textoSeleccionado">Pago registrado</span> <span>▼</span>
             </button>
             
             <ul class="dropdown-menu" role="listbox">
-                <li role="option" data-value="0">Pago registrado</li>
-                <li role="option" data-value="2">Anuladas</li>
-                <li role="option" data-value="0,2">Ambas</li>
+                <li role="option" data-value="0" title="Se filtrarán las órdenes que tienen un estado de 'Pago registrado'">Pago registrado</li>
+                <li role="option" data-value="2" title="Se filtrarán las órdenes que tienen un estado de 'Anuladas'">Anuladas</li>
+                <li role="option" data-value="0,2" title="Se filtrarán ambos estados de las órdenes (Pago registrado y Anuladas)">Ambas</li>
             </ul>
         </div>
 
         <div id="contenedorBtnAplicarFiltros">
-            <button id="btnAplicarFiltrosOrdenes" data-toggle="modal" data-target="#FiltrarOrdenes">
+            <button id="btnAplicarFiltrosOrdenes" data-toggle="modal" data-target="#FiltrarOrdenes" title="Despliega un modal que permite agregar más filtros de órdenes, se filtran por las áreas de mesa y alguna fecha predefinida">
                 <svg width="22" height="22" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M11.701 26.6667C11.2288 26.6667 10.8329 26.5069 10.5135 26.1875C10.194 25.8681 10.0343 25.4722 10.0343 25V15L0.367647 2.66667C-0.0490196 2.11111 -0.11152 1.52778 0.180147 0.916667C0.471814 0.305556 0.978758 0 1.70098 0H25.0343C25.7565 0 26.2635 0.305556 26.5551 0.916667C26.8468 1.52778 26.7843 2.11111 26.3676 2.66667L16.701 15V25C16.701 25.4722 16.5413 25.8681 16.2218 26.1875C15.9024 26.5069 15.5065 26.6667 15.0343 26.6667H11.701ZM13.3676 13.8333L21.6176 3.33333H5.11765L13.3676 13.8333Z" fill="white"/>
                     </svg>
@@ -66,14 +66,14 @@
                 Más filtros
             </button>
 
-            <div id="indicadorFiltros"></div>
+            <div id="indicadorFiltros" title="Indica que hay filtros adicionales aplicados"></div>
         </div>
 
     </div>
 
     <div id="contenedorDerechoEncabezadoInventario">
         <!-- Botón para mostrar u ocultar los registros inactivos -->
-        <button class="btnExportarOrdenes" data-toggle="modal" data-target="#ExportarOrdenes" style="margin-left: 20px;" id="btnExportarOrdenes" disabled>
+        <button class="btnExportarOrdenes" data-toggle="modal" data-target="#ExportarOrdenes" style="margin-left: 20px;" id="btnExportarOrdenes" disabled title="Permite exportar las órdenes filtradas ya sea por excel (.xlsx) o PDF (.pdf)">
             <svg width="18" height="24" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2.04167 29.7135L0 27.6354L4.30208 23.3333H1.02083V20.4167H9.26042V28.6562H6.34375V25.4115L2.04167 29.7135ZM12.1771 29.1667V26.25H20.9271V10.2083H13.6354V2.91667H3.42708V17.5H0.510417V2.91667C0.510417 2.11458 0.796007 1.42795 1.36719 0.856771C1.93837 0.28559 2.625 0 3.42708 0H15.0937L23.8438 8.75V26.25C23.8438 27.0521 23.5582 27.7387 22.987 28.3099C22.4158 28.8811 21.7292 29.1667 20.9271 29.1667H12.1771Z" fill="#ffffff"/>
             </svg>
@@ -92,11 +92,13 @@
         <thead>
             <!-- Columnas -->
             <tr>
-                <th>Nº orden</th>
-                <th>Fecha y hora</th>
-                <th>Mesas</th>
-                <th>Área</th>
-                <th>Acciones</th>
+                <th title="Número de las órdenes">Nº orden</th>
+                <th title="Fecha y hora de última modificación de las órdenes">Fecha y hora</th>
+                <th title="Mesas involucradas con las órdenes">Mesas</th>
+                <th title="Área de mesa involucrada con las órdenes">Área</th>
+                <th title="Total pagado en las órdenes">Total</th>
+                <th title="Estado de las órdenes (Pago registrado y Anuladas)">Estado</th>
+                <th title="Acciones que se pueden hacer sobre las órdenes (Ver detalles)">Acciones</th>
             </tr>
         </thead>
 
@@ -120,7 +122,7 @@
 
             <div class="modal-body row exportar col-12">
                 <div class="col-6">
-                    <button class="excel w-100" onclick="ExportarOrdenes('1')">
+                    <button class="excel w-100" onclick="ExportarOrdenes('1')" title="Exportará las órdenes en un archivo de formato excel (.xlsx)">
                         <!--
                             <img src="{% static 'img/Export_excel_2.png' %}">
                         -->
@@ -138,7 +140,7 @@
                 </div>
         
                 <div class="col-6">
-                    <button class="pdf w-100" onclick="ExportarOrdenes('2')">
+                    <button class="pdf w-100" onclick="ExportarOrdenes('2')" title="Exportará las órdenes en un archivo de formato PDF (.pdf)">
                         <!--
                             <img src="{% static 'img/Export_pdf_2.png' %}">
                         -->
@@ -173,7 +175,7 @@
                     </label>
                 -->
 
-                <label class="custom-checkbox-report">
+                <label class="custom-checkbox-report" title="Permite incluir los detalles a las órdenes que se van a exportar">
                     <input type="checkbox" id="check_incluir_detalles" name="incluir_detalles" class="check-toggle">
                     
                     <!--
@@ -190,7 +192,7 @@
                     <span class="label-text-report">Incluir detalles</span>
                 </label>
                 
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a exportar nada solo cancele">Cancelar</button>
             </div>
         </div>
     </div>
@@ -228,7 +230,7 @@
             <div class="modal-body col-12">
                 <h5 style="color: #555555; font-size: 20px;">Áreas de mesa</h5>
                 
-                <div id="areasBusqueda">
+                <div id="areasBusqueda" title="Puede filtrar las órdenes mediante el área de mesa, con la posibilidad de seleccionar uno o más">
                     {% for Area in Areas%}
                     <div class="form-check">
                         <input class="form-check-input" 
@@ -252,7 +254,7 @@
 
                     <h5 style="color: #555555; font-size: 20px;">Fechas</h5>
 
-                    <div id="fechasFiltro">
+                    <div id="fechasFiltro" title="Selecciona solo una fecha predefinida con la cual desea filtrar las órdenes">
 
                         <div class="form-radio">
                             <input class="form-radio-input"
@@ -321,11 +323,11 @@
 
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a filtrar nada solo cancele">Cancelar</button>
 
                 <button type="button"
                         class="btn btn-danger"
-                        id="btnAplicarFiltros">
+                        id="btnAplicarFiltros" title="Si va a aplicar algún filtro confirme dando click en este botón">
                     Aplicar
                 </button>
             </div>
