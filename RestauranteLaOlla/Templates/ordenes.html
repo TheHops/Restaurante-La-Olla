@@ -5,7 +5,7 @@
 <div class="EncabezadoOrdenesList py-2 px-3">
   <div class="EncabezadoOrdenesListIzquierda">
     {% if request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Administrador" %}
-      <a href="{% url 'venta' %}">
+      <a href="{% url 'venta' %}" title="Permite volver a la pantalla de selección de mesa para crear orden">
         <button id="btnVolver">
           <i class="fa-solid fa-arrow-left"></i> Volver
         </button>
@@ -42,7 +42,7 @@
       </select>
     -->
 
-    <div class="custom-dropdown" id="dropdownEstadoOrdenesProceso">
+    <div class="custom-dropdown" id="dropdownEstadoOrdenesProceso" title="Lista desplegable donde se puede seleccionar el estado de la orden que el usuario quiere ver (Los estados disponibles dependen del cargo)">
       <input type="hidden" id="listaEstadoOrdenes" value="1"> 
       
       <button class="dropdown-trigger" style="line-height: 20px;" type="button">
@@ -51,36 +51,36 @@
       
       <ul class="dropdown-menu">
           {% if CargoUsuario != "Cajero" %}
-              <li data-value="1">Pendientes</li>
-              <li data-value="4">En preparación</li>
+              <li data-value="1" title="Es el primer estado de las órdenes (Disponible para todos los cargos menos el cajero)">Pendientes</li>
+              <li data-value="4" title="Es el segundo estado y es cuando las órdenes ya se están preparando (Disponible para todos los cargos menos el cajero)">En preparación</li>
           {% endif %}
   
           {% if CargoUsuario != "Armador" %}
-              <li data-value="3">Preparadas</li>
+              <li data-value="3" title="Es el tercer estado y es cuando las órdenes ya están listas (Disponible para todos los cargos menos el armador)">Preparadas</li>
           {% endif %}
       
           {% if CargoUsuario == "Cajero" or CargoUsuario == "Administrador" %}
-              <li data-value="0">Pago registrado</li>
-              <li data-value="2">Anuladas</li>
+              <li data-value="0" title="Es uno de los dos estados finales, es cuando se registra el pago con éxito (Disponible solo para el cajero y el administrador)">Pago registrado</li>
+              <li data-value="2" title="Es el otro estado final, es cuando la orden ha sido anulada (Disponible solo para el cajero y el administrador)">Anuladas</li>
           {% endif %}
       
           {% if CargoUsuario == "Administrador" %}
-              <li data-value="5">Todas</li>
+              <li data-value="5" title="El administrador puede ver todos los estados de las órdenes en una sola página">Todas</li>
           {% endif %}
       
           {% if CargoUsuario == "Armador" %}
-              <li data-value="6">Ambas</li>
+              <li data-value="6" title="El armador puede ver dos estados a la vez en una sola página (Pendientes y En preparación)">Ambas</li>
           {% endif %}
           
           {% if CargoUsuario == "Mesero" %}
-              <li data-value="7">Las tres</li>
+              <li data-value="7" title="El mesero puede ver tres estados a la vez en una sola página (Pendientes, En preparación y Preparadas)">Las tres</li>
           {% endif %}
       </ul>
     </div>
   </div>
 
   <div class="EncabezadoOrdenesListDerecha">
-    <button id="btnInfoOrdenes" data-toggle="modal" data-target="#InfoDetalleOrden" title="Conoce que significan algunos íconos">
+    <button id="btnInfoOrdenes" data-toggle="modal" data-target="#InfoDetalleOrden" title="Conoce que significan algunos íconos" title="Se desplegará un modal que explica los símbolos que se muestran cuando se edita una orden">
       <!--
         <img style="width: 15px; padding-bottom: 3px;" src="{% static 'img/info2.png' %}" alt="Información de los íconos que se presentan">
       -->
