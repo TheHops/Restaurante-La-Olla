@@ -5,7 +5,7 @@
 <div class="EncabezadoOrdenesList py-2 px-3">
   <div class="EncabezadoOrdenesListIzquierda">
     {% if request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Administrador" %}
-      <a href="{% url 'venta' %}">
+      <a href="{% url 'venta' %}" title="Permite volver a la pantalla de selección de mesa para crear orden">
         <button id="btnVolver">
           <i class="fa-solid fa-arrow-left"></i> Volver
         </button>
@@ -42,7 +42,7 @@
       </select>
     -->
 
-    <div class="custom-dropdown" id="dropdownEstadoOrdenesProceso">
+    <div class="custom-dropdown" id="dropdownEstadoOrdenesProceso" title="Lista desplegable donde se puede seleccionar el estado de la orden que el usuario quiere ver (Los estados disponibles dependen del cargo)">
       <input type="hidden" id="listaEstadoOrdenes" value="1"> 
       
       <button class="dropdown-trigger" style="line-height: 20px;" type="button">
@@ -51,36 +51,36 @@
       
       <ul class="dropdown-menu">
           {% if CargoUsuario != "Cajero" %}
-              <li data-value="1">Pendientes</li>
-              <li data-value="4">En preparación</li>
+              <li data-value="1" title="Es el primer estado de las órdenes (Disponible para todos los cargos menos el cajero)">Pendientes</li>
+              <li data-value="4" title="Es el segundo estado y es cuando las órdenes ya se están preparando (Disponible para todos los cargos menos el cajero)">En preparación</li>
           {% endif %}
   
           {% if CargoUsuario != "Armador" %}
-              <li data-value="3">Preparadas</li>
+              <li data-value="3" title="Es el tercer estado y es cuando las órdenes ya están listas (Disponible para todos los cargos menos el armador)">Preparadas</li>
           {% endif %}
       
           {% if CargoUsuario == "Cajero" or CargoUsuario == "Administrador" %}
-              <li data-value="0">Pago registrado</li>
-              <li data-value="2">Anuladas</li>
+              <li data-value="0" title="Es uno de los dos estados finales, es cuando se registra el pago con éxito (Disponible solo para el cajero y el administrador)">Pago registrado</li>
+              <li data-value="2" title="Es el otro estado final, es cuando la orden ha sido anulada (Disponible solo para el cajero y el administrador)">Anuladas</li>
           {% endif %}
       
           {% if CargoUsuario == "Administrador" %}
-              <li data-value="5">Todas</li>
+              <li data-value="5" title="El administrador puede ver todos los estados de las órdenes en una sola página">Todas</li>
           {% endif %}
       
           {% if CargoUsuario == "Armador" %}
-              <li data-value="6">Ambas</li>
+              <li data-value="6" title="El armador puede ver dos estados a la vez en una sola página (Pendientes y En preparación)">Ambas</li>
           {% endif %}
           
           {% if CargoUsuario == "Mesero" %}
-              <li data-value="7">Las tres</li>
+              <li data-value="7" title="El mesero puede ver tres estados a la vez en una sola página (Pendientes, En preparación y Preparadas)">Las tres</li>
           {% endif %}
       </ul>
     </div>
   </div>
 
   <div class="EncabezadoOrdenesListDerecha">
-    <button id="btnInfoOrdenes" data-toggle="modal" data-target="#InfoDetalleOrden" title="Conoce que significan algunos íconos">
+    <button id="btnInfoOrdenes" data-toggle="modal" data-target="#InfoDetalleOrden" title="Conoce que significan algunos íconos" title="Se desplegará un modal que explica los símbolos que se muestran cuando se edita una orden">
       <!--
         <img style="width: 15px; padding-bottom: 3px;" src="{% static 'img/info2.png' %}" alt="Información de los íconos que se presentan">
       -->
@@ -126,7 +126,7 @@
         <form method="POST">
           {% csrf_token %}
           <div class="row">
-            <div class="col-6">
+            <div class="col-6" title="Método de pago con el que va a pagar el cliente">
               <h4 style="font-size: 20px; margin-bottom: 3px;">
                 Método de pago<span class="asterisco">*</span>
               </h4>
@@ -135,17 +135,17 @@
                 id="SelectMetodoPago"
                 onchange="MP(this.value)"
               >
-                <option value="1">Efectivo</option>
-                <option value="2">Tarjeta</option>
-                <option value="3">Transferencia</option>
-                <option value="4">Efectivo y tarjeta</option>
+                <option value="1" title="Es cuando el cliente solo quiere pagar con dinero físico">Efectivo</option>
+                <option value="2" title="Es cuando el cliente quiere utilizar la tarjeta para pagar">Tarjeta</option>
+                <option value="3" title="Es cuando el cliente quiere pagar mediante una transferencia bancaria">Transferencia</option>
+                <option value="4" title="Es cuando el cliente quiere pagar la orden en partes, tanto con dinero físico como con la tarjeta (No aplica con transferencia)">Efectivo y tarjeta</option>
               </select>
             </div>
 
-            <div class="col-6 mb-2" id="monto">
-                <h4 style="font-size: 20px; margin-bottom: 3px;">
-                  Monto (C$)<span class="asterisco">*</span>
-                </h4>
+            <div class="col-6 mb-2" id="monto" title="Disponible si el método de pago es efectivo o mixto (Efectivo y tarjeta)">
+              <h4 style="font-size: 20px; margin-bottom: 3px;">
+                Monto (C$)<span class="asterisco">*</span>
+              </h4>
 
               <input
                 type="number"
@@ -156,13 +156,13 @@
               />
             </div>
             
-            <div class="col-12 mb-2" id="MensajeMonto">
+            <div class="col-12 mb-2" id="MensajeMonto" title="Validación del monto con respecto al total a pagar">
               <span style="color: hsl(0, 100%, 70%); font-size: 15px"
               >El monto debe ser mayor o igual al total (Junto a propina y descuento si aplica)</span
               >
             </div>
 
-            <div class="col-6" id="cambio">
+            <div class="col-6" id="cambio" title="Cuando el método de cambio es efectivo, es un valor que se calcula, cuando es mixto, se puede ingresar un valor manualmente ya que puede que el cliente quiera recibir un cambio en efectivo">
               <h4 style="font-size: 20px; margin-bottom: 3px;">
                 Cambio<span class="asterisco">*</span>
               </h4>
@@ -175,7 +175,7 @@
               />
             </div>
             
-            <div class="col-6 mb-2" id="numRef">
+            <div class="col-6 mb-2" id="numRef" title="Es el número que hace referencia a la transacción realizada, es recomendable seleccionar el banco para ubicar mejor la transacción (Disponible cuando el método de pago es transferencia)">
               <div class="numReftxt">
                 <h4 style="font-size: 20px; margin-bottom: 3px;">
                   Número de referencia
@@ -191,7 +191,7 @@
               />
             </div>
 
-            <div class="col-6" id="banco">
+            <div class="col-6" id="banco" title="Se define el banco cuando el pago es con tarjeta o por transferencia (No es obligatorio pero si recomendable para ubicar mejor al momento de revisar registros)">
               <h4 style="font-size: 20px; margin-bottom: 3px;">
                 Banco
               </h4>
@@ -215,7 +215,7 @@
             <!-- VA A CONTENER LOS CAMPOS PARA PROPINA Y DESCUENTO -->
             <div class="col-12">
               <div id="contenedorExtras">
-                <div class="col-6 pl-0" id="contenedorDescuento">
+                <div class="col-6 pl-0" id="contenedorDescuento" title="Se aplica un cálculo del descuento según el total base">
 
                   <!--
                     <div class="col-12 px-0">
@@ -227,7 +227,7 @@
                     </div>
                   -->
 
-                  <div class="col-12 px-0" id="contenedorCheckDescuento">
+                  <div class="col-12 px-0" id="contenedorCheckDescuento" title="Activa si quieres incluir el descuento a la orden">
                     <label class="switch-container">
                       <span class="switch-label">Descuento</span>
                       <div class="switch-wrapper">
@@ -238,23 +238,23 @@
                   </div>
 
                   <div class="col-12 px-0 contenedorPorcentaje" id="inputPorcentajeDescuento">
-                    <div class="input-group mb-0">
+                    <div class="input-group mb-0" title="El descuento es por porcentaje, así que lo que se ingresa es el porcentaje que se calcula según el total base">
                       <span class="input-group-text"><b>%</b></span>
                       <input type="number" class="form-control" aria-label="Porcentaje" id="txtPorcentajeDescuento" min="10" max="30" step="1" placeholder="Ej: 15">
                     </div>
 
-                    <div class="col-12 px-0 mensajeExtras" id="mensajePorcentajeDescuento">
+                    <div class="col-12 px-0 mensajeExtras" id="mensajePorcentajeDescuento" title="Regla de negocio para los descuentos">
                       Debe ser entre 10% y 30%
                     </div>
 
-                    <div class="input-group mt-2">
+                    <div class="input-group mt-2" title="Valor calculado según el porcentaje ingresado">
                       <span class="input-group-text">C$</span>
                       <input type="number" class="form-control" aria-label="ValorPorcentaje" id="txtValorPorcentajeDescuento" readonly>
                     </div>
                   </div>
                 </div>
                 
-                <div class="col-6 pr-0" id="contenedorPropina">
+                <div class="col-6 pr-0" id="contenedorPropina" title="Activa si quieres incluir la propina a la orden">
                   <!--
                     <div class="col-12 px-0" id="contenedorCheckPropina">
                       <label for="checkPropina" style="font-size: 20px;">
@@ -276,7 +276,7 @@
                   </div>
 
                   <div class="col-12 px-0 contenedorPorcentaje" id="inputPorcentajePropina">
-                    <div class="input-group mb-0">
+                    <div class="input-group mb-0" title="La propina es por porcentaje, así que lo que se ingresa es el porcentaje que se calcula según el total base (Si también hay descuento primero se calcula el descuento y sobre ese resultado luego se calcula la propina)">
                       <span class="input-group-text"><b>%</b></span>
                       <input type="number" class="form-control" aria-label="Porcentaje" id="txtPorcentajePropina" min="0" max="10" step="1" placeholder="Ej: 5">
                     </div>
@@ -285,7 +285,7 @@
                       Debe ser menor o igual a 10%
                     </div>
 
-                    <div class="input-group mt-2">
+                    <div class="input-group mt-2" title="Valor calculado según el porcentaje ingresado">
                       <span class="input-group-text">C$</span>
                       <input type="number" class="form-control" aria-label="ValorPorcentaje" id="txtValorPorcentajePropina" readonly>
                     </div>
@@ -296,7 +296,7 @@
 
             <div class="alert alert-info alert-dismissible mb-0 mt-4" id="infoCalculoPropina">
               <button type="button" class="close" data-dismiss="alert">&times;</button>
-              La propina se calcula sobre el total con el descuento ya aplicado
+              La propina se calcula sobre el total base con el descuento ya aplicado
             </div>
           </div>
           
@@ -309,11 +309,12 @@
         <span
           style="font-size: 22px; color: #E87D7D"
           id="totalOrdenMonto"
-          >Total: C$</span
+          title="Total que se va a pagar por la orden (Ya con decuento y propina si aplican)"
+          >Total a pagar: C$</span
         >
 
         <div class="contFooterRegistrarOrden">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si todavía no va a registrar el pago solo cancele">
             Cancelar
           </button>
   
@@ -323,6 +324,7 @@
             id="btnFacturar"
             onclick="FacturarOrden()"
             disabled
+            title="Se validan los datos y se registra el pago de la orden"
           >
             Registrar
           </button>        
@@ -376,7 +378,7 @@
       
       <div class="modal-footer">
         <div class="contFooterIncluirDetalle">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a incluir ningún consumible a la orden solo cancele">
             Cancelar
           </button>
       
@@ -384,7 +386,8 @@
               type="button"
               class="btn btn-danger"
               id="btnConfirmarIncluirDetalles"
-              disabled>
+              disabled
+              title="Procede a incluir los nuevos consumibles a la orden (No estarán en la orden hasta que se confirmen los cambios al editar)">
               Incluir
           </button> 
         </div>
@@ -420,7 +423,7 @@
       
       <div class="modal-footer">
         <div class="contFooterEditarMesas">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a incluir o cambiar ninguna mesa o área solo cancele">
             Cancelar
           </button>
       
@@ -428,7 +431,8 @@
               type="button"
               class="btn btn-danger"
               id="btnConfirmarEditarMesas"
-              disabled>
+              disabled
+              title="Se modificarán los datos de las mesas de la orden una vez que se confirmen los cambios al editar">
               Confirmar
           </button> 
         </div>

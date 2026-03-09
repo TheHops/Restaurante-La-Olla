@@ -1,6 +1,6 @@
 {% load static %}
 
-<div class="col-12">
+<div class="col-12" title="Busque el consumible que desea incluir a la orden">
     <input
         class="form-control mb-2"
         type="text"
@@ -9,7 +9,7 @@
     >
 </div>
 
-<div id="contenidoIncluirPlatillosEditar" class="col-12 list-group pr-0">
+<div id="contenidoIncluirPlatillosEditar" class="col-12 list-group pr-0" title="Puede seleccionar uno o más consumibles para incluir a la orden">
     {% for platillo in Platillos %}
         <label class="nombreConsumibleIncluir list-group-item list-group-item-action mb-0">
             <div class="row w-100">

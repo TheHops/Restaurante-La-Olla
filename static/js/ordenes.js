@@ -364,7 +364,7 @@ function rellenarParaFacturar(id, total) {
 
   // Se coloca el total para mostrarlo y que el usuario ingrese un buen monto
   let Monto = document.getElementById("totalOrdenMonto");
-  Monto.innerHTML = "Total: C$" + total;
+  Monto.innerHTML = "Total a pagar: C$" + total;
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -450,7 +450,7 @@ function CalcularTotal() {
 
     console.log("Total a pagar: " + totalPagar);
 
-    txtTotalOrden.textContent = `Total: C$${totalPagar}`;
+    txtTotalOrden.textContent = `Total a pagar: C$${totalPagar}`;
 
     // Se verifica si el monto está bien ingresado
     if (MontoNumero < totalPagar && MetodoPago.value == "1") {

@@ -17,14 +17,14 @@
             <!-- Encabezado del inventario -->
             <div id="encabezadoVenta_pag1">
                 <a href="{% url 'OrdenesPendientes' %}">
-                    <button id="btnver_ordenes">
+                    <button id="btnver_ordenes" title="Permite ver las órdenes (Los estados que se pueden ver dependen del cargo del personal)">
                         <img src="{% static 'img/Order2.png' %}" style="width: 30px; height: 30px;" title="Ver órdenes"><span>Ver
                             órdenes</span>
                     </button>
                 </a>
 
                 {% if ordenesPendientes > 0 %}
-                    <span id="noti">{{ordenesPendientes}}</span>
+                    <span id="noti" title="Es la cantidad de órdenes pendientes">{{ordenesPendientes}}</span>
                 {% endif %}
 
             </div>
@@ -36,16 +36,13 @@
                 <fieldset>
                     <legend>Elija el área de mesa</legend>
 
-                    <select name="" id="listaAreasDeMesa" onchange="filtrarMesas(this.value)">
+                    <select name="" id="listaAreasDeMesa" onchange="filtrarMesas(this.value)" title="Es una lista con todas las áreas de mesas existentes en el restaurante, cuando seleccione una se mostrarán las mesas correspondientes a esa área">
+                    
                         {% for areamesa in AreaMesa %}
 
                             <option value="{{areamesa.Id}}">{{areamesa.Nombre}}</option>
                         
                         {% endfor %}
-                    
-                        <!-- <option value="">Salón</option>
-                        <option value="">Piscina</option>
-                        <option value="">Ranchito</option> -->
                     
                     </select>
                 </fieldset>
@@ -53,7 +50,7 @@
                 <fieldset>
                     <legend>Elija la mesa</legend>
 
-                    <div id="mesas">
+                    <div id="mesas" title="Son las mesas correspondientes al área seleccionada">
 
                         {% for mesa in Mesas %}
                             <div class="grid_item">
@@ -83,7 +80,7 @@
                         </div>
                     -->
 
-                    <label class="custom-checkbox">
+                    <label class="custom-checkbox" title="Al activar esta opción, tendremos la posibilidad de seleccionar más de una mesa">
                         <input type="checkbox" id="check_combinar_mesas" name="combinar_mesas">
                         <span class="checkmark">
                             <svg width="22" height="15" viewBox="0 0 28 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -93,7 +90,7 @@
                         <span class="label-text" style="line-height: 13px;">Combinar mesas</span>
                     </label>
     
-                    <button id="btn_siguiente" onclick="pagina2()" disabled>
+                    <button id="btn_siguiente" onclick="pagina2()" disabled title="Pasaremos a la siguiente página donde podremos seleccionar los consumibles para la nueva orden">
                         <img src="{% static 'img/Flecha-Derecha.png' %}" style="width: 25px; height: 25px;" alt="Siguiente">
                         <span id="txtbtn_siguiente">Siguiente</span>
                     </button>
@@ -113,25 +110,26 @@
 
             <div id="acciones_pag2">
                 <div id="accionesGenerales">
-                    <button id="btn_volver" onclick="volver()">
+                    <button id="btn_volver" onclick="volver()" title="Vuelve a la primer página donde se seleccionan mesas">
                         <i class="fa-solid fa-arrow-left"></i>
                         <span id="txtbtn_volver">Volver</span>
                     </button>
                 
                     <!-- Input de buscar -->
                     <input type="text" name="InputBuscarPlatillo" id="InputBuscarPlatillo" placeholder="Buscar consumible"
-                        onkeyup="debouncedFiltrarPlatillos(this.value)">
+                        onkeyup="debouncedFiltrarPlatillos(this.value)" title="Escribe el nombre del consumible que necesitas encontrar y se mostrarán todas las coincidencias">
                 
-                    <button id="btn_abrirListaOrdenes" onclick="abrirCarrito()">
+                    <button id="btn_abrirListaOrdenes" onclick="abrirCarrito()" title="Abrir carrito">
                         <!-- <i class="fa-regular fa-square-list"></i> -->
                         <!-- <i class="fa-solid fa-bars"></i> -->
                         <!-- <i class="fa-regular fa-cart-shopping-fast"></i>                     -->
                         <i class="fa-solid fa-cart-shopping"></i>
                     </button>
                 
-                    <span id="notiPlatillosOrden">1</span>
+                    <span id="notiPlatillosOrden" title="Cantidad de detalles | consumibles en el carrito">1</span>
                 </div>
-                <div id="accionesBusqueda">
+
+                <div id="accionesBusqueda" title="Selecciona el tipo para encontrar los consumibles relacionados">
                     {% for tipo in Tipos%}
                     <div class="form-check">
                         <input class="form-check-input" 
@@ -157,7 +155,7 @@
 
                 {% for Tipo in Tipos %}
 
-                <span class="tipoNombre">
+                <span class="tipoNombre" title="Tipo de consumible">
                     <div class="tipoNombreHead"></div>
                     {{Tipo.Nombre}}
                     <div class="tipoNombreFoot"></div>
@@ -167,9 +165,9 @@
                     {% for platillo in Tipo.Platillos.all %}
                     
                     <!-- Se muestra un platillo -->
-                    <div class="vplatillo" id="platillo{{platillo.Id}}">
+                    <div class="vplatillo" id="platillo{{platillo.Id}}" title="Consumible">
                         <div class="datoPlatillo">
-                            <button data-toggle="modal" data-target="#MostrarDetalleConsumible" class="btnDetalleConsumible" onclick="PonerInfoConsumible('{{platillo.ImagenUrl}}', '{{platillo.Nombre}}', '{{platillo.IdTipoPlatillo.Nombre}}', '{{platillo.Descripcion}}', '{{platillo.Precio}}')">
+                            <button data-toggle="modal" data-target="#MostrarDetalleConsumible" class="btnDetalleConsumible" onclick="PonerInfoConsumible('{{platillo.ImagenUrl}}', '{{platillo.Nombre}}', '{{platillo.IdTipoPlatillo.Nombre}}', '{{platillo.Descripcion}}', '{{platillo.Precio}}')" title="Muestra un modal con información adicional del consumible">
             
                                 <svg width="24" height="24" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M9 15H11V9H9V15ZM10.7125 6.7125C10.9042 6.52083 11 6.28333 11 6C11 5.71667 10.9042 5.47917 10.7125 5.2875C10.5208 5.09583 10.2833 5 10 5C9.71667 5 9.47917 5.09583 9.2875 5.2875C9.09583 5.47917 9 5.71667 9 6C9 6.28333 9.09583 6.52083 9.2875 6.7125C9.47917 6.90417 9.71667 7 10 7C10.2833 7 10.5208 6.90417 10.7125 6.7125ZM10 20C8.61667 20 7.31667 19.7375 6.1 19.2125C4.88333 18.6875 3.825 17.975 2.925 17.075C2.025 16.175 1.3125 15.1167 0.7875 13.9C0.2625 12.6833 0 11.3833 0 10C0 8.61667 0.2625 7.31667 0.7875 6.1C1.3125 4.88333 2.025 3.825 2.925 2.925C3.825 2.025 4.88333 1.3125 6.1 0.7875C7.31667 0.2625 8.61667 0 10 0C11.3833 0 12.6833 0.2625 13.9 0.7875C15.1167 1.3125 16.175 2.025 17.075 2.925C17.975 3.825 18.6875 4.88333 19.2125 6.1C19.7375 7.31667 20 8.61667 20 10C20 11.3833 19.7375 12.6833 19.2125 13.9C18.6875 15.1167 17.975 16.175 17.075 17.075C16.175 17.975 15.1167 18.6875 13.9 19.2125C12.6833 19.7375 11.3833 20 10 20ZM10 18C12.2333 18 14.125 17.225 15.675 15.675C17.225 14.125 18 12.2333 18 10C18 7.76667 17.225 5.875 15.675 4.325C14.125 2.775 12.2333 2 10 2C7.76667 2 5.875 2.775 4.325 4.325C2.775 5.875 2 7.76667 2 10C2 12.2333 2.775 14.125 4.325 15.675C5.875 17.225 7.76667 18 10 18Z" fill="#B44646"/>
@@ -178,15 +176,15 @@
                             </button>
             
                             {% if platillo.ImagenUrl != "" %}
-                                <img src="/media/{{ platillo.ImagenUrl }}" alt="Imagen de {{platillo.Nombre}}">
+                                <img src="/media/{{ platillo.ImagenUrl }}" alt="Imagen de {{platillo.Nombre}}" title="Imagen del consumible">
                             {% else %}
-                                <img src="{% static 'img/ProductoSinFoto.png' %}" alt="">
+                                <img src="{% static 'img/ProductoSinFoto.png' %}" alt="Consumible sin foto" title="Consumible sin foto">
                             {% endif %}
                         </div>
             
                         <div class="infoGenPlatillo">
-                            <span class="nombrePlatillo">{{ platillo.Nombre }}</span>
-                            <span class="precioPlatillo">C${{ platillo.Precio }}</span>
+                            <span class="nombrePlatillo" title="{{ platillo.Nombre }}">{{ platillo.Nombre }}</span>
+                            <span class="precioPlatillo" title="Precio del consumible">C${{ platillo.Precio }}</span>
                         </div>
             
                         <div class="accionesPlatillo">
@@ -194,15 +192,15 @@
                             <div class="cantidad">
                         
                                 <!-- Botones input para cantidad -->
-                                <button id="less" style="border-right: solid 1px #B44646;" class="btnLessPlus" onclick="cambio('{{platillo.Id}}', 0)">-</button>
-                                <input type="number" class="cantBox" id="{{platillo.Id}}" value="0" disabled>
-                                <button id="plus" style="border-left: solid 1px #B44646;" class="btnLessPlus" onclick="cambio('{{platillo.Id}}', 1)">+</button>
+                                <button id="less" style="border-right: solid 1px #B44646;" class="btnLessPlus" onclick="cambio('{{platillo.Id}}', 0)" title="Reduce la cantidad de consumibles a agregar al carrito">-</button>
+                                <input type="number" class="cantBox" id="{{platillo.Id}}" value="0" disabled title="Cantidad de consumibles que se agregarán al carrito">
+                                <button id="plus" style="border-left: solid 1px #B44646;" class="btnLessPlus" onclick="cambio('{{platillo.Id}}', 1)" title="Aumenta la cantidad de consumibles a agregar al carrito">+</button>
                         
                             </div>
                             
                             <div class="botonesPlatillo">
                                 <button class="btnaddCarrito" id="addcarrito{{platillo.Id}}"
-                                    onclick='addCarrito("{{platillo.Id}}", "{{platillo.Nombre}}", "{{platillo.Precio}}")' disabled>
+                                    onclick='addCarrito("{{platillo.Id}}", "{{platillo.Nombre}}", "{{platillo.Precio}}")' disabled title="Agrega el consumible al carrito">
                                     <img src="{% static 'img/carrito.png' %}" alt="" style="width: 20px; height: 20px;">
                                     <span style="transform: translateY(-5px);">Agregar</span>
                                 </button>
@@ -224,7 +222,7 @@
                 <!-- --------------------------- -->
 
                 <div class="encabezado_ordenes">
-                    <i class="fa-solid fa-angles-right fa-lg" id="iconoCerrarCarrito" onclick="cerrarCarrito()"></i>
+                    <i class="fa-solid fa-angles-right fa-lg" id="iconoCerrarCarrito" onclick="cerrarCarrito()" title="Cerrar carrito"></i>
                     <span>Orden</span>
 
                     <button data-toggle="modal" data-target="#InfoCrearOrden" id="btnInfoCrearOrden" title="Explica un poco sobre los botones y las funciones que ofrece">
@@ -239,7 +237,7 @@
                 <!-- animate__fadeIn -->
 
                 <div id="cuerpo_ordenes">
-                    <div id="emptyStateCrearOrden">
+                    <div id="emptyStateCrearOrden" title="Se muestra cuando no hay ningún consumible agregado al carrito">
                         <svg width="30" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg" style="min-width: 30px;">
                             <path d="M28.125 18.75C28.9931 18.75 29.7309 18.4462 30.3385 17.8385C30.9462 17.2309 31.25 16.4931 31.25 15.625C31.25 14.7569 30.9462 14.0191 30.3385 13.4115C29.7309 12.8038 28.9931 12.5 28.125 12.5C27.2569 12.5 26.5191 12.8038 25.9115 13.4115C25.3038 14.0191 25 14.7569 25 15.625C25 16.4931 25.3038 17.2309 25.9115 17.8385C26.5191 18.4462 27.2569 18.75 28.125 18.75ZM13.5417 18.75C14.4097 18.75 15.1476 18.4462 15.7552 17.8385C16.3628 17.2309 16.6667 16.4931 16.6667 15.625C16.6667 14.7569 16.3628 14.0191 15.7552 13.4115C15.1476 12.8038 14.4097 12.5 13.5417 12.5C12.6736 12.5 11.9358 12.8038 11.3281 13.4115C10.7205 14.0191 10.4167 14.7569 10.4167 15.625C10.4167 16.4931 10.7205 17.2309 11.3281 17.8385C11.9358 18.4462 12.6736 18.75 13.5417 18.75ZM20.8333 23.9583C18.4722 23.9583 16.3281 24.6267 14.401 25.9635C12.474 27.3003 11.0764 29.0625 10.2083 31.25H13.6458C14.4097 29.9653 15.4253 28.9497 16.6927 28.2031C17.9601 27.4566 19.3403 27.0833 20.8333 27.0833C22.3264 27.0833 23.7066 27.4566 24.974 28.2031C26.2413 28.9497 27.2569 29.9653 28.0208 31.25H31.4583C30.5903 29.0625 29.1927 27.3003 27.2656 25.9635C25.3385 24.6267 23.1944 23.9583 20.8333 23.9583ZM20.8333 41.6667C17.9514 41.6667 15.2431 41.1198 12.7083 40.026C10.1736 38.9323 7.96875 37.4479 6.09375 35.5729C4.21875 33.6979 2.73438 31.4931 1.64063 28.9583C0.546875 26.4236 0 23.7153 0 20.8333C0 17.9514 0.546875 15.2431 1.64063 12.7083C2.73438 10.1736 4.21875 7.96875 6.09375 6.09375C7.96875 4.21875 10.1736 2.73438 12.7083 1.64063C15.2431 0.546875 17.9514 0 20.8333 0C23.7153 0 26.4236 0.546875 28.9583 1.64063C31.4931 2.73438 33.6979 4.21875 35.5729 6.09375C37.4479 7.96875 38.9323 10.1736 40.026 12.7083C41.1198 15.2431 41.6667 17.9514 41.6667 20.8333C41.6667 23.7153 41.1198 26.4236 40.026 28.9583C38.9323 31.4931 37.4479 33.6979 35.5729 35.5729C33.6979 37.4479 31.4931 38.9323 28.9583 40.026C26.4236 41.1198 23.7153 41.6667 20.8333 41.6667ZM20.8333 37.5C25.4861 37.5 29.4271 35.8854 32.6562 32.6562C35.8854 29.4271 37.5 25.4861 37.5 20.8333C37.5 16.1806 35.8854 12.2396 32.6562 9.01042C29.4271 5.78125 25.4861 4.16667 20.8333 4.16667C16.1806 4.16667 12.2396 5.78125 9.01042 9.01042C5.78125 12.2396 4.16667 16.1806 4.16667 20.8333C4.16667 25.4861 5.78125 29.4271 9.01042 32.6562C12.2396 35.8854 16.1806 37.5 20.8333 37.5Z" fill="#BBBBBB"/>
                           </svg>
@@ -251,19 +249,18 @@
                 <!-- --------------------------- -->
 
                 <div class="pie_ordenes">
-                    <div class="total">
+                    <div class="total" title="Total del carrito">
                         <span>Total: C$<span id="preciototal">0</span></span>
                     </div>
                     <div class="botonesOrden">
 
-                        <button id="btnAgregarOrden" onclick="agregarOrden()" disabled>
+                        <button id="btnAgregarOrden" onclick="agregarOrden()" disabled title="Crea la orden detallando lo que fue agregado en el carrito">
                             <i class="fa-solid fa-clipboard-list"></i>
                             <span>Crear orden</span>
                         </button>
 
-                        <button class="btnLimpiar" onclick="limpiarOrdenes()">
-                            <img src="{% static 'img/Limpiar.png' %}" style="width: 20px; height: 20px;"
-                                title="Limpiar orden">
+                        <button class="btnLimpiar" onclick="limpiarOrdenes()" title="Se quitan todos los consumibles que fueron agregados al carrito">
+                            <img src="{% static 'img/Limpiar.png' %}" style="width: 20px; height: 20px;">
                             <span>Limpiar</span>
                         </button>
                     </div>

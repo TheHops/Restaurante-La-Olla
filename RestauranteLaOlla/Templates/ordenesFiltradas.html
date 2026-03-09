@@ -26,30 +26,30 @@
     <h5>
       Orden #{{ Orden.Id }} - 
       {% if Orden.Estado == "1" %} Pendiente
-      <div class="EstP"></div>
+      <div class="EstP" title="Orden pendiente"></div>
       {% elif Orden.Estado == "0" %} Pago registrado
-      <div class="EstF"></div>
+      <div class="EstF" title="Orden con pago registrado"></div>
       {% elif Orden.Estado == "3" %} Preparada
-      <div class="EstPre"></div>
+      <div class="EstPre" title="Orden preparada"></div>
       {% elif Orden.Estado == "4" %} En preparación
-      <div class="EstEnPre"></div>
+      <div class="EstEnPre" title="Orden en preparación"></div>
       {% else %} Anulada
-      <div class="EstC"></div>
+      <div class="EstC" title="Orden anulada"></div>
       {% endif %}
     </h5>
     
     {% if Orden.Estado == "0" %}
-      <h4>Total pagado: C${{Orden.TotalPagar}}</h4>
+      <h4 title="Total final con el que pagó el cliente">Total pagado: C${{Orden.TotalPagar}}</h4>
     {% else %}
-      <h4>Total: C${{Orden.Total}}</h4>
+      <h4 title="Total base de la orden">Total: C${{Orden.Total}}</h4>
     {% endif %}
   </div>
   <!-- Fin encabezadoPoFoC -->
 
   <div class="seccionesPoFoC">
     <div class="seccionIzquierda">
-      <h4 style="margin: 0">Area: {{Orden.AreaDeMesa}}</h4>
-      <h5>
+      <h4 style="margin: 0" title="Area de mesa de la orden">Area: {{Orden.AreaDeMesa}}</h4>
+      <h5 title="Mesas involucradas en la orden">
         Mesas ocupadas: 
         {% for mesa in Orden.Mesas.all %}
         #{{mesa.IdMesa.Numero}} 
@@ -58,17 +58,18 @@
       </h5>
 
       {% if Orden.Estado == "1" %}
-        <span class="timer" style="color: #555555" id="timer-{{ Orden.Id }}-{{Orden.Estado}}" data-estado="{{ Orden.Estado }}"
-              data-fecha="{{ Orden.Fecha|date:'Y-m-d\\TH:i:s' }}">
+        <span title="Contador de tiempo para saber cuánto ha pasado desde que se ha creado" class="timer" style="color: #555555" id="timer-{{ Orden.Id }}-{{Orden.Estado}}" data-estado="{{ Orden.Estado }}"
+          data-fecha="{{ Orden.Fecha|date:'Y-m-d\\TH:i:s' }}">
         </span>
       {% elif Orden.Estado == "4" %}
-        <span class="timer" style="color: #555555" id="timer-{{ Orden.Id }}" data-estado="{{ Orden.Estado }}" 
-              data-fecha="{{ Orden.UltimaModificacion|date:'Y-m-d\\TH:i:s' }}">
+        <span title="Contador de tiempo para saber cuánto ha pasado desde que se empezó a preparar" class="timer" style="color: #555555" id="timer-{{ Orden.Id }}" data-estado="{{ Orden.Estado }}" 
+          data-fecha="{{ Orden.UltimaModificacion|date:'Y-m-d\\TH:i:s' }}">
         </span>
       {% else %}
-        <h6 style="color: #555555">{{ Orden.UltimaModificacion|date:"j \\d\\e F \\d\\e Y \\a \\l\\a\\s g:i A" }}</h6>
+        <h6 title="Hora y fecha desde la última modificación" style="color: #555555">{{ Orden.UltimaModificacion|date:"j \\d\\e F \\d\\e Y \\a \\l\\a\\s g:i A" }}</h6>
       {% endif %}
     </div>
+
     <div class="seccionDerecha">
       <!-- Pendiente -->
       {% if Orden.Estado == "1" %}
@@ -78,6 +79,7 @@
           <button
             class="btnCancelarOrden"
             onclick="CancelarOrden('{{Orden.Id}}')"
+            title="Anular la orden"
           >
             <i class="fa-solid fa-ban"></i> Anular
           </button>
@@ -88,6 +90,7 @@
           data-toggle="modal"
           data-target="#EditarOrden"
           onclick="rellenarParaEditarOrden('{{Orden.Id}}')"
+          title="Editar la orden"
           >
           <svg width="20" height="20" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg" class="btnIcono">
             <path d="M2.91667 23.3333H4.99479L19.25 9.07812L17.1719 7L2.91667 21.2552V23.3333ZM0 26.25V20.0521L19.25 0.838542C19.5417 0.571181 19.8637 0.364583 20.2161 0.21875C20.5686 0.0729167 20.9392 0 21.3281 0C21.717 0 22.0938 0.0729167 22.4583 0.21875C22.8229 0.364583 23.1389 0.583333 23.4062 0.875L25.4115 2.91667C25.7031 3.18403 25.9158 3.5 26.0495 3.86458C26.1832 4.22917 26.25 4.59375 26.25 4.95833C26.25 5.34722 26.1832 5.71788 26.0495 6.07031C25.9158 6.42274 25.7031 6.74479 25.4115 7.03646L6.19792 26.25H0ZM18.1927 8.05729L17.1719 7L19.25 9.07812L18.1927 8.05729Z" fill="white"/>
@@ -99,7 +102,7 @@
 
         {% if CargoUsuario == "Armador" or CargoUsuario == "Administrador" %}
           <!-- Cambiar el estado de la orden a 'En preparación' -->
-          <button class="btnPrepararOrden" onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAEnPreparacion' %}', 'Cambiando a En preparación')">
+          <button class="btnPrepararOrden" onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAEnPreparacion' %}', 'Cambiando a En preparación')" title="Cambiar el estado de la orden a 'En preparación'">
             <svg width="30" height="18" viewBox="0 0 30 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="btnIcono">
               <path d="M0 17.5V0H2.91667V17.5H0ZM20.4167 17.5L18.3385 15.4583L23.5885 10.2083H5.83333V7.29167H23.5885L18.375 2.04167L20.4167 0L29.1667 8.75L20.4167 17.5Z" fill="white"/>
               </svg>
@@ -116,6 +119,7 @@
           <button
             class="btnCancelarOrden"
             onclick="CancelarOrden('{{Orden.Id}}')"
+            title="Anular la orden"
           >
             <i class="fa-solid fa-ban"></i> Anular
           </button>
@@ -126,6 +130,7 @@
             data-toggle="modal"
             data-target="#EditarOrden"
             onclick="rellenarParaEditarOrden('{{Orden.Id}}')"
+            title="Editar la orden"
             >
               <svg width="20" height="20" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg" class="btnIcono">
                 <path d="M2.91667 23.3333H4.99479L19.25 9.07812L17.1719 7L2.91667 21.2552V23.3333ZM0 26.25V20.0521L19.25 0.838542C19.5417 0.571181 19.8637 0.364583 20.2161 0.21875C20.5686 0.0729167 20.9392 0 21.3281 0C21.717 0 22.0938 0.0729167 22.4583 0.21875C22.8229 0.364583 23.1389 0.583333 23.4062 0.875L25.4115 2.91667C25.7031 3.18403 25.9158 3.5 26.0495 3.86458C26.1832 4.22917 26.25 4.59375 26.25 4.95833C26.25 5.34722 26.1832 5.71788 26.0495 6.07031C25.9158 6.42274 25.7031 6.74479 25.4115 7.03646L6.19792 26.25H0ZM18.1927 8.05729L17.1719 7L19.25 9.07812L18.1927 8.05729Z" fill="white"/>
@@ -137,12 +142,13 @@
 
         {% if CargoUsuario == "Armador" or CargoUsuario == "Administrador" %}
           <!-- Cambiar el estado de la orden a 'Preparada' -->
-          <button class="btnFinalizarOrden" onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAPreparado' %}', 'Cambiando a Preparada')">
+          <button class="btnFinalizarOrden" onclick="cambiarEstadoOrden('{{Orden.Id}}', '{% url 'CambiarAPreparado' %}', 'Cambiando a Preparada')" title="Cambiar el estado de la orden a 'Preparada'">
             <svg width="22" height="22" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" class="btnIcono">
               <path d="M11.25 33.75C8.125 33.75 5.46875 32.6562 3.28125 30.4688C1.09375 28.2812 0 25.625 0 22.5V11.25C0 8.125 1.09375 5.46875 3.28125 3.28125C5.46875 1.09375 8.125 0 11.25 0H22.5C25.625 0 28.2812 1.09375 30.4688 3.28125C32.6562 5.46875 33.75 8.125 33.75 11.25V22.5C33.75 25.625 32.6562 28.2812 30.4688 30.4688C28.2812 32.6562 25.625 33.75 22.5 33.75H11.25ZM15 24.375L26.25 13.125L23.625 10.5L15 19.125L10.875 15L8.25 17.625L15 24.375ZM11.25 30H22.5C24.5625 30 26.3281 29.2656 27.7969 27.7969C29.2656 26.3281 30 24.5625 30 22.5V11.25C30 9.1875 29.2656 7.42188 27.7969 5.95312C26.3281 4.48438 24.5625 3.75 22.5 3.75H11.25C9.1875 3.75 7.42188 4.48438 5.95312 5.95312C4.48438 7.42188 3.75 9.1875 3.75 11.25V22.5C3.75 24.5625 4.48438 26.3281 5.95312 27.7969C7.42188 29.2656 9.1875 30 11.25 30Z" fill="white"/>
-              </svg>
-              Finalizar
-            </button>
+            </svg>
+
+            Finalizar
+          </button>
         {% endif %}
 
       <!-- Preparado -->
@@ -153,6 +159,7 @@
           <button
             class="btnCancelarOrden"
             onclick="CancelarOrden('{{Orden.Id}}')"
+            title="Anular la orden"
           >
             <i class="fa-solid fa-ban"></i> Anular
           </button>
@@ -165,6 +172,7 @@
             data-toggle="modal"
             data-target="#EditarOrden"
             onclick="rellenarParaEditarOrden('{{Orden.Id}}')"
+            title="Editar la orden"
             >
             <svg width="20" height="20" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg" class="btnIcono">
               <path d="M2.91667 23.3333H4.99479L19.25 9.07812L17.1719 7L2.91667 21.2552V23.3333ZM0 26.25V20.0521L19.25 0.838542C19.5417 0.571181 19.8637 0.364583 20.2161 0.21875C20.5686 0.0729167 20.9392 0 21.3281 0C21.717 0 22.0938 0.0729167 22.4583 0.21875C22.8229 0.364583 23.1389 0.583333 23.4062 0.875L25.4115 2.91667C25.7031 3.18403 25.9158 3.5 26.0495 3.86458C26.1832 4.22917 26.25 4.59375 26.25 4.95833C26.25 5.34722 26.1832 5.71788 26.0495 6.07031C25.9158 6.42274 25.7031 6.74479 25.4115 7.03646L6.19792 26.25H0ZM18.1927 8.05729L17.1719 7L19.25 9.07812L18.1927 8.05729Z" fill="white"/>
@@ -180,6 +188,7 @@
             data-toggle="modal"
             data-target="#FacturarOrden"
             onclick="rellenarParaFacturar('{{Orden.Id}}', '{{Orden.Total}}')"
+            title="Registrar el pago de la orden"
           >
             <i class="fa-solid fa-file-invoice-dollar"></i> Registrar pago
           </button>
@@ -189,7 +198,7 @@
       {% elif Orden.Estado == "2" %}
 
         {% if Orden.Motivo is not none and Orden.Motivo != '' %}
-          <div class="motivoOrden">
+          <div class="motivoOrden" title="Motivo de la anulación de la orden">
             <svg width="30" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg" style="min-width: 30px;">
               <path d="M28.125 18.75C28.9931 18.75 29.7309 18.4462 30.3385 17.8385C30.9462 17.2309 31.25 16.4931 31.25 15.625C31.25 14.7569 30.9462 14.0191 30.3385 13.4115C29.7309 12.8038 28.9931 12.5 28.125 12.5C27.2569 12.5 26.5191 12.8038 25.9115 13.4115C25.3038 14.0191 25 14.7569 25 15.625C25 16.4931 25.3038 17.2309 25.9115 17.8385C26.5191 18.4462 27.2569 18.75 28.125 18.75ZM13.5417 18.75C14.4097 18.75 15.1476 18.4462 15.7552 17.8385C16.3628 17.2309 16.6667 16.4931 16.6667 15.625C16.6667 14.7569 16.3628 14.0191 15.7552 13.4115C15.1476 12.8038 14.4097 12.5 13.5417 12.5C12.6736 12.5 11.9358 12.8038 11.3281 13.4115C10.7205 14.0191 10.4167 14.7569 10.4167 15.625C10.4167 16.4931 10.7205 17.2309 11.3281 17.8385C11.9358 18.4462 12.6736 18.75 13.5417 18.75ZM20.8333 23.9583C18.4722 23.9583 16.3281 24.6267 14.401 25.9635C12.474 27.3003 11.0764 29.0625 10.2083 31.25H13.6458C14.4097 29.9653 15.4253 28.9497 16.6927 28.2031C17.9601 27.4566 19.3403 27.0833 20.8333 27.0833C22.3264 27.0833 23.7066 27.4566 24.974 28.2031C26.2413 28.9497 27.2569 29.9653 28.0208 31.25H31.4583C30.5903 29.0625 29.1927 27.3003 27.2656 25.9635C25.3385 24.6267 23.1944 23.9583 20.8333 23.9583ZM20.8333 41.6667C17.9514 41.6667 15.2431 41.1198 12.7083 40.026C10.1736 38.9323 7.96875 37.4479 6.09375 35.5729C4.21875 33.6979 2.73438 31.4931 1.64063 28.9583C0.546875 26.4236 0 23.7153 0 20.8333C0 17.9514 0.546875 15.2431 1.64063 12.7083C2.73438 10.1736 4.21875 7.96875 6.09375 6.09375C7.96875 4.21875 10.1736 2.73438 12.7083 1.64063C15.2431 0.546875 17.9514 0 20.8333 0C23.7153 0 26.4236 0.546875 28.9583 1.64063C31.4931 2.73438 33.6979 4.21875 35.5729 6.09375C37.4479 7.96875 38.9323 10.1736 40.026 12.7083C41.1198 15.2431 41.6667 17.9514 41.6667 20.8333C41.6667 23.7153 41.1198 26.4236 40.026 28.9583C38.9323 31.4931 37.4479 33.6979 35.5729 35.5729C33.6979 37.4479 31.4931 38.9323 28.9583 40.026C26.4236 41.1198 23.7153 41.6667 20.8333 41.6667ZM20.8333 37.5C25.4861 37.5 29.4271 35.8854 32.6562 32.6562C35.8854 29.4271 37.5 25.4861 37.5 20.8333C37.5 16.1806 35.8854 12.2396 32.6562 9.01042C29.4271 5.78125 25.4861 4.16667 20.8333 4.16667C16.1806 4.16667 12.2396 5.78125 9.01042 9.01042C5.78125 12.2396 4.16667 16.1806 4.16667 20.8333C4.16667 25.4861 5.78125 29.4271 9.01042 32.6562C12.2396 35.8854 16.1806 37.5 20.8333 37.5Z" fill="#CC6666"/>
             </svg>
@@ -212,7 +221,7 @@
 
 <!-- Inicia descripcion (Se agrega si es necesario) -->
 {% if Orden.Descripcion is not none and Orden.Descripcion != '' %}
-  <div class="descripcionOrden">
+  <div class="descripcionOrden" title="Descripción de la orden">
     <svg width="16" height="16" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 10px;">
       <path d="M5 15H20V12.5H5V15ZM5 11.25H20V8.75H5V11.25ZM5 7.5H20V5H5V7.5ZM25 25L20 20H2.5C1.8125 20 1.22396 19.7552 0.734375 19.2656C0.244792 18.776 0 18.1875 0 17.5V2.5C0 1.8125 0.244792 1.22396 0.734375 0.734375C1.22396 0.244792 1.8125 0 2.5 0H22.5C23.1875 0 23.776 0.244792 24.2656 0.734375C24.7552 1.22396 25 1.8125 25 2.5V25ZM2.5 17.5H21.0625L22.5 18.9062V2.5H2.5V17.5Z" fill="#CC6666"/>
       </svg>
@@ -223,7 +232,7 @@
 
 {% if Orden.Estado == "1" or Orden.Estado == "4" or Orden.Estado == "3" %}
   {% if Orden.DescripcionEdicion is not none and Orden.DescripcionEdicion != '' %}
-    <div class="descripcionEdicionOrden">
+    <div class="descripcionEdicionOrden" title="Descripción de la edición de la orden">
       <img style="width: 20px; margin-right: 10px;" src="{% static 'img/comment_pen_blue_thick.png' %}" alt="">
 
       <span>{{ Orden.DescripcionEdicion }}</span>
@@ -231,12 +240,12 @@
   {% endif %}
 {% endif %}
 
-<div class="detalleOrdenPoFoC">
+<div class="detalleOrdenPoFoC" title="Detalles de la orden">
   <div class="cuerpoDetalleOrden" id="idDetalleOrden{{Orden.Id}}">
     <div class="detallitoOrden">
-      <span style="width: 70%">Platillo</span>
-      <span style="width: 15%">Cantidad</span>
-      <span style="width: 10%">Precio</span>
+      <span style="width: 70%" title="Nombre del consumible">Consumible</span>
+      <span style="width: 15%" title="Cantidad del consumible">Cantidad</span>
+      <span style="width: 10%" title="Precio del consumible">Precio</span>
 
       <hr
         style="
@@ -254,10 +263,10 @@
           {% if Orden.Estado != "0" and Orden.Estado != "2" %}
             {% if Detalle.DesdeEdicion %}
               {% if Detalle.EsNuevo %}
-                <div class="signalDetalleNuevo signalDetalle">
+                <div class="signalDetalleNuevo signalDetalle" title="Este detalle fué recién incluido a la orden (Los cambios en el detalle se basan en la última edición de la orden)">
                 </div>
               {% else %}
-                <div class="signalDetalleEditado signalDetalle">
+                <div class="signalDetalleEditado signalDetalle" title="Este detalle fué recién editado (Los cambios en el detalle se basan en la última edición de la orden)">
                 </div>
               {% endif %}
             {% endif %}
@@ -270,13 +279,13 @@
             >{{ Detalle.IdPlatillo.Nombre }}
           </span>
 
-          <span style="width: 15%">{{ Detalle.Cantidad }}</span>
-          <span style="width: 10%">C${{ Detalle.PrecioVenta }}</span>
+          <span style="width: 15%" title="Cantidad: {{ Detalle.Cantidad }}">{{ Detalle.Cantidad }}</span>
+          <span style="width: 10%" title="Precio: C${{ Detalle.PrecioVenta }}">C${{ Detalle.PrecioVenta }}</span>
         {% else %}
         
           {% if Orden.Estado != "0" and Orden.Estado != "2" %}
             {% if Detalle.EsEliminado %}
-              <div class="signalDetalleEliminado signalDetalle">
+              <div class="signalDetalleEliminado signalDetalle" title="Este detalle fué recién eliminado de la orden (Los cambios en el detalle se basan en la última edición de la orden)">
               </div>
             {% endif %}
           {% endif %}
@@ -297,7 +306,7 @@
     </div>
   </div>
   <!-- fin cuerpoDetalleOrden -->
-  <div class="botonDesplazarDetalleOrden">
+  <div class="botonDesplazarDetalleOrden" title="Presiona para mostrar u ocultar los detalles de la orden">
     <button onclick="desplegarDetalles('{{Orden.Id}}')">
       <i
         class="fa-solid fa-angles-down iconoDesplegarDetalles"
@@ -311,7 +320,7 @@
 
 {% endfor %}
 
-<div id="emptyStateOrdenes">
+<div id="emptyStateOrdenes" title="No hay órdenes">
   <img src="/static/img/Logo la olla 2.png" alt="" id="logodecoESOrdenes" />
 
   <svg viewBox="0 0 200 60" width="260" height="80" id="svgCurvoOrdenes">

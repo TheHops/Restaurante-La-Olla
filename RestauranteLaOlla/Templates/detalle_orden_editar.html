@@ -26,19 +26,19 @@
 
     <!-- ¿Quién creó la orden? -->
     <div class="col-12">
-      <div class="row">
+      <div class="row" title="Se muestran detalles del usuario | personal que creó la orden">
 
         <!-- Detalles del que hizo la orden -->
         <h4 style="font-size: 18px; margin-bottom: 3px;" class="col-12">¿Quién creó la orden?</h4>
     
-        <div class="col-6 mb-2" id="nombreCreadorDiv">
+        <div class="col-6 mb-2" id="nombreCreadorDiv" title="Nombre del usuario | personal que creó la orden">
           <div class="nombreCreadorTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Nombre</h4>
           </div>
           <input type="text" class="form-control" id="nombreCreador" value="{{NombreCreador}}" readonly/>
         </div>
     
-        <div class="col-3 mb-2" id="cargoCreadorDiv">
+        <div class="col-3 mb-2" id="cargoCreadorDiv" title="Cargo del usuario | Personal que creó la orden">
           <div class="cargoCreadorTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Cargo</h4>
           </div>
@@ -54,14 +54,14 @@
     {% if Orden.Estado == "0" %}
     <!-- Detalles de pago de la orden -->
     <div class="col-12">
-      <div class="row">
+      <div class="row" title="Se muestran los detalles de pago de la orden">
 
         <!-- Detalles del que hizo la orden -->
         <h4 style="font-size: 18px; margin-bottom: 3px;" class="col-12">Detalles de pago</h4>
         
         {% if Orden.Total > 0 %}
         <!-- Total base -->
-        <div class="col-3 mb-2" id="totalBaseOrdenDiv">
+        <div class="col-3 mb-2" id="totalBaseOrdenDiv" title="Es el total base de la orden (Se le excluye el descuento y la propina)">
           <div class="totalBaseOrdenTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Subtotal (C$)</h4>
           </div>
@@ -71,7 +71,7 @@
         
         {% if Orden.Descuento < 0 %}
         <!-- Descuento -->
-        <div class="col-3 mb-2" id="descuentoOrdenDiv">
+        <div class="col-3 mb-2" id="descuentoOrdenDiv" title="Es el descuento de la orden">
           <div class="descuentoOrdenTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Descuento (C$)</h4>
           </div>
@@ -81,7 +81,7 @@
     
         {% if Orden.Propina > 0 %}
         <!-- Propina -->
-        <div class="col-3 mb-2" id="propinaOrdenDiv">
+        <div class="col-3 mb-2" id="propinaOrdenDiv" title="Es la propina de la orden">
           <div class="propinaOrdenTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Propina (C$)</h4>
           </div>
@@ -91,7 +91,7 @@
     
         {% if Orden.TotalPagar > 0 %}
         <!-- Total pagado -->
-        <div class="col-3 mb-2" id="totalPagadoOrdenDiv">
+        <div class="col-3 mb-2" id="totalPagadoOrdenDiv" title="Es el total pagado (Incluye el descuento y la propina)">
           <div class="totalPagadoOrdenTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Total pagado (C$)</h4>
           </div>
@@ -101,7 +101,7 @@
     
         {% if Orden.Monto > 0 %}
         <!-- Monto -->
-        <div class="col-3 mb-2" id="montoOrdenDiv">
+        <div class="col-3 mb-2" id="montoOrdenDiv" title="Es el monto con el que se pagó la orden (Si el método de pago es con tarjeta o transferencia el resultado del monto es igual al total a pagar)">
           <div class="montoOrdenTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Monto (C$)</h4>
           </div>
@@ -111,7 +111,7 @@
     
         {% if Orden.Cambio > 0 %}
         <!-- Cambio -->
-        <div class="col-3 mb-2" id="cambioOrdenDiv">
+        <div class="col-3 mb-2" id="cambioOrdenDiv" title="El cambio que se le dió al cliente (Si aplica)">
           <div class="cambioOrdenTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Cambio (C$)</h4>
           </div>
@@ -121,7 +121,7 @@
     
         {% if Orden.SegundoMonto > 0 %}
         <!-- Segundo monto -->
-        <div class="col-3 mb-2" id="segundoMontoOrdenDiv">
+        <div class="col-3 mb-2" id="segundoMontoOrdenDiv" title="Solo aplica si hubo pago mixto, este monto representa lo restante que se paga con la tarjeta">
           <div class="segundoMontoOrdenTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Segundo monto (C$)</h4>
           </div>
@@ -130,7 +130,7 @@
         {% endif %}
     
         <!-- Metodo de pago -->
-        <div class="col-3 mb-2" id="metodoPagoOrdenDiv">
+        <div class="col-3 mb-2" id="metodoPagoOrdenDiv" title="Indica el método de pago con el que se registró el pago la orden">
           <div class="metodoPagoOrdenTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Método de pago</h4>
           </div>
@@ -145,13 +145,13 @@
     {% else %}
     <!-- Motivo de la anulación -->
     <div class="col-12">
-      <div class="row">
+      <div class="row" title="Se muestran estos datos cuando la orden fue anulada">
 
         <!-- Detalles del que hizo la orden -->
         <h4 style="font-size: 18px; margin-bottom: 3px;" class="col-12">Detalles de la anulación</h4>
     
         <!-- Metodo de pago -->
-        <div class="col-12 mb-2" id="motivoAnulacionOrdenDiv">
+        <div class="col-12 mb-2" id="motivoAnulacionOrdenDiv" title="Motivo de la orden anulada">
           <div class="motivoAnulacionOrdenTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Motivo</h4>
           </div>
@@ -169,12 +169,12 @@
   {% else %}
 
   <div class="col-12 d-flex justify-content-between">
-    <div class="col-6 row" id="izquierdaEditarMesas">
+    <div class="col-6 row" id="izquierdaEditarMesas" title="Detalles de las mesas de la orden">
       <!-- Detalles del que hizo la orden -->
       <h4 style="font-size: 18px; margin-bottom: 3px;" class="col-12 pl-0">Area de mesa</h4>
   
       <!-- Area de mesa -->
-      <div class="col-6 mb-2 pl-0" id="NombreAreaMesaOrdenDiv">
+      <div class="col-6 mb-2 pl-0" id="NombreAreaMesaOrdenDiv" title="Nombre del área de mesa">
         <div class="NombreAreaMesaOrdenTxt">
           <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Nombre</h4>
         </div>
@@ -182,7 +182,7 @@
       </div>
       
       <!-- Mesas -->
-      <div class="col-6 mb-2" id="MesasOrdenDiv">
+      <div class="col-6 mb-2" id="MesasOrdenDiv" title="Nombre de las mesas del área de la orden">
         <div class="MesasOrdenTxt">
           <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Mesas</h4>
         </div>
@@ -194,8 +194,8 @@
       </div>
     </div>
 
-    <div class="col-6 d-flex justify-content-end pr-0 mb-2" id="derechaEditarMesas">
-        <button data-toggle="modal" data-target="#EditarMesas" onclick="editarMesas('{{Orden.Id}}')" id="btnEditarMesas">
+    <div class="col-6 d-flex justify-content-end pr-0 mb-2" id="derechaEditarMesas" title="Acciones para editar las mesas">
+        <button data-toggle="modal" data-target="#EditarMesas" onclick="editarMesas('{{Orden.Id}}')" id="btnEditarMesas" title="Edita las mesas y también puedes cambiar de área y seleccionar una mesa de la nueva área">
   
           <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M14.7879 7H5.21288L4.93788 9H15.0379L14.7879 7ZM1.98788 16L3.21288 7H0.987879C0.654545 7 0.392045 6.86667 0.200379 6.6C0.00871211 6.33333 -0.0454545 6.04167 0.0378788 5.725L1.46288 0.725C1.52955 0.508333 1.64621 0.333333 1.81288 0.2C1.97955 0.0666667 2.17955 0 2.41288 0H17.5629C17.7962 0 17.9962 0.0666667 18.1629 0.2C18.3295 0.333333 18.4462 0.508333 18.5129 0.725L19.9379 5.725C20.0212 6.04167 19.967 6.33333 19.7754 6.6C19.5837 6.86667 19.3212 7 18.9879 7H16.7879L17.9879 16H15.9879L15.3129 11H4.66288L3.98788 16H1.98788Z" fill="white"/>
@@ -225,7 +225,7 @@
   
   <div class="col-12">
     <!-- Descripción -->
-    <h4 style="font-size: 20px; margin-bottom: 3px;">Descripción</h4>
+    <h4 style="font-size: 20px; margin-bottom: 3px;" title="Es la descripción de la orden">Descripción</h4>
     
     {% if Modo == "Editar" %}
       <textarea class="form-control mb-2" id="descripcionOrdenEditar" maxlength="150" placeholder="Ingrese una descripción">{% if Orden.Descripcion %}{{ Orden.Descripcion }}{% endif %}</textarea>
@@ -238,7 +238,7 @@
   <hr>
 
   <div class="col-12">
-    <button data-toggle="modal" data-target="#IncluirDetalle" onclick="agregarPlatillosIncluir('{{Orden.Id}}')" id="btnIncluirConsumible">
+    <button data-toggle="modal" data-target="#IncluirDetalle" onclick="agregarPlatillosIncluir('{{Orden.Id}}')" id="btnIncluirConsumible" title="Incluye un nuevo consumible a la orden">
       <svg width="18" height="18" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M6 8H0V6H6V0H8V6H14V8H8V14H6V8Z" fill="white"/>
       </svg>
@@ -248,7 +248,7 @@
       Incluir consumible
     </button>
 
-    <button onclick="rellenarParaEditarOrden('{{Orden.Id}}')" id="btnReiniciarEdición">
+    <button onclick="rellenarParaEditarOrden('{{Orden.Id}}')" id="btnReiniciarEdición" title="Reinicia todos los cambios a como estaban inicialmente antes de modificar o agregar consumibles o mesas">
       <svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M7 18.45C4.98333 18.2 3.3125 17.3208 1.9875 15.8125C0.6625 14.3042 0 12.5333 0 10.5C0 9.4 0.216667 8.34583 0.65 7.3375C1.08333 6.32917 1.7 5.45 2.5 4.7L3.925 6.125C3.29167 6.69167 2.8125 7.35 2.4875 8.1C2.1625 8.85 2 9.65 2 10.5C2 11.9667 2.46667 13.2625 3.4 14.3875C4.33333 15.5125 5.53333 16.2 7 16.45V18.45ZM9 18.45V16.45C10.45 16.1833 11.6458 15.4917 12.5875 14.375C13.5292 13.2583 14 11.9667 14 10.5C14 8.83333 13.4167 7.41667 12.25 6.25C11.0833 5.08333 9.66667 4.5 8 4.5H7.925L9.025 5.6L7.625 7L4.125 3.5L7.625 0L9.025 1.4L7.925 2.5H8C10.2333 2.5 12.125 3.275 13.675 4.825C15.225 6.375 16 8.26667 16 10.5C16 12.5167 15.3375 14.2792 14.0125 15.7875C12.6875 17.2958 11.0167 18.1833 9 18.45Z" fill="white"/>
       </svg>
@@ -268,37 +268,37 @@
       <thead>
         <!-- Columnas -->
         <tr id="columnasDetallesEditarOrden">
-            <th><h5>Consumible</h5></th>
-            <th><h5>Precio unitario</h5></th>
-            <th style="text-align: center; min-width: 100px;"><h5>Cantidad</h5></th>
+            <th title="Nombre del consumible"><h5>Consumible</h5></th>
+            <th title="Precio del consumible como unidad"><h5>Precio unitario</h5></th>
+            <th title="Cantidad que quiere el cliente de este consumible" style="text-align: center; min-width: 100px;"><h5>Cantidad</h5></th>
 
             {% if Modo == "Editar" %}
-                <th style="text-align: center;"><h5>Acciones</h5></th>
+                <th style="text-align: center;" title="Acciones (En este caso solo quitar consumible de la orden)"><h5>Acciones</h5></th>
             {% else %}
-                <th><h5>Subtotal</h5></th>
+                <th title="Subtotal: Precio unitario * cantidad"><h5>Subtotal</h5></th>
             {% endif %}
         </tr>
       </thead>
   
       <!-- Filas -->
-      <tbody class="cuerpoDetalleOrdenTabla" id="cuerpoTablaEditarOrdenDetalles">
+      <tbody class="cuerpoDetalleOrdenTabla" id="cuerpoTablaEditarOrdenDetalles" title="Detalles | Consumibles de la orden">
         {% for detalle in Orden.Detalles.all %}
           {% if detalle.EsActivo %}
-            <tr id="filaDetalleOrdenEditar{{detalle.IdPlatillo.Id}}" class="filaDetalleOrden">
-                <td style="text-transform: capitalize; padding-left: 10px;">{{detalle.IdPlatillo.Nombre|lower}}</td>
-                <td>C${{detalle.PrecioVenta}}</td>
+            <tr id="filaDetalleOrdenEditar{{detalle.IdPlatillo.Id}}" class="filaDetalleOrden" title="Detalle | Consumible">
+                <td title="Nombre del consumible" style="text-transform: capitalize; padding-left: 10px;">{{detalle.IdPlatillo.Nombre|lower}}</td>
+                <td title="Precio del consumible">C${{detalle.PrecioVenta}}</td>
                 
                 {% if Modo == "Editar" %}
 
-                  <td style="text-align: center;">
-                    <button style="min-width: 30px;" class="btnControlCantidad" onclick="bajarCantidad('{{detalle.IdPlatillo.Id}}')">-</button>
+                  <td style="text-align: center;" title="Cantidad del consumible">
+                    <button title="Bajar la cantidad del detalle | consumible en la orden (Mínimo 1)" style="min-width: 30px;" class="btnControlCantidad" onclick="bajarCantidad('{{detalle.IdPlatillo.Id}}')">-</button>
 
-                    <span id="cantidadDetalle-{{detalle.IdPlatillo.Id}}" class="cantidadConsumibleEditar">{{detalle.Cantidad}}</span>
+                    <span title="Cantidad de detalle | consumible en la orden" id="cantidadDetalle-{{detalle.IdPlatillo.Id}}" class="cantidadConsumibleEditar">{{detalle.Cantidad}}</span>
                     
-                    <button style="min-width: 30px;" class="btnControlCantidad" onclick="subirCantidad('{{detalle.IdPlatillo.Id}}')">+</button>
+                    <button title="Subir la cantidad del detalle | consumible en la orden" style="min-width: 30px;" class="btnControlCantidad" onclick="subirCantidad('{{detalle.IdPlatillo.Id}}')">+</button>
                   </td>
 
-                  <td class="actions btnQuitarEditar">
+                  <td class="actions btnQuitarEditar" title="Quita el detalle | consumible de la orden">
                     <div class='botonQuitar'>
                       <button type="button" class="btnQuitar2 btn-popover" 
                         data-id-detalle="{{detalle.Id}}"
@@ -311,9 +311,9 @@
                 
                 {% else %}
                   
-                  <td style="text-align: center;">{{detalle.Cantidad}}</td>
+                  <td style="text-align: center;" title="Cantidad del detalle | consumible">{{detalle.Cantidad}}</td>
                   
-                  <td>C${{detalle.SubTotal}}</td>
+                  <td title="Subtotal calculado de la cantidad y el precio unitario del consumible">C${{detalle.SubTotal}}</td>
                 
                 {% endif %}
                 
@@ -337,7 +337,7 @@
 
 <div class="modal-footer">
   <div class="contFooterEditarOrden">
-    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Presione para cerrar el modal">
       {% if Modo == "Editar" %}
       Cancelar
       {% else %}
@@ -351,7 +351,8 @@
           class="btn btn-danger"
           id="btnConfirmarCambiosEditarOrden"
           onclick="ConfirmarEditarOrden({{Orden.Id}})"
-          disabled>
+          disabled
+          title="Se verifica si todo está bien y se procede a realizar las modificaciones a la orden">
           Confirmar cambios
       </button> 
     {% endif %}       
