@@ -449,7 +449,7 @@ def FacturarOrden(request):
         if orden.Estado == "2":
             return JsonResponse({
                 "status": "error",
-                "message": "La orden fué anulada"
+                "message": "La orden fue anulada"
             })
             
         total       = orden.Total
@@ -893,7 +893,7 @@ def EditarOrden (request):
         if orden.Estado == "2":
             return JsonResponse({
                 "status": "error",
-                "message": "La orden fué anulada"
+                "message": "La orden fue anulada"
             })
 
         # Se actualiza la información de la orden

@@ -1,6 +1,6 @@
 {% load static %}
 
-<div class="col-12">
+<div class="col-12" title="Seleccione un área diferente si la va a cambiar">
     <select id="selectAreaMesa" class="form-control">
         <option value="" disabled>Seleccione un área</option>
         {% for area in Areas %}
@@ -12,7 +12,7 @@
     </select>
 </div>
 
-<div id="contenedorMesas" class="col-12 list-group pr-0">
+<div id="contenedorMesas" class="col-12 list-group pr-0" title="Seleccione las mesas que quiera definir a la orden">
     {% for area in Areas %}
         {% for mesa in area.mesas_activas %}
             <label class="numeroMesaEditar list-group-item list-group-item-action mb-0 mesa-item d-none"
