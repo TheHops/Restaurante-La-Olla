@@ -410,8 +410,99 @@ def exportar_pdf_ordenes(ordenes, request, incluir_detalles=False, nombre_archiv
     header_label_style = ParagraphStyle(name="LabelStyle", fontSize=10, fontName="Helvetica-Bold", textColor=colors.HexColor("#8e0000"))
     cell_style = ParagraphStyle(name="CellStyle", fontSize=9, leading=11)
     total_style = ParagraphStyle(name="TotalStyle", fontSize=10, fontName="Helvetica-Bold", textColor=colors.black)
+    
+    # # # # # RESUMEN # # # # #
+    
+    # --- NUEVA SECCIÓN: CÁLCULOS PREVIOS ---
+    sum_subtotal = sum_propina = sum_desc = sum_total_pagar = sum_monto = sum_cambio = sum_2do = Decimal(0)
+    propinas_por_usuario = {}
+
+    for o in ordenes:
+        # Acumulación de totales generales
+        sum_subtotal += Decimal(str(o.Total or 0))
+        sum_propina += Decimal(str(o.Propina or 0))
+        sum_desc += Decimal(str(o.Descuento or 0))
+        sum_total_pagar += Decimal(str(o.TotalPagar or 0))
+        sum_monto += Decimal(str(o.Monto or 0))
+        sum_cambio += Decimal(str(o.Cambio or 0))
+        sum_2do += Decimal(str(o.SegundoMonto or 0))
+
+        # Agrupación por usuario
+        creador_nombre = f"{o.IdUsuario.Nombres} ({o.IdUsuario.IdCargo.Nombre})"
+        propinas_por_usuario[creador_nombre] = propinas_por_usuario.get(creador_nombre, Decimal(0)) + Decimal(str(o.Propina or 0))
+
+    # --- TABLA 1: RESUMEN GENERAL DE TOTALES ---
+    elementos.append(Paragraph("RESUMEN GENERAL DE VENTAS", header_label_style))
+    elementos.append(Spacer(1, 8))
+    
+    # El ancho total disponible en horizontal (Landscape Letter) es ~732 puntos con márgenes de 40.
+    ancho_total = 732 
+    ancho_col_resumen = ancho_total / 4 # Dividido en 4 columnas iguales
+
+    resumen_data = [
+        [Paragraph("Subtotal Total", header_label_style), Paragraph("Total Propinas", header_label_style), 
+         Paragraph("Total Descuentos", header_label_style), Paragraph("TOTAL PAGADO", header_label_style)],
+        [f"C$ {sum_subtotal:,.2f}", f"C$ {sum_propina:,.2f}", f"C$ {sum_desc:,.2f}", Paragraph(f"C$ {sum_total_pagar:,.2f}", total_style)],
+        [Paragraph("Total Montos", header_label_style), Paragraph("Total Cambios", header_label_style), 
+         Paragraph("Total 2do Monto", header_label_style), ""] ,
+        [f"C$ {sum_monto:,.2f}", f"C$ {sum_cambio:,.2f}", f"C$ {sum_2do:,.2f}", ""]
+    ]
+    
+    tabla_resumen = Table(resumen_data, colWidths=[ancho_col_resumen] * 4)
+    tabla_resumen.setStyle(TableStyle([
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.whitesmoke),
+        ('BACKGROUND', (0, 2), (-1, 2), colors.whitesmoke),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('ALIGN', (0, 1), (-1, 1), 'LEFT'), # Alineación de datos
+        ('ALIGN', (0, 3), (-1, 3), 'LEFT'),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+    ]))
+    elementos.append(tabla_resumen)
+    elementos.append(Spacer(1, 20))
+
+    # --- TABLA 2: RESUMEN DE PROPINAS POR USUARIO (Ocupando 100%) ---
+    elementos.append(Paragraph("RESUMEN DE PROPINAS POR USUARIO", header_label_style))
+    elementos.append(Spacer(1, 8))
+    
+    propinas_data = [[Paragraph("USUARIO / CARGO", header_label_style), Paragraph("TOTAL RECAUDADO EN PROPINAS", header_label_style)]]
+    for usuario, total_p in propinas_por_usuario.items():
+        propinas_data.append([usuario.upper(), f"C$ {total_p:,.2f}"])
+
+    # Aquí le damos el 70% del ancho a la descripción y el 30% al monto para que sumen el 100%
+    tabla_propinas = Table(propinas_data, colWidths=[ancho_total * 0.5, ancho_total * 0.5])
+    tabla_propinas.setStyle(TableStyle([
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#f5f0f0")),
+        ('ALIGN', (1, 0), (1, -1), 'LEFT'), # Montos a la derecha
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+        ('TOPPADDING', (0, 0), (-1, -1), 5),
+    ]))
+    elementos.append(tabla_propinas)
+    elementos.append(Spacer(1, 25))
+    elementos.append(HRFlowable(width="100%", thickness=2, color="#8e0000", spaceAfter=20))
+    
+    # # # # # # # # # # # # # #
 
     titulo_texto = "REPORTE DETALLADO DE ÓRDENES" if incluir_detalles else "REPORTE GENERAL DE ÓRDENES"
+    
+    # 1. Definir el nuevo estilo (puedes poner esto junto a tus otros styles)
+    ordenes_title_style = ParagraphStyle(
+        name="OrdenesTitleStyle", 
+        fontSize=14,               # Más grande que el anterior
+        fontName="Helvetica-Bold", 
+        textColor=colors.HexColor("#8e0000"),
+        alignment=1,               # 0=Izquierda, 1=Centro, 2=Derecha
+        spaceBefore=20,            # Espacio arriba del título
+        spaceAfter=15              # Espacio debajo del título
+    )
+
+    # 2. Agregar el elemento justo antes del bucle 'for orden in ordenes:'
+    elementos.append(Paragraph("ÓRDENES", ordenes_title_style))
+    
+    elementos.append(Spacer(1, 3))
+    elementos.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor("#8e0000"), spaceBefore=5, spaceAfter=15))
     
     for orden in ordenes:
         # 1. Preparación de datos del Creador
@@ -538,6 +629,8 @@ def exportar_pdf_ordenes(ordenes, request, incluir_detalles=False, nombre_archiv
     response = HttpResponse(buffer, content_type="application/pdf")
     response["Content-Disposition"] = f'attachment; filename="{nombre_archivo}.pdf"'
     return response
+
+#endregion Ordenes
 
 #region Platillos
 
