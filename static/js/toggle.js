@@ -24,7 +24,7 @@ $(document).ready(function () {
   });
 });
 
-function confirmLogout(url) {
+function confirmLogout() {
   Swal.fire({
     title: "¿Cerrar sesión?",
     text: "Tendrás que volver a ingresar tus credenciales",
@@ -39,7 +39,7 @@ function confirmLogout(url) {
   }).then((result) => {
     if (result.isConfirmed) {
       // Aquí es donde Django hace su magia
-      window.location.href = url;
+      window.location.href = "/logout/";
     }
   });
 }
