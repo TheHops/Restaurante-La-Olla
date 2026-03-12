@@ -36,6 +36,8 @@ body.modal-open {
     left: 0;
     background: #DF362D;
     width: 100vw;
+    height: 55px;
+    z-index: 2;
 }
 
 nav {
@@ -297,11 +299,12 @@ html {
 /***************************************************************************************************/
 
 .contenido {
-    height: auto;
+    height: 100vh;
     width: 100%;
     background-color: white;
     position: absolute;
-    top: 8vh;
+    padding-top: 55px;
+    z-index: 1;
 }
 
 .modal {
