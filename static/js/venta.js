@@ -500,6 +500,8 @@ function filtrarPlatillos(cadena) {
       if (contenedor) {
         contenedor.innerHTML = this.responseText;
 
+        console.log(this.responseText);
+
         validarMostrarEmptyStateFiltroPlatillos();
       }
 

@@ -9,7 +9,7 @@
     </span>
 
     <div class="PlatillosVenta">
-        {% for platillo in Tipo.Platillos.all %}
+        {% for platillo in Tipo.PlatillosFiltrados %}
         
         <!-- Se muestra un platillo -->
         <div class="vplatillo" id="platillo{{platillo.Id}}" title="Consumible">
