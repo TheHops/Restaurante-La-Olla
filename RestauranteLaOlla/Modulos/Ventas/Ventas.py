@@ -92,6 +92,10 @@ def BuscarPlatillo(request):
             if request.method == "GET":
                 Texto = request.GET.get("InputBuscarPlatillo")
                 TiposParam = request.GET.get("TiposSeleccionados", "")
+                
+                print("BUSQUEDA")
+                print(Texto)
+                print(TiposParam)
 
                 # Convertir "1,2,3" → [1,2,3]
                 tipos_ids = []
@@ -131,9 +135,9 @@ def BuscarPlatillo(request):
                         queryset=PlatillosFiltrados,
                         to_attr='PlatillosFiltrados'
                     )
-                )
+                ).order_by('Nombre')
                 
-                print("TIPOS FILTRADOS 2")
+                print("TIPOS FILTRADOS")
                 print(TiposFiltrados)
 
                 contexto = {

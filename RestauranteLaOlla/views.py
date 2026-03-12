@@ -157,11 +157,12 @@ def obtener_stats_metodos_pago(dias_atras=30):
     Retorna labels y valores de métodos de pago en un rango de días.
     """
     hoy_local = timezone.localdate()
-    fecha_inicio = hoy_local - timedelta(days=dias_atras - 1)
+    fecha_inicio = hoy_local - timedelta(days=dias_atras)
     
     # Límites con zona horaria
     inicio_dt = timezone.make_aware(datetime.combine(fecha_inicio, datetime.min.time()))
     fin_dt = timezone.make_aware(datetime.combine(hoy_local, datetime.max.time()))
+    
 
     # Consulta agrupada
     stats = (
@@ -174,6 +175,18 @@ def obtener_stats_metodos_pago(dias_atras=30):
         .annotate(total=Count('Id'))
         .order_by('-total')
     )
+    
+    print("🔥 Metodos de pago 🔥")
+    print(stats)
+    
+    ordenes = Orden.objects.filter(
+            Estado="0", 
+            EsActivo="1",
+            UltimaModificacion__range=(inicio_dt, fin_dt)
+        )
+    
+    print("🔥 Ordenes 🔥")
+    print(ordenes)
 
     # Diccionario de traducción según tus modelos
     nombres_map = {

@@ -779,6 +779,7 @@ legend {
   text-align: center;
   /* margin-top: 15px; */
   font-size: 16px;
+  padding: 0 10px;
 }
 
 .precioPlatillo {
