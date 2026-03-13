@@ -107,7 +107,7 @@ function rellenarParaMostrarOrden(idOrden) {
   request.send();
   request.onreadystatechange = function () {
     if (this.readyState == 4) {
-      let contenedor = document.getElementById("contenidoDetalleOrden");
+      let contenedor = document.getElementById("contenidoDetalleOrdenMostrar");
 
       if (contenedor) {
         contenedor.innerHTML = this.responseText;

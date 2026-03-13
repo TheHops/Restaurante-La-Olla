@@ -2,9 +2,15 @@
   overflow: hidden;
   height: 550px;
   position: relative;
-  height: 92vh;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
   /* padding: 25px 50px; */
   /* display: inline-block; */
+}
+
+.contenidoVenta::-webkit-scrollbar{
+  width: 0;
 }
 
 #pag1 {
