@@ -17,6 +17,14 @@
     justify-content: end;
 }
 
+#contenedorCompletoEncabezadoInventario {
+    display: none;
+    width: 100%;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+}
+
 .btnExportar {
     margin-left: 20px;
     background-color: white;
@@ -440,3 +448,18 @@ a .paginate_button .current {
 }
 
 /* - - - - - - - - - - - - - - FIXES - - - - - - - - - - - - - - - - */
+
+/* @media (max-width : 800px) {
+    #contenedorIzquierdoEncabezadoInventario {
+        display: none;
+    }
+
+    #contenedorDerechoEncabezadoInventario {
+        display: none;
+    }
+
+    #contenedorCompletoEncabezadoInventario {
+        display: flex;
+        flex-wrap: wrap;
+    }
+} */
