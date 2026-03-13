@@ -40,7 +40,7 @@
 
                 <td title="Estado de la orden">
                     {% if Orden.Estado == "0" %}
-                    <span class="badge-green">
+                    <span class="badge-green" style="display: inline-block">
                         {{Orden.get_Estado_display}}
                     </span>
                     {% else %}
@@ -56,7 +56,7 @@
                     <button
                         class="btnMostrarOrden"
                         data-toggle="modal"
-                        data-target="#EditarOrden"
+                        data-target="#MostrarOrden"
                         onclick="rellenarParaMostrarOrden('{{Orden.Id}}')"
                         title="Muestra información más detallada de la orden, como los montos, cambios, totales, mesas, métodos de pago, descripción, etc..."
                         >

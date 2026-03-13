@@ -116,57 +116,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="CambiarPass" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title " id="exampleModalLabel" >Cambiar contraseña</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            
-            <div class="alert alert-info alert-dismissible mb-0">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                Los cambios de contraseña son independientes a los otros datos del perfil
-            </div>
-
-            <div class="modal-body">
-                <form method="POST" action="">
-                    {% csrf_token %}
-                    <div class="row">
-                        <div class="col-12 mb-2" title="Ingresa la contraseña actual, ya sea una propia o una temporal por haber sido restablecida">
-                            <h4 style="font-size: 20px; margin-bottom: 3px;">Contraseña actual<span class="asterisco">*</span></h4>
-                            <input type="Password" name="OldPassEditarPerfil" class="form-control" id="OldPassEditarPerfil" placeholder="Ej: JC12345*" required autocomplete="off">
-                        </div>
-                        
-                        <div class="col-12 mb-2" title="Ingresa la nueva contraseña que quiera utilizar">
-                            <h4 style="font-size: 20px; margin-bottom: 3px;">Nueva contraseña<span class="asterisco">*</span></h4>
-                            <input type="Password" name="NuevaPassEditarPerfil" class="form-control" id="NuevaPassEditarPerfil" placeholder="Ej: JC12345*" required autocomplete="off">
-                        </div>
-
-                        <div class="mb-3 ml-4" id="requisitosPass">
-                            <small id="req-length" class="req neutral">• Mínimo 8 caracteres</small><br>
-                            <small id="req-number" class="req neutral">• Al menos un número</small><br>
-                            <small id="req-special" class="req neutral">• Al menos un carácter especial</small>
-                        </div>
-
-                        <div class="col-12 mb-2" title="Se vuelve a ingresar la nueva contraseña para verificar">
-                            <h4 style="font-size: 20px; margin-bottom: 3px; line-height: 15px;">Verificar contraseña<span class="asterisco">*</span></h4>
-                            <input type="Password" name="VerificarPassEditarPerfil" class="form-control" id="VerificarPassEditarPerfil" placeholder="Ej: JC12345*" required autocomplete="off">
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a cambiar la contraseña solo cancele">Cancelar</button>
-                <button type="button" id="btnCambiarPassword" class="btn btn_confirmation_mi_color" onclick="cambiarPass()" title="Se procede a hacer el cambio de contraseña una vez validado que todo esté correcto" disabled>Cambiar contraseña</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script src="{% static 'js/mi_perfil.js' %}"></script>
 
 {% endblock %}

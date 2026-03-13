@@ -68,6 +68,1467 @@
 
     <script src="{% static 'js/opciones.js' %}"></script>
 
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+
+    <div class="modal fade" id="MostrarDetalleConsumible" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title ">Detalle del consumible</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" style="display: flex; flex-direction: column;">
+              <img src="" alt="" id="ImagenDetalleConsumible" class="detalleConsumibleElemento" style="width: 70%; align-self: center; border-radius: 15px;" title="Imagen del consumible">
+              <hr>
+              <h4 id="NombreDetalleConsumible" class="detalleConsumibleElemento"></h4>
+              <h6 id="NombreDetalleTipoConsumible" class="detalleConsumibleElemento"></h6>
+              <hr>
+              <h6 id="DescripcionDetalleConsumible" class="detalleConsumibleElemento"></h6>
+              <hr>
+              <h4>Precio: C$<span id="PrecioDetalleConsumible" class="detalleConsumibleElemento"></span></h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="InfoCrearOrden" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title ">Información adicional</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" style="display: flex; flex-direction: column;">
+              <h5 class="subTItuloInfoCrearOrden">Crear orden</h5>
+              <h6 class="textoInfoCrearOrden">Realiza el proceso de creación de la orden una vez haya agregado al menos un consumible al carrito</h6>
+              <hr>
+              <h5 class="subTItuloInfoCrearOrden">Limpiar</h5>
+              <h6 class="textoInfoCrearOrden">Elimina todos los consumibles que han sido agregados al carrito, volviendo a dejarlo vacío para poder agregar nuevos consumibles</h6>
+              <hr>
+              <h5 class="subTItuloInfoCrearOrden">Quitar</h5>
+              <h6 class="textoInfoCrearOrden">Es similar al anterior pero elimina solo un consumible del carrito</h6>
+              <hr>
+              <h5 class="subTItuloInfoCrearOrden">Al crear la orden</h5>
+              <h6 class="textoInfoCrearOrden">Podrá ser capaz de escribir alguna información adicional como descripción que podrá ver el armador</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+
+    <div class="modal fade" id="InfoDetalleOrden" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title ">Detalles de íconos en las órdenes</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="modal-body" style="display: flex; flex-direction: column;">
+            <div class="contInfoSignals mb-2">
+              <div class="iconoOrdenEditada" style="
+                width: 40px;
+                height: 40px;
+                position: initial;
+                ">
+                  <img src="{% static 'img/Edit_alert_png.png' %}" style="width: 20px; height: 20px; z-index: 3;" alt="La orden fue editada" title="La orden fue editada">
+              </div>
+              
+              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Indica que la orden fue editada</h6>
+            </div>
+
+            <hr>
+            
+            <div class="contInfoSignals">
+              <div style="width: 40px; min-width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                <div class="signalDetalleEditado signalDetalle" style="position: initial;">
+                </div>
+              </div>
+              
+              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Indica que el detalle fue editado</h6>
+            </div>
+
+            <hr>
+
+            <div class="contInfoSignals">
+              <div style="width: 40px; min-width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                <div class="signalDetalleNuevo signalDetalle" style="position: initial;">
+                </div>
+              </div>
+              
+              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Indica que el detalle es nuevo porque fue agregado en la edición de la orden</h6>
+            </div>
+
+            <hr>
+
+            <div class="contInfoSignals">
+              <div style="width: 40px; min-width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                <div class="signalDetalleEliminado signalDetalle" style="position: initial;">
+                </div>
+              </div>
+              
+              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Indica que el detalle fue eliminado en la última edición de la orden</h6>
+            </div>
+
+            <hr>
+
+            <div class="contInfoSignals" style="margin-top: 10px;">
+              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Estos símbolos se presentan sobre los detalles que fueron manipulados en la <b>última</b> edición</h6>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+
+    <div class="modal fade" id="CambiarPass" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title " id="exampleModalLabel" >Cambiar contraseña</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              
+              <div class="alert alert-info alert-dismissible mb-0">
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  Los cambios de contraseña son independientes a los otros datos del perfil
+              </div>
+  
+              <div class="modal-body">
+                  <form method="POST" action="">
+                      {% csrf_token %}
+                      <div class="row">
+                          <div class="col-12 mb-2" title="Ingresa la contraseña actual, ya sea una propia o una temporal por haber sido restablecida">
+                              <h4 style="font-size: 20px; margin-bottom: 3px;">Contraseña actual<span class="asterisco">*</span></h4>
+                              <input type="Password" name="OldPassEditarPerfil" class="form-control" id="OldPassEditarPerfil" placeholder="Ej: JC12345*" required autocomplete="off">
+                          </div>
+                          
+                          <div class="col-12 mb-2" title="Ingresa la nueva contraseña que quiera utilizar">
+                              <h4 style="font-size: 20px; margin-bottom: 3px;">Nueva contraseña<span class="asterisco">*</span></h4>
+                              <input type="Password" name="NuevaPassEditarPerfil" class="form-control" id="NuevaPassEditarPerfil" placeholder="Ej: JC12345*" required autocomplete="off">
+                          </div>
+  
+                          <div class="mb-3 ml-4" id="requisitosPass">
+                              <small id="req-length" class="req neutral">• Mínimo 8 caracteres</small><br>
+                              <small id="req-number" class="req neutral">• Al menos un número</small><br>
+                              <small id="req-special" class="req neutral">• Al menos un carácter especial</small>
+                          </div>
+  
+                          <div class="col-12 mb-2" title="Se vuelve a ingresar la nueva contraseña para verificar">
+                              <h4 style="font-size: 20px; margin-bottom: 3px; line-height: 15px;">Verificar contraseña<span class="asterisco">*</span></h4>
+                              <input type="Password" name="VerificarPassEditarPerfil" class="form-control" id="VerificarPassEditarPerfil" placeholder="Ej: JC12345*" required autocomplete="off">
+                          </div>
+                      </div>
+                  </form>
+              </div>
+  
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a cambiar la contraseña solo cancele">Cancelar</button>
+                  <button type="button" id="btnCambiarPassword" class="btn btn_confirmation_mi_color" onclick="cambiarPass()" title="Se procede a hacer el cambio de contraseña una vez validado que todo esté correcto" disabled>Cambiar contraseña</button>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay"></div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+
+    <div class="modal fade" id="ExportarPlatillo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title " id="exampleModalLabel" >Exportar consumible</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body row exportar col-12">
+            <div class="col-6">
+                <button type="button" class="excel w-100" onclick="ExportarPlatillos('1')" title="Exportará los consumibles en un archivo de formato excel (.xlsx)">
+                    <!--
+                        <img src="{% static 'img/Export_excel_2.png' %}">
+                    -->
+
+                    <svg width="20" height="24" viewBox="0 0 36 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M35.5003 40H2.16699V36.6667H32.167V10.6667L24.8337 3.33333H5.50033V15H2.16699V0H26.167L35.5003 9.33333V40Z" fill="#66CC66"/>
+                        <path d="M33.8337 13.3333H22.167V3.33333H25.5003V9.99999H33.8337V13.3333Z" fill="#66CC66"/>
+                        <path d="M5.16667 25.6667L0.166666 18.3333H4L7.16667 23.1667L10.3333 18.3333H14.1667L9.16667 25.6667L14.3333 33.3333H10.5L7.16667 28.1667L3.83333 33.3333H0L5.16667 25.6667Z" fill="#66CC66"/>
+                        </svg>
+                        
+                    &nbsp;
+
+                    EXCEL
+                </button>
+            </div>
+    
+            <div class="col-6">
+                <button type="button" class="pdf w-100" onclick="ExportarPlatillos('2')" title="Exportará los consumibles en un archivo de formato PDF (.pdf)">
+                    <!--
+                        <img src="{% static 'img/Export_pdf_2.png' %}">
+                    -->
+
+                    <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_1693_1025)">
+                        <path d="M18.3333 33.3333H11.6667V20H18.3333C21 20 23.3333 22.5 23.3333 25.3333V28C23.3333 30.8333 21 33.3333 18.3333 33.3333ZM15 30H18.3333C19.1667 30 20 29 20 28V25.3333C20 24.3333 19.1667 23.3333 18.3333 23.3333H15V30ZM3.33333 33.3333H0V20H5C7.83333 20 10 22.1667 10 25C10 27.8333 7.83333 30 5 30H3.33333V33.3333ZM3.33333 26.6667H5C6 26.6667 6.66667 26 6.66667 25C6.66667 24 6 23.3333 5 23.3333H3.33333V26.6667Z" fill="#e69696"/>
+                        <path d="M35 20H25V23.3333H35V20Z" fill="#e69696"/>
+                        <path d="M28.3333 20H25V33.3333H28.3333V20Z" fill="#e69696"/>
+                        <path d="M33.3333 26.6667H25V30H33.3333V26.6667Z" fill="#e69696"/>
+                        <path d="M40.0003 40H6.66699V36.6667H36.667V10.6667L29.3337 3.33333H10.0003V15H6.66699V0H30.667L40.0003 9.33333V40Z" fill="#e69696"/>
+                        <path d="M38.3337 13.3333H26.667V3.33333H30.0003V9.99999H38.3337V13.3333Z" fill="#e69696"/>
+                        </g>
+                        <defs>
+                        <clipPath id="clip0_1693_1025">
+                        <rect width="40" height="40" fill="white"/>
+                        </clipPath>
+                        </defs>
+                        </svg>
+
+                    &nbsp;
+
+                    PDF
+                </button>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a exportar nada solo cancele">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+
+    <div class="modal fade" id="ModificarPlatillo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title " id="exampleModalLabel" >Modificar consumible</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row">
+                    
+                    <div class="col-md-12 mb-2" title="Nombre para reconocer el consumible">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Nombre<span class="asterisco">*</span></h4>
+                        <input type="text" class="form-control" id="NombrePlatillo" placeholder="Ej: Frijoles" required>
+                    </div>
+                    <div class="col-md-6 mb-2" title="Tipo de consumible para agruparlos donde pertenezcan">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Tipo de consumible<span class="asterisco">*</span></h4>
+                        <select class="form-control" id="TipoPlatillo">
+                            {% for tipoplatillo in TypePlatillo %}
+                            {% if tipoplatillo.EsActivo == "1" %}
+                                <option value="{{ tipoplatillo.Id }}">{{ tipoplatillo.Nombre }}</option>
+                            <!--
+                                {% else %}
+                                <option value="{{ tipoplatillo.Id }}" disabled>{{ tipoplatillo.Nombre }}</option>
+                            -->
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-2" title="Cuánto es lo que va a costar el consumible">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Precio (C$)<span class="asterisco">*</span></h4>
+                        <input type="text" inputmode="numeric" class="form-control" id="PrecioPlatillo" placeholder="Ej: 150" onkeypress="return soloNumeros(event)" required>
+                    </div>
+
+                    <!--
+                        <div class="col-md-6 mb-2">
+                            <h4 style="font-size: 20px; margin-bottom: 3px;">Estado</h4>
+                            <select class="form-control" id="EstadoPlatillo">
+                                <option value="1">Activo</option>
+                                <option value="0">Inactivo</option>
+                            </select>
+                        </div>
+                    -->
+
+                    <!-- Selector tipo pastilla -->
+                    <div class="col-md-6 mb-2" title="Estado activo o inactivo del consumible">
+                        <h4 class="titulo-estado">Estado<span class="required">*</span></h4>
+                        
+                        <div class="switch-segmentado" id="switch-estado">
+                            <input type="radio" name="estado" id="activo" value="1">
+                            <label for="activo">Activo</label>
+                    
+                            <input type="radio" name="estado" id="inactivo" value="0">
+                            <label for="inactivo">Inactivo</label>
+                    
+                            <span class="slider-bg"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-2" title="Imagen representativa del consumible">
+                        <h4 style="font-size: 20px; margin-bottom: 6px;">Imagen</h4>
+                        <label for="archivoModal_dos"
+                        class="LabelArchivo">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H10V2H2V16H16V8H18V16C18 16.55 17.8042 17.0208 17.4125 17.4125C17.0208 17.8042 16.55 18 16 18H2ZM3 14H15L11.25 9L8.25 13L6 10L3 14ZM14 6V4H12V2H14V0H16V2H18V4H16V6H14Z" fill="white"/>
+                            </svg>
+
+                            &nbsp;
+                            
+                           <span id="SpanLabel_dos"> Cargar imagen</span>
+                           <!-- TODO: Agregar icono para la carga de imagen -->                           
+                        </label>
+                        <input type="file" accept="image/png,image/jpeg,image/jpg" id="archivoModal_dos" onchange="VerificarArchivo_dos(this)"
+                        style="position: absolute;
+                            right: 0;
+                            width: 180px;
+                            display: none;
+                            cursor: pointer;">
+                    </div>
+
+                    <input type="hidden" class="form-control" id="IDPlatillo">
+                    
+                    <div class="col-md-12 mb-2" title="Descripción del consumible para detallar más cosas sobre el consumible">
+                        <h4 style="font-size: 20px; margin-bottom: 3px;">Descripción</h4>
+                        <textarea class="form-control" id="DescripcionPlatillo" placeholder="Ej: Acompañado con salsa ranch. (Opcional)"></textarea>
+                    </div>
+                </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Cerrar el modal si acaso ya no va a realizar ninguna acción">Cancelar</button>
+            <button type="button" class="btn btn_confirmation_mi_color" onclick="ActualizarPlatillo();" title="Se confirman los cambios para el consumible">Modificar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+
+    <div class="modal fade" id="AgregarPlatillo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title " id="exampleModalLabel" >Agregar consumible</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="POST">
+              {% csrf_token %}
+              <h4 style="font-size: 20px; margin-bottom: 3px;" title="Nombre para conocer el nuevo consumible">Nombre<span class="asterisco">*</span></h4>
+              <input type="text" placeholder="Ej: Frijoles" class="form-control mb-2" id="NombrePlatilloAgregar" required>
+
+              <div class="row">
+                  <div class="col-md-6" title="Cómo va a estar categorizado este nuevo consumible seleccionando un tipo">
+                      <h4 style="font-size: 20px; margin-bottom: 3px;">Tipo de consumible<span class="asterisco">*</span></h4>
+                      <select class="form-control mb-2" id="TipoPlatilloAgregar">
+                          {% for tipoplatillo in TypePlatillo %}
+                              {% if tipoplatillo.EsActivo == "1" %}
+                                  <option value="{{ tipoplatillo.Id }}">{{ tipoplatillo.Nombre }}</option>
+                                  <!--
+                                      {% else %}
+                                      <option value="{{ tipoplatillo.Id }}" disabled>{{ tipoplatillo.Nombre }}</option>
+                                  -->
+                              {% endif %}
+                          {% endfor %}
+                      </select>
+                  </div>
+
+                  <div class="col-md-6" title="Precio que va a tener el consumible para sus próximas órdenes">
+                      <h4 style="font-size: 20px; margin-bottom: 3px;" >Precio (C$)<span class="asterisco">*</span></h4>
+                      <input type="number" class="form-control mb-2" placeholder="Ej: 150" id="PrecioPlatilloAgregar" required>
+                  </div>
+
+                  <div class="col-md-12 mb-2" title="Imagen representativa del consumible para visualizarla">
+                      <h4 style="font-size: 20px; margin-bottom: 3px;">Imagen</h4>
+                      <label for="iconoCargarImagen"
+                      class="LabelArchivo">
+                          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H10V2H2V16H16V8H18V16C18 16.55 17.8042 17.0208 17.4125 17.4125C17.0208 17.8042 16.55 18 16 18H2ZM3 14H15L11.25 9L8.25 13L6 10L3 14ZM14 6V4H12V2H14V0H16V2H18V4H16V6H14Z" fill="white"/>
+                          </svg>
+
+                          &nbsp;
+
+                          <span id="SpanLabel">
+                              Cargar imagen
+                          </span>
+                          <!-- TODO: Agregar icono para la carga de imagen -->
+                      </label>
+
+                      <input type="file" accept="image/png,image/jpeg,image/jpg" id="iconoCargarImagen" onchange="VerificarArchivo(this)"
+                      style="position: absolute;
+                          right: 0;
+                          width: 180px;
+                          display: none;
+                          cursor: pointer;">
+                  </div>
+
+                  <div class="col-md-12" title="Descripción para incluir más detalles sobre este nuevo consumible">
+                    <h4 style="font-size: 20px; margin-bottom: 3px;">Descripción</h4>
+                    <textarea class="form-control mb-2" placeholder="Ej: Acompañado con salsa ranch. (Opcional)" id="DescripcionPlatilloAgregar" ></textarea>
+                  </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si ya no va a realizar la acción solo cancele">Cancelar</button>
+            <button type="button" class="btn btn_confirmation_mi_color" onclick="AgregarPlatillo();" title="Si todo está bien puede agregar este nuevo consumible">Agregar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+
+    <div class="modal fade" id="ExportarTipoPlatillo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title " id="exampleModalLabel" >Exportar tipo de consumible</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body row exportar col-12">
+              <div class="col-6">
+                <button type="button" class="excel w-100" onclick="ExportarTipoPlatillos('1')" title="Exportará los tipos de consumibles en un archivo de formato excel (.xlsx)">
+                  <!--
+                    <img src="{% static 'img/Export_pdf_2.png' %}">
+                  -->
+    
+                  <svg width="20" height="24" viewBox="0 0 36 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M35.5003 40H2.16699V36.6667H32.167V10.6667L24.8337 3.33333H5.50033V15H2.16699V0H26.167L35.5003 9.33333V40Z" fill="#66CC66"/>
+                    <path d="M33.8337 13.3333H22.167V3.33333H25.5003V9.99999H33.8337V13.3333Z" fill="#66CC66"/>
+                    <path d="M5.16667 25.6667L0.166666 18.3333H4L7.16667 23.1667L10.3333 18.3333H14.1667L9.16667 25.6667L14.3333 33.3333H10.5L7.16667 28.1667L3.83333 33.3333H0L5.16667 25.6667Z" fill="#66CC66"/>
+                    </svg>
+                    
+                  &nbsp;
+    
+                  EXCEL
+                </button>
+              </div>
+      
+              <div class="col-6">
+                <button type="button" class="pdf w-100" onclick="ExportarTipoPlatillos('2')" title="Exportará los tipos de consumibles en un archivo de formato PDF (.pdf)">
+                  <!--
+                    <img src="{% static 'img/Export_pdf_2.png' %}">
+                  -->
+                
+                  <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0_1693_1025)">
+                    <path d="M18.3333 33.3333H11.6667V20H18.3333C21 20 23.3333 22.5 23.3333 25.3333V28C23.3333 30.8333 21 33.3333 18.3333 33.3333ZM15 30H18.3333C19.1667 30 20 29 20 28V25.3333C20 24.3333 19.1667 23.3333 18.3333 23.3333H15V30ZM3.33333 33.3333H0V20H5C7.83333 20 10 22.1667 10 25C10 27.8333 7.83333 30 5 30H3.33333V33.3333ZM3.33333 26.6667H5C6 26.6667 6.66667 26 6.66667 25C6.66667 24 6 23.3333 5 23.3333H3.33333V26.6667Z" fill="#e69696"/>
+                    <path d="M35 20H25V23.3333H35V20Z" fill="#e69696"/>
+                    <path d="M28.3333 20H25V33.3333H28.3333V20Z" fill="#e69696"/>
+                    <path d="M33.3333 26.6667H25V30H33.3333V26.6667Z" fill="#e69696"/>
+                    <path d="M40.0003 40H6.66699V36.6667H36.667V10.6667L29.3337 3.33333H10.0003V15H6.66699V0H30.667L40.0003 9.33333V40Z" fill="#e69696"/>
+                    <path d="M38.3337 13.3333H26.667V3.33333H30.0003V9.99999H38.3337V13.3333Z" fill="#e69696"/>
+                    </g>
+                    <defs>
+                    <clipPath id="clip0_1693_1025">
+                    <rect width="40" height="40" fill="white"/>
+                    </clipPath>
+                    </defs>
+                    </svg>
+    
+                  &nbsp;
+    
+                  PDF
+                </button>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a exportar nada solo cancele">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    
+    <div class="modal fade" id="ModificarTipoPlatillo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title " id="exampleModalLabel" >Modificar tipo de consumible</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                      <div class="col-md-6 mb-2" title="Nombre para reconocer el tipo de consumible">
+                        <h4 style="font-size: 20px;">Nombre<span class="asterisco">*</span></h4>
+                        <input type="text" class="form-control" id="NameTipoPlatillo" placeholder="Ej: Aperitivos" required>
+                      </div>
+                      
+                      <!--
+                        <h4 style="font-size: 20px;">Estado</h4>
+                        <select class="form-control" id="EstadoTipoPlatillo">
+                          <option value = "1">Activo</option>
+                          <option value = "0">Inactivo</option>
+                        </select>
+                      -->
+      
+                      <div class="col-md-6 mb-2" title="Estado activo o inactivo del tipo de consumible">
+                        <h4 class="titulo-estado" style="margin-bottom: 7px;">Estado<span class="required">*</span></h4>
+                            
+                        <div class="switch-segmentado" id="switch-estado">
+                            <input type="radio" name="estado" id="activo" value="1">
+                            <label for="activo">Activo</label>
+                    
+                            <input type="radio" name="estado" id="inactivo" value="0">
+                            <label for="inactivo">Inactivo</label>
+                    
+                            <span class="slider-bg"></span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <input type="hidden" class="form-control" id="IDTipoPlatillo" required>
+                </form>
+                   
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Cerrar el modal si acaso ya no va a realizar ninguna acción">Cancelar</button>
+              <button type="button" class="btn btn_confirmation_mi_color" onclick="ActualizarTipoPlatillo();" title="Se confirman los cambios para el tipo de consumible">Modificar</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    
+    <div class="modal fade" id="AgregarTipoPlatillo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title " id="exampleModalLabel" >Agregar tipo de consumible</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <h4 style="font-size: 20px;" title="Nombre para conocer el nuevo tipo de consumible">Nombre<span class="asterisco">*</span></h4>
+                    <input type="text" class="form-control" placeholder="Ej: Aperitivos" id="NameTipoPlatilloAgregar" required>
+                    <!-- <h4 style="font-size: 20px;">Estado</h4>
+                    <select class="form-control" id="EstadoTipoPlatilloAgregar">
+                        <option>activo</option>
+                        <option>inactivo</option>
+                      </select> -->
+                </form>
+                   
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si ya no va a realizar la acción solo cancele">Cancelar</button>
+              <button type="button" class="btn btn_confirmation_mi_color" onclick="Agregar_TipoPlatillo();" title="Si todo está bien puede agregar este nuevo tipo de consumible">Agregar</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+
+    <div class="modal fade" id="FacturarOrden" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Registrar pago</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+    
+          <div class="alert alert-info alert-dismissible mb-0" id="infoMetodoPagoMixto">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            El monto pagado con tarjeta será la diferencia del total menos lo que se vaya a pagar en efectivo
+          </div>
+    
+          <div class="modal-body">
+            <form method="POST">
+              {% csrf_token %}
+              <div class="row">
+                <div class="col-6" title="Método de pago con el que va a pagar el cliente">
+                  <h4 style="font-size: 20px; margin-bottom: 3px;">
+                    Método de pago<span class="asterisco">*</span>
+                  </h4>
+                  <select
+                    class="form-control"
+                    id="SelectMetodoPago"
+                    onchange="MP(this.value)"
+                  >
+                    <option value="1" title="Es cuando el cliente solo quiere pagar con dinero físico">Efectivo</option>
+                    <option value="2" title="Es cuando el cliente quiere utilizar la tarjeta para pagar">Tarjeta</option>
+                    <option value="3" title="Es cuando el cliente quiere pagar mediante una transferencia bancaria">Transferencia</option>
+                    <option value="4" title="Es cuando el cliente quiere pagar la orden en partes, tanto con dinero físico como con la tarjeta (No aplica con transferencia)">Efectivo y tarjeta</option>
+                  </select>
+                </div>
+    
+                <div class="col-6 mb-2" id="monto" title="Disponible si el método de pago es efectivo o mixto (Efectivo y tarjeta)">
+                  <h4 style="font-size: 20px; margin-bottom: 3px;">
+                    Monto (C$)<span class="asterisco">*</span>
+                  </h4>
+    
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="MontoOrden"
+                    placeholder="Ej: 500"
+                    required
+                  />
+                </div>
+                
+                <div class="col-12 mb-2" id="MensajeMonto" title="Validación del monto con respecto al total a pagar">
+                  <span style="color: hsl(0, 100%, 70%); font-size: 15px"
+                  >El monto debe ser mayor o igual al total (Junto a propina y descuento si aplica)</span
+                  >
+                </div>
+    
+                <div class="col-6" id="cambio" title="Cuando el método de cambio es efectivo, es un valor que se calcula, cuando es mixto, se puede ingresar un valor manualmente ya que puede que el cliente quiera recibir un cambio en efectivo">
+                  <h4 style="font-size: 20px; margin-bottom: 3px;">
+                    Cambio<span class="asterisco">*</span>
+                  </h4>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="CambioOrden"
+                    required
+                    disabled
+                  />
+                </div>
+                
+                <div class="col-6 mb-2" id="numRef" title="Es el número que hace referencia a la transacción realizada, es recomendable seleccionar el banco para ubicar mejor la transacción (Disponible cuando el método de pago es transferencia)">
+                  <div class="numReftxt">
+                    <h4 style="font-size: 20px; margin-bottom: 3px;">
+                      Número de referencia
+                    </h4>
+                  </div>
+    
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="numRefOrden"
+                    placeholder="Ej: 15789508"
+                    required
+                  />
+                </div>
+    
+                <div class="col-6" id="banco" title="Se define el banco cuando el pago es con tarjeta o por transferencia (No es obligatorio pero si recomendable para ubicar mejor al momento de revisar registros)">
+                  <h4 style="font-size: 20px; margin-bottom: 3px;">
+                    Banco
+                  </h4>
+                  <select
+                    class="form-control"
+                    id="SelectBanco"
+                  >
+                    <option value="" selected disabled style="color: #AAAAAA; weight: 0;">Seleccione un banco</option>
+                    
+                    <option value="1">Lafise</option>
+                    <option value="2">Banpro</option>
+                    <option value="3">BAC</option>
+                    <option value="4">Ficohsa</option>
+                    <option value="5">Avanz</option>
+                    <option value="6">Atlántida</option>
+                    <option value="7">BFP</option>
+                    <option value="8">FDL</option>
+                  </select>
+                </div>
+    
+                <!-- VA A CONTENER LOS CAMPOS PARA PROPINA Y DESCUENTO -->
+                <div class="col-12">
+                  <div id="contenedorExtras">
+                    <div class="col-6 pl-0" id="contenedorDescuento" title="Se aplica un cálculo del descuento según el total base">
+    
+                      <!--
+                        <div class="col-12 px-0">
+                          <label for="checkDescuento" style="font-size: 20px;">
+                            Descuento
+                          </label>
+                          
+                          <input type="checkbox" name="inputCheckDescuento" id="checkDescuento">
+                        </div>
+                      -->
+    
+                      <div class="col-12 px-0" id="contenedorCheckDescuento" title="Activa si quieres incluir el descuento a la orden">
+                        <label class="switch-container">
+                          <span class="switch-label">Descuento</span>
+                          <div class="switch-wrapper">
+                            <input type="checkbox" id="checkDescuento" name="inputCheckDescuento">
+                            <span class="slider"></span>
+                          </div>
+                        </label>
+                      </div>
+    
+                      <div class="col-12 px-0 contenedorPorcentaje" id="inputPorcentajeDescuento">
+                        <div class="input-group mb-0" title="El descuento es por porcentaje, así que lo que se ingresa es el porcentaje que se calcula según el total base">
+                          <span class="input-group-text"><b>%</b></span>
+                          <input type="number" class="form-control" aria-label="Porcentaje" id="txtPorcentajeDescuento" min="10" max="30" step="1" placeholder="Ej: 15">
+                        </div>
+    
+                        <div class="col-12 px-0 mensajeExtras" id="mensajePorcentajeDescuento" title="Regla de negocio para los descuentos">
+                          Debe ser entre 10% y 30%
+                        </div>
+    
+                        <div class="input-group mt-2" title="Valor calculado según el porcentaje ingresado">
+                          <span class="input-group-text">C$</span>
+                          <input type="number" class="form-control" aria-label="ValorPorcentaje" id="txtValorPorcentajeDescuento" readonly>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="col-6 pr-0" id="contenedorPropina" title="Activa si quieres incluir la propina a la orden">
+                      <!--
+                        <div class="col-12 px-0" id="contenedorCheckPropina">
+                          <label for="checkPropina" style="font-size: 20px;">
+                            Propina
+                          </label>
+                        
+                          <input type="checkbox" name="inputCheckPropina" id="checkPropina">
+                        </div>
+                      -->
+    
+                      <div class="col-12 px-0" id="contenedorCheckPropina">
+                        <label class="switch-container">
+                          <span class="switch-label">Propina</span>
+                          <div class="switch-wrapper">
+                            <input type="checkbox" id="checkPropina" name="inputCheckPropina">
+                            <span class="slider"></span>
+                          </div>
+                        </label>
+                      </div>
+    
+                      <div class="col-12 px-0 contenedorPorcentaje" id="inputPorcentajePropina">
+                        <div class="input-group mb-0" title="La propina es por porcentaje, así que lo que se ingresa es el porcentaje que se calcula según el total base (Si también hay descuento primero se calcula el descuento y sobre ese resultado luego se calcula la propina)">
+                          <span class="input-group-text"><b>%</b></span>
+                          <input type="number" class="form-control" aria-label="Porcentaje" id="txtPorcentajePropina" min="0" max="10" step="1" placeholder="Ej: 5">
+                        </div>
+                        
+                        <div class="col-12 px-0 mensajeExtras" id="mensajePorcentajePropina">
+                          Debe ser menor o igual a 10%
+                        </div>
+    
+                        <div class="input-group mt-2" title="Valor calculado según el porcentaje ingresado">
+                          <span class="input-group-text">C$</span>
+                          <input type="number" class="form-control" aria-label="ValorPorcentaje" id="txtValorPorcentajePropina" readonly>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+    
+                <div class="alert alert-info alert-dismissible mb-0 mt-4" id="infoCalculoPropina">
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  La propina se calcula sobre el total base con el descuento ya aplicado
+                </div>
+              </div>
+              
+              <input type="hidden" id="idOrdenFactura"/>
+              <input type="hidden" id="totalOrdenFactura"/>
+            </form>
+          </div>
+    
+          <div class="modal-footer" style="justify-content: space-between;">
+            <span
+              style="font-size: 22px; color: #E87D7D"
+              id="totalOrdenMonto"
+              title="Total que se va a pagar por la orden (Ya con decuento y propina si aplican)"
+              >Total a pagar: C$</span
+            >
+    
+            <div class="contFooterRegistrarOrden">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si todavía no va a registrar el pago solo cancele">
+                Cancelar
+              </button>
+      
+              <button
+                type="button"
+                class="btn btn-danger"
+                id="btnFacturar"
+                onclick="FacturarOrden()"
+                disabled
+                title="Se validan los datos y se registra el pago de la orden"
+              >
+                Registrar
+              </button>        
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    
+    <div class="modal fade" id="EditarOrden"
+        data-backdrop="static"
+        data-keyboard="false"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+        onclick="cerrarPopover()">
+      <div class="modal-dialog modal-editar-orden" role="document">
+        <div class="modal-content"  id="contenidoDetalleOrden">
+          <!-- modal-header, modal-body y modal-footer se encuentran en detalle_orden_editar.html -->
+        </div>
+      </div>
+    </div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    
+    <div class="modal fade" id="IncluirDetalle" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-incluir-detalle" role="document">
+        <div class="modal-content" id="contenidoIncluirDetalle">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Incluir consumible a orden</h5>
+          
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>  
+          
+          </div>
+          
+          <div class="alert alert-info alert-dismissible mb-0">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            Puedes seleccionar uno o más consumibles
+          </div>
+    
+          <div class="modal-body" id="contenidoModalBodyIncluirPlatillosEditar">
+            <!-- EL CONTENIDO DE ESTE CONTENEDOR SE ENCUENTRA EN 'incluir_platillos_editar.html' -->
+          </div>
+          
+          <div class="modal-footer">
+            <div class="contFooterIncluirDetalle">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a incluir ningún consumible a la orden solo cancele">
+                Cancelar
+              </button>
+          
+              <button
+                  type="button"
+                  class="btn btn-danger"
+                  id="btnConfirmarIncluirDetalles"
+                  disabled
+                  title="Procede a incluir los nuevos consumibles a la orden (No estarán en la orden hasta que se confirmen los cambios al editar)">
+                  Incluir
+              </button> 
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    
+    <div class="modal fade" id="EditarMesas" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-editar-mesa" role="document">
+        <div class="modal-content" id="contenidoEditarMesas">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Editar mesas</h5>
+          
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>  
+          
+          </div>
+          
+          <div class="alert alert-info alert-dismissible mb-0">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            Puedes seleccionar una o más mesas
+          </div>
+    
+          <div class="modal-body" id="contenidoModalBodyEditarMesas">
+            <!-- EL CONTENIDO DE ESTE CONTENEDOR SE ENCUENTRA EN 'incluir_platillos_editar.html' -->
+          </div>
+          
+          <div class="modal-footer">
+            <div class="contFooterEditarMesas">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a incluir o cambiar ninguna mesa o área solo cancele">
+                Cancelar
+              </button>
+          
+              <button
+                  type="button"
+                  class="btn btn-danger"
+                  id="btnConfirmarEditarMesas"
+                  disabled
+                  title="Se modificarán los datos de las mesas de la orden una vez que se confirmen los cambios al editar">
+                  Confirmar
+              </button> 
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+
+    <div class="modal fade" id="ExportarPersonal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title " id="exampleModalLabel" >Exportar personal</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body row exportar col-12">
+              <div class="col-6">
+                  <button class="excel w-100" onclick="ExportarPersonal('1')" title="Exportará los usuarios | personal en un archivo de formato excel (.xlsx)">
+                      <!--
+                          <img src="{% static 'img/Export_excel_2.png' %}">
+                      -->
+  
+                      <svg width="20" height="24" viewBox="0 0 36 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M35.5003 40H2.16699V36.6667H32.167V10.6667L24.8337 3.33333H5.50033V15H2.16699V0H26.167L35.5003 9.33333V40Z" fill="#66CC66"/>
+                          <path d="M33.8337 13.3333H22.167V3.33333H25.5003V9.99999H33.8337V13.3333Z" fill="#66CC66"/>
+                          <path d="M5.16667 25.6667L0.166666 18.3333H4L7.16667 23.1667L10.3333 18.3333H14.1667L9.16667 25.6667L14.3333 33.3333H10.5L7.16667 28.1667L3.83333 33.3333H0L5.16667 25.6667Z" fill="#66CC66"/>
+                          </svg>
+                          
+                      &nbsp;
+  
+                      EXCEL
+                  </button>
+              </div>
+      
+              <div class="col-6">
+                  <button class="pdf w-100" onclick="ExportarPersonal('2')" title="Exportará los usuarios | personal en un archivo de formato PDF (.pdf)">
+                      <!--
+                          <img src="{% static 'img/Export_pdf_2.png' %}">
+                      -->
+  
+                      <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <g clip-path="url(#clip0_1693_1025)">
+                          <path d="M18.3333 33.3333H11.6667V20H18.3333C21 20 23.3333 22.5 23.3333 25.3333V28C23.3333 30.8333 21 33.3333 18.3333 33.3333ZM15 30H18.3333C19.1667 30 20 29 20 28V25.3333C20 24.3333 19.1667 23.3333 18.3333 23.3333H15V30ZM3.33333 33.3333H0V20H5C7.83333 20 10 22.1667 10 25C10 27.8333 7.83333 30 5 30H3.33333V33.3333ZM3.33333 26.6667H5C6 26.6667 6.66667 26 6.66667 25C6.66667 24 6 23.3333 5 23.3333H3.33333V26.6667Z" fill="#e69696"/>
+                          <path d="M35 20H25V23.3333H35V20Z" fill="#e69696"/>
+                          <path d="M28.3333 20H25V33.3333H28.3333V20Z" fill="#e69696"/>
+                          <path d="M33.3333 26.6667H25V30H33.3333V26.6667Z" fill="#e69696"/>
+                          <path d="M40.0003 40H6.66699V36.6667H36.667V10.6667L29.3337 3.33333H10.0003V15H6.66699V0H30.667L40.0003 9.33333V40Z" fill="#e69696"/>
+                          <path d="M38.3337 13.3333H26.667V3.33333H30.0003V9.99999H38.3337V13.3333Z" fill="#e69696"/>
+                          </g>
+                          <defs>
+                          <clipPath id="clip0_1693_1025">
+                          <rect width="40" height="40" fill="white"/>
+                          </clipPath>
+                          </defs>
+                          </svg>
+  
+                      &nbsp;
+  
+                      PDF
+                  </button>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a exportar nada solo cancele">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+  
+    <div class="modal fade" id="AgregarPersonal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title " id="exampleModalLabel" >Agregar Personal</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              
+              <div class="alert alert-info alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  <strong>Recuerde!</strong> Campos con <span class="asterisco">*</span> son obligatorios.
+              </div>
+  
+              <div class="modal-body">
+                  <form method="POST" action="" id="formAgregarPersonal">
+                      {% csrf_token %}
+                      <div class="row">
+                          <div class="col-6 mb-2" title="El nombre real de la persona que estará asociada a este nuevo usuario (Solo nombres)">
+                              <h4 style="font-size: 20px; margin-bottom: 3px;">Nombres<span class="asterisco">*</span></h4>
+                              <input type="text" class="form-control" id="Fullname" placeholder="Ej: Juan Carlos" required>
+                          </div>
+  
+                          <div class="col-6 mb-2" title="Los apellidos reales de la persona asociada al nuevo usuario">
+                              <h4 style="font-size: 20px; margin-bottom: 3px;">Apellidos<span class="asterisco">*</span></h4>
+                              <input type="text" class="form-control" id="Apellidos" placeholder="Ej: Perez Lopez" required>
+                          </div>
+                          
+                          <div class="col-6 mb-2" title="El nuevo nombre de usuario que va a tener la persona (Como recomendación tiene que ser algo que lo represente y pueda recordar fácilmente)">
+                              <h4 style="font-size: 20px; margin-bottom: 3px;">Nombre de usuario<span class="asterisco">*</span></h4>
+                              <input type="text" class="form-control" id="User" placeholder="Ej: JCLopez" required autocomplete="off">
+                          </div>
+                          
+                          <div class="col-6 mb-2" title="Es una contraseña que el admin va a definirle al usuario para que luego el nuevo usuario proceda a cambiarsela cuando inicie sesión">
+                              <h4 style="font-size: 20px; margin-bottom: 3px;">Contraseña temporal<span class="asterisco">*</span></h4>
+                              <input type="Password" class="form-control" id="Pass" placeholder="Ej: JC123*" required autocomplete="off">
+                          </div>
+                          
+                          <div class="col-12 mb-2" title="Es recomendable que tenga un correo válido para casos de cambio de contraseña">
+                              <h4 style="font-size: 20px; margin-bottom: 3px;">Correo</h4>
+                              <input type="email" class="form-control" placeholder="Ej: juanpl@gmail.om" id="e-mail">
+                          </div>
+  
+                          <div class="col-6 mb-2" title="Número de teléfono del personal">
+                              <h4 style="font-size: 20px; margin-bottom: 3px;">Teléfono</h4>
+                              <input type="text"inputmode="numeric" class="form-control" maxlength="8" id="telefono" onkeypress="return soloNumeros(event)" placeholder="Ej: 88888888">
+                          </div>
+  
+                          <div class="col-6 mb-2" title="Por defecto será mesero pero si tendrá otro cargo solo se selecciona otro en la lista">
+                              <h4 style="font-size: 20px; margin-bottom: 3px;">Cargo<span class="asterisco">*</span></h4>
+                              <select class="form-control" id="idCargo" required>
+                                  {% for cargo in Cargos %}
+                                      {% if cargo.Nombre == "Mesero" %}
+                                          <option value="{{cargo.Id}}" selected>{{cargo.Nombre}}</option>
+                                      {% else %}
+                                          <option value="{{cargo.Id}}">{{cargo.Nombre}}</option>
+                                      {% endif %}
+                                  {% endfor %}
+                              </select>
+                          </div>
+                      </div>
+                  </form>
+              </div>
+  
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a realizar ninguna acción de agregar usuario | personal solo cancele">Cancelar</button>
+                  <button type="button" class="btn btn_confirmation_mi_color" onclick="Agregar_Personal();" title="Luego de confirmar se validan los datos y si todo está bien se creará el usuario con éxito">Agregar</button>
+              </div>
+            </div>
+        </div>
+    </div>
+  
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+
+    <div class="modal fade" id="ModificarPersonal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title " id="exampleModalLabel">Modificar Personal</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="alert alert-info alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>¡Recuerde!</strong> Campos con <span class="asterisco">*</span> son obligatorios.
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    <div class="row">
+                    {% csrf_token %}
+    
+                        <input type="hidden" class="form-control" id="IdPersonal">
+                    
+                        <div class="col-6 mb-2" title="Si acaso ocurrió algún error al escribir el nombre se cambia acá">
+                            <h4 style="font-size: 20px; margin-bottom: 3px;">Nombres<span class="asterisco">*</span></h4>
+                            <input type="text" class="form-control" id="NombreUsuarioMod" placeholder="Ej: Juan Carlos" required>
+                        </div>
+    
+                        <div class="col-6 mb-2" title="Si ocurrió algún error al ingresar los apellidos se cambian acá">
+                            <h4 style="font-size: 20px; margin-bottom: 3px;">Apellidos<span class="asterisco">*</span></h4>
+                            <input type="text" class="form-control" id="ApellidosUsuarioMod" placeholder="Ej: Perez Lopez" required>
+                        </div>
+                    
+                        <div class="col-6 mb-2" title="Asegurar que el usuario no se repita">
+                            <h4 style="font-size: 20px; margin-bottom: 3px;">Usuario<span class="asterisco">*</span></h4>
+                            <input type="text" class="form-control" id="NameUsuario" placeholder="Ej: JCLopez" required autocomplete="off">
+                        </div>
+    
+                        <div class="col-6 mb-2" title="Actualizar el número de teléfono">
+                            <h4 style="font-size: 20px; margin-bottom: 3px;">Teléfono</h4>
+                            <input type="text" inputmode="numeric" class="form-control" placeholder="Ej: 88888888" maxlength="8" id="NumberUsuario" onkeypress="return soloNumeros(event)"  required>
+                        </div>
+                    
+                        <div class="col-12 mb-2" title="Asegurar que el correo no se repita con el de otro usuario">
+                            <h4 style="font-size: 20px; margin-bottom: 3px;">Correo</h4>
+                            <input type="email" class="form-control" id="CorreoUsuario" placeholder="Ej: juanpl@gmail.com" required>
+                        </div>
+                
+                        <div class="col-6 mb-2" title="Como admin si quiere puede cambiar su cargo a otro diferente">
+                            <h4 style="font-size: 20px; margin-bottom: 3px;">Cargo<span class="asterisco">*</span></h4>
+                            <select class="form-control" id="idCargoModificar" required>
+                                {% for cargo in Cargos %}
+                                    <option value="{{cargo.Id}}" id="personalCargo{{cargo.Id}}">{{cargo.Nombre}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+    
+                        <!--
+                            <div class="col-6 mb-2">
+                                <h4 style="font-size: 20px; margin-bottom: 3px;">Estado<span class="asterisco">*</span></h4>
+                                <select class="form-control" id="idEstadoModificar" required>
+                                    <option value="1">Activo</option>
+                                    <option value="0">Inactivo</option>
+                                </select>
+                            </div>
+                        -->
+    
+                        <div class="col-md-6 mb-2" title="Se puede cambiar su estado a dado de baja o revertirlo dependiendo de los casos que se presenten">
+                            <h4 class="titulo-estado">Estado<span class="required">*</span></h4>
+                            
+                            <div class="switch-segmentado" id="switch-estado">
+                                <input type="radio" name="estado" id="activo" value="1">
+                                <label for="activo">Activo</label>
+                        
+                                <input type="radio" name="estado" id="inactivo" value="0">
+                                <label for="inactivo">Inactivo</label>
+                        
+                                <span class="slider-bg"></span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                  
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a modificar nada solo cancele">Cancelar</button>
+              <button type="submit" class="btn btn_confirmation_mi_color" onclick="ModificarPersonal();" title="Si los cambios están correctos se validarán los datos y si todo está bien entonces se actualizará el usuario | personal correctamente">Modificar</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+  
+    <!-- Modal mostrar contraseña restablecida -->
+    <div class="modal fade" id="modalPassRestablecida" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nueva contraseña temporal</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+    
+            <div class="modal-body row">
+                <div class="col-10" title="Esta es la nueva contraseña temporal del usuario, que la utilice para iniciar sesión y se la cambie en la sección 'Mi perfil'">
+                    <input type="text" id="nuevaPassTemporal" class="form-control" readonly>
+                </div>
+    
+                <input type="hidden" id="IdPersonalRestablecerPass">
+    
+                <div class="col-2" title="Botón que sirve para copiar la nueva contraseña temporal del usuario">
+                    <div class="input-group">
+                        <button class="actionButton btnCopiarPass" id="btnCopiarPass"
+                            data-img-check="{% static 'img/check.png' %}"
+                            data-img-copy="{% static 'img/copy_content.png' %}" >
+    
+                            <img src="{% static 'img/copy_content.png' %}" 
+                            id="iconoCopiarPass" alt="Copiar contraseña" title="Copiar contraseña">
+                        </button>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="modal-footer" title="Si el usuario tiene un correo válido, se le enviará la nueva contraseña temporal por correo">
+                <button type="button" id="btnEnviarPorCorreo" data-bs-dismiss="modal" onclick="EnviarCorreo()">
+                    <svg width="22" height="28" viewBox="0 0 31 28" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 5px;">
+                        <path d="M14.5833 13.125L2.91667 5.83333V20.4167H16.0417V23.3333H2.91667C2.11458 23.3333 1.42795 23.0477 0.856771 22.4766C0.28559 21.9054 0 21.2188 0 20.4167V2.91667C0 2.11458 0.28559 1.42795 0.856771 0.856771C1.42795 0.28559 2.11458 0 2.91667 0H26.25C27.0521 0 27.7387 0.28559 28.3099 0.856771C28.8811 1.42795 29.1667 2.11458 29.1667 2.91667V13.125H26.25V5.83333L14.5833 13.125ZM14.5833 10.2083L26.25 2.91667H2.91667L14.5833 10.2083ZM24.7917 27.7083L22.75 25.6667L25.0469 23.3333H18.9583V20.4167H25.0469L22.7135 18.0833L24.7917 16.0417L30.625 21.875L24.7917 27.7083ZM2.91667 5.83333V21.875V13.125V13.2344V2.91667V5.83333Z" fill="white"/>
+                    </svg>
+                        
+                    Enviar por correo
+                </button>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+
+    <div class="modal fade" id="ExportarOrdenes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title " id="exampleModalLabel" >Exportar órdenes</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+  
+              <div class="modal-body row exportar col-12">
+                  <div class="col-6">
+                      <button class="excel w-100" onclick="ExportarOrdenes('1')" title="Exportará las órdenes en un archivo de formato excel (.xlsx)">
+                          <!--
+                              <img src="{% static 'img/Export_excel_2.png' %}">
+                          -->
+  
+                          <svg width="20" height="24" viewBox="0 0 36 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M35.5003 40H2.16699V36.6667H32.167V10.6667L24.8337 3.33333H5.50033V15H2.16699V0H26.167L35.5003 9.33333V40Z" fill="#66CC66"/>
+                              <path d="M33.8337 13.3333H22.167V3.33333H25.5003V9.99999H33.8337V13.3333Z" fill="#66CC66"/>
+                              <path d="M5.16667 25.6667L0.166666 18.3333H4L7.16667 23.1667L10.3333 18.3333H14.1667L9.16667 25.6667L14.3333 33.3333H10.5L7.16667 28.1667L3.83333 33.3333H0L5.16667 25.6667Z" fill="#66CC66"/>
+                              </svg>
+                              
+                          &nbsp;
+      
+                          EXCEL
+                      </button>
+                  </div>
+          
+                  <div class="col-6">
+                      <button class="pdf w-100" onclick="ExportarOrdenes('2')" title="Exportará las órdenes en un archivo de formato PDF (.pdf)">
+                          <!--
+                              <img src="{% static 'img/Export_pdf_2.png' %}">
+                          -->
+  
+                          <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <g clip-path="url(#clip0_1693_1025)">
+                              <path d="M18.3333 33.3333H11.6667V20H18.3333C21 20 23.3333 22.5 23.3333 25.3333V28C23.3333 30.8333 21 33.3333 18.3333 33.3333ZM15 30H18.3333C19.1667 30 20 29 20 28V25.3333C20 24.3333 19.1667 23.3333 18.3333 23.3333H15V30ZM3.33333 33.3333H0V20H5C7.83333 20 10 22.1667 10 25C10 27.8333 7.83333 30 5 30H3.33333V33.3333ZM3.33333 26.6667H5C6 26.6667 6.66667 26 6.66667 25C6.66667 24 6 23.3333 5 23.3333H3.33333V26.6667Z" fill="#e69696"/>
+                              <path d="M35 20H25V23.3333H35V20Z" fill="#e69696"/>
+                              <path d="M28.3333 20H25V33.3333H28.3333V20Z" fill="#e69696"/>
+                              <path d="M33.3333 26.6667H25V30H33.3333V26.6667Z" fill="#e69696"/>
+                              <path d="M40.0003 40H6.66699V36.6667H36.667V10.6667L29.3337 3.33333H10.0003V15H6.66699V0H30.667L40.0003 9.33333V40Z" fill="#e69696"/>
+                              <path d="M38.3337 13.3333H26.667V3.33333H30.0003V9.99999H38.3337V13.3333Z" fill="#e69696"/>
+                              </g>
+                              <defs>
+                              <clipPath id="clip0_1693_1025">
+                              <rect width="40" height="40" fill="white"/>
+                              </clipPath>
+                              </defs>
+                              </svg>
+      
+                          &nbsp;
+      
+                          PDF
+                      </button>
+                  </div>
+              </div>
+              <div class="modal-footer d-flex justify-content-between">
+                  <!--
+                      <label>
+                          <input type="checkbox" id="check_incluir_detalles" name="incluir_detalles" value="false">
+                          Incluir detalles
+                      </label>
+                  -->
+  
+                  <label class="custom-checkbox-report" title="Permite incluir los detalles a las órdenes que se van a exportar">
+                      <input type="checkbox" id="check_incluir_detalles" name="incluir_detalles" class="check-toggle">
+                      
+                      <!--
+                          <label for="check_incluir_detalles" class="label-toggle-reportes">
+                              Incluir detalles
+                          </label>
+                      -->
+  
+                      <span class="checkmark-report">
+                          <svg width="16" height="15" viewBox="0 0 28 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M9.5 20.0417L0 10.5417L2.375 8.16667L9.5 15.2917L24.7917 0L27.1667 2.375L9.5 20.0417Z" fill="white"/>
+                              </svg>                                
+                      </span>
+                      <span class="label-text-report">Incluir detalles</span>
+                  </label>
+                  
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a exportar nada solo cancele">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    
+    <div class="modal fade" id="MostrarOrden"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+      <div class="modal-dialog modal-editar-orden" role="document">
+        <div class="modal-content"  id="contenidoDetalleOrdenMostrar">
+          <!-- modal-header, modal-body y modal-footer se encuentran en detalle_orden_editar.html -->
+        </div>
+      </div>
+    </div>
+
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------->
+    
+    <div class="modal fade" id="FiltrarOrdenes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title " id="exampleModalLabel" >Filtrar órdenes</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+    
+                <div class="alert alert-info alert-dismissible mb-0">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    Puedes seleccionar una o más áreas de mesa
+                </div>
+    
+                <div class="modal-body col-12">
+                    <h5 style="color: #555555; font-size: 20px;">Áreas de mesa</h5>
+                    
+                    <div id="areasBusqueda" title="Puede filtrar las órdenes mediante el área de mesa, con la posibilidad de seleccionar uno o más">
+                        {% for Area in Areas%}
+                        <div class="form-check">
+                            <input class="form-check-input" 
+                                  type="checkbox" 
+                                  name="areas[]" 
+                                  value="{{ Area.Id }}" 
+                                  id="tipo_{{ Area.Id }}">
+                                  
+                            <label class="form-check-label" for="tipo_{{ Area.Id }}">
+                                {{ Area.Nombre }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+    
+                    <!-------------------------------------------->
+    
+                    {% if Cargo == "Administrador" %}
+                        
+                        <hr>
+    
+                        <h5 style="color: #555555; font-size: 20px;">Fechas</h5>
+    
+                        <div id="fechasFiltro" title="Selecciona solo una fecha predefinida con la cual desea filtrar las órdenes">
+    
+                            <div class="form-radio">
+                                <input class="form-radio-input"
+                                    type="radio"
+                                    name="fecha"
+                                    value="1"
+                                    id="tipo_fecha_1">
+                        
+                                <label class="form-radio-label" for="tipo_fecha_1">
+                                    Hoy
+                                </label>
+                            </div>
+                        
+                            <div class="form-radio">
+                                <input class="form-radio-input"
+                                    type="radio"
+                                    name="fecha"
+                                    value="2"
+                                    id="tipo_fecha_2">
+                        
+                                <label class="form-radio-label" for="tipo_fecha_2">
+                                    Ayer
+                                </label>
+                            </div>
+    
+                            <div class="form-radio">
+                                <input class="form-radio-input"
+                                    type="radio"
+                                    name="fecha"
+                                    value="3"
+                                    id="tipo_fecha_3">
+                        
+                                <label class="form-radio-label" for="tipo_fecha_3">
+                                    Últimos 7 días
+                                </label>
+                            </div>
+    
+                            <div class="form-radio">
+                                <input class="form-radio-input"
+                                    type="radio"
+                                    name="fecha"
+                                    value="4"
+                                    id="tipo_fecha_4">
+                        
+                                <label class="form-radio-label" for="tipo_fecha_4">
+                                    Últimos 15 días
+                                </label>
+                            </div>
+    
+                            <div class="form-radio">
+                                <input class="form-radio-input"
+                                    type="radio"
+                                    name="fecha"
+                                    value="5"
+                                    id="tipo_fecha_5">
+                        
+                                <label class="form-radio-label" for="tipo_fecha_5">
+                                    Últimos 30 días
+                                </label>
+                            </div>
+                            
+                        </div>
+    
+                    {% endif %}
+                </div>
+    
+    
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si no va a filtrar nada solo cancele">Cancelar</button>
+    
+                    <button type="button"
+                            class="btn btn-danger"
+                            id="btnAplicarFiltros" title="Si va a aplicar algún filtro confirme dando click en este botón">
+                        Aplicar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <header>
       <div id="opciones" style="position: fixed; z-index: 20;" title="Secciones disponibles para el usuario (Varían según el cargo)">
         <div id="btnopciones2" onclick="cerrar()">
@@ -247,121 +1708,6 @@
       Please ensure Javascript is enabled for purposes of
       <a href="https://userway.org">website accessibility</a>
     </noscript>
-
-    <div class="modal fade" id="MostrarDetalleConsumible" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title ">Detalle del consumible</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body" style="display: flex; flex-direction: column;">
-              <img src="" alt="" id="ImagenDetalleConsumible" class="detalleConsumibleElemento" style="width: 70%; align-self: center; border-radius: 15px;" title="Imagen del consumible">
-              <hr>
-              <h4 id="NombreDetalleConsumible" class="detalleConsumibleElemento"></h4>
-              <h6 id="NombreDetalleTipoConsumible" class="detalleConsumibleElemento"></h6>
-              <hr>
-              <h6 id="DescripcionDetalleConsumible" class="detalleConsumibleElemento"></h6>
-              <hr>
-              <h4>Precio: C$<span id="PrecioDetalleConsumible" class="detalleConsumibleElemento"></span></h4>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal fade" id="InfoCrearOrden" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title ">Información adicional</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body" style="display: flex; flex-direction: column;">
-              <h5 class="subTItuloInfoCrearOrden">Crear orden</h5>
-              <h6 class="textoInfoCrearOrden">Realiza el proceso de creación de la orden una vez haya agregado al menos un consumible al carrito</h6>
-              <hr>
-              <h5 class="subTItuloInfoCrearOrden">Limpiar</h5>
-              <h6 class="textoInfoCrearOrden">Elimina todos los consumibles que han sido agregados al carrito, volviendo a dejarlo vacío para poder agregar nuevos consumibles</h6>
-              <hr>
-              <h5 class="subTItuloInfoCrearOrden">Quitar</h5>
-              <h6 class="textoInfoCrearOrden">Es similar al anterior pero elimina solo un consumible del carrito</h6>
-              <hr>
-              <h5 class="subTItuloInfoCrearOrden">Al crear la orden</h5>
-              <h6 class="textoInfoCrearOrden">Podrá ser capaz de escribir alguna información adicional como descripción que podrá ver el armador</h6>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal fade" id="InfoDetalleOrden" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title ">Detalles de íconos en las órdenes</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-
-          <div class="modal-body" style="display: flex; flex-direction: column;">
-            <div class="contInfoSignals mb-2">
-              <div class="iconoOrdenEditada" style="
-                width: 40px;
-                height: 40px;
-                position: initial;
-                ">
-                  <img src="{% static 'img/Edit_alert_png.png' %}" style="width: 20px; height: 20px; z-index: 3;" alt="La orden fue editada" title="La orden fue editada">
-              </div>
-              
-              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Indica que la orden fue editada</h6>
-            </div>
-
-            <hr>
-            
-            <div class="contInfoSignals">
-              <div style="width: 40px; min-width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;">
-                <div class="signalDetalleEditado signalDetalle" style="position: initial;">
-                </div>
-              </div>
-              
-              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Indica que el detalle fue editado</h6>
-            </div>
-
-            <hr>
-
-            <div class="contInfoSignals">
-              <div style="width: 40px; min-width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;">
-                <div class="signalDetalleNuevo signalDetalle" style="position: initial;">
-                </div>
-              </div>
-              
-              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Indica que el detalle es nuevo porque fue agregado en la edición de la orden</h6>
-            </div>
-
-            <hr>
-
-            <div class="contInfoSignals">
-              <div style="width: 40px; min-width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;">
-                <div class="signalDetalleEliminado signalDetalle" style="position: initial;">
-                </div>
-              </div>
-              
-              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Indica que el detalle fue eliminado en la última edición de la orden</h6>
-            </div>
-
-            <hr>
-
-            <div class="contInfoSignals" style="margin-top: 10px;">
-              <h6 class="subTItuloInfoCrearOrden pl-3 mb-0">Estos símbolos se presentan sobre los detalles que fueron manipulados en la <b>última</b> edición</h6>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <button id="focusSink" style="position:absolute; left:-9999px; top:-9999px;"></button>
   </body>
