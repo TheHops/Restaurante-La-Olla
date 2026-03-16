@@ -1,0 +1,1 @@
+web: gunicorn RestauranteLaOlla.wsgi
