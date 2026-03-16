@@ -13,13 +13,25 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+from dotenv import load_dotenv
+import os
 
-EMAIL_HOST_USER = 'jasson2852@gmail.com'
-EMAIL_HOST_PASSWORD = 'nndw ztun wlne oqbr'
+load_dotenv()
+
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = os.getenv("EMAIL_PORT")
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+
+# EMAIL_HOST_USER = 'jasson2852@gmail.com'
+# EMAIL_HOST_PASSWORD = 'nndw ztun wlne oqbr'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,10 +41,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-w9&r-%hsn^v-2f&e1j0l!j)blnjr8wfmetnd=*#2-a&#i(o96i'
+# SECRET_KEY = 'django-insecure-w9&r-%hsn^v-2f&e1j0l!j)blnjr8wfmetnd=*#2-a&#i(o96i'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = os.getenv("DEBUG")
 
 ALLOWED_HOSTS = []
 
@@ -87,12 +101,12 @@ WSGI_APPLICATION = 'RestauranteLaOlla.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'restaurante_la_olla',
-        'USER': 'admin',
-        'PASSWORD': 'Admin123',
-        'HOST': '127.0.0.1',
-        'PORT': '3306'
+        'ENGINE': os.getenv("DB_ENGINE"),
+        'NAME': os.getenv("DB_NAME"),
+        'USER': os.getenv("DB_USER"),
+        'PASSWORD': os.getenv("DB_PASSWORD"),
+        'HOST': os.getenv("DB_HOST"),
+        'PORT': os.getenv("DB_PORT")
     }
 }
 
@@ -119,15 +133,19 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'es'
+# LANGUAGE_CODE = 'es'
+LANGUAGE_CODE = os.getenv("LANGUAGE_CODE")
 
-TIME_ZONE = 'America/Managua'
+# TIME_ZONE = 'America/Managua'
+TIME_ZONE = os.getenv("TIME_ZONE")
 
-USE_I18N = True
+# USE_I18N = True
+USE_I18N = os.getenv("USE_I18N")
 
 # -> USE_L10N = True
 
-USE_TZ = True
+# USE_TZ = True
+USE_TZ = os.getenv("USE_TZ")
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
@@ -143,6 +161,3 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-WKHTMLTOPDF_CMD = 'C:\Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'
-WKHTMLTOPDF_BIN = 'C:\Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'
