@@ -7,7 +7,10 @@
 <div id="encabezado_inventario">
     <div id="contenedorIzquierdoEncabezadoInventario">
         <button id="agregar" data-toggle="modal" data-target="#AgregarPlatillo" title="Agrega un nuevo consumible al catálogo">
-                <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px; margin-right: 10px;">Agregar consumible
+                <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px;">
+                <span style="margin-left: 10px;" id="txtBtnAgregarConsumible">
+                    Agregar consumible
+                </span>
         </button>
     
         <!-- <input type="text" id="buscar" placeholder="Buscar"> -->
@@ -19,7 +22,7 @@
         </select>
         -->
 
-        <div class="custom-dropdown" id="dropdownInventario">
+        <div class="custom-dropdown" id="dropdownInventario" style="margin-left: 0;">
             <button class="dropdown-trigger" aria-haspopup="true" aria-expanded="false" title="Puedes cambiar el contenido de la tabla entre consumibles y sus tipos">
                 Consumibles <span style="margin-left: 10px;">▼</span>
             </button>
@@ -42,7 +45,7 @@
 
     <div id="contenedorDerechoEncabezadoInventario" title="Si se activa incluirá los consumibles inactivos a la tabla además de una nueva columna para saber cuáles están activos o no">
         <!-- Botón para mostrar u ocultar los registros inactivos -->
-        <div class="toggle-container">
+        <div class="toggle-container" style="height: 40px;">
             <input type="checkbox" id="checkVerConsumiblesInactivos" class="check-toggle">
             <label for="checkVerConsumiblesInactivos" class="label-toggle">Incluir inactivos</label>
         </div>

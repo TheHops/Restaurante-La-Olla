@@ -3,11 +3,13 @@
     justify-content: space-between;
     margin-bottom: 25px;
     padding: 25px 40px 0px 40px;
+    gap: 15px;
 }
 
 #contenedorIzquierdoEncabezadoInventario {
     display: flex;
     width: 70%;
+    gap: 15px;
 }
 
 #contenedorDerechoEncabezadoInventario
@@ -26,13 +28,13 @@
 }
 
 .btnExportar {
-    margin-left: 20px;
     background-color: white;
     border-radius: 7px;
     padding: 0 15px;
     border-color: rgb(255, 130, 150);
     color: #d92644;
 
+    height: 40px;
     cursor: pointer;
 
     transition: background-color ease .3s;
@@ -106,7 +108,8 @@
 
 #agregar {
     justify-self: flex-start;
-    width: 180px;
+    width: auto;
+    padding: 0 8px;
     height: 40px;
     color: white;
     background: rgb(255, 100, 100);
@@ -449,7 +452,13 @@ a .paginate_button .current {
 
 /* - - - - - - - - - - - - - - FIXES - - - - - - - - - - - - - - - - */
 
-/* @media (max-width : 800px) {
+@media (max-width : 620px) {
+    #txtBtnAgregarConsumible {
+        display: none;
+    }
+}
+
+@media (max-width : 475px) {
     #contenedorIzquierdoEncabezadoInventario {
         display: none;
     }
@@ -462,4 +471,4 @@ a .paginate_button .current {
         display: flex;
         flex-wrap: wrap;
     }
-} */
+}
