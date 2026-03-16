@@ -10,9 +10,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='orden',
-            name='TotalPagar',
-            field=models.DecimalField(blank=True, db_column='total_pagar', decimal_places=2, default=0, max_digits=8, null=True),
-        ),
+        # AddField removido: ya fue creado en 0027
     ]
