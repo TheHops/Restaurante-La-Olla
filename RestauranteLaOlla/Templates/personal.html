@@ -9,7 +9,7 @@
             <img src="{% static 'img/Add_user.png' %}" style="width: 30px; height: 30px; margin-right: 5px;">Agregar personal
         </button>
     
-        <button class="btnExportar" data-toggle="modal" data-target="#ExportarPersonal" style="margin-left: 20px;" title="Exporta un archivo excel o pdf a todos los usuarios | personal activos y dados de baja">
+        <button class="btnExportar" data-toggle="modal" data-target="#ExportarPersonal"  title="Exporta un archivo excel o pdf a todos los usuarios | personal activos y dados de baja">
             <svg width="18" height="24" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2.04167 29.7135L0 27.6354L4.30208 23.3333H1.02083V20.4167H9.26042V28.6562H6.34375V25.4115L2.04167 29.7135ZM12.1771 29.1667V26.25H20.9271V10.2083H13.6354V2.91667H3.42708V17.5H0.510417V2.91667C0.510417 2.11458 0.796007 1.42795 1.36719 0.856771C1.93837 0.28559 2.625 0 3.42708 0H15.0937L23.8438 8.75V26.25C23.8438 27.0521 23.5582 27.7387 22.987 28.3099C22.4158 28.8811 21.7292 29.1667 20.9271 29.1667H12.1771Z" fill="#d92644"/>
             </svg>
@@ -29,9 +29,30 @@
             </div>
         -->
 
-        <div class="toggle-container">
+        <div class="toggle-container" style="height: 40px;">
             <input type="checkbox" id="checkVerPersonalInactivos" class="check-toggle">
             <label for="checkVerPersonalInactivos" class="label-toggle">Ver dados de baja</label>
+        </div>
+    </div>
+
+    <div id="contenedorCompletoEncabezadoInventario">
+        <button id="agregar"  data-toggle="modal" data-target="#AgregarPersonal" onclick="resetFormAgregarPersonal();" title="Agrega un nuevo usuario | personal al sistema">
+            <img src="{% static 'img/Add_user.png' %}" style="width: 30px; height: 30px; margin-right: 5px;">Agregar personal
+        </button>
+    
+        <button class="btnExportar" data-toggle="modal" data-target="#ExportarPersonal"  title="Exporta un archivo excel o pdf a todos los usuarios | personal activos y dados de baja">
+            <svg width="18" height="24" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2.04167 29.7135L0 27.6354L4.30208 23.3333H1.02083V20.4167H9.26042V28.6562H6.34375V25.4115L2.04167 29.7135ZM12.1771 29.1667V26.25H20.9271V10.2083H13.6354V2.91667H3.42708V17.5H0.510417V2.91667C0.510417 2.11458 0.796007 1.42795 1.36719 0.856771C1.93837 0.28559 2.625 0 3.42708 0H15.0937L23.8438 8.75V26.25C23.8438 27.0521 23.5582 27.7387 22.987 28.3099C22.4158 28.8811 21.7292 29.1667 20.9271 29.1667H12.1771Z" fill="#d92644"/>
+            </svg>
+                    
+            &nbsp;
+            
+            Exportar
+        </button>
+
+        <div class="toggle-container" style="height: 40px;">
+            <input type="checkbox" id="checkVerPersonalInactivos2" class="check-toggle">
+            <label for="checkVerPersonalInactivos2" class="label-toggle">Ver dados de baja</label>
         </div>
     </div>
 </div>

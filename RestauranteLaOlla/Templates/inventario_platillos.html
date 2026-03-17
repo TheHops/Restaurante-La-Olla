@@ -8,7 +8,7 @@
     <div id="contenedorIzquierdoEncabezadoInventario">
         <button id="agregar" data-toggle="modal" data-target="#AgregarPlatillo" title="Agrega un nuevo consumible al catálogo">
                 <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px;">
-                <span style="margin-left: 10px;" id="txtBtnAgregarConsumible">
+                <span style="margin-left: 10px; line-height: 15px;" id="txtBtnAgregar">
                     Agregar consumible
                 </span>
         </button>
@@ -53,12 +53,15 @@
 
     <div id="contenedorCompletoEncabezadoInventario">
         <!-- Agregar consumible -->
-        <button id="agregar" data-toggle="modal" data-target="#AgregarPlatillo" title="Agrega un nuevo consumible al catálogo">
-            <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px; margin-right: 10px;">Agregar consumible
+        <button id="agregar2" data-toggle="modal" data-target="#AgregarPlatillo" title="Agrega un nuevo consumible al catálogo">
+            <img src="{% static 'img/icon_add_2.png' %}" style="width: 25px; height: 25px;">
+            <span style="margin-left: 10px;" id="txtBtnAgregar2">
+                Agregar consumible
+            </span>
         </button>
 
         <!-- Dropdown menu -->
-        <div class="custom-dropdown" id="dropdownInventario">
+        <div class="custom-dropdown" id="dropdownInventario2" style="margin-left: 0;">
             <button class="dropdown-trigger" aria-haspopup="true" aria-expanded="false" title="Puedes cambiar el contenido de la tabla entre consumibles y sus tipos">
                 Consumibles <span style="margin-left: 10px;">▼</span>
             </button>
@@ -68,7 +71,6 @@
             </ul>
         </div>
     
-        <!-- Exportar -->
         <button class="btnExportar" data-toggle="modal" data-target="#ExportarPlatillo" title="Exporta todos los consumibles en un archivo excel o pdf">
             <svg width="18" height="24" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2.04167 29.7135L0 27.6354L4.30208 23.3333H1.02083V20.4167H9.26042V28.6562H6.34375V25.4115L2.04167 29.7135ZM12.1771 29.1667V26.25H20.9271V10.2083H13.6354V2.91667H3.42708V17.5H0.510417V2.91667C0.510417 2.11458 0.796007 1.42795 1.36719 0.856771C1.93837 0.28559 2.625 0 3.42708 0H15.0937L23.8438 8.75V26.25C23.8438 27.0521 23.5582 27.7387 22.987 28.3099C22.4158 28.8811 21.7292 29.1667 20.9271 29.1667H12.1771Z" fill="#d92644"/>
@@ -80,9 +82,9 @@
         </button>
 
         <!-- Incluir inactivos -->
-        <div class="toggle-container">
-            <input type="checkbox" id="checkVerConsumiblesInactivos" class="check-toggle">
-            <label for="checkVerConsumiblesInactivos" class="label-toggle">Incluir inactivos</label>
+        <div class="toggle-container" style="height: 40px;">
+            <input type="checkbox" id="checkVerConsumiblesInactivos2" class="check-toggle">
+            <label for="checkVerConsumiblesInactivos2" class="label-toggle">Incluir inactivos</label>
         </div>
     </div>
 </div>

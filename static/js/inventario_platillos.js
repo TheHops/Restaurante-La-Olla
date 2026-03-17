@@ -1,16 +1,29 @@
 document.addEventListener("DOMContentLoaded", () => {
   const check = document.getElementById("checkVerConsumiblesInactivos");
+  const check2 = document.getElementById("checkVerConsumiblesInactivos2");
   const key = "verEliminadosPlatillos";
 
   // Restaurar estado guardado
   check.checked = localStorage.getItem(key) === "1";
+  check2.checked = localStorage.getItem(key) === "1";
 
   // Cargar tabla al inicio
   cargarPlatillos(check.checked);
 
   check.addEventListener("change", () => {
     localStorage.setItem(key, check.checked ? "1" : "0");
+
+    check2.checked = check.checked;
+
     cargarPlatillos(check.checked);
+  });
+
+  check2.addEventListener("change", () => {
+    localStorage.setItem(key, check2.checked ? "1" : "0");
+
+    check.checked = check2.checked;
+
+    cargarPlatillos(check2.checked);
   });
 });
 

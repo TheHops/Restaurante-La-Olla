@@ -203,17 +203,30 @@ function Agregar_TipoPlatillo() {
 
 document.addEventListener("DOMContentLoaded", () => {
   const check = document.getElementById("checkVerTipoConsumiblesInactivos");
+  const check2 = document.getElementById("checkVerTipoConsumiblesInactivos2");
   const key = "verEliminadosTipoPlatillos";
 
   // Restaurar estado guardado
   check.checked = localStorage.getItem(key) === "1";
+  check2.checked = localStorage.getItem(key) === "1";
 
   // Cargar tabla al inicio
   cargarTipoPlatillos(check.checked);
 
   check.addEventListener("change", () => {
     localStorage.setItem(key, check.checked ? "1" : "0");
+
+    check2.checked = check.checked;
+
     cargarTipoPlatillos(check.checked);
+  });
+
+  check2.addEventListener("change", () => {
+    localStorage.setItem(key, check2.checked ? "1" : "0");
+    
+    check.checked = check2.checked;
+    
+    cargarTipoPlatillos(check2.checked);
   });
 });
 
