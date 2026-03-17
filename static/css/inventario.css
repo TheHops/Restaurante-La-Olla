@@ -109,7 +109,7 @@
     margin-bottom: 0;
 }
 
-#agregar {
+#agregar, #agregar2 {
     justify-self: flex-start;
     width: auto;
     padding: 0 8px;
@@ -129,7 +129,7 @@
     transition: background-color ease .3s;
 }
 
-#agregar:hover {
+#agregar:hover, #agregar2:hover {
     background: rgb(255, 120, 110);
     border-color: rgb(255, 170, 120);
 }
@@ -405,6 +405,7 @@ a .paginate_button .current {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 40px;
 }
 
 /* La lista de opciones (oculta por defecto) */
@@ -455,7 +456,7 @@ a .paginate_button .current {
 
 /* - - - - - - - - - - - - - - FIXES - - - - - - - - - - - - - - - - */
 
-@media (max-width : 740px) {
+@media (max-width : 765px) {
     #txtBtnAgregar, #txtBtnAgregar2 {
         display: none;
     }

@@ -12,12 +12,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   check.addEventListener("change", () => {
     localStorage.setItem(key, check.checked ? "1" : "0");
+
+    check2.checked = check.checked;
+
     cargarPlatillos(check.checked);
   });
 
   check2.addEventListener("change", () => {
-    localStorage.setItem(key, check.checked ? "1" : "0");
-    cargarPlatillos(check.checked);
+    localStorage.setItem(key, check2.checked ? "1" : "0");
+
+    check.checked = check2.checked;
+
+    cargarPlatillos(check2.checked);
   });
 });
 
