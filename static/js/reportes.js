@@ -5,9 +5,35 @@ const listaEstado = document.getElementById("listaEstadoOrdenesExportar");
 const btnAplicarFiltros = document.getElementById("btnAplicarFiltrosOrdenes");
 const incluirCheckbox = document.getElementById("check_incluir_detalles");
 
+$(window).on("resize", function () {
+  let nuevoAlto = calcularAltoTabla();
+  $(".dataTables_scrollBody").css("height", nuevoAlto);
+  table.columns.adjust().draw();
+});
+
+function calcularAltoTabla() {
+  // 1. Obtenemos el alto total de la ventana (viewport)
+  let altoVentana = window.innerHeight;
+
+  // 2. Obtenemos la distancia desde el tope de la página hasta tu tabla
+  // Si la tabla no existe aún, usamos un valor por defecto
+  let tablaElemento = document.querySelector(".tablaInventario");
+  let offsetTop = tablaElemento
+    ? tablaElemento.getBoundingClientRect().top
+    : 200;
+
+  // 3. Calculamos: Alto total - lo que ya ocupan los headers/filtros - margen de seguridad (ej. 100px)
+  let altoDisponible = altoVentana - offsetTop - 250;
+
+  // Retornamos mínimo 300px para que no desaparezca en pantallas ultra pequeñas
+  return altoDisponible > 300 ? altoDisponible + "px" : "43vh";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  let alto = calcularAltoTabla();
+
   $(".tablaInventario").DataTable({
-    scrollY: "43vh",
+    scrollY: alto,
     scrollCollapse: true,
     paging: true,
     language: {
@@ -145,8 +171,10 @@ function filtrarOrdenesFecha() {
       $(".tablaInventario").DataTable().destroy();
       document.querySelector("#cuerpoInventario").innerHTML = this.responseText;
 
+      let alto = calcularAltoTabla();
+
       $(".tablaInventario").DataTable({
-        scrollY: "43vh",
+        scrollY: alto,
         paging: true,
         language: { url: "/static/json/es-ES.json" },
       });

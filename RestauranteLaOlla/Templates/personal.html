@@ -6,7 +6,10 @@
 <div id="encabezado_inventario">
     <div id="contenedorIzquierdoEncabezadoInventario">
         <button id="agregar"  data-toggle="modal" data-target="#AgregarPersonal" onclick="resetFormAgregarPersonal();" title="Agrega un nuevo usuario | personal al sistema">
-            <img src="{% static 'img/Add_user.png' %}" style="width: 30px; height: 30px; margin-right: 5px;">Agregar personal
+            <img src="{% static 'img/Add_user.png' %}" style="width: 30px; height: 30px;">
+            <span style="margin-left: 10px;" id="txtBtnAgregar">
+                Agregar personal
+            </span>
         </button>
     
         <button class="btnExportar" data-toggle="modal" data-target="#ExportarPersonal"  title="Exporta un archivo excel o pdf a todos los usuarios | personal activos y dados de baja">
@@ -37,7 +40,10 @@
 
     <div id="contenedorCompletoEncabezadoInventario">
         <button id="agregar"  data-toggle="modal" data-target="#AgregarPersonal" onclick="resetFormAgregarPersonal();" title="Agrega un nuevo usuario | personal al sistema">
-            <img src="{% static 'img/Add_user.png' %}" style="width: 30px; height: 30px; margin-right: 5px;">Agregar personal
+            <img src="{% static 'img/Add_user.png' %}" style="width: 30px; height: 30px;">
+            <span style="margin-left: 10px;" id="txtBtnAgregar2">
+                Agregar personal
+            </span>
         </button>
     
         <button class="btnExportar" data-toggle="modal" data-target="#ExportarPersonal"  title="Exporta un archivo excel o pdf a todos los usuarios | personal activos y dados de baja">
