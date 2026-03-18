@@ -3,6 +3,15 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
+
+    gap: 15px;
+}
+
+#contenedorDerechoEncabezadoInventarioReportes {
+    width: 30%;
+    display: flex;
+    justify-content: end;
+    align-items: center;
 }
 
 #errorFechas {
@@ -31,10 +40,9 @@
 }
 
 .contenedorFechasReportes input {
-    height: 35px;
+    height: 40px;
     border-radius: 7px;
     padding: 0 10px;
-    margin-right: 15px;
 
     cursor: pointer;
 
@@ -48,15 +56,13 @@
 #btnAplicarFiltrosOrdenes {
     justify-self: flex-start;
     width: auto;
-    height: 35px;
+    height: 40px;
     color: white;
     background: hsl(24, 100%, 65%);
     border-color: hsl(24, 100%, 80%);
     border-radius: 7px;
     cursor: pointer;
     box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
-
-    margin-left: 15px;
 
     padding: 0 15px;
 
@@ -115,31 +121,34 @@
 
 /* * * * * * * * * * * * * * * * * * */
 
-.btnExportarOrdenes {
-    margin-left: 20px;
+.btnExportarOrdenes, .btnExportarOrdenes2 {
     border-radius: 7px;
     padding: 0 15px;
     color: white;
     background: rgb(255, 100, 100);
     border-color: rgb(255, 130, 150);
 
+    height: 40px;
+
+    min-width: 130px;
+
     cursor: pointer;
 
     transition: background-color ease .3s;
 }
 
-.btnExportarOrdenes:hover {
+.btnExportarOrdenes:hover, .btnExportarOrdenes2:hover {
     background: hsl(0, 100%, 63%);
 }
 
-.btnExportarOrdenes:disabled {
+.btnExportarOrdenes:disabled, .btnExportarOrdenes2:disabled {
     background-color: hsl(359, 10%, 97%);
     border-color: hsl(350, 10%, 75%);
     color: hsl(350, 10%, 70%);
     cursor: initial;
 }
 
-.btnExportarOrdenes:disabled svg path {
+.btnExportarOrdenes:disabled svg path, .btnExportarOrdenes2:disabled svg path {
     fill: hsl(350, 10%, 70%) !important;
     cursor: initial;
 }
@@ -267,4 +276,43 @@
 /* Mostrar el check cuando está marcado */
 .custom-checkbox-report input:checked + .checkmark-report:after {
   display: block;
+}
+
+#txtBtnFiltrosAdicionales {
+    margin-left: 10px;
+}
+
+#cont_encabezado {
+    display: flex;
+    justify-content: space-between; 
+    width: 100%;
+}
+
+@media (max-width : 940px) {
+    #txtBtnFiltrosAdicionales, #txtBtnFiltrosAdicionales2 {
+        display: none;
+    }
+}
+
+@media (max-width : 610px) {
+    #cont_encabezado {
+        display: contents;
+    }
+
+    #contenedorIzquierdoEncabezadoInventarioReportes {
+        display: contents;
+    }
+
+    #contenedorDerechoEncabezadoInventarioReportes {
+        display: contents;
+    }
+
+    #encabezado_inventario {
+        width: 100%;
+        justify-content: center;
+        gap: 10px;
+        align-items: center;
+
+        flex-wrap: wrap;
+    }
 }

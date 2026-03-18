@@ -1,16 +1,29 @@
 document.addEventListener("DOMContentLoaded", () => {
   const check = document.getElementById("checkVerPersonalInactivos");
+  const check2 = document.getElementById("checkVerPersonalInactivos2");
   const key = "verEliminadosPersonal";
 
   // Restaurar estado guardado
   check.checked = localStorage.getItem(key) === "1";
+  check2.checked = localStorage.getItem(key) === "1";
 
   // Cargar tabla al inicio
   cargarPersonal(check.checked);
 
   check.addEventListener("change", () => {
     localStorage.setItem(key, check.checked ? "1" : "0");
+
+    check2.checked = check.checked;
+
     cargarPersonal(check.checked);
+  });
+
+  check2.addEventListener("change", () => {
+    localStorage.setItem(key, check2.checked ? "1" : "0");
+
+    check.checked = check2.checked;
+
+    cargarPersonal(check2.checked);
   });
 });
 
@@ -43,8 +56,10 @@ function cargarPersonal(ver) {
       const tbody = document.querySelector("#cuerpoInventario");
       tbody.innerHTML = this.responseText;
 
+      let alto = calcularAltoTabla();
+
       $(".tablaInventario").DataTable({
-        scrollY: "43vh",
+        scrollY: alto,
         scrollCollapse: true,
         paging: true,
         language: {
@@ -57,6 +72,30 @@ function cargarPersonal(ver) {
       }, 500);
     }
   };
+}
+
+$(window).on("resize", function () {
+  let nuevoAlto = calcularAltoTabla();
+  $(".dataTables_scrollBody").css("height", nuevoAlto);
+  table.columns.adjust().draw();
+});
+
+function calcularAltoTabla() {
+  // 1. Obtenemos el alto total de la ventana (viewport)
+  let altoVentana = window.innerHeight;
+
+  // 2. Obtenemos la distancia desde el tope de la página hasta tu tabla
+  // Si la tabla no existe aún, usamos un valor por defecto
+  let tablaElemento = document.querySelector(".tablaInventario");
+  let offsetTop = tablaElemento
+    ? tablaElemento.getBoundingClientRect().top
+    : 200;
+
+  // 3. Calculamos: Alto total - lo que ya ocupan los headers/filtros - margen de seguridad (ej. 100px)
+  let altoDisponible = altoVentana - offsetTop - 250;
+
+  // Retornamos mínimo 300px para que no desaparezca en pantallas ultra pequeñas
+  return altoDisponible > 300 ? altoDisponible + "px" : "43vh";
 }
 
 ///////////////////////////////////////////////////////////////////

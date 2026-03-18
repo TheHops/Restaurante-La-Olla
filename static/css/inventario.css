@@ -206,13 +206,13 @@
 #cuerpoInventario {
     overflow: auto;
     padding: 10px 20px;
-    margin: 0 40px;
+    margin: 0 40px 40px 40px;
     border-radius: 15px;
     background-color: #FFF;
     border: solid 4px #F5A3A3;
     /* box-shadow: 2px 2px; */
     box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 15px;
-    height: 75vh;
+    height: 100%;
     z-index: -3;
 
     transition: all .15s ease;
