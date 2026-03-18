@@ -4,9 +4,9 @@ function Impresion(id, nombre, estado) {
   $("#IDTipoPlatillo").val(id);
 
   if (estado == "1" || estado == 1) {
-    $("#activo").prop("checked", true);
+    $("#activoTipoConsumible").prop("checked", true);
   } else {
-    $("#inactivo").prop("checked", true);
+    $("#inactivoTipoConsumible").prop("checked", true);
   }
 }
 

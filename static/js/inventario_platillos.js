@@ -124,9 +124,9 @@ function Impresion(
   $("#TipoPlatillo").val(idTipoPLatillo);
   
   if (estado == "1" || estado == 1) {
-    $("#activo").prop("checked", true);
+    $("#activoConsumible").prop("checked", true);
   } else {
-    $("#inactivo").prop("checked", true);
+    $("#inactivoConsumible").prop("checked", true);
   }
 }
 
