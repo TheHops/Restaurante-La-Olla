@@ -508,7 +508,7 @@ def generar_crear_otp(usuario):
 def enviar_otp_correo(usuario, otp):
     try:
         asunto = "Código OTP para restablecer contraseña"
-        mensaje = f"Hola {usuario.Nombres},\n\nTu código OTP para restablecer tu contraseña es:\n\n{otp}\n\nEste código expirará en 5 minutos. Si no solicitaste este OTP, ignora este mensaje."
+        mensaje = f"Hola {usuario.Nombres},\n\nTu código OTP para restablecer tu contraseña es:\n\n{otp}\n\nEste código expirará en 2 minutos. Si no solicitaste este OTP, ignora este mensaje."
         
         enviado = send_mail(
             subject=asunto,
