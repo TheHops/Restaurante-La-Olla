@@ -37,7 +37,13 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = ['*']
+RAILWAY_URL = os.getenv('RAILWAY_URL')
+
+ALLOWED_HOSTS = [
+    RAILWAY_URL,
+    'localhost',
+    '127.0.0.1'
+]
 
 # Application definition
 
@@ -84,6 +90,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'RestauranteLaOlla.wsgi.application'
 
+CSRF_TRUSTED_ORIGINS = [
+    f'https://{RAILWAY_URL}',
+]
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
