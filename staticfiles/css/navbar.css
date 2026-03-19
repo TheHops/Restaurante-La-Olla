@@ -1,0 +1,586 @@
+body ::selection {
+    background-color: rgba(255, 0, 0, .5);
+    color: white;
+}
+
+body {
+    /* background-image: url('/static/img/wavebgTest4-1.png'); */
+    background-size: cover; /* o contain */
+    background-repeat: no-repeat;
+    background-position: center top;
+}
+
+body.modal-open {
+    height: 100vh;
+}
+
+#userNameText:hover {
+    text-decoration: none;
+    color: white;
+}
+
+/* Basic styling */
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+/* html {
+    overflow: hidden;
+} */
+
+#navSistema {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #DF362D;
+    width: 100vw;
+    height: 55px;
+    z-index: 2;
+}
+
+nav {
+    padding: 8px 20px 5px 20px;
+}
+
+body > header > nav > ul::selection {
+    background-color: #ffffff90;
+}
+
+ul {
+    list-style-type: none;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.logo a:hover {
+    text-decoration: none;
+}
+
+.logo a{
+    width: 120px;
+}
+
+.menu li {
+    font-size: 20px;
+    padding: 10px 5px;
+    white-space: nowrap;
+}
+
+.logo a img {
+    width: 100%;
+    padding: 0;
+}
+
+/* Mobile menu */
+.menu {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: left;
+    margin-bottom: 0;
+}
+
+/* Tablet menu */
+@media all and (min-width: 468px) {
+    .menu {
+        justify-content: center;
+    }
+
+    .logo {
+        flex: 1;
+        /* transform: translate(-8px, -6px); */
+    }
+}
+
+@media (max-width: 468px)
+{
+    #userConfig {
+        display: none;
+        visibility: hidden;
+    }
+
+    .logo {
+        margin-left: 0;
+    }
+}
+
+
+/*****************************************************************************************************/
+/**************************************** O P C I O N E S ********************************************/
+/*****************************************************************************************************/
+
+#opciones {
+    position: absolute;
+    background: linear-gradient(90deg, rgb(255, 255, 255), rgb(255, 230, 230));
+    border-right: 1px solid white;
+    width: 280px;
+    height: 100vh;
+    border-bottom-right-radius: 25px;
+    border-top-right-radius: 25px;
+    z-index: 5;
+
+    /* transform: translateX(-305px); */
+    display: none;
+}
+
+.salir
+{
+    transition: all 2s ease;
+}
+
+#btnopciones1 {
+    size: 20px;
+    cursor: pointer;
+}
+
+#btnopciones2 {
+    size: 20px;
+    margin: 20px 25px;
+    cursor: pointer;
+    display: inline-block;
+    align-self: flex-start;
+}
+
+.burger1-1, .burger1-2, .burger1-3 {
+    background-color: white;
+    width: 40px;
+    height: 5px;
+    margin-bottom: 3px;
+    border-radius: 2px;
+}
+
+.burger2-1, .burger2-2, .burger2-3 {
+    background-color: #DF362D;
+    width: 40px;
+    height: 5px;
+    margin-bottom: 3px;
+    border-radius: 2px;
+}
+
+.listaOpciones {
+    padding-top: 5%;
+    width: 100%;
+}
+
+#logodeco {
+    margin-top: auto;
+    margin-bottom: 50px;
+    /* align-self: flex-end; */
+    /* position: absolute; */
+    width: 190px;
+    height: 190px;
+    opacity: 15%;
+    user-select: none;
+}
+
+.opcion {
+    height: 50px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all .3s ease;
+}
+
+.opcion:hover {
+    background-color: rgb(255, 220, 200);
+    height: 50px;
+    width: 100%;
+    transition: all .3s ease;
+}
+
+.opcion a {
+    /* padding-left: 25px; */
+    color: rgb(180, 0, 0);
+    font-size: 22px;
+    text-decoration: none;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    letter-spacing: 2px;
+    width: 100%;
+    text-align: center;
+}
+
+#logout {
+    height: 5px;
+    width: 30px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 25% 25% 25% 25%;
+    transition: all .5s ease;
+    cursor: pointer;
+}
+
+#logout:hover {
+    background: rgba(255, 255, 255, .2);
+}
+
+#userConfig {
+    margin-top: 5px;
+    margin-right: 18px;
+    height: 5px;
+    width: 30px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 25% 25% 25% 25%;
+    transition: all .5s ease;
+    cursor: pointer;
+}
+
+#userConfig:hover {
+    background: rgba(255, 255, 255, .2);
+}
+
+.imagenCargo {
+    transform: translateY(-3px);
+}
+
+/***************************************************************************************************/
+/********************************************** C A P A ********************************************/
+/***************************************************************************************************/
+
+#capa {
+    height: 100vh;
+    position: absolute;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, .5);
+    z-index: 5;
+    display: none;
+}
+
+/***************************************************************************************************/
+/******************************************** S C R O L L ******************************************/
+/***************************************************************************************************/
+
+html::-webkit-scrollbar {
+    width: 0px;
+    background: #DF362D;
+}
+
+html::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, .3);
+    border-radius: 10px;
+}
+
+html {
+    overflow-x: hidden;
+
+    background: white;
+
+    background-attachment: fixed;
+}
+
+/* html::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 7vh;
+    background: #DF362D;
+    z-index: -1;
+} */
+
+/***************************************************************************************************/
+/************************************** C O N T E N I D O ******************************************/
+/***************************************************************************************************/
+
+.contenido {
+    min-height: 100vh;
+    height: auto;
+    width: 100%;
+    background-color: white;
+    position: absolute;
+    padding-top: 55px;
+    z-index: 1;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    /* establece una mayor prioridad que el fondo oscuro */
+}
+
+.modal::-webkit-scrollbar {
+    display: none;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 110vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* establece el fondo oscuro */
+    z-index: 900;
+    display: none;
+    transform: translateY(-10vh);
+    /* establece una menor prioridad que el modal */
+}
+
+.modal {
+    z-index: 1050 !important;
+}
+
+.modal-backdrop {
+    z-index: 1040 !important;
+    opacity: 0.3 !important;
+}
+
+.modal-backdrop.fade {
+    opacity: 0 !important;
+}
+
+.modal-backdrop.show {
+    opacity: 0.3 !important;  /* tu opacidad deseada */
+    transition: opacity .2s linear !important;
+}
+
+/* ::placeholder {
+    color: #9ca3af !important;
+    opacity: 1;
+} */
+
+/* .modal-backdrop {
+    display: none;
+} */
+
+/********************* MODIFICANDO EL MODAL SWEET **************************/
+
+body > .swal2-container > .swal2-popup {
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+}
+
+.asterisco {
+    color: hsl(0, 65%, 70%);
+}
+
+body .modal-open {
+    padding: 0;
+}
+
+.uwy .userway_p1 {
+    transform: translate(-20px, 80px);
+}
+
+@media (max-width: 470px) {
+    #UserName {
+      display: none;
+    }
+  }
+
+.dt-scroll-body::-webkit-scrollbar {
+    width: 0px;
+    /* background: #f5f0f0; */
+}
+
+/*****************************************************/
+
+.badge-red {
+    background-color: hsl(3, 74%, 65%);
+    padding: 5px 7px;
+    color: white;
+    border-radius: 10px;
+}
+
+.badge-green {
+    background-color: hsl(146, 60%, 59%);
+    padding: 5px 7px;
+    color: white;
+    border-radius: 10px;
+}
+
+.badge-dark-gray {
+    background-color: #888888;
+    padding: 5px 7px;
+    color: white;
+    border-radius: 10px;
+}
+
+/* * * * * * * * * * CHECK TOGGLE * * * * * * * * * */
+
+/* Contenedor principal para alinear texto y switch */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: sans-serif;
+    color: #6c757d; /* Color del texto similar a la imagen */
+
+    border: solid 2px hsl(208, 7%, 70%);
+    padding: 0 10px;
+    border-radius: 30px;
+}
+
+.toggle-container:has(.label-toggle:hover) {
+    background-color: #f5f0f0; /* Color de fondo sutil */
+    transition: background-color ease-in-out 0.2s;
+}
+
+/* Ocultamos el checkbox original */
+.check-toggle {
+    display: none;
+}
+
+/* Estilo del carril (el fondo ovalado) */
+.label-toggle {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    margin: 0;
+    line-height: 15px;
+    text-align: center;
+}
+
+.label-toggle::after {
+    content: "";
+    width: 50px;
+    min-width: 50px;
+    height: 24px;
+    background-color: #ffffff;
+    border: 2px solid #dee2e6;
+    border-radius: 20px;
+    display: inline-block;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Estilo del círculo (el switch) */
+.label-toggle::before {
+    content: "";
+    position: absolute;
+    right: 28px; /* Posición inicial (apagado) */
+    width: 18px;
+    height: 18px;
+    background-color: #adb5bd; /* Gris cuando está inactivo */
+    border-radius: 50%;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+/* --- ESTADOS ACTIVOS --- */
+
+/* Cuando el checkbox está marcado: movemos el círculo y cambiamos color */
+.check-toggle:checked + .label-toggle::before {
+    transform: translateX(130%);
+    background-color: #e35d5d; /* Rojo de tu imagen */
+}
+
+/* Opcional: cambiar el borde del carril cuando esté activo */
+.check-toggle:checked + .label-toggle::after {
+    border-color: #ced4da;
+}
+
+/* * * * * * * * * ESTADOS TIPO PASTILLAS * * * * * * * * * */
+
+:root {
+    --color-activo: #63c963;   /* Verde de tu imagen */
+    --color-inactivo: #ce6d6d; /* Rojo de tu imagen */
+    --color-texto-off: #888;
+}
+
+/* Título */
+.titulo-estado {
+    font-size: 20px;
+    margin-bottom: 5px;
+    color: #444;
+}
+.required { color: #ff8a8a; }
+
+/* Contenedor del Switch */
+.switch-segmentado {
+    display: flex;
+    position: relative;
+    width: 100%; /* Ajusta el ancho según necesites */
+    height: 40px;
+    background-color: #fff;
+    border: 2px solid #e9ecef;
+    border-radius: 50px;
+    overflow: hidden;
+}
+
+/* Ocultamos los radios reales */
+.switch-segmentado input {
+    display: none;
+}
+
+/* Estilo de las etiquetas (Texto) */
+.switch-segmentado label {
+    flex: 1;
+    text-align: center;
+    line-height: 38px; /* Centrado vertical */
+    z-index: 2;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 18px;
+    color: var(--color-texto-off);
+    transition: color 0.3s ease;
+    margin: 0;
+}
+
+/* La pastilla deslizante */
+.slider-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    border-radius: 40px;
+    transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    z-index: 1;
+}
+
+/* --- LÓGICA DE ESTADOS --- */
+
+/* Si ACTIVO está seleccionado */
+#activoConsumible:checked ~ .slider-bg, #activoTipoConsumible:checked ~ .slider-bg, #activoPersonal:checked ~ .slider-bg {
+    left: 0;
+    background-color: var(--color-activo);
+}
+
+#activoConsumible:checked + label, #activoTipoConsumible:checked + label, #activoPersonal:checked + label {
+    color: white;
+}
+
+/* Si INACTIVO está seleccionado */
+#inactivoConsumible:checked ~ .slider-bg, #inactivoTipoConsumible:checked ~ .slider-bg, #inactivoPersonal:checked ~ .slider-bg {
+    left: 50%;
+    background-color: var(--color-inactivo);
+}
+
+#inactivoConsumible:checked + label, #inactivoTipoConsumible:checked + label, #inactivoPersonal:checked + label {
+    color: white;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

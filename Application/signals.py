@@ -1,9 +1,11 @@
 # Application/signals.py
 
 from django.db import transaction
-from django.contrib.auth.hashers import make_password
 from .models import Cargo, AreaMesa, Mesa, Platillo, TipoPlatillo
+from django.db.models.signals import post_migrate
+from django.dispatch import receiver
 
+@receiver(post_migrate)
 def initial_data(sender, **kwargs):
     with transaction.atomic():
         print("Insertando datos iniciales")
