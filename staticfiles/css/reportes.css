@@ -1,0 +1,318 @@
+#contenedorIzquierdoEncabezadoInventarioReportes {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+
+    gap: 15px;
+}
+
+#contenedorDerechoEncabezadoInventarioReportes {
+    width: 30%;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+#errorFechas {
+    position: absolute;
+    bottom: -20px;
+}
+
+#areasBusqueda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+
+    padding: 5px 15px 0 15px;
+}
+
+#fechasFiltro {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+
+    padding: 5px 15px 0 15px;
+}
+
+.separadorMostrarOrden {
+    margin: 7px 0px;
+}
+
+.contenedorFechasReportes input {
+    height: 40px;
+    border-radius: 7px;
+    padding: 0 10px;
+
+    cursor: pointer;
+
+    transition: background-color ease .3s;
+}
+
+.contenedorFechasReportes input:hover {
+    background-color: rgb(245, 245, 245);
+}
+
+#btnAplicarFiltrosOrdenes {
+    justify-self: flex-start;
+    width: auto;
+    height: 40px;
+    color: white;
+    background: hsl(24, 100%, 65%);
+    border-color: hsl(24, 100%, 80%);
+    border-radius: 7px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+
+    padding: 0 15px;
+
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: background-color ease .3s;
+}
+
+#btnAplicarFiltrosOrdenes:hover {
+    background: hsl(24, 100%, 60%);
+    border-color: hsl(24, 100%, 70%);
+}
+
+.btnMostrarOrden {
+    background-color: white;
+    border: solid 3px hsl(200 80% 60% / 1);
+    border-radius: 10px;
+    color: hsl(200 80% 60% / 1);
+    font-weight: 600;
+    padding: 5px 15px;
+    line-height: 16px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: background-color ease .3s;
+}
+
+.btnMostrarOrden span {
+    margin-left: 8px;
+    text-align: center;
+}
+
+.btnMostrarOrden:hover {
+    background-color: hsl(200 80% 95% / 1);;
+}
+
+#contenedorBtnAplicarFiltros {
+    position: relative;
+}
+
+#indicadorFiltros {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    background-color: orange;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: solid 1px white;
+}
+
+/* * * * * * * * * * * * * * * * * * */
+
+.btnExportarOrdenes, .btnExportarOrdenes2 {
+    border-radius: 7px;
+    padding: 0 15px;
+    color: white;
+    background: rgb(255, 100, 100);
+    border-color: rgb(255, 130, 150);
+
+    height: 40px;
+
+    min-width: 130px;
+
+    cursor: pointer;
+
+    transition: background-color ease .3s;
+}
+
+.btnExportarOrdenes:hover, .btnExportarOrdenes2:hover {
+    background: hsl(0, 100%, 63%);
+}
+
+.btnExportarOrdenes:disabled, .btnExportarOrdenes2:disabled {
+    background-color: hsl(359, 10%, 97%);
+    border-color: hsl(350, 10%, 75%);
+    color: hsl(350, 10%, 70%);
+    cursor: initial;
+}
+
+.btnExportarOrdenes:disabled svg path, .btnExportarOrdenes2:disabled svg path {
+    fill: hsl(350, 10%, 70%) !important;
+    cursor: initial;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * AUTO SELECT * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+.dropdown-menu li {
+    color: #333;
+    padding: 5px 15px;
+    cursor: pointer; /* Cambia a manito al pasar el mouse */
+    font-size: 14px;
+    outline: none;
+}
+
+/* El efecto de oscurecer un poco el fondo que querías */
+.dropdown-menu li:hover 
+{
+    background-color: #e2e2e2;
+    color: #000;
+}
+
+.dropdown-menu li:focus {
+    background-color: #9C090B;
+    color: white;
+    outline: none;
+}
+
+/* Aseguramos que el contenedor no mueva otros elementos al abrirse */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 100%;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+    z-index: 999;
+    border: 1px solid #b0b0b0;
+    border-radius: 4px;
+    padding: 0;
+    margin-top: 0;
+}
+
+.custom-dropdown:hover .dropdown-menu,
+.custom-dropdown.is-active .dropdown-menu {
+    display: block;
+}
+
+/* TOGGLE */
+
+:root {
+  --color-primary: #d66161; /* El color rojizo de tus imágenes */
+  --color-bg-light: #fff5f5; /* Fondo muy tenue para el estado desmarcado */
+  --color-border-unchecked: hsl(0, 7%, 70%);
+  --color-border-checked: hsl(0, 40%, 70%);
+}
+
+.custom-checkbox-report {
+    display: inline-flex;
+    height: 34px;
+    width: auto;
+    align-items: center;
+    cursor: pointer;
+    border: 2px solid var(--color-border-unchecked);
+    border-radius: 8px;
+    padding: 10px 5px 10px 3px;
+    margin-top: 0px;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+/* Ocultar el checkbox original */
+.custom-checkbox-report input {
+  display: none;
+}
+
+/* El cuadro del checkbox */
+.checkmark-report {
+    width: 25px;
+    height: 25px;
+    border: 2px solid var(--color-border-unchecked);
+    border-radius: 5px;
+    margin-right: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-bg-light);
+    transition: background-color 0.2s ease;
+    position: relative;
+}
+
+.checkmark-report svg {
+  opacity: 0;
+}
+
+/* El texto "Combinar mesas" */
+.label-text-report {
+  font-family: sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-border-unchecked);
+  transition: color 0.2s ease;
+}
+
+/* --- ESTADO ACTIVADO (Checked) --- */
+
+/* Cambiar fondo del cuadro al marcar */
+.custom-checkbox-report input:checked + .checkmark-report {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.custom-checkbox-report:has(input:checked) .label-text-report {
+  color: var(--color-primary);
+}
+
+.custom-checkbox-report:has(input:checked) {
+  border-color: var(--color-primary);
+}
+
+.custom-checkbox-report input:checked + .checkmark-report svg {
+  opacity: 100%;
+}
+
+/* Mostrar el check cuando está marcado */
+.custom-checkbox-report input:checked + .checkmark-report:after {
+  display: block;
+}
+
+#txtBtnFiltrosAdicionales {
+    margin-left: 10px;
+}
+
+#cont_encabezado {
+    display: flex;
+    justify-content: space-between; 
+    width: 100%;
+}
+
+@media (max-width : 940px) {
+    #txtBtnFiltrosAdicionales, #txtBtnFiltrosAdicionales2 {
+        display: none;
+    }
+}
+
+@media (max-width : 610px) {
+    #cont_encabezado {
+        display: contents;
+    }
+
+    #contenedorIzquierdoEncabezadoInventarioReportes {
+        display: contents;
+    }
+
+    #contenedorDerechoEncabezadoInventarioReportes {
+        display: contents;
+    }
+
+    #encabezado_inventario {
+        width: 100%;
+        justify-content: center;
+        gap: 10px;
+        align-items: center;
+
+        flex-wrap: wrap;
+    }
+}

@@ -1,0 +1,1445 @@
+.contenidoVenta {
+  overflow: hidden;
+  height: 550px;
+  position: relative;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* padding: 25px 50px; */
+  /* display: inline-block; */
+}
+
+.contenidoVenta::-webkit-scrollbar{
+  width: 0;
+}
+
+#pag1 {
+  position: absolute;
+  width: 100%;
+  /* transition: 1s ease; */
+}
+
+#pag2 {
+  position: absolute;
+  left: 100%;
+  width: 100%;
+  /* transition: 1s ease; */
+}
+
+#emptyStatePlatillos {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20vh;
+  display: none;
+}
+
+#encabezadoVenta_pag1 {
+  display: flex;
+  margin-top: 12px;
+  padding: 25px 50px;
+
+  transition: all ease 3s;
+}
+
+#btnver_ordenes {
+  width: 150px;
+  height: 40px;
+  background: rgb(255, 100, 100);
+  border-color: rgb(255, 130, 150);
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+  display: inline-block;
+  cursor: pointer;
+}
+
+#btnver_ordenes img {
+  vertical-align: middle;
+}
+
+#btnver_ordenes span {
+  color: white;
+  vertical-align: middle;
+  font-size: 18px;
+  padding-left: 5px;
+}
+
+#noti {
+  transform: translate(-16px, -10px);
+  background-color: rgb(255, 50, 50);
+  /* color: white;
+    border-radius: 50%;
+    font-size: 15px;
+    padding: 15px; */
+  border-radius: 0.8em;
+  -moz-border-radius: 0.8em;
+  -webkit-border-radius: 0.8em;
+  color: #ffffff;
+  display: inline-block;
+  font-weight: bold;
+  line-height: 1.6em;
+  text-align: center;
+  width: 26px;
+  height: 26px;
+  cursor: default;
+}
+
+#btnver_ordenes:hover {
+  background: rgb(255, 120, 110);
+  border-color: rgb(255, 170, 120);
+}
+
+/******************************* E X P O R T A R *************************************/
+
+.exportarV {
+  margin-left: 20px;
+}
+
+.exportarV .pdf,
+.excel {
+  width: 50px;
+  height: 40px;
+  background: rgb(255, 255, 255);
+  border-color: rgb(230, 150, 150);
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+}
+
+.exportarV .pdf:hover {
+  background: rgb(255, 240, 240);
+}
+
+.exportarV .excel:hover {
+  background: rgb(255, 240, 240);
+}
+
+/**********************************************************************************/
+/*************************** C U E R P O  D E  V E N T A *********************************/
+/**********************************************************************************/
+
+#cuerpoVenta_pag1 {
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#listaAreasDeMesa:hover {
+  background: rgb(255, 245, 245);
+  border-color: rgb(230, 100, 50) rgb(255, 150, 100) rgb(255, 150, 100)
+    rgb(230, 100, 50);
+}
+
+#listaAreasDeMesa {
+  width: 80%;
+  margin: 5px 10%;
+  min-width: 155px;
+  height: 40px;
+  border-color: rgb(200, 50, 50) rgb(255, 100, 100) rgb(255, 100, 100)
+    rgb(200, 50, 50);
+  border-radius: 10px;
+  padding-left: 15px;
+  font-size: 20px;
+  color: #821414;
+  outline-color: rgb(200, 100, 100);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+  cursor: pointer;
+}
+
+/*************************** C H E C K E D *********************************/
+
+fieldset {
+  border: 1px solid rgb(200, 150, 150);
+  border-radius: 10px;
+  padding: 0 0.5em 1em 0.5em;
+  width: 50%;
+  margin-top: 15px;
+
+  transition: ease 0.3s;
+}
+
+legend {
+  color: rgb(200, 150, 150);
+  font-size: 16px;
+  padding: 0 5px;
+}
+
+#mesas input[type="radio"] {
+  display: none;
+}
+
+#mesas input[type="checkbox"] {
+  display: none;
+}
+
+#mesas input[type="radio"]:checked + label {
+  background-color: #ff4e4e;
+  color: white;
+}
+
+#mesas input[type="checkbox"]:checked + label {
+  background-color: #ff4e4e;
+  color: white;
+}
+
+#mesas label {
+  width: 40px;
+  height: 40px;
+  background-color: #ffbebe;
+  color: #821414;
+  border-radius: 10px;
+  text-align: center;
+  padding-top: 7px;
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+
+#mesas {
+  display: grid;
+  grid-template-columns: auto auto auto auto auto;
+  justify-content: center;
+}
+
+#mesas .grid_item {
+  margin: 0 10px;
+}
+
+/*************************** B O T O N *********************************/
+
+#AccionesPrimerPagina {
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+
+  transition: all ease .3s;
+}
+
+#btn_siguiente {
+  margin-top: 15px;
+  margin-left: 10px;
+  
+  width: 150px;
+  height: 40px;
+  background: hsl(0, 100%, 70%);
+  border-color: hsl(350, 100%, 75%);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+  display: inline-block;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+#btn_siguiente:disabled {
+  background: hsl(0, 20%, 75%);
+  border-color: hsl(350, 20%, 80%);
+  color: white;
+  border-radius: 10px;
+  cursor: auto;
+}
+
+#btn_siguiente:disabled:hover {
+  background: hsl(0, 20%, 76%);
+  border-color: hsl(350, 20%, 81%);
+  color: white;
+  border-radius: 10px;
+  cursor: auto;
+}
+
+#btn_siguiente img {
+  vertical-align: middle;
+}
+
+#btn_siguiente span {
+  color: white;
+  vertical-align: middle;
+  font-size: 18px;
+  padding-left: 5px;
+}
+
+#btn_siguiente:hover {
+  background: rgb(255, 120, 110);
+  border-color: rgb(255, 170, 120);
+}
+
+/*---------------------------*/
+
+#btn_volver {
+  margin-top: 15px;
+  margin-left: 15px;
+  margin-right: 20px;
+  width: 120px;
+  height: 40px;
+  background: #ff6464;
+  border-color: rgb(255, 130, 150);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+  display: inline-block;
+  cursor: pointer;
+
+  transition: 0.2s ease;
+
+  font-size: 18px;
+}
+
+#btn_volver:hover {
+  background: rgb(255, 120, 110);
+  border-color: rgb(255, 170, 120);
+}
+
+#btn_volver i {
+  font-size: 26px;
+  vertical-align: middle;
+}
+
+#btn_volver span {
+  vertical-align: middle;
+}
+
+#acciones_pag2 input {
+  width: 50%;
+  margin-top: 15px;
+  margin-right: 20px;
+  border-radius: 10px;
+  border: #821414 solid 1px;
+  outline: none;
+
+  padding-left: 15px;
+  color: #821414;
+}
+
+/**********************************************************************************/
+/*********************************** P A G I N A 2 ************************************/
+/**********************************************************************************/
+
+#capaventas {
+  height: 100vh;
+  position: absolute;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 3;
+  display: none;
+}
+
+#pag2 {
+  display: flex;
+}
+
+#acciones_pag2 {
+  position: absolute;
+  width: calc(100% - 300px);
+  z-index: 999;
+  background-color: white;
+  padding-bottom: 10px;
+}
+
+#acciones_pag2_foot {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  z-index: 999;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), #df362d 50%, rgba(255, 255, 255, 0));
+}
+
+#accionesGenerales{
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+}
+
+#accionesBusqueda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 15px 10px 0 10px;
+  justify-content: center;
+}
+
+#Ordenes {
+  margin-left: auto;
+  width: 300px;
+  height: auto;
+  background: rgba(255, 255, 255, 0.8);
+
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+
+  overflow: hidden;
+
+  z-index: 15;
+  /* border-left-style: solid;
+    border-left-width: 1px;
+    border-color: rgb(200, 200, 200); */
+}
+
+.form-check-input {
+  display: none;
+}
+
+.form-radio-input {
+  display: none;
+}
+
+.form-check-label {
+  background-color: #FFBEBE;
+  color: #B24D60;
+  border-radius: 10px;
+
+  cursor: pointer;
+  
+  padding: 0 7px;
+  transition: ease .3s all;
+}
+
+.form-radio-label {
+  background-color: #E6E6E6;
+  color: #8A8A8A;
+  border-radius: 15px;
+
+  cursor: pointer;
+
+  margin-bottom: 0;
+
+  padding: 2px 10px;
+  transition: ease .3s all;
+}
+
+.form-check-input:checked + label {
+  background-color: #FF4E4E;
+  color: white;
+}
+
+.form-radio-input:checked + label {
+  color: #E6E6E6;
+  background-color: #8A8A8A;
+}
+
+.form-check, .form-radio {
+  margin: 0;
+  padding: 0;
+}
+
+.encabezado_ordenes {
+  background-color: #df362d;
+  width: 100%;
+  height: 60px;
+  /* border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+}
+
+.encabezado_ordenes span {
+  color: white;
+  font-size: 23px;
+}
+
+.encabezado_ordenes i {
+  color: white;
+  position: absolute;
+
+  display: none;
+
+  right: 260px;
+
+  cursor: pointer;
+
+  justify-self: flex-start;
+}
+
+#btnInfoCrearOrden {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 20px;
+  background-color: #FF7878;
+  border: solid 1px #FFB3B2;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  padding-bottom: 2px;
+
+  transition: background-color ease .3s;
+}
+
+#btnInfoCrearOrden:hover {
+  background-color: hsl(0, 100%, 70%);
+}
+
+.orden {
+  margin: 5%;
+  width: 90%;
+  background: rgba(255, 255, 255, 60%);
+  min-height: 100px;
+  border-style: solid;
+  border-color: #821414;
+  border-radius: 15px;
+  border-width: 1px;
+  padding: 5px 15px;
+}
+
+.orden > span {
+  color: #821414;
+  font-size: 20px;
+}
+
+.separador {
+  width: 100%;
+  height: 1px;
+  background: white;
+  position: absolute;
+  top: 0;
+  z-index: 3;
+}
+
+.detalleorden {
+  display: flex;
+}
+
+.detalleorden span {
+  color: rgb(110, 10, 10);
+  font-size: 16px;
+}
+
+.botonQuitar {
+  display: flex;
+}
+
+.btnQuitar {
+  margin-left: auto;
+  margin-top: 15px;
+  width: 90px;
+  height: 30px;
+  background: rgb(223, 54, 45);
+  border-color: rgb(255, 130, 150);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+  display: inline-block;
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.btnQuitar:hover {
+  background: rgb(223, 70, 65);
+  border-color: rgb(255, 180, 120);
+}
+
+#cuerpo_ordenes {
+  max-height: 70vh;
+  padding-bottom: 5px;
+  overflow: auto;
+  transition: 0.5s ease;
+  background-color: hsl(0, 0%, 98%);
+}
+
+#cuerpo_ordenes::-webkit-scrollbar {
+  width: 10px;
+  background: #ffffff;
+}
+
+#cuerpo_ordenes::-webkit-scrollbar-thumb {
+  background: rgba(255, 200, 200, 1);
+  border-radius: 10px;
+}
+
+.pie_ordenes {
+  background-color: #df362d;
+  width: 100%;
+  height: 80px;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.total {
+  color: white;
+  padding-right: 25px;
+}
+
+.botonesOrden {
+  display: flex;
+  flex-direction: column;
+}
+
+#btnAgregarOrden {
+  width: 140px;
+  height: 30px;
+  background: #ff964e;
+  border-color: rgb(255, 130, 80);
+  color: white;
+  font-size: 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+  display: inline-block;
+  cursor: pointer;
+  transition: ease 0.2s;
+}
+
+#btnAgregarOrden:hover {
+  background: rgb(255, 170, 90);
+  border-color: rgb(255, 170, 50);
+}
+
+#btnAgregarOrden:disabled {
+  background: hsl(24, 50%, 65%);
+  border-color: hsl(17, 50%, 66%);
+  cursor: auto;
+}
+
+#btnAgregarOrden:hover:disabled {
+  background: hsl(24, 50%, 69%);
+  border-color: hsl(17, 50%, 61%);
+}
+
+.btnLimpiar {
+  margin-top: 5px;
+  width: 140px;
+  height: 30px;
+  background: rgba(255, 180, 180, 0.8);
+  border-color: rgb(255, 190, 190);
+  color: white;
+  font-size: 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+  display: inline-block;
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.btnLimpiar:hover {
+  background: rgba(255, 200, 200, 0.8);
+  border-color: rgb(255, 230, 160);
+}
+
+#btnAgregarOrden img {
+  vertical-align: middle;
+}
+
+#btnAgregarOrden span {
+  color: white;
+  vertical-align: middle;
+  font-size: 14px;
+  padding-left: 5px;
+}
+
+#btnLimpiar img {
+  vertical-align: middle;
+}
+
+#btnLimpiar span {
+  color: white;
+  vertical-align: middle;
+  font-size: 18px;
+  padding-left: 5px;
+}
+
+/* ***************************** P L A T I L L O S ******************************** */
+
+.tipoNombre {
+  justify-self: center;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 50%;
+  margin: 25px 0 15px 0;
+  color: #D49191;
+  font-size: 25px;
+}
+
+.tipoNombreHead {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  top: 0;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), #D49191 50%, rgba(255, 255, 255, 0));
+}
+
+.tipoNombreFoot {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), #D49191 50%, rgba(255, 255, 255, 0));
+}
+
+.PlatillosVenta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  width: 100%;
+
+  gap: 20px;
+
+  justify-items: center;
+}
+
+#VPlatillos {
+  width: calc(100% - 300px);
+  /* height: calc(100% - 10vh); */
+  height: 100vh;
+  overflow: auto;
+
+  padding-bottom: 200px;
+  padding-top: 80px;
+
+  /* display: grid;
+    grid-template-columns: auto auto auto; */
+  /* box-shadow: rgba(0, 0, 0, 0.5) 0px 2px 10px; */
+  transform: translateY(70px);
+  /* border-bottom-right-radius:  15px; */
+  /* justify-content: center; */
+}
+
+#VPlatillos::-webkit-scrollbar {
+  width: 0px;
+}
+
+#VPlatillos::-webkit-scrollbar-thumb {
+  background: rgba(200, 100, 100, 0.5);
+  border-radius: 10px;
+}
+
+.vplatillo {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  
+  width: 200px;
+  height: auto;
+  /* background-color: rgb(220, 100, 90); */
+  background-color: #FFE6E6;
+  /* border-color: hsl(0, 50%, 50%); */
+
+  border: solid 1px #B44646;
+
+  box-shadow: 1px 5px 5px 1px hsla(0, 100%, 20%, 0.2);
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.textoInfoCrearOrden {
+  color: #97999B;
+}
+
+.subTItuloInfoCrearOrden {
+  color: #6D6F72;
+}
+
+.datoPlatillo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.detalleConsumibleElemento{
+  margin: 0 0;
+}
+
+.accionesPlatillo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.infoGenPlatillo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.datoPlatillo img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  /* border-radius: 19px; */
+  border-style: solid;
+  border-width: 0 0 2px 0;
+  border-color: #B44646;
+}
+
+.nombrePlatillo {
+  color: #B44646;
+  text-align: center;
+  /* margin-top: 15px; */
+  font-size: 16px;
+  padding: 0 10px;
+}
+
+.precioPlatillo {
+  color: #B44646;
+  font-size: 17px;
+  margin: 0 5%;
+  display: block;
+  text-decoration: underline;
+}
+
+.vplatillo .accionesPlatillo fieldset {
+  border-color: #ffbebe;
+  width: 70%;
+
+  margin: 0 15%;
+  height: 85px;
+  padding-left: 15px;
+}
+
+.vplatillo fieldset legend {
+  color: #ffbebe;
+}
+
+/* ********************************** C A N T I D A D *************************************** */
+
+.cantidad {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  width: 80%;
+  border-radius: 20px;
+  overflow: hidden;
+  border: solid 1px #B44646;
+}
+
+.btnLessPlus {
+  width: 30%;
+  height: 30px;
+
+  background-color: #FFBEBE;
+
+  border: none;
+}
+
+.cantBox:disabled {
+  width: 40%;
+  height: 30px;
+  border-radius: 0;
+
+  background-color: #FFE6E600;
+  border: none;
+
+  color: #b44646;
+}
+
+.cantidad button {
+  /* background: rgba(255, 110, 110, 0.1); */
+  /* background-color: #FFBEBE; */
+  /* background-color: #ffffff; */
+  /* border-color: rgba(255, 140, 160, 0.1);
+  border-radius: 5px; */
+  cursor: pointer;
+  /* box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px; */
+  display: inline-block;
+  cursor: pointer;
+  color: #b44646;
+  /* color: white; */
+  /* color: #821414; */
+  transition: 0.2s ease;
+  text-align: center;
+}
+
+.cantidad input[type="number"]::-webkit-outer-spin-button,
+.cantidad input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.cantidad button:hover {
+  background-color: hsl(0, 100%, 83%);
+  /* color: #821414; */
+}
+
+.cantidad input {
+  text-align: center;
+}
+
+/***************************************************************************************/
+/***************************************************************************************/
+/***************************************************************************************/
+
+.btnDetalleConsumible {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  border-radius: 10px;
+  width: 32px;
+  border-color: #B44646;
+  height: 32px;
+  border-style: solid;
+  background-color: rgba(255, 255, 255, 85%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btninfoPlatillo {
+  width: 40px;
+  height: 30px;
+  margin-right: 10px;
+  background: rgb(255, 150, 78);
+  border-color: rgb(255, 130, 80);
+  color: white;
+  font-size: 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+  display: inline-block;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btninfoPlatillo:hover {
+  background: rgb(255, 170, 90);
+  border-color: rgb(255, 170, 50);
+}
+
+.btnaddCarrito {
+  width: 100%;
+  height: 40px;
+  margin: 0;
+  border: none;
+  background: hsl(0, 100%, 70%);
+  border-color: hsl(350, 100%, 75%);
+  /* border-radius: 2px 2px 0px 0px; */
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.btnaddCarrito:disabled {
+  background: hsl(0, 20%, 75%);
+  border-color: hsl(350, 20%, 80%);
+  cursor: auto;
+  transition: all 0.2s ease;
+}
+
+.btnaddCarrito:disabled:hover {
+  background: hsl(0, 20%, 76%);
+  border-color: hsl(350, 20%, 81%);
+  /* border-radius: 2px 2px 19px 19px; */
+  cursor: auto;
+}
+
+.btnaddCarrito:hover {
+  background: hsl(4, 100%, 72%);
+  border-color: hsl(22, 100%, 74%);
+}
+
+.btnaddCarrito img {
+  vertical-align: middle;
+}
+
+.btnaddCarrito span {
+  color: white;
+  vertical-align: middle;
+  font-size: 18px;
+  padding-left: 5px;
+}
+
+.botonesPlatillo {
+  width: 100%;
+
+  margin-top: 13px;
+  display: flex;
+  justify-content: end;
+  margin-bottom: 0;
+}
+
+#btn_abrirListaOrdenes {
+  margin-top: 15px;
+  margin-left: auto;
+  margin-right: 15px;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  background: hsl(0, 100%, 70%);
+  border-color: hsl(350, 100%, 75%);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+  display: inline-block;
+  cursor: pointer;
+  transition: 0.2s ease;
+
+  display: none;
+}
+
+#notiPlatillosOrden {
+  background-color: rgb(255, 50, 50);
+  /* color: white;
+    border-radius: 50%;
+    font-size: 15px;
+    padding: 15px; */
+  border-radius: 0.8em;
+  -moz-border-radius: 0.8em;
+  -webkit-border-radius: 0.8em;
+  color: #ffffff;
+  display: none;
+  font-weight: bold;
+  line-height: 1.6em;
+  text-align: center;
+  width: 26px;
+  height: 26px;
+  cursor: default;
+
+  position: absolute;
+  right: 0;
+
+  transform: translate(-10px, 4px);
+}
+
+/* CHECKS */
+/* TOGGLE */
+
+:root {
+  --color-primary: #d66161; /* El color rojizo de tus imágenes */
+  --color-bg-light: #fff5f5; /* Fondo muy tenue para el estado desmarcado */
+  --color-border-unchecked: hsl(0, 40%, 65%);
+  --color-border-checked: hsl(0, 70%, 60%);
+}
+
+.custom-checkbox {
+  display: inline-flex;
+  height: 40px;
+  width: auto;
+  align-items: center;
+  cursor: pointer;
+  border: 3px solid var(--color-border-unchecked);
+  border-radius: 12px;
+  padding: 10px 5px;
+  margin-top: 15px;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+/* Ocultar el checkbox original */
+.custom-checkbox input {
+  display: none;
+}
+
+/* El cuadro del checkbox */
+.checkmark {
+  width: 30px;
+  height: 30px;
+  border: 3px solid var(--color-border-unchecked);
+  border-radius: 7px;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg-light);
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+.checkmark svg {
+  opacity: 0;
+}
+
+/* El texto "Combinar mesas" */
+.label-text {
+  font-family: sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-border-unchecked);
+}
+
+/* --- ESTADO ACTIVADO (Checked) --- */
+
+/* Cambiar fondo del cuadro al marcar */
+.custom-checkbox input:checked + .checkmark {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.custom-checkbox:has(input:checked) .label-text {
+  color: var(--color-primary);
+}
+
+.custom-checkbox:has(input:checked) {
+  border-color: var(--color-primary);
+}
+
+.custom-checkbox input:checked + .checkmark svg {
+  opacity: 100%;
+}
+
+/* Mostrar el check cuando está marcado */
+.custom-checkbox input:checked + .checkmark:after {
+  display: block;
+}
+
+#emptyStateCrearOrden {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #BBBBBB;
+  /* display: none; */
+}
+
+#emptyStateCrearOrden span {
+  text-align: center;
+  color: #BBBBBB;
+}
+
+#swal2-input {
+  margin-top: 0;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * R E S P N S I V I D A D * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * * */
+
+@media (max-width: 1200px) {
+  /* #PlatillosVenta {
+    grid-template-columns: auto auto;
+  } */
+}
+
+@media (max-width: 900px) {
+  /* #Ordenes {
+        position: absolute;
+
+        right: 0;
+
+        display: none;
+    } */
+
+  /* #VPlatillos {
+        width: 100%;
+        border-radius: 0;
+    } */
+
+  /* #PlatillosVenta {
+    grid-template-columns: auto;
+  } */
+
+  /* .vplatillo {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+
+    padding: 10px 0;
+  } */
+
+  /* .datoPlatillo img {
+    width: 150px;
+    height: 150px;
+  }
+
+  .datoPlatillo {
+    display: flex;
+    flex-direction: column;
+
+    width: 40%;
+  }
+
+  .accionesPlatillo {
+    width: 60%;
+  } */
+/* 
+  .nombrePlatillo {
+    font-size: 16px;
+  }
+
+  .precioPlatillo {
+    font-size: 14px;
+  }
+
+  .accionesPlatillo fieldset legend {
+    font-size: 14px;
+  }
+
+  .accionesPlatillo .btninfoPlatillo,
+  .accionesPlatillo .btnaddCarrito {
+    height: 30px;
+  }
+
+  .accionesPlatillo .btnaddCarrito span {
+    font-size: 15px;
+  } */
+}
+
+@media (max-width: 730px) {
+  #notiPlatillosOrden {
+    display: inline-block;
+  }
+
+  #acciones_pag2 {
+    width: 100%;
+    padding-right: 10px;
+    z-index: 2;
+  }
+
+  .separador {
+    background-color: #df362d;
+  }
+
+  #iconoCerrarCarrito {
+    display: initial;
+  }
+
+  #btn_abrirListaOrdenes {
+    display: initial;
+  }
+
+  #VPlatillos {
+    width: 100%;
+    border-radius: 0;
+  }
+
+  #Ordenes {
+    position: absolute;
+
+    right: 0;
+    /* top: 10vh; */
+
+    display: none;
+  }
+
+  #cuerpo_ordenes {
+    max-height: 60vh;
+  }
+
+  /* .vplatillo {
+    display: flex;
+    flex-direction: column;
+
+    width: 40vh;
+    justify-content: start;
+    align-items: center;
+
+    padding: 10px 0;
+  }
+
+  #PlatillosVenta {
+    grid-template-columns: auto auto;
+  } */
+
+  .nombrePlatillo {
+    font-size: 16px;
+    text-align: center;
+    margin: 0 5%;
+  }
+
+  .precioPlatillo {
+    font-size: 17px;
+    margin: 0 5%;
+    display: block;
+  }
+
+  .accionesPlatillo {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .accionesPlatillo fieldset {
+    width: 70%;
+  }
+
+  .datoPlatillo {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+  }
+
+  /* .datoPlatillo img {
+    width: 200px;
+    height: 200px;
+  } */
+}
+
+@media (max-width: 700px) {
+  fieldset {
+    width: 66%;
+  }
+
+  #AccionesPrimerPagina{
+    width: 66%;
+  }
+
+  /* #btn_siguiente {
+    margin-right: 17%;
+  } */
+}
+
+@media (max-width: 600px) {
+  /* #PlatillosVenta {
+    grid-template-columns: auto;
+  } */
+
+  /* .vplatillo {
+    display: flex;
+    flex-direction: row;
+
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+
+    padding: 10px 0;
+  }
+
+  .datoPlatillo {
+    display: flex;
+    flex-direction: column;
+
+    width: 50%;
+  }
+
+  .accionesPlatillo {
+    display: flex;
+    flex-direction: column;
+
+    width: 50%;
+  } */
+
+  fieldset {
+    width: 75%;
+  }
+
+  #AccionesPrimerPagina{
+    width: 75%;
+  }
+}
+
+@media (max-width: 500px) {
+  fieldset {
+    width: 80%;
+  }
+
+  #AccionesPrimerPagina{
+    width: 80%;
+  }
+
+  #encabezadoVenta_pag1 {
+    padding-left: 10%;
+  }
+
+  .vplatillo{
+    width: 170px;
+  }
+
+  .PlatillosVenta {
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  }
+
+  /* .nombrePlatillo {
+    font-size: 18px;
+    text-align: center;
+    margin: 0 5%;
+  }
+
+  .precioPlatillo {
+    font-size: 17px;
+    margin: 0 5%;
+    display: block;
+  }
+
+  .accionesPlatillo fieldset legend {
+    font-size: 14px;
+  }
+
+  .accionesPlatillo .btninfoPlatillo,
+  .accionesPlatillo .btnaddCarrito {
+    height: 30px;
+  }
+
+  .accionesPlatillo .btnaddCarrito span {
+    font-size: 15px;
+  }
+
+  .datoPlatillo img {
+    width: 150px;
+    height: 150px;
+  }
+
+  .datoPlatillo {
+    display: flex;
+    flex-direction: column;
+
+    width: 40%;
+  }
+
+  .accionesPlatillo {
+    width: 60%;
+  } */
+
+  .nombrePlatillo {
+    font-size: 15px;
+  }
+
+  .precioPlatillo {
+    font-size: 14px;
+  }
+
+  .accionesPlatillo fieldset legend {
+    font-size: 14px;
+  }
+
+  .accionesPlatillo .btninfoPlatillo,
+  .accionesPlatillo .btnaddCarrito {
+    height: 30px;
+  }
+
+  .accionesPlatillo .btnaddCarrito span {
+    font-size: 15px;
+  }
+
+  #txtbtn_volver {
+    display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  #mesas {
+    grid-template-columns: auto auto auto auto;
+  }
+
+  #txtbtn_siguiente {
+    display: none;
+  }
+}
+
+@media (max-width: 370px) {
+  #mesas {
+    grid-template-columns: auto auto auto;
+  }
+
+  .vplatillo{
+    width: 250px;
+  }
+
+  .PlatillosVenta {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}

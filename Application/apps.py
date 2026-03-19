@@ -6,5 +6,4 @@ class ApplicationConfig(AppConfig):
     name = 'Application'
 
     def ready(self):
-        from .signals import initial_data
-        post_migrate.connect(initial_data, sender=self)
+        import Application.signals

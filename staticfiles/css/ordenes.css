@@ -1,0 +1,947 @@
+
+.EncabezadoOrdenesList {
+    background-color: white;
+    height: auto;
+    border: #DF362D solid 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+#EncabezadoOrdenesList_foot {
+    position: absolute;
+    width: calc(100% - 32px);
+    height: 2px;
+    bottom: 0;
+    z-index: 10;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0), #df362d 50%, rgba(255, 255, 255, 0));
+}
+
+.EncabezadoOrdenesListIzquierda {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#listaOrdenesPoFoC::-webkit-scrollbar {
+    width: 10px;
+}
+
+#listaOrdenesPoFoC::-webkit-scrollbar-thumb {
+    background: rgba(200, 100, 100, .5);
+    border-radius: 10px;
+}
+
+#btnInfoOrdenes {
+    width: 35px;
+    height: 35px;
+    background: hsl(0, 0%, 50%);
+    border: solid 0px black;
+    border-radius: 50%;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
+    padding-bottom: 3px;
+
+    transition: all .3s ease;
+}
+
+#btnInfoOrdenes:hover {
+    background: hsl(0, 0%, 45%);
+}
+
+#listaOrdenesPoFoC {
+    width: 100vw;
+    height: 85vh;
+    display: flex;
+    flex-direction: column;
+    padding-left: 15%;
+    padding-right: 15%;
+    overflow-y: auto;
+    padding-bottom: 50px;
+
+    transition: all .3s ease;
+}
+
+#inputPorcentajePropina,
+#inputPorcentajeDescuento {
+    display: none;
+}
+
+.iconoOrdenEditada {
+    position: absolute;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulsoIcono 1.4s ease-in-out infinite;
+}
+
+.contInfoSignals {
+    display: flex;
+    align-items: center;
+}
+
+#InfoDetalleOrden hr {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+/* El borde (estrella blanca de fondo) */
+.iconoOrdenEditada::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: white; /* Color del borde */
+    -webkit-mask-image: url('/static/img/empty_star.svg');
+    mask-image: url('/static/img/empty_star.svg');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    z-index: 1;
+}
+
+/* El contenido (estrella roja con imagen, un poco más pequeña) */
+.iconoOrdenEditada::after {
+    content: "";
+    position: absolute;
+    width: 95%; 
+    height: 95%;
+    background-color: #DF362D;
+
+    -webkit-mask-image: url('/static/img/empty_star.svg');
+    mask-image: url('/static/img/empty_star.svg');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    z-index: 2;
+}
+
+.tachado {
+    text-decoration: line-through;
+    color: #DF362D;
+}
+
+@keyframes pulsoIcono {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.9;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.ordenPoFoC {
+    margin-top: 20px;
+    /* background-color: hsl(3, 74%, 65%); */
+    background-color: #ffffff;
+    box-shadow: inset;
+    border: hsl(3, 74%, 60%) solid 1px;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.encabezadoPoFoC {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+
+    padding: 5px 15px 0;
+
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    justify-self: center;
+    align-items: center;
+    background-color: #DF362D;
+
+    position: relative;
+}
+
+.encabezadoPoFoC h3::selection,
+.encabezadoPoFoC h4::selection {
+    background-color: hsla(39, 100%, 60%, 0.8);
+    color: #ffffff;
+}
+
+.encabezadoPoFoC h3, .encabezadoPoFoC h4, .encabezadoPoFoC h5 {
+    color: white;
+}
+
+.seccionesPoFoC {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    justify-self: center;
+    align-items: center;
+
+    padding: 7px 15px;
+}
+
+.timer {
+    font-weight: bold;
+}
+
+.timer.naranja {
+    color: #ff9800 !important;
+}
+
+.timer.rojo {
+    color: #ff3b30 !important;
+}
+
+.seccionDerecha {
+    display: flex;
+    width: auto;
+    max-width: 70%;
+    flex-wrap: wrap;
+    justify-content: end;
+    gap: 10px;
+    margin-left: 15px;
+    /* flex-direction: column; */
+}
+
+#MensajeMonto {
+    display: none;
+}
+
+.EstP {
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background-color: hsl(39, 100%, 100%);
+    display: inline-block;
+    /* transform: translateY(-4px); */
+    margin-left: 6px;
+}
+
+.EstPre {
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background-color: hsl(60, 100%, 60%);
+    display: inline-block;
+    /* transform: translateY(-4px); */
+    margin-left: 6px;
+}
+
+.EstEnPre {
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background-color: hsl(39, 100%, 55%);
+    display: inline-block;
+    /* transform: translateY(-4px); */
+    margin-left: 6px;
+}
+
+.EstC {
+    width: 10px;
+    height: 10px;
+        
+    border-radius: 50%;
+
+    background-color: hsl(0, 100%, 80%);
+    display: inline-block;
+    /* transform: translateY(-4px); */
+    margin-left: 4px;
+}
+
+.EstF {
+    width: 10px;
+    height: 10px;
+        
+    border-radius: 50%;
+
+    background-color: hsl(120, 100%, 45%);
+    display: inline-block;
+    /* transform: translateY(-4px); */
+    margin-left: 4px;
+}
+
+#btnFacturar {
+    transition: all .2s ease;
+}
+
+/* #btnFacturar:hover {
+    background-color: hsl(120, 50%, 55%);
+} */
+
+.btnFacturarOrden {
+    width: 130px;
+    height: 30px; /*hsl(39, 100%, 55%)*/
+    background: hsl(120, 50%, 60%);
+    border-color: hsl(120, 50%, 55%);
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
+    transition: ease .2s;
+}
+
+.btnFacturarOrden:disabled {
+    transition: ease .2s;
+}
+
+.btnFacturarOrden:hover {
+    background: hsl(120, 50%, 55%);
+}
+
+.btnCancelarOrden {
+    min-width: 120px;
+    height: 30px;
+    /* margin-right: 5%; */
+    background: hsl(0, 0%, 30%);
+    border-color: hsl(350, 0%, 35%);
+    color: #ffffff;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    transition: .2s ease;
+}
+
+.btnCancelarOrden:hover {
+    background: hsl(0, 0%, 35%);
+    border-color: hsl(350, 0%, 40%);
+}
+
+#btnVolver {
+    width: 100px;
+    height: 40px;
+    background: rgb(255, 100, 100);
+    border-color: rgb(255, 130, 150);
+    border-radius: 10px;
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.descripcionOrden {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    background-color: white;
+    width: calc(100% - 20px);
+    margin: 0 10px;
+    border-radius: 0 0 5px 5px;
+    border-bottom: hsl(3, 74%, 60%) solid 1px;
+    border-right: hsl(3, 74%, 60%) solid 1px;
+    border-left: hsl(3, 74%, 60%) solid 1px;
+    color: #CC6666;
+}
+
+.descripcionEdicionOrden {
+    display: flex;
+    align-items: center;
+    padding: 2px 15px;
+    background-color: white;
+    width: calc(100% - 30px);
+    margin: 0 15px;
+    border-radius: 0 0 5px 5px;
+    border-bottom: #85a0ad solid 1px;
+    border-right: #85a0ad solid 1px;
+    border-left: #85a0ad solid 1px;
+    color: hsl(200, 20%, 60%);
+}
+
+.descripcionEdicionOrden span {
+    line-height: 18px;
+}
+
+.detallitoOrden {
+    overflow: hidden;
+    width: calc(100% - 40px);
+    background-color: white;
+    margin: 0 20px;
+    padding: 0 0 0 15px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-left: #DF362D solid 1px;
+    border-right: #DF362D solid 1px;
+}
+
+.detalleTruncar {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.detallitoOrden > span {
+    display: inline-block;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.detalle {
+    width: 100%;
+    padding-left: 20px;
+    position: relative;
+}
+
+.detalle > span {
+    display: inline-block;
+}
+
+.cuerpoDetalleOrden {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: .4s grid-template-rows;
+}
+
+/********************* EDITAR ***********************/
+
+#contenedorTablaEditarOrden {
+    max-height: 25vh;
+    overflow: auto;
+}
+
+#btnConfirmarCambiosEditarOrden {
+    transition: all .3s ease;
+}
+
+/* #btnConfirmarCambiosEditarOrden:hover {
+    background-color: hsl(200, 50%, 55%);
+} */
+
+.filaDetalleOrden {
+    transition: opacity 0.3s ease-in, background-color 0.1s ease-in;
+    padding: 10px 0;
+}
+
+.filaDetalleOrden td {
+    margin: 5px 0;
+}
+
+.filaDetalleOrden.quitar {
+    opacity: 0;
+}
+
+.filaDetalleOrden:hover {
+    background-color: rgb(252, 252, 252);
+}
+
+.btnQuitarEditar{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-editar-orden {
+    max-width: 95% !important;
+}
+
+.btnQuitar2 {
+    margin-left: auto;
+    width: 90px;
+    height: 30px;
+    background: hsl(3, 74%, 53%);
+    border-color: rgb(255, 130, 150);
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
+  
+    transition: 0.2s ease;
+}
+
+.btnQuitar2:hover {
+    background: hsl(3, 74%, 45%);
+}
+
+.modal-backdrop.show {
+    z-index: 1040 !important;
+}
+
+/* Si hay 2 backdrops consecutivos, el segundo quedará encima del primer modal */
+.modal-backdrop.show + .modal-backdrop.show {
+    z-index: 1055 !important;
+}
+
+#EditarOrden.modal.show {
+    z-index: 1050 !important;
+}
+
+#IncluirDetalle.modal.show {
+    z-index: 1060 !important;
+}
+
+#EditarMesas.modal.show {
+    z-index: 1060 !important;
+}
+
+#contenidoIncluirPlatillosEditar {
+    max-height: 50vh;
+    overflow: auto;
+}
+
+#contenidoIncluirPlatillosEditar::-webkit-scrollbar {
+    width: 0;
+}
+
+.nombreConsumibleIncluir {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
+}
+
+.nombreConsumibleIncluir input:checked + span,
+.nombreConsumibleIncluir input:checked ~ span {
+    font-weight: 600;
+}
+
+/* Fondo verde cuando está seleccionado */
+.nombreConsumibleIncluir input:checked {
+    display: none;
+}
+
+.nombreConsumibleIncluir:has(input:checked) {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.nombreConsumibleIncluir:has(input:checked):hover {
+    background-color: hsl(134, 41%, 85%);
+}
+
+.numeroMesaEditar {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
+}
+
+.numeroMesaEditar input:checked + span,
+.numeroMesaEditar input:checked ~ span {
+    font-weight: 600;
+}
+
+.numeroMesaEditar input:checked {
+    display: none;
+}
+
+.numeroMesaEditar:has(input:checked) {
+    background-color: #d4edda;
+    border-color: hsl(134, 41%, 70%);
+}
+
+.numeroMesaEditar:has(input:checked):hover {
+    background-color: hsl(134, 41%, 85%);
+}
+
+#contenedorMesas {
+    border-style: solid;
+    border-color: #DFDFDF;
+    border-width: 1px;
+    border-radius: 10px;
+
+    overflow: auto;
+
+    margin-top: 15px;
+}
+
+.filaDetalleOrdenNuevo {
+    background-color: hsl(134, 41%, 92%);
+    border-color: #c3e6cb;
+}
+
+.filaDetalleOrdenNuevo:hover {
+    background-color: hsl(134, 41%, 90%) !important;
+}
+
+.signalDetalle
+{
+    left: -5px;
+    top: 5px;
+    width: 15px;
+    height: 15px;
+
+    position: absolute;
+    border-radius: 50%;
+
+    animation: pulsoIcono 1.4s ease-in-out infinite;
+}
+
+.signalDetalleEditado
+{
+    background-color: hsl(30, 100%, 50%);
+}
+
+.signalDetalleNuevo
+{
+    background-color: hsl(200, 80%, 50%);
+}
+
+.signalDetalleEliminado
+{
+    background-color: hsl(0, 74%, 50%);
+}
+
+/****************************************************/
+
+.cuerpoDetalleOrden.desplegado {
+    grid-template-rows: 1fr;
+}
+
+.cuerpoDetalleOrden.desplegado > .detallitoOrden {
+    border-bottom: #DF362D solid 1px;
+}
+
+.botonDesplazarDetalleOrden {
+    display: flex;
+    justify-content: center;
+}
+
+.botonDesplazarDetalleOrden button {
+    width: 50px;
+    height: 30px;
+    background: #DF362D;
+    border:#DF362D 0px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.iconoDesplegarDetalles {
+    transition: .3s ease;
+}
+
+.iconoDesplegarDetalles.desplegado {
+    transform: rotate(180deg);
+}
+
+#listaEstadoOrdenes:hover {
+    background: rgb(255, 245, 245);
+    border-color: rgb(230, 100, 50) rgb(255, 150, 100) rgb(255, 150, 100) rgb(230, 100, 50);
+}
+
+#listaEstadoOrdenes {
+    margin-left: 10px;
+    width: 300px;
+    min-width: 155px;
+    height: 40px;
+    border-color: rgb(200, 50, 50) rgb(255, 100, 100) rgb(255, 100, 100) rgb(200, 50, 50);
+    border-radius: 10px;
+    padding-left: 15px;
+    font-size: 20px;
+    color: #821414;
+    outline-color: rgb(200, 100, 100);
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    cursor: pointer;
+}
+
+#contenedorExtras {
+    display: flex;
+    width: 100%;
+    margin-top: 15px;
+}
+
+#contenedorCheckPropina {
+    display: flex;
+}
+
+.mensajeExtras {
+    font-size: 12px;
+    color: #AAAAAA;
+}
+
+/* * * * * * * BTN * * * * * * * */
+
+.btnEditarOrden {
+    background-color: hsl(200, 50%, 60%);
+    border-color: hsl(200, 50%, 65%);
+    color: white;
+    width: 120px;
+    border-radius: 10px;
+}
+
+.btnPrepararOrden {
+    background-color: #FD7418;
+    border-color: hsl(24, 98%, 60%);
+    color: white;
+    width: 120px;
+    border-radius: 10px;
+}
+
+.btnPrepararOrden:hover {
+    background-color: hsl(24, 98%, 50%);
+}
+
+.btnFinalizarOrden {
+    background-color: #FFAA00;
+    border-color: hsl(40, 100%, 60%);
+    color: white;
+    width: 120px;
+    border-radius: 10px;
+}
+
+.btnFinalizarOrden:hover {
+    background-color: hsl(40, 100%, 45%);
+}
+
+.btnIcono {
+    padding-bottom: 4px;
+    /* margin-right: 3px; */
+}
+
+.btnEditarOrden:hover {
+    background-color: hsl(200, 50%, 55%);
+}
+
+.encabezadoPoFoC h4 {
+    margin-left: 15px;
+    text-align: end;
+}
+
+.motivoOrden {
+    border: solid 3px #CC6666;
+    color: #CC6666;
+    border-radius: 20px;
+    padding: 0px 15px 0px 5px;
+    display: flex;
+    align-items: center;
+}
+
+/* BOTONES DE EDITAR ORDEN */
+
+.btnControlCantidad {
+    transition: background-color ease .3s;
+    background-color: rgba(255, 255, 255, 0);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+}
+
+.btnControlCantidad:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+    border: none;
+}
+
+#columnasDetallesEditarOrden {
+    position: sticky; top: 0; background-color: white;
+}
+
+#contenedorTablaEditarOrden::-webkit-scrollbar {
+    width: 0;
+}
+
+#btnEditarMesas {
+    background-color: #FD7418;
+    border-color: hsl(24, 98%, 60%);
+    color: white;
+    width: 150px;
+    height: 40px;
+    align-self: flex-end;
+    border-radius: 10px;
+    transition: background-color ease .3s;
+}
+
+#btnEditarMesas:hover {
+    background-color: hsl(24, 98%, 45%);
+}
+
+#btnIncluirConsumible {
+    background: hsl(120, 50%, 60%);
+    border-color: hsl(120, 50%, 55%);
+    color: white;
+    width: 180px;
+    height: 40px;
+    align-self: flex-end;
+    border-radius: 10px;
+    transition: background-color ease .3s;
+}
+
+#btnIncluirConsumible:hover {
+    background: hsl(120, 50%, 50%);
+}
+
+#btnReiniciarEdición {
+    background-color: hsl(200, 50%, 60%);
+    border-color: hsl(200, 50%, 65%);
+    color: white;
+    width: 120px;
+    height: 40px;
+    border-radius: 10px;
+    transition: background-color ease .3s;
+}
+
+#btnReiniciarEdición:hover {
+    background-color: hsl(200, 50%, 50%);
+}
+
+/* CHECK TOGGLE DE PROPINA Y DESCUENTO */
+
+/* Contenedor principal para alinear texto y switch */
+.switch-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 2px 5px;
+    border: 2px solid #e0e0e0;
+    border-radius: 20px;
+    width: 100%;
+    min-width: 180px;
+}
+
+.switch-label {
+  font-size: 20px;
+  font-weight: bold;
+  color: #666;
+  margin-right: 15px;
+  margin-left: 10px;
+}
+
+/* El contenedor del interruptor */
+.switch-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+/* Esconder el checkbox original */
+.switch-wrapper input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* El fondo del interruptor (píldora pequeña interna) */
+.slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent;
+  border: 1px solid #ddd;
+  border-radius: 34px;
+  transition: .4s;
+}
+
+/* El círculo (bolita) */
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 2px;
+  background-color: #a0a0a0; /* Color gris de tu imagen 1 */
+  border-radius: 50%;
+  transition: .1s;
+}
+
+/* Cuando el checkbox está marcado (Checked) */
+input:checked + .slider:before {
+  transform: translateX(24px);
+  background-color: #5b92d4; /* El azul de tu imagen 2 */
+}
+
+/* Opcional: cambiar el borde del slider al estar activo */
+input:checked + .slider {
+  border-color: #5b92d4;
+}
+
+#emptyStateOrdenes {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20vh;
+    display: none;
+}
+
+#logodecoESOrdenes {
+    width: 180px;
+    height: 180px;
+    opacity: 15%;
+    user-select: none;
+}
+
+#svgCurvoOrdenes {
+    margin-top: -10px; /* Ajusta esto para acercar el texto al logo */
+}
+
+#textoEmptyStateOrdenes {
+    fill: hsl(0, 30%, 60%); 
+    font-size: 17px; /* Ajusta según prefieras */
+    
+    /* Tus estilos originales */
+    opacity: 40%;
+    font-family: cursive;
+    font-style: oblique;
+}
+
+/***************************************************/
+
+@media (max-width: 900px)
+{
+    .seccionDerecha {
+        flex-direction: column;
+    }
+
+    .btnFacturarOrden {
+        margin: 5px 0;
+    }
+}
+
+@media (max-width: 700px)
+{
+    .encabezadoPoFoC h4 {
+        font-size: medium;
+    }
+
+    .encabezadoPoFoC h5 {
+        font-size: medium;
+    }
+    
+    .seccionIzquierda h4 {
+        font-size: large;
+    }
+
+    .seccionIzquierda h6 {
+        font-size: small;
+    }
+
+    .btnCancelarOrden, .btnFacturarOrden {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 620px)
+{
+    #listaOrdenesPoFoC {
+        padding: 0 10% 50px;
+    }
+}
+
+@media (max-width: 500px)
+{
+    #listaOrdenesPoFoC {
+        padding: 0 5% 50px;
+    }
+}
