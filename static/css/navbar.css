@@ -553,20 +553,22 @@ body .modal-open {
 /* --- LÓGICA DE ESTADOS --- */
 
 /* Si ACTIVO está seleccionado */
-#activo:checked ~ .slider-bg {
+#activoConsumible:checked ~ .slider-bg, #activoTipoConsumible:checked ~ .slider-bg, #activoPersonal:checked ~ .slider-bg {
     left: 0;
     background-color: var(--color-activo);
 }
-#activo:checked + label {
+
+#activoConsumible:checked + label, #activoTipoConsumible:checked + label, #activoPersonal:checked + label {
     color: white;
 }
 
 /* Si INACTIVO está seleccionado */
-#inactivo:checked ~ .slider-bg {
+#inactivoConsumible:checked ~ .slider-bg, #inactivoTipoConsumible:checked ~ .slider-bg, #inactivoPersonal:checked ~ .slider-bg {
     left: 50%;
     background-color: var(--color-inactivo);
 }
-#inactivo:checked + label {
+
+#inactivoConsumible:checked + label, #inactivoTipoConsumible:checked + label, #inactivoPersonal:checked + label {
     color: white;
 }
 

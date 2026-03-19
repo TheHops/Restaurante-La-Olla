@@ -875,7 +875,7 @@ def exportar_excel_personal():
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
     
-    filename = 'Personal_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
+    filename = 'PERSONAL_' + timezone.localtime().strftime('%d-%m-%Y') + '.xlsx'
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     wb.save(response)
     return response
@@ -900,7 +900,7 @@ def exportar_pdf_personal(request):
         titulo="PERSONAL",
         columnas=columnas,
         filas=filas,
-        nombre_archivo="Personal",
+        nombre_archivo="PERSONAL_" + timezone.localtime().strftime('%d-%m-%Y'),
         ancho_columnas=[50, 150, 100, 100, 60, 170, 80],
         usuario=request.user.username,
         wrap_columns=[1],

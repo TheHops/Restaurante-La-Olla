@@ -96,9 +96,9 @@ function ImpresionPersonal(
   // $("#idEstadoModificar").val(estado === "1" ? 1 : 0);
 
   if (estado == "1" || estado == 1) {
-    $("#activo").prop("checked", true);
+    $("#activoPersonal").prop("checked", true);
   } else {
-    $("#inactivo").prop("checked", true);
+    $("#inactivoPersonal").prop("checked", true);
   }
 }
 
