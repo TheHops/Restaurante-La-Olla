@@ -141,9 +141,14 @@
   margin: 5px 10%;
   min-width: 155px;
   height: 40px;
+
+  background-color: white;
+
   border-color: rgb(200, 50, 50) rgb(255, 100, 100) rgb(255, 100, 100)
     rgb(200, 50, 50);
   border-radius: 10px;
+  border-width: 2px;
+
   padding-left: 15px;
   font-size: 20px;
   color: #821414;
@@ -315,8 +320,6 @@ legend {
 
   padding-left: 15px;
   color: #821414;
-
-  position: fixed;
 }
 
 /**********************************************************************************/
