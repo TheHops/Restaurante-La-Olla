@@ -46,6 +46,10 @@
 
     cursor: pointer;
 
+    border: solid 2px #000;
+    color: #000;
+    background-color: white;
+
     transition: background-color ease .3s;
 }
 
