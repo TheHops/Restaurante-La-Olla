@@ -460,6 +460,10 @@ a .paginate_button .current {
     #txtBtnAgregar, #txtBtnAgregar2 {
         display: none;
     }
+
+    #cuerpoInventario {
+        margin: 0 20px 40px 20px;
+    }
 }
 
 @media (max-width : 610px) {
@@ -474,5 +478,9 @@ a .paginate_button .current {
     #contenedorCompletoEncabezadoInventario {
         display: flex;
         flex-wrap: wrap;
+    }
+
+    #cuerpoInventario {
+        margin: 0 10px 40px 10px;
     }
 }

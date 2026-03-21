@@ -344,7 +344,7 @@ legend {
   width: calc(100% - 300px);
   z-index: 999;
   background-color: white;
-  padding-bottom: 10px;
+  /* padding-bottom: 10px; */
 }
 
 #acciones_pag2_foot {
@@ -352,6 +352,15 @@ legend {
   width: 100%;
   height: 2px;
   bottom: 0;
+  z-index: 999;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), #df362d 50%, rgba(255, 255, 255, 0));
+}
+
+#acciones_pag2_head {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  top: 70px;
   z-index: 999;
   background: linear-gradient(to right, rgba(255, 255, 255, 0), #df362d 50%, rgba(255, 255, 255, 0));
 }
@@ -368,9 +377,25 @@ legend {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
-  padding: 15px 10px 0 10px;
+  padding: 15px 10px 15px 10px;
   justify-content: center;
+  max-height: 85px;
+  margin-top: 15px;
+  overflow-y: auto;
+
+  position: relative;
 }
+
+#accionesBusqueda::-webkit-scrollbar {
+  width: 10px;
+  background: #ffffff;
+}
+
+#accionesBusqueda::-webkit-scrollbar-thumb {
+  background: rgba(255, 200, 200, 1);
+  border-radius: 10px;
+}
+
 
 #Ordenes {
   margin-left: auto;
@@ -782,7 +807,7 @@ legend {
   object-fit: cover;
   /* border-radius: 19px; */
   border-style: solid;
-  border-width: 0 0 2px 0;
+  border-width: 0 0 1px 0;
   border-color: #B44646;
 }
 
@@ -1442,10 +1467,10 @@ legend {
   }
 
   .vplatillo{
-    width: 250px;
+    width: 120px;
   }
 
   .PlatillosVenta {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   }
 }
