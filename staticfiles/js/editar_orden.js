@@ -16,6 +16,8 @@ function rellenarParaEditarOrden(idOrden) {
       }
     }
   };
+
+  editarMesas(idOrden);
 }
 
 function agregarPlatillosIncluir(idOrden) {
