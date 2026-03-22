@@ -120,10 +120,21 @@ function verificarCorreo() {
 
   let xhr = new XMLHttpRequest();
   xhr.open("POST", "/ValidateEmailForgotPass/", true);
+  xhr.timeout = 20000;
   xhr.setRequestHeader(
     "X-CSRFToken",
     document.getElementsByName("csrfmiddlewaretoken")[0].value,
   );
+
+  xhr.ontimeout = function () {
+    contenedor.classList.remove("hide");
+    Swal.fire({
+      icon: "error",
+      title: "Tiempo agotado",
+      text: "El servidor tardó demasiado en responder. Intenta de nuevo.",
+      confirmButtonColor: "#ff6464",
+    });
+  };
 
   xhr.onreadystatechange = function () {
     if (xhr.readyState === 4) {
@@ -143,14 +154,21 @@ function verificarCorreo() {
       } else {
         contenedor.classList.remove("hide");
 
-        let response = JSON.parse(xhr.responseText);
-
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: response.message,
-          confirmButtonColor: "#ff6464",
-        });
+        try {
+          let response = JSON.parse(xhr.responseText);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: response.message || "Error desconocido",
+            confirmButtonColor: "#ff6464",
+          });
+        } catch (e) {
+          Swal.fire({
+            icon: "error",
+            title: "Error de servidor",
+            text: "Ocurrió un error inesperado en el servidor.",
+          });
+        }
       }
     }
   };

@@ -330,15 +330,19 @@ def filtrar_personal(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
     
-    if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Cajero":
-            return redirect("/")
-
+    roles_restringidos = ["Armador", "Mesero", "Cajero"]
+    if request.user.IdCargo.Nombre in roles_restringidos:
+        return redirect("/")
+    
     ver_eliminados = request.GET.get("verEliminados") == "1"
 
+    queryset = Usuario.objects.exclude(Id=request.user.Id)
+
     if ver_eliminados:
-        personal = Usuario.objects.order_by("Id")
+        personal = queryset.order_by("Id")
     else:
-        personal = Usuario.objects.filter(EsActivo="1").order_by("Id")
+        # Filtramos por activos sobre el queryset que ya excluyó al usuario actual
+        personal = queryset.filter(EsActivo="1").order_by("Id")
 
     contexto = {
         "Personal": personal,

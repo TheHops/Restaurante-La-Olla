@@ -35,14 +35,14 @@
           <div class="nombreCreadorTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Nombre</h4>
           </div>
-          <input type="text" class="form-control" id="nombreCreador" value="{{NombreCreador}}" readonly/>
+          <input type="text" class="form-control" id="nombreCreador" value="{{NombreCreador}}" title="{{NombreCreador}}" readonly/>
         </div>
     
-        <div class="col-3 mb-2" id="cargoCreadorDiv" title="Cargo del usuario | Personal que creó la orden">
+        <div class="col-6 col-sm-4 col-md-3 mb-2" id="cargoCreadorDiv" title="Cargo del usuario | Personal que creó la orden">
           <div class="cargoCreadorTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Cargo</h4>
           </div>
-          <input type="text" class="form-control" id="cargoCreador" value="{{CargoCreador}}" readonly/>
+          <input type="text" class="form-control" id="cargoCreador" value="{{CargoCreador}}" title="{{CargoCreador}}" readonly/>
         </div>
         
       </div>
@@ -61,80 +61,80 @@
         
         {% if Orden.Total > 0 %}
         <!-- Total base -->
-        <div class="col-3 mb-2" id="totalBaseOrdenDiv" title="Es el total base de la orden (Se le excluye el descuento y la propina)">
+        <div class="col-6 col-sm-4 col-md-3 mb-2" id="totalBaseOrdenDiv" title="Es el total base de la orden (Se le excluye el descuento y la propina)">
           <div class="totalBaseOrdenTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Subtotal (C$)</h4>
           </div>
-          <input type="text" class="form-control" id="totalBaseOrden" value="{{Orden.Total}}" readonly/>
+          <input type="text" class="form-control" id="totalBaseOrden" value="{{Orden.Total}}" title="{{Orden.Total}}" readonly/>
         </div>
         {% endif %}
         
         {% if Orden.Descuento < 0 %}
         <!-- Descuento -->
-        <div class="col-3 mb-2" id="descuentoOrdenDiv" title="Es el descuento de la orden">
+        <div class="col-6 col-sm-4 col-md-3 mb-2" id="descuentoOrdenDiv" title="Es el descuento de la orden">
           <div class="descuentoOrdenTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Descuento (C$)</h4>
           </div>
-          <input type="text" class="form-control" id="descuentoOrden" value="{{Orden.Descuento}}" readonly/>
+          <input type="text" class="form-control" id="descuentoOrden" value="{{Orden.Descuento}}" title="{{Orden.Descuento}}" readonly/>
         </div>
         {% endif %}
     
         {% if Orden.Propina > 0 %}
         <!-- Propina -->
-        <div class="col-3 mb-2" id="propinaOrdenDiv" title="Es la propina de la orden">
+        <div class="col-6 col-sm-4 col-md-3 mb-2" id="propinaOrdenDiv" title="Es la propina de la orden">
           <div class="propinaOrdenTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Propina (C$)</h4>
           </div>
-          <input type="text" class="form-control" id="propinaOrden" value="{{Orden.Propina}}" readonly/>
+          <input type="text" class="form-control" id="propinaOrden" value="{{Orden.Propina}}" title="{{Orden.Propina}}" readonly/>
         </div>
         {% endif %}
     
         {% if Orden.TotalPagar > 0 %}
         <!-- Total pagado -->
-        <div class="col-3 mb-2" id="totalPagadoOrdenDiv" title="Es el total pagado (Incluye el descuento y la propina)">
+        <div class="col-6 col-sm-4 col-md-3 mb-2" id="totalPagadoOrdenDiv" title="Es el total pagado (Incluye el descuento y la propina)">
           <div class="totalPagadoOrdenTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Total pagado (C$)</h4>
           </div>
-          <input type="text" class="form-control" id="totalPagadoOrden" value="{{Orden.TotalPagar}}" readonly/>
+          <input type="text" class="form-control" id="totalPagadoOrden" value="{{Orden.TotalPagar}}" title="{{Orden.TotalPagar}}" readonly/>
         </div>
         {% endif %}
     
         {% if Orden.Monto > 0 %}
         <!-- Monto -->
-        <div class="col-3 mb-2" id="montoOrdenDiv" title="Es el monto con el que se pagó la orden (Si el método de pago es con tarjeta o transferencia el resultado del monto es igual al total a pagar)">
+        <div class="col-6 col-sm-4 col-md-3 mb-2" id="montoOrdenDiv" title="Es el monto con el que se pagó la orden (Si el método de pago es con tarjeta o transferencia el resultado del monto es igual al total a pagar)">
           <div class="montoOrdenTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Monto (C$)</h4>
           </div>
-          <input type="text" class="form-control" id="montoOrden" value="{{Orden.Monto}}" readonly/>
+          <input type="text" class="form-control" id="montoOrden" value="{{Orden.Monto}}" title="{{Orden.Monto}}" readonly/>
         </div>
         {% endif %}
     
         {% if Orden.Cambio > 0 %}
         <!-- Cambio -->
-        <div class="col-3 mb-2" id="cambioOrdenDiv" title="El cambio que se le dió al cliente (Si aplica)">
+        <div class="col-6 col-sm-4 col-md-3 mb-2" id="cambioOrdenDiv" title="El cambio que se le dió al cliente (Si aplica)">
           <div class="cambioOrdenTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Cambio (C$)</h4>
           </div>
-          <input type="text" class="form-control" id="cambioOrden" value="{{Orden.Cambio}}" readonly/>
+          <input type="text" class="form-control" id="cambioOrden" value="{{Orden.Cambio}}" title="{{Orden.Cambio}}" readonly/>
         </div>
         {% endif %}
     
         {% if Orden.SegundoMonto > 0 %}
         <!-- Segundo monto -->
-        <div class="col-3 mb-2" id="segundoMontoOrdenDiv" title="Solo aplica si hubo pago mixto, este monto representa lo restante que se paga con la tarjeta">
+        <div class="col-6 col-sm-4 col-md-3 mb-2" id="segundoMontoOrdenDiv" title="Solo aplica si hubo pago mixto, este monto representa lo restante que se paga con la tarjeta">
           <div class="segundoMontoOrdenTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Segundo monto (C$)</h4>
           </div>
-          <input type="text" class="form-control" id="segundoMontoOrden" value="{{Orden.SegundoMonto}}" readonly/>
+          <input type="text" class="form-control" id="segundoMontoOrden" value="{{Orden.SegundoMonto}}" title="{{Orden.SegundoMonto}}" readonly/>
         </div>
         {% endif %}
     
         <!-- Metodo de pago -->
-        <div class="col-3 mb-2" id="metodoPagoOrdenDiv" title="Indica el método de pago con el que se registró el pago la orden">
+        <div class="col-6 col-sm-4 col-md-3 mb-2" id="metodoPagoOrdenDiv" title="Indica el método de pago con el que se registró el pago la orden">
           <div class="metodoPagoOrdenTxt">
             <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Método de pago</h4>
           </div>
-          <input type="text" class="form-control" id="metodoPagoOrden" value="{{Orden.get_MetodoPago_display }}" readonly/>
+          <input type="text" class="form-control" id="metodoPagoOrden" value="{{Orden.get_MetodoPago_display}}" title="{{Orden.get_MetodoPago_display}}" readonly/>
         </div>
 
       </div>
@@ -168,8 +168,8 @@
 
   {% else %}
 
-  <div class="col-12 d-flex justify-content-between">
-    <div class="col-6 row" id="izquierdaEditarMesas" title="Detalles de las mesas de la orden">
+  <div class="col-12 d-flex justify-content-between flex-wrap">
+    <div class="col-12 col-sm-8 col-md-6 row pb-2" id="izquierdaEditarMesas" title="Detalles de las mesas de la orden">
       <!-- Detalles del que hizo la orden -->
       <h4 style="font-size: 18px; margin-bottom: 3px;" class="col-12 pl-0">Area de mesa</h4>
   
@@ -194,7 +194,7 @@
       </div>
     </div>
 
-    <div class="col-6 d-flex justify-content-end pr-0 mb-2" id="derechaEditarMesas" title="Acciones para editar las mesas">
+    <div class="col-6 d-flex justify-content-start pl-0 pb-3" id="derechaEditarMesas" title="Acciones para editar las mesas">
         <button data-toggle="modal" data-target="#EditarMesas" onclick="editarMesas('{{Orden.Id}}')" id="btnEditarMesas" title="Edita las mesas y también puedes cambiar de área y seleccionar una mesa de la nueva área">
   
           <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -237,7 +237,10 @@
   {% if Modo == "Editar" %}
   <hr>
 
-  <div class="col-12">
+  <div class="col-12" style="
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;">
     <button data-toggle="modal" data-target="#IncluirDetalle" onclick="agregarPlatillosIncluir('{{Orden.Id}}')" id="btnIncluirConsumible" title="Incluye un nuevo consumible a la orden">
       <svg width="18" height="18" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M6 8H0V6H6V0H8V6H14V8H8V14H6V8Z" fill="white"/>
@@ -268,8 +271,8 @@
       <thead>
         <!-- Columnas -->
         <tr id="columnasDetallesEditarOrden">
-            <th title="Nombre del consumible"><h5>Consumible</h5></th>
-            <th title="Precio del consumible como unidad"><h5>Precio unitario</h5></th>
+            <th title="Nombre del consumible" style="padding: 0 5px 0 0;"><h5>Consumible</h5></th>
+            <th title="Precio del consumible como unidad" style="padding: 0 5px;"><h5>Precio unitario</h5></th>
             <th title="Cantidad que quiere el cliente de este consumible" style="text-align: center; min-width: 100px;"><h5>Cantidad</h5></th>
 
             {% if Modo == "Editar" %}
@@ -285,8 +288,8 @@
         {% for detalle in Orden.Detalles.all %}
           {% if detalle.EsActivo %}
             <tr id="filaDetalleOrdenEditar{{detalle.IdPlatillo.Id}}" class="filaDetalleOrden" title="Detalle | Consumible">
-                <td title="Nombre del consumible" style="text-transform: capitalize; padding-left: 10px;">{{detalle.IdPlatillo.Nombre|lower}}</td>
-                <td title="Precio del consumible">C${{detalle.PrecioVenta}}</td>
+                <td title="Nombre del consumible" style="text-transform: capitalize; padding: 0 5px 0 10px;">{{detalle.IdPlatillo.Nombre|lower}}</td>
+                <td title="Precio del consumible" style="padding: 0 5px;">C${{detalle.PrecioVenta}}</td>
                 
                 {% if Modo == "Editar" %}
 

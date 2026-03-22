@@ -671,7 +671,7 @@
     background-color: hsl(200, 50%, 60%);
     border-color: hsl(200, 50%, 65%);
     color: white;
-    width: 120px;
+    width: 130px;
     border-radius: 10px;
 }
 
@@ -751,6 +751,7 @@
     border-color: hsl(24, 98%, 60%);
     color: white;
     width: 150px;
+    min-width: 150px;
     height: 40px;
     align-self: flex-end;
     border-radius: 10px;
@@ -902,10 +903,6 @@ input:checked + .slider {
 {
     .seccionDerecha {
         flex-direction: column;
-    }
-
-    .btnFacturarOrden {
-        margin: 5px 0;
     }
 }
 

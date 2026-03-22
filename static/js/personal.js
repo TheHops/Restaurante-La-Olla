@@ -524,7 +524,10 @@ function EnviarCorreo() {
     data: {
       idPersonal: idPersonal,
       tituloCorreo: "Nueva contraseña temporal",
-      mensajeCorreo: "Su contraseña temporal es: \n\n" + passTemporal + "\n\nUsa esta contraseña para iniciar sesión.\n\n(Como recomendación, una vez iniciada la sesión le sugerimos que cambie la contraseña temporal por una propia en la sección de 'Mi perfil')",
+      mensajeCorreo:
+        "Su contraseña temporal es: \n\n" +
+        passTemporal +
+        "\n\nUsa esta contraseña para iniciar sesión.\n\n(Como recomendación, una vez iniciada la sesión le sugerimos que cambie la contraseña temporal por una propia en la sección de 'Mi perfil')",
       csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
     },
     success: function (response) {
@@ -541,17 +544,28 @@ function EnviarCorreo() {
           timerProgressBar: false,
         });
       } else {
-        Swal.fire({
-          icon: "error",
-          title: response.message,
-          toast: true,
-          position: "top-end",
-          showConfirmButton: false,
-          timer: 4000,
-          timerProgressBar: false,
-        });
+        mostrarError(response.message);
       }
     },
+    error: function (jqXHR, textStatus, errorThrown) {
+      Swal.close();
+      let msg = "Hubo un problema con el servidor";
+      if (textStatus === "timeout") {
+        msg = "La operación tardó demasiado tiempo. Revisa tu conexión.";
+      }
+      mostrarError(msg);
+    },
+  });
+}
+
+function mostrarError(mensaje) {
+  Swal.fire({
+    icon: "error",
+    title: mensaje,
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 4000,
   });
 }
 
