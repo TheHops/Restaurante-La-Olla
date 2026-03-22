@@ -7,15 +7,14 @@ from Application.models  import Orden, Platillo, Usuario, DetalleOrden, MesasPor
 from django.contrib import messages
 from django.http import JsonResponse
 from datetime import datetime, timedelta, time
-from django.db.models import Q, Prefetch
-from django.db.models.functions import TruncDate
+from django.db.models import Prefetch
 import traceback
 from django.core.mail import send_mail
 from django.utils import timezone
 import secrets
 import string
 import re
-import json
+import threading
 
 from django.conf import settings
 
@@ -45,8 +44,6 @@ def DebeCambiarPass(request):
     
     if request.method != "GET":
         return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
-    
-    print(request.user.DebeCambiarPass)
     
     return JsonResponse({"status": "ok", "DebeCambiarPass": request.user.DebeCambiarPass})
 
@@ -130,8 +127,6 @@ def GraficarOrdenes(request):
             for factura in ventas_7_dias:
                 fecha = factura.UltimaModificacion.astimezone(timezone.get_current_timezone()).date()
                 mapeo_ventas[fecha] = mapeo_ventas.get(fecha, 0) + float(factura.TotalPagar)
-                
-            print(dias)
             
             data["ingresos_v"] = [mapeo_ventas.get(dia, 0) for dia in dias]
             data["labels_x"] = [dias_semana_es[dia.weekday()] for dia in dias]
@@ -151,7 +146,9 @@ def GraficarOrdenes(request):
 
         return JsonResponse(data)
     except Exception as ex:
+        print("\n\n############### E X C E P C I Ó N ###############")
         print(traceback.format_exc())
+        print("#####################################################\n\n")
         return JsonResponse({"error": str(ex)}, status=500)
     
 def obtener_stats_metodos_pago(dias_atras=30):
@@ -230,7 +227,6 @@ def obtener_ventas_por_horas():
     # Convertimos el diccionario a la lista que espera la gráfica
     ventas_por_hora = [acumulador[h] for h in bloques]
     
-    print("Ventas procesadas por hora local:", ventas_por_hora)
     return labels_horas, ventas_por_hora
 
 def obtener_metricas_resumen():
@@ -253,13 +249,6 @@ def obtener_metricas_resumen():
         total_ventas=Sum('Total') + Sum('Descuento'),
         total_propinas=Sum('Propina')
     )
-    
-    print("#################################")
-    print("FILTRO DE FECHAS 30D en DASHBOARD")
-    print("INICIO")
-    print(inicio_30)
-    print("FIN")
-    print(fin_hoy)
 
     # 2. Total últimos 30 días
     stats_30 = Orden.objects.filter(
@@ -396,9 +385,6 @@ def FiltrarOrdenes(request):
             ordenes = ordenes.filter(
                 Estado=EstadoOrden
             ).order_by('-UltimaModificacion')
-            
-        print("ESTADO ORDEN")
-        print(EstadoOrden)
 
         platillos = Platillo.objects.all().values()
 
@@ -411,9 +397,10 @@ def FiltrarOrdenes(request):
         return render(request, "ordenesFiltradas.html", contexto)
 
     except Exception as ex:
-        print("\n############### EXCEPCIÓN ###############")
+        print("\n\n############### E X C E P C I Ó N ###############")
         print(traceback.format_exc())
-        print("#########################################\n")
+        print("#####################################################\n\n")
+        
         return JsonResponse({'error': str(ex)}, status=500)
 
 #endregion FiltrarOrdenes
@@ -453,6 +440,14 @@ def validar_cargo(request, cargo_recibido):
 
 #region Correo
 
+def enviar_correo_hilo(asunto, mensaje, remitente, destinatarios):
+    try:
+        send_mail(asunto, mensaje, remitente, destinatarios, fail_silently=False)
+    except Exception as e:
+        print("\n\n############### E X C E P C I Ó N ###############")
+        print(traceback.format_exc())
+        print("#####################################################\n\n")
+
 def EnviarCorreo(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
@@ -469,24 +464,44 @@ def EnviarCorreo(request):
             usuario = Usuario.objects.get(Id=id_personal)
             mensaje = f"Hola {usuario.Nombres},\n\n" + f"{mensaje}"
 
-            enviado = send_mail(
-                subject=titulo,
-                message=mensaje,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[usuario.email],
-                fail_silently=False,
+            # enviado = send_mail(
+            #     subject=titulo,
+            #     message=mensaje,
+            #     from_email=settings.DEFAULT_FROM_EMAIL,
+            #     recipient_list=[usuario.email],
+            #     fail_silently=False,
+            # )
+            
+            thread = threading.Thread(
+                target=enviar_correo_hilo,
+                args=(titulo, mensaje, settings.DEFAULT_FROM_EMAIL, [usuario.email])
             )
             
-            if enviado > 0:
-                return JsonResponse({'status': 'ok', 'message': '¡Correo enviado con éxito!'})
-            else:
-                return JsonResponse({'status': 'error', 'message': 'Error al enviar correo'})
+            thread.start()
+            
+            return JsonResponse({'status': 'ok', 'message': '¡El correo ya se encuentra en proceso!'})
+            
         except Exception as e:
             return JsonResponse({"ok": False, "message": f"Error al enviar el correo: {str(e)}"})
 
 #endregion Correo
 
 #region ForgotPassword
+
+def ejecutar_envio_correo(asunto, mensaje, destinatario):
+    """Esta función corre en un hilo separado."""
+    try:
+        send_mail(
+            subject=asunto,
+            message=mensaje,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[destinatario],
+            fail_silently=False,
+        )
+        
+        print(f"DEBUG: Correo enviado con éxito a {destinatario}")
+    except Exception as e:
+        print(f"ERROR al enviar correo en segundo plano: {str(e)}")
 
 def generar_otp(longitud=6):
     caracteres = string.digits
@@ -516,18 +531,19 @@ def enviar_otp_correo(usuario, otp):
         asunto = "Código OTP para restablecer contraseña"
         mensaje = f"Hola {usuario.Nombres},\n\nTu código OTP para restablecer tu contraseña es:\n\n{otp}\n\nEste código expirará en 2 minutos. Si no solicitaste este OTP, ignora este mensaje."
         
-        enviado = send_mail(
-            subject=asunto,
-            message=mensaje,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[usuario.email],
-            fail_silently=False,
+        hilo = threading.Thread(
+            target=ejecutar_envio_correo,
+            args=(asunto, mensaje, usuario.email)
         )
-
-        if enviado <= 0:
-            return {"ok": False, "message": "Error al enviar el OTP"}
         
-        return {"ok": True, "message": "OTP enviado correctamente al correo"}
+        # Lo iniciamos (esto no bloquea la ejecución)
+        hilo.start()
+        
+        # Respondemos de inmediato
+        return {
+            "ok": True, 
+            "message": "Se está procesando el envío del código OTP a tu correo."
+        }
     except Exception as e:
         return {"ok": False, "message": f"Error al enviar el OTP: {str(e)}"}
 
@@ -567,12 +583,8 @@ def ValidateEmailForgotPass(request):
                 "ok": False,
                 "message": "Esta función solo está disponible para administradores"
             }, status=400)
-
-        # Caso correcto
-        print("ESTE USUARIO ES ADMIN")
         
         otp, expiracion = generar_crear_otp(usuario)
-        print("OTP generado:", otp)
         
         segundos_restantes = int((expiracion - timezone.now()).total_seconds())
         
@@ -591,12 +603,10 @@ def ValidateEmailForgotPass(request):
 
         return render(request, "ingresar_otp_forgot_password.html", contexto)
     except Exception as ex:
-        print()
-        print("#################### E X C E P C I O N ########################")
-        print("-----------------------'ForgotPass'--------------------------")
+        print("\n\n#################### E X C E P C I O N ########################")
+        print("----------------------------'ForgotPass'--------------------------")
         print(traceback.format_exc(ex))
-        print("########################################################")
-        print()
+        print("###################################################################\n\n")
         
         return JsonResponse({
             "ok": False,
@@ -667,9 +677,6 @@ def ValidarOTPForgotPass(request):
             "ok": False,
             "message": "El OTP ha expirado."
         }, status=400)
-
-    # TODO CORRECTO
-    print("OTP CORRECTO")
     
     otp_obj.Usado = True
     otp_obj.save()
@@ -689,12 +696,6 @@ def CambiarPassForgotPass (request):
         id_usuario = request.POST.get("userIdValue")
 
         user = Usuario.objects.get(Id=id_usuario)
-        
-        print(user)
-        
-        print("PASS")
-        print(new_pass)
-        print(verify_pass)
 
         # 🔹 Verificar coincidencia
         if new_pass != verify_pass:
@@ -722,11 +723,9 @@ def CambiarPassForgotPass (request):
 
         return render(request, "login.html", {"is_for_change_pass":True, "message": "¡La contraseña fue cambiada con éxito!", "icon": "success"})
     except Exception as ex:
-        print()
-        print("#################### E X C E P C I O N ########################")
-        print(ex)
-        print("########################################################")
-        print()
+        print("\n\n############### E X C E P C I Ó N ###############")
+        print(traceback.format_exc())
+        print("#####################################################\n\n")
         
         return JsonResponse({
             "status": "error",

@@ -70,8 +70,9 @@ def Actualizar_Platillos(request):
             })
 
     except Exception as ex:
-        print("\n### ERROR EN Actualizar_Platillos ###")
+        print("\n\n############### E X C E P C I Ó N ###############")
         print(traceback.format_exc())
+        print("#####################################################\n\n")
 
         return JsonResponse({
             'status': 'error',
@@ -119,9 +120,9 @@ def DarBaja_Platillo(request):
         }, status=405)
 
     except Exception as ex:
-        print("\n######## EXCEPCIÓN ########")
-        print(ex)
-        print("###########################\n")
+        print("\n\n############### E X C E P C I Ó N ###############")
+        print(traceback.format_exc())
+        print("#####################################################\n\n")
 
         return JsonResponse({
             'status': 'error',
@@ -184,8 +185,9 @@ def Agregar_Platillo(request):
             })
 
     except Exception as ex:
-        print("### ERROR EN Agregar_Platillo ###")
-        print(ex)
+        print("\n\n############### E X C E P C I Ó N ###############")
+        print(traceback.format_exc())
+        print("#####################################################\n\n")
 
         return JsonResponse({
             'status': 'error',

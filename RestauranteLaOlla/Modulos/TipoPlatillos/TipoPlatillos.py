@@ -1,3 +1,5 @@
+import traceback
+
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
@@ -69,8 +71,9 @@ def Actualizar_TipoPlatillo(request):
             })
 
     except Exception as ex:
-        print("\n### ERROR EN Actualizar_TipoPlatillo ###")
-        print(ex)
+        print("\n\n############### E X C E P C I Ó N ###############")
+        print(traceback.format_exc())
+        print("#####################################################\n\n")
 
         return JsonResponse({
             'status': 'error',
@@ -115,9 +118,10 @@ def DarBaja_TipoPlatillo(request):
         return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
 
     except Exception as ex:
-        print("#################### EXCEPCIÓN ########################")
-        print(ex)
-        print("########################################################")
+        print("\n\n############### E X C E P C I Ó N ###############")
+        print(traceback.format_exc())
+        print("#####################################################\n\n")
+        
         return JsonResponse({"status": "error", "message": "Error interno del servidor"}, status=500)
     
 #endregion Eliminar platillos
@@ -163,8 +167,9 @@ def Agregar_TipoPlatillo(request):
             })
 
     except Exception as ex:
-        print("### ERROR EN Agregar_TipoPlatillo ###")
-        print(ex)
+        print("\n\n############### E X C E P C I Ó N ###############")
+        print(traceback.format_exc())
+        print("#####################################################\n\n")
 
         return JsonResponse({
             'status': 'error',

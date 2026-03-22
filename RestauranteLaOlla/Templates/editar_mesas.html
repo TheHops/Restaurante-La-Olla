@@ -4,10 +4,16 @@
     <select id="selectAreaMesa" class="form-control">
         <option value="" disabled>Seleccione un área</option>
         {% for area in Areas %}
-            <option value="{{ area.Id }}"
-                {% if area.Id == Orden.IdAreaDeMesa.Id %}selected{% endif %}>
-                {{ area.Nombre }}
-            </option>
+            {% if area.Id == Orden.IdAreaDeMesa.Id %}
+                <option value="{{ area.Id }}"
+                    selected>
+                    {{ area.Nombre }}
+                </option>
+            {% else %}
+                <option value="{{ area.Id }}">
+                    {{ area.Nombre }}
+                </option>
+            {% endif %}
         {% endfor %}
     </select>
 </div>

@@ -23,11 +23,10 @@ def inventario_platillos(request):
             
             return render(request, "inventario_platillos.html", {'Platillos': Platillos, 'TypePlatillo': PlatilloType, "User": request.user})
         except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print("--------------------'inventario_platillos'--------------------")
+            print("\n\n#################### E X C E P C I O N ########################")
+            print("-----------------------'inventario_platillos'--------------------")
             print(traceback.format_exc())
-            print("########################################################")
+            print("###################################################################\n\n")
             return JsonResponse({'error': str(ex)}, status=500)
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
@@ -67,11 +66,10 @@ def inventario_tipoplatillo(request):
             PlatilloType = TipoPlatillo.objects.all()
             return render(request, "inventario_tipoPlatillo.html", {'TypePlatillo': PlatilloType, "User": request.user})
         except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print("-------------------'inventario_tipoplatillo'-------------------")
+            print("\n\n#################### E X C E P C I O N ########################")
+            print("---------------------'inventario_tipo_platillo'-------------------")
             print(traceback.format_exc())
-            print("########################################################")
+            print("###################################################################\n\n")
             return JsonResponse({'error': str(ex)}, status=500)
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión

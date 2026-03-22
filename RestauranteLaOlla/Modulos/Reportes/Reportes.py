@@ -65,9 +65,6 @@ def ReportesOrdenesFiltradas (request):
         
         areasSeleccionadas = request.GET.get("AreasSeleccionadas", "")
         
-        print("ESTADO")
-        print(estado)
-        
         areas_ids = []
         if areasSeleccionadas:
             areas_ids = [int(x) for x in areasSeleccionadas.split(",") if x.isdigit()]
@@ -88,9 +85,9 @@ def ReportesOrdenesFiltradas (request):
         )
 
     except Exception as ex:
-        print("\n############### EXCEPCIÓN ###############")
+        print("\n\n############### E X C E P C I Ó N ###############")
         print(traceback.format_exc())
-        print("#########################################\n")
+        print("#####################################################\n\n")
         return JsonResponse(
             {"status": "error", "message": str(ex)},
             status=500
@@ -156,9 +153,6 @@ def ExportarOrdenes(request):
     except KeyError as e:
         return JsonResponse({"status": "error", "message": f"Falta el campo {str(e)}"}, status=400)
     
-    print(data)
-    print(tipo_exportacion)
-    
     if request.user.IdCargo.Nombre == "Cajero":
         fecha_hoy_local = timezone.localtime(timezone.now()).date()
         
@@ -172,8 +166,6 @@ def ExportarOrdenes(request):
         ordenes = filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids, estado)
     except ValidationError as e:
         return JsonResponse({"status": "error", "message": str(e)})
-    
-    print(ordenes)
     
     nombreArchivo = f"ORDENES_{fecha_inicio_str}_{fecha_fin_str}" if not incluir_detalles else f"ORDENES_DETALLES_{fecha_inicio_str}_{fecha_fin_str}"
     
@@ -644,8 +636,6 @@ def ExportarPlatillo(request):
     try:
         tipoExportacion = request.GET.get("Tipo")
         
-        print(tipoExportacion)
-        
         if tipoExportacion not in ("1","2"):
             return JsonResponse({
                 "status": "error",
@@ -663,13 +653,10 @@ def ExportarPlatillo(request):
             "message": "Exportación no implementada"
         }, status=400)
     except Exception:
-        import traceback
-        print()
-        print("#################### E X C E P C I O N ########################")
+        print("\n\n#################### E X C E P C I O N ########################")
         print("-------------------- 'exportar platillo' --------------------")
         print(traceback.format_exc())
-        print("#############################################################")
-        print()
+        print("#############################################################\n\n")
         return JsonResponse({
             "status": "error",
             "message": "Error interno al exportar consumibles"
@@ -743,8 +730,6 @@ def ExportarTipoPlatillo(request):
     try:
         tipoExportacion = request.GET.get("Tipo")
         
-        print(tipoExportacion)
-        
         if tipoExportacion not in ("1","2"):
             return JsonResponse({
                 "status": "error",
@@ -762,12 +747,10 @@ def ExportarTipoPlatillo(request):
             "message": "Exportación no implementada"
         }, status=400)
     except Exception:
-        import traceback
-        print()
-        print("#################### E X C E P C I O N ########################")
+        print("\n\n#################### E X C E P C I O N ########################")
         print("---------------- 'exportar tipo platillo' ----------------")
         print(traceback.format_exc())
-        print("#############################################################")
+        print("#############################################################\n\n")
         
         return JsonResponse({
             "status": "error",
@@ -846,12 +829,10 @@ def ExportarPersonal(request):
         }, status=400)
 
     except Exception:
-        import traceback
-        print()
-        print("#################### E X C E P C I O N ########################")
+        print("\n\n#################### E X C E P C I O N ########################")
         print("---------------- 'exportar tipo platillo' ----------------")
         print(traceback.format_exc())
-        print("#############################################################")
+        print("#############################################################\n\n")
         
 def exportar_excel_personal():
     columnas = ['Id', 'Nombres y apellidos', 'Usuario', 'Cargo', 'Telefono', 'Correo', 'Estado']
@@ -911,111 +892,9 @@ def exportar_pdf_personal(request):
 
 #endregion Exportaciones
 
-#region PDF
-
-def CreacionPlatillos_PDF(request):
-    if request.user.is_authenticated:
-        try:
-            directorio = os.getcwd()
-            
-            print("\n########## DIRECTORIO ###########")
-            print(directorio)
-
-            ruta_template = os.path.normpath(directorio + '/RestauranteLaOlla/Templates/Platillos_PDF.html')
-            
-            print("\n########## RUTA TEMPLATE ###########")
-            print(ruta_template)
-            
-            segmentos = ruta_template.split('\\')
-            
-            print("\n########## SEGMENTOS ###########")
-            print(segmentos)           
-
-            ruta = '/'.join(segmentos)
-            
-            print("\n########## RUTA ###########")
-            print(ruta)
-
-            if not os.path.isfile(ruta_template):
-                return HttpResponse("Error: El archivo HTML del template no existe.")
-
-            ruta = os.path.dirname(ruta_template)
-            nombre_template = os.path.basename(ruta_template)
-
-            env = Environment(loader=FileSystemLoader(ruta))
-            template = env.get_template(nombre_template)
-            platillos = Platillo.objects.filter(EsActivo="1").order_by('Nombre').values()
-
-            # filtro de tipo platillo
-            tp = TipoPlatillo.objects.filter(EsActivo="1").values()
-    
-            # nuevo elemento a contexto
-            html = template.render({'platillos': platillos, 'tipoplatillos' : tp})
-        
-            config = pdfkit.configuration(wkhtmltopdf=settings.WKHTMLTOPDF_CMD)
-            pdf = pdfkit.from_string(html, False, configuration=config)
-
-            response = HttpResponse(content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename="CONSUMIBLES.pdf"'
-            response.write(pdf)
-
-            return response
-        except Exception as ex:
-            print("\n############### EXCEPCIÓN ###############")
-            print(traceback.format_exc())
-            print("#########################################\n")
-            return JsonResponse({'error': str(ex)}, status=500)
-    else:
-        # Si no lo ha hecho entonces deberá iniciar sesión
-        return render(request, "login.html")
-
-def CreacionTipoPlatillos_PDF(request):
-    if request.user.is_authenticated:
-        try:
-            directorio = os.getcwd()
-            
-            ruta_template = os.path.normpath(directorio + '/RestauranteLaOlla/RestauranteLaOlla/Templates/TipoPlatillos_PDF.html')
-            segmentos = ruta_template.split('\\')
-            ruta = '/'.join(segmentos)
-            ruta_template = ruta.replace('/RestauranteLaOlla/', '/')
-
-            if not os.path.isfile(ruta_template):
-                return HttpResponse("Error: El archivo HTML del template no existe.")
-
-            ruta = os.path.dirname(ruta_template)
-            nombre_template = os.path.basename(ruta_template)
-
-            env = Environment(loader=FileSystemLoader(ruta))
-            template = env.get_template(nombre_template)
-            tipoPlatillo =  TipoPlatillo.objects.all()
-        
-            html = template.render({'tipoPlatillo': tipoPlatillo})
-        
-            config = pdfkit.configuration(wkhtmltopdf=settings.WKHTMLTOPDF_CMD)
-            pdf = pdfkit.from_string(html, False, configuration=config)
-
-            response = HttpResponse(content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename="TIPO_CONSUMIBLES.pdf"'
-            response.write(pdf)
-            return response
-        except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
-    else:
-        # Si no lo ha hecho entonces deberá iniciar sesión
-        return render(request, "login.html")
-    
-#endregion PDF
-
 #region PublicFunctions
 
 def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids, estado = "0"):
-    print(fecha_inicio_str)
-    print(fecha_fin_str)
-    print(areas_ids)
     
     listaEstado = estado.split(",")
     
@@ -1033,13 +912,6 @@ def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids, est
     # Ajustar horas
     fecha_inicio = timezone.make_aware(datetime.combine(fecha_inicio_date, time.min), timezone.get_current_timezone())   # 00:00:00
     fecha_fin = timezone.make_aware(datetime.combine(fecha_fin_date, time.max), timezone.get_current_timezone())         # 23:59:59.999999
-    
-    print("#################################")
-    print("FILTRO DE FECHAS 30D en REPORTES")
-    print("INICIO")
-    print(fecha_inicio)
-    print("FIN")
-    print(fecha_fin)
     
     filtros = Q(
         EsActivo="1",

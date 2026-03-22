@@ -1,5 +1,7 @@
 #region Personal
 
+import traceback
+
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
@@ -24,11 +26,9 @@ def personal(request):
 
             return render(request, "personal.html", {'Personal': personal, 'Cargos': cargos, 'User': request.user})
         except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
+            print("\n\n############### E X C E P C I Ó N ###############")
+            print(traceback.format_exc())
+            print("#####################################################\n\n")
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
@@ -95,8 +95,6 @@ def AgregarPersonal(request):
                 'status': 'error',
                 'message': 'El cargo seleccionado no existe'})
 
-        print(correo)
-
         # Crear usuario
         personal = Usuario.objects.create(
             Nombres=nombre,
@@ -126,9 +124,9 @@ def AgregarPersonal(request):
         })
 
     except Exception as ex:
-        print("### ERROR ###")
-        print(ex)
-        print("#############")
+        print("\n\n############### E X C E P C I Ó N ###############")
+        print(traceback.format_exc())
+        print("#####################################################\n\n")
 
         return JsonResponse({
             'status': 'error',
@@ -224,8 +222,10 @@ def ModificarPersonal(request):
         })
 
     except Exception as ex:
-        print("### ERROR EN ModificarPersonal ###")
-        print(ex)
+        print("\n\n############### E X C E P C I Ó N ###############")
+        print(traceback.format_exc())
+        print("#####################################################\n\n")
+        
         return JsonResponse({
             'status': 'error',
             'message': 'Error interno en el servidor.'
@@ -259,9 +259,10 @@ def DarBajaPersonal(request):
             return JsonResponse({'status': 'error', 'message': 'Usuario no encontrado'})
 
         except Exception as ex:
-            print("\n#################### EXCEPCIÓN ########################")
-            print(ex)
-            print("########################################################\n")
+            print("\n\n############### E X C E P C I Ó N ###############")
+            print(traceback.format_exc())
+            print("#####################################################\n\n")
+            
             return JsonResponse({'status': 'error', 'message': 'Error interno del servidor'})
     
     return JsonResponse({'status': 'error', 'message': 'Método no permitido'})
@@ -315,9 +316,10 @@ def RestablecerPass(request):
             return JsonResponse({'status': 'error', 'message': 'Usuario no encontrado'})
 
         except Exception as ex:
-            print("\n#################### EXCEPCIÓN ########################")
-            print(ex)
-            print("########################################################\n")
+            print("\n\n############### E X C E P C I Ó N ###############")
+            print(traceback.format_exc())
+            print("#####################################################\n\n")
+            
             return JsonResponse({'status': 'error', 'message': 'Error interno del servidor'})
     
     return JsonResponse({'status': 'error', 'message': 'Método no permitido'})
