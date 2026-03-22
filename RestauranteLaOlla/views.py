@@ -17,6 +17,8 @@ import string
 import re
 import json
 
+from django.conf import settings
+
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -459,24 +461,28 @@ def EnviarCorreo(request):
             return redirect("/")
     
     if request.method == "POST":
-        id_personal = request.POST.get("idPersonal")
-        titulo = request.POST.get("tituloCorreo")
-        mensaje = request.POST.get("mensajeCorreo")
+        try:
+            id_personal = request.POST.get("idPersonal")
+            titulo = request.POST.get("tituloCorreo")
+            mensaje = request.POST.get("mensajeCorreo")
+            
+            usuario = Usuario.objects.get(Id=id_personal)
+            mensaje = f"Hola {usuario.Nombres},\n\n" + f"{mensaje}"
 
-        usuario = Usuario.objects.get(Id=id_personal)
-
-        enviado = send_mail(
-            subject=titulo,
-            message=mensaje,
-            from_email='jasson2852@gmail.com',
-            recipient_list=[usuario.email],
-            fail_silently=False,
-        )
-        
-        if enviado > 0:
-            return JsonResponse({'status': 'ok', 'message': '¡Correo enviado con éxito!'})
-        else:
-            return JsonResponse({'status': 'error', 'message': 'Error al enviar correo'})
+            enviado = send_mail(
+                subject=titulo,
+                message=mensaje,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[usuario.email],
+                fail_silently=False,
+            )
+            
+            if enviado > 0:
+                return JsonResponse({'status': 'ok', 'message': '¡Correo enviado con éxito!'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Error al enviar correo'})
+        except Exception as e:
+            return JsonResponse({"ok": False, "message": f"Error al enviar el correo: {str(e)}"})
 
 #endregion Correo
 
@@ -513,7 +519,7 @@ def enviar_otp_correo(usuario, otp):
         enviado = send_mail(
             subject=asunto,
             message=mensaje,
-            from_email="jasson2852@gmail.com",
+            from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[usuario.email],
             fail_silently=False,
         )
