@@ -1,1 +1,1 @@
-web: python manage.py migrate && python manage.py collectstatic --noinput && gunicorn RestauranteLaOlla.wsgi
+web: python manage.py migrate && python manage.py collectstatic --noinput && gunicorn RestauranteLaOlla.wsgi --worker-class gthread --threads 4

@@ -28,12 +28,20 @@
 
                 <div class="row w-100 align-items-center">
 
-                    <input type="checkbox"
+                    {% if mesa.Id in MesasOrden %}
+                        <input type="checkbox"
                            class="chkMesaEditar d-none"
                            value="{{ mesa.Id }}"
-                           {% if mesa.Id in MesasOrden %}checked{% endif %}>
-
-                    <span class="col-6">Mesa #{{ mesa.Numero }}</span>
+                           checked>
+                           
+                        <span class="col-6">Mesa #{{ mesa.Numero }}</span>
+                    {% else %}
+                        <input type="checkbox"
+                           class="chkMesaEditar d-none"
+                           value="{{ mesa.Id }}">
+                           
+                        <span class="col-6">Mesa #{{ mesa.Numero }}</span>
+                    {% endif %}
 
                 </div>
             </label>
