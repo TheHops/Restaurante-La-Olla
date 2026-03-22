@@ -1,3 +1,5 @@
+import traceback
+
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -18,11 +20,9 @@ def MiPerfil(request):
         try:
             return render(request, "mi_perfil.html", {'Usuario': request.user, "User": request.user})
         except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
+            print("\n\n############### E X C E P C I Ó N ###############")
+            print(traceback.format_exc())
+            print("#####################################################\n\n")
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
@@ -90,11 +90,9 @@ def EditarDatosPerfil (request):
             
             return JsonResponse({"status": "ok", "message": "¡Los datos de su perfil fueron modificados con éxito!"})
         except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
+            print("\n\n############### E X C E P C I Ó N ###############")
+            print(traceback.format_exc())
+            print("#####################################################\n\n")
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
@@ -162,11 +160,9 @@ def CambiarPass (request):
                 "message": "¡La contraseña fue cambiada con éxito!"
             })
         except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
-            print(ex)
-            print("########################################################")
-            print()
+            print("\n\n############### E X C E P C I Ó N ###############")
+            print(traceback.format_exc())
+            print("#####################################################\n\n")
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")

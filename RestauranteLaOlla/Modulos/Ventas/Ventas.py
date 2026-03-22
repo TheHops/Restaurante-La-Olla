@@ -71,12 +71,10 @@ def venta(request):
 
             return render(request, "venta.html", contexto)
         except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
+            print("\n\n#################### E X C E P C I O N ########################")
             print("--------------------------'venta'--------------------------")
             print(traceback.format_exc(ex))
-            print("########################################################")
-            print()
+            print("########################################################\n\n")
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
@@ -93,10 +91,6 @@ def BuscarPlatillo(request):
                 Texto = request.GET.get("InputBuscarPlatillo")
                 TiposParam = request.GET.get("TiposSeleccionados", "")
                 
-                print("BUSQUEDA")
-                print(Texto)
-                print(TiposParam)
-
                 # Convertir "1,2,3" → [1,2,3]
                 tipos_ids = []
                 if TiposParam:
@@ -125,9 +119,6 @@ def BuscarPlatillo(request):
                     Platillos__in=PlatillosFiltrados
                 ).distinct()
                 
-                print("PLATILLOS FILTRADOS")
-                print(PlatillosFiltrados)
-
                 # --- Prefetch solo los platillos filtrados ---
                 TiposFiltrados = TiposFiltrados.prefetch_related(
                     Prefetch(
@@ -137,21 +128,16 @@ def BuscarPlatillo(request):
                     )
                 ).order_by('Nombre')
                 
-                print("TIPOS FILTRADOS")
-                print(TiposFiltrados)
-
                 contexto = {
                     "Tipos": TiposFiltrados
                 }
 
                 return render(request, "platillos.html", contexto)
         except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
+            print("\n\n#################### E X C E P C I O N ########################")
             print("----------------------'BuscarPlatillo'---------------------")
             print(traceback.format_exc())
-            print("########################################################")
-            print()
+            print("########################################################\n\n")
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
@@ -167,18 +153,11 @@ def FiltrarMesas(request):
             if request.method == "GET":
                 idAM = request.GET.get("listaAreasDeMesa")
 
-                print("-----------------------vvvvvv---------------------------")
-                print(idAM)
-
                 AreaMesaSeleccionada = AreaMesa.objects.get(Id=idAM)
-                
-                print(AreaMesaSeleccionada)
 
                 MesasObtenidas = Mesa.objects.filter(
                     Q(IdAreaMesa=AreaMesaSeleccionada) & Q(EsActivo="1")).values()
                 # No será sensible a las mayusculas con la i antes de contains
-
-                print(MesasObtenidas)
 
                 contexto = {
                     "Mesas": MesasObtenidas
@@ -186,12 +165,10 @@ def FiltrarMesas(request):
 
                 return render(request, "mesas.html", contexto)
         except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
+            print("\n\n#################### E X C E P C I O N ########################")
             print("--------------------'FiltrarMesas'--------------------")
             print(traceback.format_exc())
-            print("########################################################")
-            print()
+            print("########################################################\n\n")
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
         return render(request, "login.html")
@@ -209,24 +186,19 @@ def OrdenesPendientes(request):
             # Obtener cargo del usuario en sesión
             cargo_usuario = request.user.IdCargo.Nombre if request.user.IdCargo else None
 
-            # print(ordenes)
             contexto = {
                 "Ordenes": ordenes,
                 "Platillos": platillos,
                 "CargoUsuario": cargo_usuario,
                 "User": request.user
             }
-            
-            print(request.user)
-            print(contexto)
 
             return render(request, "ordenes.html", contexto)
         except Exception as ex:
-            print()
-            print("#################### E X C E P C I O N ########################")
+            print("\n\n#################### E X C E P C I O N ########################")
             print("--------------------'OrdenesPendientes'--------------------")
             print(traceback.format_exc())
-            print("########################################################")
+            print("################################################################\n\n")
             return JsonResponse({'error': str(ex)}, status=500)
     else:
         # Si no lo ha hecho entonces deberá iniciar sesión
@@ -257,7 +229,7 @@ def CrearOrden(request):
         if descripcion is not None and descripcion.strip() == "":
             descripcion = None
 
-        print("---------------------------- ORDEN CREADA -----------------------")
+        print("---------------------------- ORDEN CREADA --------------------------")
         print("Mesas:", mesas)
         print("Total:", totalval)
         print("Descripción:", descripcion)
@@ -307,9 +279,9 @@ def CrearOrden(request):
             "orden_id": orden.Id
         })
     except Exception as ex:
-        print("\n############### EXCEPCIÓN ###############")
+        print("\n\n############### E X C E P C I Ó N ###############")
         print(traceback.format_exc())
-        print("#########################################\n")
+        print("#####################################################\n\n")
         return JsonResponse({"status": "error", "message": str(ex)}, status=500)
 #endregion CrearOrden
 
@@ -352,9 +324,9 @@ def CancelarOrden(request):
         return JsonResponse({"status": "error", "message": "La orden no existe"}, status=404)
 
     except Exception as ex:
-        print("\n############### EXCEPCIÓN ###############")
+        print("\n\n############### E X C E P C I Ó N ###############")
         print(traceback.format_exc())
-        print("#########################################\n")
+        print("#####################################################\n\n")
         return JsonResponse({"status": "error", "message": str(ex)}, status=500)
 #endregion AnularOrden
 
@@ -476,19 +448,6 @@ def FacturarOrden(request):
         
         if banco is not None and banco.strip() == "":
             banco = None
-            
-        print("Total base: " + str(total))
-        print("Descuento (Front): " + str(descuento))
-        print("Propina (Front): " + str(propina))
-        print("Monto (Front): " + str(monto))
-        
-        print("Porcentaje descuento: " + str(porcentajeDescuento))
-        print("Descuento calculado (Back): " + str(descuento_calculado))
-        
-        print("Porcentaje propina: " + str(porcentajePropina))
-        print("Propina calculada (Back): " + str(propina_calculada))
-        
-        print("Cambio: " + str(cambio))
         
         if redondear(propina) != propina_calculada:
             return JsonResponse({
@@ -591,9 +550,9 @@ def FacturarOrden(request):
         })
 
     except Exception as ex:
-        print("\n############### EXCEPCIÓN ###############")
+        print("\n\n############### E X C E P C I Ó N ###############")
         print(traceback.format_exc())
-        print("#########################################\n")
+        print("#####################################################\n\n")
 
         return JsonResponse({
             "status": "error",
@@ -639,8 +598,12 @@ def CambiarAEnPreparacion(request):
                 "old_type": "1",
                 "new_type": "4"
             }, status=200)
+            
         except Exception as ex:
-            print("ERROR:", ex)
+            print("\n\n############### E X C E P C I Ó N ###############")
+            print(traceback.format_exc())
+            print("#####################################################\n\n")
+            
             return JsonResponse({
                 "status": "error",
                 "message": "Ocurrió un error cambiar el estado la orden."
@@ -680,7 +643,10 @@ def CambiarAPreparado(request):
                 "new_type": "3"
             }, status=200)
         except Exception as ex:
-            print("ERROR:", ex)
+            print("\n\n############### E X C E P C I Ó N ###############")
+            print(traceback.format_exc())
+            print("#####################################################\n\n")
+            
             return JsonResponse({
                 "status": "error",
                 "message": "Ocurrió un error cambiar el estado la orden."
@@ -756,8 +722,6 @@ def InicioEditarMesas(request):
     
     if request.user.IdCargo.Nombre == "Armador":
             return redirect("/")
-    
-    print("SI ENTRO")
 
     idOrden = request.GET.get("IdOrden")
     if not idOrden:
@@ -788,8 +752,6 @@ def InicioEditarMesas(request):
         "Areas": areas,
         "MesasOrden": list(mesas_orden),
     }
-    
-    print(contexto)
 
     return render(request, "editar_mesas.html", contexto)
 
@@ -911,11 +873,6 @@ def EditarOrden (request):
             
         idAreaMesa = data["idAreaMesa"]
         mesasIdList = data["mesas"]
-        
-        print("Id area de mesa:")
-        print(idAreaMesa)
-        print("Mesas:")
-        print(mesasIdList)
         
         areaCambiada, mesasCambiadas = Editar_area_y_mesas(
             orden,
