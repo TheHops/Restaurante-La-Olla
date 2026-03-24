@@ -19,13 +19,14 @@ import os
 load_dotenv()
 
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
-EMAIL_HOST = os.getenv("EMAIL_HOST")
-EMAIL_PORT = os.getenv("EMAIL_PORT")
+# EMAIL_HOST = os.getenv("EMAIL_HOST")
+# EMAIL_PORT = os.getenv("EMAIL_PORT")
 # EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
-EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL")
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = f'RestauranteLaOlla <{EMAIL_HOST_USER}>'
+# EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL")
+# EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+# EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+# SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,15 +38,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+DEBUG = os.getenv("DEBUG", "False").lower() == "True"
 
 RAILWAY_URL = os.getenv('RAILWAY_URL')
 
-ALLOWED_HOSTS = [
-    RAILWAY_URL,
+ALLOWED_HOSTS = [host for host in [
+    os.getenv('RAILWAY_URL'),
     'localhost',
     '127.0.0.1'
-]
+] if host]
 
 # Application definition
 
@@ -57,7 +58,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'anymail',
 ]
+
+ANYMAIL = {
+    "BREVO_API_KEY": os.getenv("BREVO_API_KEY"),
+}
 
 AUTH_USER_MODEL = 'Application.Usuario'
 
@@ -137,9 +143,9 @@ LANGUAGE_CODE = os.getenv("LANGUAGE_CODE")
 
 TIME_ZONE = os.getenv("TIME_ZONE")
 
-USE_I18N = os.getenv("USE_I18N")
+USE_I18N = os.getenv("USE_I18N", "True") == "True"
 
-USE_TZ = os.getenv("USE_TZ")
+USE_TZ = os.getenv("USE_TZ", "True") == "True"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
