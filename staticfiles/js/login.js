@@ -22,9 +22,6 @@ function PreResultado() {
   var message = document.getElementById("Message").value;
   var icon = document.getElementById("Icon").value;
 
-  console.log(falloLogin);
-  console.log(message);
-
   if ((falloLogin || cambioPass) && message.length > 0) {
     Swal.fire({
       icon: icon,
@@ -52,8 +49,7 @@ function InicioForgotPassword() {
   request.open("GET", url);
   request.onreadystatechange = function () {
     if (this.readyState == 4 && this.status === 200) {
-      console.log("INICIO FORGOT AFTER GET");
-
+      
       setTimeout(() => {
         if (contenedor) {
           contenedor.innerHTML = this.responseText;
@@ -76,8 +72,6 @@ function validarCorreoForgotPass() {
   );
 
   const correo = inputCorreo.value.trim();
-
-  console.log("Se está validando");
 
   // Expresión regular básica para correo
   const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -102,8 +96,6 @@ function verificarCorreo() {
     allowOutsideClick: false,
     didOpen: () => Swal.showLoading(),
   });
-
-  console.log("ENTRA A VERIFICAR CORREO");
 
   if (correo === "") {
     Swal.fire({
@@ -316,8 +308,6 @@ function verificarOTP() {
     allowOutsideClick: false,
     didOpen: () => Swal.showLoading(),
   });
-
-  console.log("ENTRA A VALIDAR OTP");
 
   // Validación rápida en frontend
   if (!/^\d{6}$/.test(otp)) {

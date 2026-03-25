@@ -1,13 +1,10 @@
 function cambio (id, tipo){
-  // console.log(id);
 
   inputnum = document.getElementById(id);
 
 
   let activar = "addcarrito" + id;
   addbtn = document.getElementById(activar);
-
-  // console.log(inputnum);
 
   if (tipo == 1)
   {

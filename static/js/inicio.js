@@ -11,8 +11,6 @@ document.addEventListener("DOMContentLoaded", function () {
       gradient.addColorStop(0, "rgba(255, 99, 132, 0.4)");
       gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
 
-      console.log(data);
-
       new Chart(ctx, {
         type: "line",
         data: {
@@ -104,13 +102,11 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function ConsultaDebeCambiarPass() {
-  console.log("INICIA CONSULA DEBE CAMBIAR PASS");
 
   $.ajax({
     url: "/DebeCambiarPass/",
     type: "GET",
     success: function (response) {
-      console.log(response);
       if (response.status === "ok" && response.DebeCambiarPass) {
         Swal.fire({
           icon: "warning",

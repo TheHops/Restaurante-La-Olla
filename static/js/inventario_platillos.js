@@ -316,9 +316,6 @@ function VerificarArchivo(campoArchivo) {
   if (campoArchivo.files.length > 0) {
     iconocargar.style.display = "initial";
 
-    console.log(campoArchivo.files[0].name);
-    console.log(campoArchivo.files[0]);
-
     spanlabel.textContent = campoArchivo.files[0].name;
     spanlabel.title = campoArchivo.files[0].name;
     return true;
@@ -335,9 +332,6 @@ function VerificarArchivo_dos(campoArchivo) {
   if (campoArchivo.files.length > 0) {
     iconocargar.style.display = "initial";
 
-    console.log(campoArchivo.files[0].name);
-    console.log(campoArchivo.files[0]);
-
     spanlabel.textContent = campoArchivo.files[0].name;
     spanlabel.title = campoArchivo.files[0].name;
     return true;
@@ -349,9 +343,6 @@ function VerificarArchivo_dos(campoArchivo) {
 }
 
 function ExportarPlatillos(tipo) {
-  // PREPARACION DE DATOS
-  console.log("Exportación de tipo: " + (tipo == "1" ? "excel" : "pdf"));
-
   // PETICION AL SERVICIO
   let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
   let xhr = new XMLHttpRequest();
@@ -367,14 +358,10 @@ function ExportarPlatillos(tipo) {
   xhr.onload = function () {
     const contentType = xhr.getResponseHeader("Content-Type");
 
-    console.log(contentType);
-
     // Si el backend devolvió JSON (error)
     if (contentType && contentType.includes("application/json")) {
       const reader = new FileReader();
       
-      console.log("ES JSON");
-
       reader.onload = function () {
         try {
           const respuesta = JSON.parse(reader.result);

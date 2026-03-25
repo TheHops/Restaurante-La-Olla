@@ -128,7 +128,6 @@ function Agregar_Personal() {
     type: "POST",
     data: data,
     success: function (response) {
-      console.log(response);
 
       if (response.status === "ok") {
         Swal.fire({
@@ -247,8 +246,6 @@ function ConfirmarRestablecer(idPersonal) {
           if (response.status === "ok") {
             // Insertar la contraseña nueva en el modal
             $("#nuevaPassTemporal").val(response.new_pass);
-
-            console.log(response.new_pass);
 
             $("#IdPersonalRestablecerPass").val(idPersonal);
 
@@ -574,9 +571,6 @@ function mostrarError(mensaje) {
 /******************************************************************************/
 
 function ExportarPersonal(tipo) {
-  // PREPARACION DE DATOS
-  console.log("Exportación de tipo: " + (tipo == "1" ? "excel" : "pdf"));
-
   // PETICION AL SERVICIO
   let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
   let xhr = new XMLHttpRequest();

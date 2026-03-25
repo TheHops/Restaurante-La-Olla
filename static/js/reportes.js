@@ -120,9 +120,6 @@ function rellenarParaMostrarOrden(idOrden) {
 
 function filtrarOrdenesFecha() {
   estadoAFiltrar = document.getElementById("listaEstadoOrdenesExportar");
-
-  console.log("ESTADO");
-  console.log(estadoAFiltrar.value);
   
   const params = new URLSearchParams({
     FechaInicio: fechaDesde.value,
@@ -252,9 +249,6 @@ function aplicarFechaPredefinidaTemp(tipo) {
   filtrosTemp.fechaDesde = formatLocalDate(desde);
   filtrosTemp.fechaHasta = formatLocalDate(hasta);
 
-  console.log(filtrosTemp.fechaDesde);
-  console.log(filtrosTemp.fechaHasta);
-
   // fechaDesde.value = filtrosTemp.fechaDesde;
   // fechaHasta.value = filtrosTemp.fechaHasta;
 }
@@ -340,9 +334,6 @@ function ExportarOrdenes(tipo)
     },
   });
 
-  // PREPARACION DE DATOS
-  console.log("Exportación de tipo: " + (tipo == "1" ? "excel" : "pdf"));
-
   const payload = {
     FechaInicio: fechaDesde.value,
     FechaFin: fechaHasta.value,
@@ -354,8 +345,6 @@ function ExportarOrdenes(tipo)
 
   let incluirDetalle = document.getElementById("check_incluir_detalles");
   payload.IncluirDetalles = incluirDetalle.checked;
-
-  console.log("Incluir detalles : " + incluirDetalle.checked) ;
 
   // PETICION AL SERVICIO
   let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
@@ -375,8 +364,6 @@ function ExportarOrdenes(tipo)
     // Si el backend devolvió JSON (error)
     if (contentType && contentType.includes("application/json")) {
       const reader = new FileReader();
-      
-      console.log("ES JSON");
 
       reader.onload = function () {
         try {
