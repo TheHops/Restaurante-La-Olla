@@ -13,13 +13,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     // Utilizar clientHeight para obtener la altura del elemento
     const altura = accionesBusquedaElement.clientHeight;
 
-    // Mostrar el resultado en la consola (o realizar la acción deseada)
-    console.log(`El alto actual de 'accionesBusqueda' es: ${altura}px`);
-
     vPlatillosElement.style.paddingTop = `${altura}px`;
-
-    console.log(`El alto de 'accionesBusqueda' es: ${altura}px`);
-    console.log(`Se aplicó padding-top: ${altura}px a 'VPlatillos'.`);
   }
 
   // 3. Agregar el listener al evento 'resize' de la ventana
@@ -37,13 +31,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
 });
 
 function ConsultaDebeCambiarPass() {
-  console.log("INICIA CONSULA DEBE CAMBIAR PASS");
-
   $.ajax({
     url: "/DebeCambiarPass/",
     type: "GET",
     success: function (response) {
-      console.log(response);
       if (response.status === "ok" && response.DebeCambiarPass) {
         Swal.fire({
           icon: "warning",
@@ -105,12 +96,6 @@ function PonerInfoConsumible(imagenUrl, nombre, tipoConsumible, descripcion, pre
   } else {
     img.src = "/static/img/ProductoSinFoto.png";
   }
-
-  console.log(imagenUrl);
-  console.log(nombre);
-  console.log(tipoConsumible);
-  console.log(descripcion);
-  console.log(precio);
 
   // Nombre del platillo
   document.getElementById("NombreDetalleConsumible").textContent = nombre;
@@ -218,7 +203,6 @@ var indice = 0;
 var cantOrdenes = 0;
 
 function addCarrito(id, nombre, precio) {
-  // console.log(id + " - " + nombre + " - " + precio);
 
   // Se reinicia el indice
   indice = 0;
@@ -250,13 +234,17 @@ function addCarrito(id, nombre, precio) {
 
   // Se verifica si ya existe o no
   if (existeOrden) {
-    console.log("ENTRÓ A LA FUNCION SI EXISTE EL PLATILLO EN LA ORDEN");
 
     // Se obtiene la orden
     ordenExistente = document.getElementById("ordenP" + id);
-
+    
     ordenP[indice].subtotal += subtotal;
     ordenP[indice].cantidad += parseInt(cant.value);
+    
+    ordenExistente.style.transition = "background-color 0s";
+    ordenExistente.style.backgroundColor = "#ffe6e6";
+    ordenExistente.style.transition = "background-color ease .2s";
+    ordenExistente.style.backgroundColor = "#ffffff";
 
     ordenExistente.innerHTML =
       "<span>" +
@@ -311,8 +299,6 @@ function addCarrito(id, nombre, precio) {
     notiPlatillos();
   }
 
-  // console.log(ordenP);
-
   calcularTotal(1, subtotal);
 
   validarMostrarEmptyStateCrearOrden();
@@ -348,15 +334,9 @@ var total = 0;
 function calcularTotal(tipo, subtotal) {
   let LabelTotal = document.getElementById("preciototal");
 
-  // console.log(LabelTotal);
-
   if (tipo == 1) {
     // Si es de tipo 1 entonces se está agregando
     total += subtotal;
-
-    // console.log(total);
-
-    // console.log(parseInt(LabelTotal.value))
 
     // Se va aumentando el valor del total sumandole el subtotal
     LabelTotal.innerHTML = total;
@@ -391,7 +371,6 @@ function limpiarOrdenes() {
 }
 
 function quitarOrden(idOrden, subtotalOrden) {
-  console.log("ENTRÓ A FUNCION QUITAR ORDEN");
 
   let cuerpo_ordenes = document.getElementById("cuerpo_ordenes");
   let ordenQuitar = document.getElementById("ordenP" + idOrden);
@@ -427,9 +406,6 @@ function quitarOrden(idOrden, subtotalOrden) {
     let btnAgregarOrden = document.getElementById("btnAgregarOrden");
     btnAgregarOrden.disabled = true;
   }
-
-  console.log(ordenP);
-  console.log("Cantidad de ordenes: " + cantOrdenes);
 
   notiPlatillos();
 
@@ -500,14 +476,8 @@ function filtrarPlatillos(cadena) {
       if (contenedor) {
         contenedor.innerHTML = this.responseText;
 
-        console.log(this.responseText);
-
         validarMostrarEmptyStateFiltroPlatillos();
       }
-
-      console.log(
-        "Filtrado completado con texto: " + cadena + " y tipos: " + tiposParam
-      );
     }
   };
 }
@@ -518,8 +488,6 @@ function filtrarMesas(idAreaMesa) {
 
   let boton = document.getElementById("btn_siguiente");
   boton.disabled = true;
-
-  console.log(idAreaMesa);
 
   // data.append('InputBuscarPlatillo', idAreaMesa);
   request.open("GET", "/FiltrarMesas?listaAreasDeMesa=" + idAreaMesa);

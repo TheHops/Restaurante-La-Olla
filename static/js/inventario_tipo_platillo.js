@@ -292,9 +292,6 @@ function calcularAltoTabla() {
 /************************* E X P O R T A R **************************/
 
 function ExportarTipoPlatillos(tipo) {
-  // PREPARACION DE DATOS
-  console.log("Exportación de tipo: " + (tipo == "1" ? "excel" : "pdf"));
-
   // PETICION AL SERVICIO
   let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
   let xhr = new XMLHttpRequest();
@@ -310,13 +307,9 @@ function ExportarTipoPlatillos(tipo) {
   xhr.onload = function () {
     const contentType = xhr.getResponseHeader("Content-Type");
 
-    console.log(contentType);
-
     // Si el backend devolvió JSON (error)
     if (contentType && contentType.includes("application/json")) {
       const reader = new FileReader();
-
-      console.log("ES JSON");
 
       reader.onload = function () {
         try {

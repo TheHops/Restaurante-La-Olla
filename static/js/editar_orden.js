@@ -63,7 +63,6 @@ function subirCantidad(id) {
 }
 
 function bajarCantidad(id) {
-  console.log("Subir cantidad detalle existente");
 
   const span = document.getElementById(`cantidadDetalle-${id}`);
   const dataFinal = document.getElementById(`detalleOrdenEditarData${id}`);
@@ -152,7 +151,6 @@ $("#EditarOrden").on("hidden.bs.modal", function () {
 });
 
 function confirmarQuitar(idPlatillo) {
-  console.log("Quitar detalle:", idPlatillo);
 
   let fila = $("#filaDetalleOrdenEditar" + idPlatillo);
   let dataFinal = $("#detalleOrdenEditarData" + idPlatillo);
@@ -238,7 +236,6 @@ async function ConfirmarEditarOrden(idOrden) {
 }
 
 function enviarDatosEditar(idOrden) {
-  console.log("ENTRA A CONFIRMAR EDITAR");
 
   let descripcionElement = document.getElementById("descripcionOrdenEditar");
 
@@ -271,8 +268,6 @@ function enviarDatosEditar(idOrden) {
 
     payload.detalles.push(detalle);
   });
-
-  console.log(payload);
 
   /* Se realiza la petición al backend */
 
@@ -369,8 +364,6 @@ $("#EditarOrden").on("hide.bs.modal", function () {
 // Se ejecuta cuando da click al botón 'incluir'
 $("#btnConfirmarIncluirDetalles").on("click", function () {
   const platillosSeleccionados = obtenerPlatillosSeleccionadosEditar();
-
-  console.log("Platillos seleccionados:", platillosSeleccionados);
 
   platillosSeleccionados.forEach((p) => {
     // Evitar duplicados

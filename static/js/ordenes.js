@@ -50,13 +50,11 @@ function GetNombreEstadoOrden (estado)
 }
 
 function ConsultaDebeCambiarPass() {
-  console.log("INICIA CONSULA DEBE CAMBIAR PASS");
 
   $.ajax({
     url: "/DebeCambiarPass/",
     type: "GET",
     success: function (response) {
-      console.log(response);
       if (response.status === "ok" && response.DebeCambiarPass) {
         Swal.fire({
           icon: "warning",
@@ -129,13 +127,6 @@ async function FacturarOrden() {
 
     if (MetodoDePago.value == "2" || MetodoDePago.value == "3") Cambio = 0;
 
-    console.log(Monto);
-    console.log(Cambio);
-    console.log(Propina);
-    console.log(Descuento);
-    console.log(PorcentajePropina);
-    console.log(PorcentajeDescuento);
-
     let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
 
     let xhr = new XMLHttpRequest();
@@ -154,8 +145,6 @@ async function FacturarOrden() {
     datos.append("metodoPago", MetodoDePago.value);
     datos.append("banco", Banco.value);
     datos.append("numRef", numRef.value);
-
-    console.log(MontoOrden.value);
 
     xhr.onreadystatechange = function () {
       if (this.readyState === 4) {
@@ -442,13 +431,9 @@ function CalcularTotal() {
       throw new Error("El valor no se puede convertir a un número");
     }
 
-    console.log("Total base: " + TotalGlobal);
-
     let totalPagar = redondear(
       totalGlobalNumero + valorDescuentoNumero + valorPropinaNumero,
     );
-
-    console.log("Total a pagar: " + totalPagar);
 
     txtTotalOrden.textContent = `Total a pagar: C$${totalPagar}`;
 
@@ -750,8 +735,6 @@ function CambioEstadoOrdenes(cadena) {
 
 function filtrarOrdenes(cadena) {
   const contenedor = document.getElementById("listaOrdenesPoFoC");
-
-  console.log(contenedor.value);
 
   const request = new XMLHttpRequest();
 
