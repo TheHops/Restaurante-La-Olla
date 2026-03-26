@@ -22,8 +22,8 @@
 
                 </button>
 
-                {% if platillo.ImagenUrl != "" %}
-                    <img src="/media/{{ platillo.ImagenUrl }}" alt="Imagen de {{platillo.Nombre}}" title="Imagen del consumible">
+                {% if platillo.ImagenUrl %}
+                    <img src="{{ platillo.ImagenUrl.url }}" alt="Imagen de {{platillo.Nombre}}" title="Imagen del consumible">
                 {% else %}
                     <img src="{% static 'img/ProductoSinFoto.png' %}" alt="Consumible sin foto" title="Consumible sin foto">
                 {% endif %}

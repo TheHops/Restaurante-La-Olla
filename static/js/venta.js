@@ -28,6 +28,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
   validarMostrarEmptyStateCrearOrden();
 
   notiPlatillos();
+
+  filtrarPlatillos("");
 });
 
 function ConsultaDebeCambiarPass() {

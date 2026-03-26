@@ -84,7 +84,6 @@ urlpatterns = [
     path("ReenviarOTPForgotPass/", ReenviarOTPForgotPass, name="ReenviarOTPForgotPass"),
     path("ValidarOTPForgotPass/", ValidarOTPForgotPass, name="ValidarOTPForgotPass"),
     path("CambiarPassForgotPass/", CambiarPassForgotPass, name="CambiarPassForgotPass"),
-
 ]
 
 urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)

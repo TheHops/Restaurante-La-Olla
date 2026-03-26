@@ -28,6 +28,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
   validarMostrarEmptyStateCrearOrden();
 
   notiPlatillos();
+
+  filtrarPlatillos("");
 });
 
 function ConsultaDebeCambiarPass() {
@@ -548,6 +550,8 @@ async function agregarOrden() {
 
       // Supongamos que Django responde con algo como:
       // { "status": "ok", "message": "Orden creada exitosamente" }
+
+      console.log(respuesta);
 
       if (respuesta.status === "ok") {
         await Swal.fire({
