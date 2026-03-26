@@ -8,8 +8,6 @@
 </form>
 
 <div class="contenidoVenta">
-    <!-- <form action="">
-    {% csrf_token %} -->
 
         <!-- Pagina 1 (Para seleccion de mesa y area) -->
         <div id="pag1">
@@ -64,21 +62,6 @@
                 </fieldset>
 
                 <div id="AccionesPrimerPagina">
-                    <!--
-                        <label>
-                            <input type="checkbox" id="check_combinar_mesas" name="combinar_mesas" value="true">
-                            Combinar mesas
-                        </label>
-                    -->
-
-                    <!--
-                        <div class="toggle-container-cuadrado">
-                            <input type="checkbox" id="check_combinar_mesas" name="combinar_mesas" class="check-toggle" value="true">
-                            <label for="check_combinar_mesas" class="label-toggle-cuadrado">
-                                Combinar mesas
-                            </label>
-                        </div>
-                    -->
 
                     <label class="custom-checkbox" title="Al activar esta opción, tendremos la posibilidad de seleccionar más de una mesa">
                         <input type="checkbox" id="check_combinar_mesas" name="combinar_mesas">
@@ -120,9 +103,6 @@
                         onkeyup="debouncedFiltrarPlatillos(this.value)" title="Escribe el nombre del consumible que necesitas encontrar y se mostrarán todas las coincidencias">
                 
                     <button id="btn_abrirListaOrdenes" onclick="abrirCarrito()" title="Abrir carrito">
-                        <!-- <i class="fa-regular fa-square-list"></i> -->
-                        <!-- <i class="fa-solid fa-bars"></i> -->
-                        <!-- <i class="fa-regular fa-cart-shopping-fast"></i>                     -->
                         <i class="fa-solid fa-cart-shopping"></i>
                     </button>
                 
@@ -148,8 +128,6 @@
                     {% endfor %}
                 </div>
 
-                
-                <!-- <img src="{% static 'img/List2.png' %}" style="width: 20px; height: 20px;" title="Crear orden"></img> -->
                 <div id="acciones_pag2_foot"></div>
             </div>
             

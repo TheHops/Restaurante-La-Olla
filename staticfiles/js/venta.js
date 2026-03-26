@@ -240,11 +240,6 @@ function addCarrito(id, nombre, precio) {
     
     ordenP[indice].subtotal += subtotal;
     ordenP[indice].cantidad += parseInt(cant.value);
-    
-    ordenExistente.style.transition = "background-color 0s";
-    ordenExistente.style.backgroundColor = "#ffe6e6";
-    ordenExistente.style.transition = "background-color ease .2s";
-    ordenExistente.style.backgroundColor = "#ffffff";
 
     ordenExistente.innerHTML =
       "<span>" +
@@ -258,6 +253,15 @@ function addCarrito(id, nombre, precio) {
       ", " +
       ordenP[indice].subtotal +
       ")'><button class='btnQuitar'>Quitar</button></div>";
+
+      // Efecto de actualización
+      ordenExistente.style.transition = "background-color 0s";
+      ordenExistente.style.backgroundColor = "#fff0f0";
+      
+      setTimeout(() => {
+        ordenExistente.style.transition = "background-color 0.4s ease";
+        ordenExistente.style.backgroundColor = "#ffffff";
+      }, 10);
   } else {
     ordenP.push({
       id: id,
