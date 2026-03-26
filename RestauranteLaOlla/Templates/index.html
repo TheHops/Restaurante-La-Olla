@@ -25,9 +25,6 @@
     <!-- FontAwesome -->
     <link rel="stylesheet" href="{% static 'css/lib/fontawesome/css/all.min.css' %}">
 
-    <!-- Flowbite -->
-    {% comment %} <link rel="stylesheet" href="{% static 'css/lib/flowbite.min.css' %}"> {% endcomment %}
-
     <!-- Estilos propios -->
     <link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
     <link rel="stylesheet" href="{% static 'css/inventario.css' %}" />
@@ -59,12 +56,6 @@
     
     <!-- ChartJs -->
     <script src="{% static 'js/lib/chart.umd.min.js' %}"></script>
-
-    <!-- Tailwind -->
-    {% comment %} <script src="{% static 'js/lib/tailwind-browser.js' %}"></script> {% endcomment %}
-
-    <!-- Flowbite -->
-    {% comment %} <script src="{% static 'js/lib/flowbite.min.js' %}"></script> {% endcomment %}
 
     <script src="{% static 'js/opciones.js' %}"></script>
 
@@ -264,10 +255,7 @@
           <div class="modal-body row exportar col-12">
             <div class="col-6">
                 <button type="button" class="excel w-100" onclick="ExportarPlatillos('1')" title="Exportará los consumibles en un archivo de formato excel (.xlsx)">
-                    <!--
-                        <img src="{% static 'img/Export_excel_2.png' %}">
-                    -->
-
+                    
                     <svg width="20" height="24" viewBox="0 0 36 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M35.5003 40H2.16699V36.6667H32.167V10.6667L24.8337 3.33333H5.50033V15H2.16699V0H26.167L35.5003 9.33333V40Z" fill="#66CC66"/>
                         <path d="M33.8337 13.3333H22.167V3.33333H25.5003V9.99999H33.8337V13.3333Z" fill="#66CC66"/>
@@ -282,10 +270,7 @@
     
             <div class="col-6">
                 <button type="button" class="pdf w-100" onclick="ExportarPlatillos('2')" title="Exportará los consumibles en un archivo de formato PDF (.pdf)">
-                    <!--
-                        <img src="{% static 'img/Export_pdf_2.png' %}">
-                    -->
-
+                    
                     <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_1693_1025)">
                         <path d="M18.3333 33.3333H11.6667V20H18.3333C21 20 23.3333 22.5 23.3333 25.3333V28C23.3333 30.8333 21 33.3333 18.3333 33.3333ZM15 30H18.3333C19.1667 30 20 29 20 28V25.3333C20 24.3333 19.1667 23.3333 18.3333 23.3333H15V30ZM3.33333 33.3333H0V20H5C7.83333 20 10 22.1667 10 25C10 27.8333 7.83333 30 5 30H3.33333V33.3333ZM3.33333 26.6667H5C6 26.6667 6.66667 26 6.66667 25C6.66667 24 6 23.3333 5 23.3333H3.33333V26.6667Z" fill="#e69696"/>
@@ -341,13 +326,9 @@
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Tipo de consumible<span class="asterisco">*</span></h4>
                         <select class="form-control" id="TipoPlatillo">
                             {% for tipoplatillo in TypePlatillo %}
-                            {% if tipoplatillo.EsActivo == "1" %}
-                                <option value="{{ tipoplatillo.Id }}">{{ tipoplatillo.Nombre }}</option>
-                            <!--
-                                {% else %}
-                                <option value="{{ tipoplatillo.Id }}" disabled>{{ tipoplatillo.Nombre }}</option>
-                            -->
-                            {% endif %}
+                              {% if tipoplatillo.EsActivo == "1" %}
+                                  <option value="{{ tipoplatillo.Id }}">{{ tipoplatillo.Nombre }}</option>
+                              {% endif %}
                             {% endfor %}
                         </select>
                     </div>
@@ -355,16 +336,6 @@
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Precio (C$)<span class="asterisco">*</span></h4>
                         <input type="text" inputmode="numeric" class="form-control" id="PrecioPlatillo" placeholder="Ej: 150" onkeypress="return soloNumeros(event)" required>
                     </div>
-
-                    <!--
-                        <div class="col-md-6 mb-2">
-                            <h4 style="font-size: 20px; margin-bottom: 3px;">Estado</h4>
-                            <select class="form-control" id="EstadoPlatillo">
-                                <option value="1">Activo</option>
-                                <option value="0">Inactivo</option>
-                            </select>
-                        </div>
-                    -->
 
                     <!-- Selector tipo pastilla -->
                     <div class="col-md-6 mb-2" title="Estado activo o inactivo del consumible">
@@ -391,8 +362,7 @@
 
                             &nbsp;
                             
-                           <span id="SpanLabel_dos"> Cargar imagen</span>
-                           <!-- TODO: Agregar icono para la carga de imagen -->                           
+                           <span id="SpanLabel_dos"> Cargar imagen</span>                         
                         </label>
                         <input type="file" accept="image/png,image/jpeg,image/jpg" id="archivoModal_dos" onchange="VerificarArchivo_dos(this)"
                         style="position: absolute;
@@ -445,10 +415,6 @@
                           {% for tipoplatillo in TypePlatillo %}
                               {% if tipoplatillo.EsActivo == "1" %}
                                   <option value="{{ tipoplatillo.Id }}">{{ tipoplatillo.Nombre }}</option>
-                                  <!--
-                                      {% else %}
-                                      <option value="{{ tipoplatillo.Id }}" disabled>{{ tipoplatillo.Nombre }}</option>
-                                  -->
                               {% endif %}
                           {% endfor %}
                       </select>
@@ -514,10 +480,7 @@
           <div class="modal-body row exportar col-12">
               <div class="col-6">
                 <button type="button" class="excel w-100" onclick="ExportarTipoPlatillos('1')" title="Exportará los tipos de consumibles en un archivo de formato excel (.xlsx)">
-                  <!--
-                    <img src="{% static 'img/Export_pdf_2.png' %}">
-                  -->
-    
+                  
                   <svg width="20" height="24" viewBox="0 0 36 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M35.5003 40H2.16699V36.6667H32.167V10.6667L24.8337 3.33333H5.50033V15H2.16699V0H26.167L35.5003 9.33333V40Z" fill="#66CC66"/>
                     <path d="M33.8337 13.3333H22.167V3.33333H25.5003V9.99999H33.8337V13.3333Z" fill="#66CC66"/>
@@ -532,10 +495,7 @@
       
               <div class="col-6">
                 <button type="button" class="pdf w-100" onclick="ExportarTipoPlatillos('2')" title="Exportará los tipos de consumibles en un archivo de formato PDF (.pdf)">
-                  <!--
-                    <img src="{% static 'img/Export_pdf_2.png' %}">
-                  -->
-                
+                  
                   <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_1693_1025)">
                     <path d="M18.3333 33.3333H11.6667V20H18.3333C21 20 23.3333 22.5 23.3333 25.3333V28C23.3333 30.8333 21 33.3333 18.3333 33.3333ZM15 30H18.3333C19.1667 30 20 29 20 28V25.3333C20 24.3333 19.1667 23.3333 18.3333 23.3333H15V30ZM3.33333 33.3333H0V20H5C7.83333 20 10 22.1667 10 25C10 27.8333 7.83333 30 5 30H3.33333V33.3333ZM3.33333 26.6667H5C6 26.6667 6.66667 26 6.66667 25C6.66667 24 6 23.3333 5 23.3333H3.33333V26.6667Z" fill="#e69696"/>
@@ -586,14 +546,6 @@
                         <h4 style="font-size: 20px;">Nombre<span class="asterisco">*</span></h4>
                         <input type="text" class="form-control" id="NameTipoPlatillo" placeholder="Ej: Aperitivos" required>
                       </div>
-                      
-                      <!--
-                        <h4 style="font-size: 20px;">Estado</h4>
-                        <select class="form-control" id="EstadoTipoPlatillo">
-                          <option value = "1">Activo</option>
-                          <option value = "0">Inactivo</option>
-                        </select>
-                      -->
       
                       <div class="col-md-6 mb-2" title="Estado activo o inactivo del tipo de consumible">
                         <h4 class="titulo-estado" style="margin-bottom: 7px;">Estado<span class="required">*</span></h4>
@@ -640,13 +592,7 @@
                     {% csrf_token %}
                     <h4 style="font-size: 20px;" title="Nombre para conocer el nuevo tipo de consumible">Nombre<span class="asterisco">*</span></h4>
                     <input type="text" class="form-control" placeholder="Ej: Aperitivos" id="NameTipoPlatilloAgregar" required>
-                    <!-- <h4 style="font-size: 20px;">Estado</h4>
-                    <select class="form-control" id="EstadoTipoPlatilloAgregar">
-                        <option>activo</option>
-                        <option>inactivo</option>
-                      </select> -->
                 </form>
-                   
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal" title="Si ya no va a realizar la acción solo cancele">Cancelar</button>
@@ -775,16 +721,6 @@
                   <div id="contenedorExtras">
                     <div class="col-6 pl-0" id="contenedorDescuento" title="Se aplica un cálculo del descuento según el total base">
     
-                      <!--
-                        <div class="col-12 px-0">
-                          <label for="checkDescuento" style="font-size: 20px;">
-                            Descuento
-                          </label>
-                          
-                          <input type="checkbox" name="inputCheckDescuento" id="checkDescuento">
-                        </div>
-                      -->
-    
                       <div class="col-12 px-0" id="contenedorCheckDescuento" title="Activa si quieres incluir el descuento a la orden">
                         <label class="switch-container">
                           <span class="switch-label">Descuento</span>
@@ -813,16 +749,7 @@
                     </div>
                     
                     <div class="col-6 pr-0" id="contenedorPropina" title="Activa si quieres incluir la propina a la orden">
-                      <!--
-                        <div class="col-12 px-0" id="contenedorCheckPropina">
-                          <label for="checkPropina" style="font-size: 20px;">
-                            Propina
-                          </label>
-                        
-                          <input type="checkbox" name="inputCheckPropina" id="checkPropina">
-                        </div>
-                      -->
-    
+                      
                       <div class="col-12 px-0" id="contenedorCheckPropina">
                         <label class="switch-container">
                           <span class="switch-label">Propina</span>
@@ -1025,9 +952,6 @@
           <div class="modal-body row exportar col-12">
               <div class="col-6">
                   <button class="excel w-100" onclick="ExportarPersonal('1')" title="Exportará los usuarios | personal en un archivo de formato excel (.xlsx)">
-                      <!--
-                          <img src="{% static 'img/Export_excel_2.png' %}">
-                      -->
   
                       <svg width="20" height="24" viewBox="0 0 36 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M35.5003 40H2.16699V36.6667H32.167V10.6667L24.8337 3.33333H5.50033V15H2.16699V0H26.167L35.5003 9.33333V40Z" fill="#66CC66"/>
@@ -1043,9 +967,6 @@
       
               <div class="col-6">
                   <button class="pdf w-100" onclick="ExportarPersonal('2')" title="Exportará los usuarios | personal en un archivo de formato PDF (.pdf)">
-                      <!--
-                          <img src="{% static 'img/Export_pdf_2.png' %}">
-                      -->
   
                       <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <g clip-path="url(#clip0_1693_1025)">
@@ -1211,16 +1132,6 @@
                             </select>
                         </div>
     
-                        <!--
-                            <div class="col-6 mb-2">
-                                <h4 style="font-size: 20px; margin-bottom: 3px;">Estado<span class="asterisco">*</span></h4>
-                                <select class="form-control" id="idEstadoModificar" required>
-                                    <option value="1">Activo</option>
-                                    <option value="0">Inactivo</option>
-                                </select>
-                            </div>
-                        -->
-    
                         <div class="col-md-6 mb-2" title="Se puede cambiar su estado a dado de baja o revertirlo dependiendo de los casos que se presenten">
                             <h4 class="titulo-estado">Estado<span class="required">*</span></h4>
                             
@@ -1311,10 +1222,7 @@
               <div class="modal-body row exportar col-12">
                   <div class="col-6">
                       <button class="excel w-100" onclick="ExportarOrdenes('1')" title="Exportará las órdenes en un archivo de formato excel (.xlsx)">
-                          <!--
-                              <img src="{% static 'img/Export_excel_2.png' %}">
-                          -->
-  
+                          
                           <svg width="20" height="24" viewBox="0 0 36 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M35.5003 40H2.16699V36.6667H32.167V10.6667L24.8337 3.33333H5.50033V15H2.16699V0H26.167L35.5003 9.33333V40Z" fill="#66CC66"/>
                               <path d="M33.8337 13.3333H22.167V3.33333H25.5003V9.99999H33.8337V13.3333Z" fill="#66CC66"/>
@@ -1329,10 +1237,7 @@
           
                   <div class="col-6">
                       <button class="pdf w-100" onclick="ExportarOrdenes('2')" title="Exportará las órdenes en un archivo de formato PDF (.pdf)">
-                          <!--
-                              <img src="{% static 'img/Export_pdf_2.png' %}">
-                          -->
-  
+                          
                           <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <g clip-path="url(#clip0_1693_1025)">
                               <path d="M18.3333 33.3333H11.6667V20H18.3333C21 20 23.3333 22.5 23.3333 25.3333V28C23.3333 30.8333 21 33.3333 18.3333 33.3333ZM15 30H18.3333C19.1667 30 20 29 20 28V25.3333C20 24.3333 19.1667 23.3333 18.3333 23.3333H15V30ZM3.33333 33.3333H0V20H5C7.83333 20 10 22.1667 10 25C10 27.8333 7.83333 30 5 30H3.33333V33.3333ZM3.33333 26.6667H5C6 26.6667 6.66667 26 6.66667 25C6.66667 24 6 23.3333 5 23.3333H3.33333V26.6667Z" fill="#e69696"/>
@@ -1356,22 +1261,10 @@
                   </div>
               </div>
               <div class="modal-footer d-flex justify-content-between">
-                  <!--
-                      <label>
-                          <input type="checkbox" id="check_incluir_detalles" name="incluir_detalles" value="false">
-                          Incluir detalles
-                      </label>
-                  -->
   
                   <label class="custom-checkbox-report" title="Permite incluir los detalles a las órdenes que se van a exportar">
                       <input type="checkbox" id="check_incluir_detalles" name="incluir_detalles" class="check-toggle">
                       
-                      <!--
-                          <label for="check_incluir_detalles" class="label-toggle-reportes">
-                              Incluir detalles
-                          </label>
-                      -->
-  
                       <span class="checkmark-report">
                           <svg width="16" height="15" viewBox="0 0 28 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M9.5 20.0417L0 10.5417L2.375 8.16667L9.5 15.2917L24.7917 0L27.1667 2.375L9.5 20.0417Z" fill="white"/>
@@ -1549,8 +1442,6 @@
             <li class="opcion" title="Menú donde se ven las tablas catálogo donde conoceremos los consumibles y sus tipos"><a href="{% url 'inventario' %}">Menú</a></li>
           {% endif %}
 
-          <!-- <li class="opcion"><a href="">Compra</a></li> -->
-
           {% if request.user.IdCargo.Nombre == "Mesero" or request.user.IdCargo.Nombre == "Administrador" %}
             <li class="opcion" title="Sección donde se gestionan las órdenes (Creación, Modificación, Cambio de estado, Anulación y Registro de pago)"><a href="{% url 'venta' %}">Crear orden</a></li>
           {% else %}
@@ -1566,7 +1457,6 @@
           {% endif %}
 
           <li class="opcion" title="Permite gestionar el perfil propio del usuario en sesión"><a href="{% url 'MiPerfil' %}">Mi perfil</a></li>
-          <!-- <li class="opcion"><a href="">Configuraciones</a></li> -->
         </ul>
 
         <img src="/static/img/Logo la olla 2.png" alt="" id="logodeco" />
@@ -1590,14 +1480,7 @@
             <a href="{% url 'index' %}"
               ><img src="{% static 'img/LogoNav.png' %}" alt=""
             /></a>
-            <!-- <a href="#">Historial</a> -->
           </li>
-
-          <!-- <li id="userConfig">
-              <a href="#">
-                  <img src="{% static 'img/Icon_UserSet.png' %}" alt="">
-              </a>
-          </li> -->
 
           <li id="UserName" style="margin-right: 15px; padding: 5px 0 0 0;">
             <h4 style="color: white;" title="Eres el {{User.IdCargo.Nombre}}">
@@ -1635,15 +1518,10 @@
         </ul>
       </nav>
 
-      <!-- Imagen de fondo -->
-
       <div class="contenido">
-
-        <!-- {% comment %} Aqui es donde va todo el contenido {% endcomment %} -->
-
         {% block content %} {% endblock %}
       </div>
-      <!-- <img src="/Restaurante_La_Olla/Static/img/waveTest3.svg" alt="Onda de fondo" style="transform: translateY(-25px);"> -->
+      
     </header>
 
     <!-- Tus scripts -->

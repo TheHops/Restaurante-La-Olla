@@ -206,6 +206,7 @@ def OrdenesPendientes(request):
 #endregion OrdenesPendientes
 
 #region CrearOrden
+
 def CrearOrden(request):
     if not request.user.is_authenticated:
         return render(request, "login.html")
@@ -214,7 +215,7 @@ def CrearOrden(request):
         return redirect("/")
     
     if request.method != "POST":
-        return JsonResponse({"status": "error", "message": "Método no permitido."}, status=405)
+        return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
     
     try:
         # Datos recibidos del frontend
@@ -226,6 +227,12 @@ def CrearOrden(request):
         datos = json.loads(datos_json)
         mesas = json.loads(mesas_json)
         
+        if not datos:
+            return JsonResponse({"status": "error", "message": "La orden no tiene consumibles"})
+        
+        if not mesas:
+            return JsonResponse({"status": "error", "message": "Debe seleccionar al menos una mesa"})
+        
         if descripcion is not None and descripcion.strip() == "":
             descripcion = None
 
@@ -235,42 +242,77 @@ def CrearOrden(request):
         print("Descripción:", descripcion)
         print("User ID:", request.user.Id)
         print("--------------------------------------------------------------------")
-
-        # Obtener usuario en sesión
-        usuario_en_sesion = Usuario.objects.get(Id=request.user.Id)
-
-        # Crear la orden
-        orden = Orden.objects.create(
-            IdUsuario=usuario_en_sesion,
-            Total=totalval,
-            Descripcion=descripcion  # si tu modelo tiene este campo
-        )
-
-        # Asignar mesas a la orden
-        mesas_objetos = Mesa.objects.filter(Id__in=mesas)
-        for mesa in mesas_objetos:
-            MesasPorOrden.objects.create(IdOrden=orden, IdMesa=mesa)
-
-        # Establecer el área según la primera mesa seleccionada
-        if mesas_objetos.exists():
-            orden.AreaDeMesa = mesas_objetos[0].IdAreaMesa.Nombre
-            orden.IdAreaDeMesa = mesas_objetos[0].IdAreaMesa
-            orden.save()
-
-        # Crear los detalles de la orden
-        for dato in datos:
-            platillo = Platillo.objects.get(Id=dato["id"])
-            DetalleOrden.objects.create(
-                IdOrden=orden,
-                IdPlatillo=platillo,
-                Cantidad=dato['cantidad'],
-                PrecioVenta=platillo.Precio,
-                SubTotal=dato['subtotal']
+        
+        total_recalculado = 0
+        
+        with transaction.atomic():
+            # Crear la orden
+            orden = Orden.objects.create(
+                IdUsuario=request.user,
+                Total=0,
+                Descripcion=descripcion  # si tu modelo tiene este campo
             )
 
-        print("-----------------------------------------------------")
-        print("Orden creada correctamente:", orden)
-        print("-----------------------------------------------------")
+            # Asignar mesas a la orden
+            mesas_objetos = Mesa.objects.filter(Id__in=mesas)
+            
+            for mesa in mesas_objetos:
+                MesasPorOrden.objects.create(IdOrden=orden, IdMesa=mesa)
+
+            # Establecer el área según la primera mesa seleccionada
+            if mesas_objetos.exists():
+                orden.AreaDeMesa = mesas_objetos[0].IdAreaMesa.Nombre
+                orden.IdAreaDeMesa = mesas_objetos[0].IdAreaMesa
+                orden.save()
+
+            # Crear los detalles de la orden
+            for dato in datos:
+                
+                try:
+                    platillo = Platillo.objects.get(Id=dato["id"])
+                except Platillo.DoesNotExist:
+                    return JsonResponse({
+                        "status": "error", 
+                        "message": f"El consumible con ID {dato["id"]} no existe en el menú"
+                    })
+                
+                cantidad = dato.get('cantidad')
+                
+                if not isinstance(cantidad, (int, float)) or cantidad <= 0:
+                    return JsonResponse({
+                        "status": "error", 
+                        "message": f"Cantidad inválida ({cantidad}) para el consumible {platillo.Nombre}"
+                    }, status=400)
+                        
+                subtotal_item = platillo.Precio * cantidad
+                total_recalculado += subtotal_item
+                
+                DetalleOrden.objects.create(
+                    IdOrden=orden,
+                    IdPlatillo=platillo,
+                    Cantidad=cantidad,
+                    PrecioVenta=platillo.Precio,
+                    SubTotal=subtotal_item
+                )
+                
+            try:
+                # Limpieza por si acaso (quitar espacios o cambiar comas por puntos)
+                totalval = totalval.replace(',', '.').strip()
+                total_cliente_decimal = Decimal(totalval)
+
+                print(f"DEBUG: Recalculado: {total_recalculado} | Cliente: {total_cliente_decimal}")
+                
+                if abs(total_recalculado - total_cliente_decimal) > 0.01:
+                    return JsonResponse({"status": "error", "message": "Inconsistencia en los precios"})
+            except (ValueError, TypeError):
+                return JsonResponse({"status": "error", "message": "Total inválido"})
+                
+            orden.Total = total_recalculado
+            orden.save()
+
+            print("-----------------------------------------------------")
+            print("Orden creada correctamente:", orden)
+            print("-----------------------------------------------------")
 
         # Respuesta final esperada por el frontend
         return JsonResponse({
@@ -283,6 +325,7 @@ def CrearOrden(request):
         print(traceback.format_exc())
         print("#####################################################\n\n")
         return JsonResponse({"status": "error", "message": str(ex)}, status=500)
+    
 #endregion CrearOrden
 
 #region AnularOrden
