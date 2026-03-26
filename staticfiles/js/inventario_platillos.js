@@ -138,7 +138,7 @@ function ActualizarPlatillo() {
   formData.append("Precio", parseFloat($("#PrecioPlatillo").val()));
   formData.append("estado", $('input[name="estado"]:checked').val());
   formData.append("Descripcion", $("#DescripcionPlatillo").val());
-  formData.append("Imagen", $("#archivoModal_dos")[0].files[0]);
+  formData.append("Imagen", $("#iconoCargarImagen_dos")[0].files[0]);
   formData.append(
     "csrfmiddlewaretoken",
     $("input[name=csrfmiddlewaretoken]").val(),
@@ -305,7 +305,6 @@ function AgregarPlatillo() {
 
 function VerificarArchivo(campoArchivo) {
   let iconocargar = document.getElementById("iconoCargarImagen");
-  let labelArchivo = document.getElementById("LabelArchivo");
   let spanlabel = document.getElementById("SpanLabel");
 
   if (!iconocargar || !spanlabel) {
@@ -314,7 +313,7 @@ function VerificarArchivo(campoArchivo) {
   }
 
   if (campoArchivo.files.length > 0) {
-    iconocargar.style.display = "initial";
+    // iconocargar.style.display = "initial";
 
     spanlabel.textContent = campoArchivo.files[0].name;
     spanlabel.title = campoArchivo.files[0].name;
@@ -326,18 +325,19 @@ function VerificarArchivo(campoArchivo) {
 }
 
 function VerificarArchivo_dos(campoArchivo) {
-  let iconocargar = document.getElementById("iconoCargarImagen_dos");
-  let labelArchivo = document.getElementById("LabelArchivo_dos");
   let spanlabel = document.getElementById("SpanLabel_dos");
-  if (campoArchivo.files.length > 0) {
-    iconocargar.style.display = "initial";
 
-    spanlabel.textContent = campoArchivo.files[0].name;
-    spanlabel.title = campoArchivo.files[0].name;
+  if (campoArchivo.files && campoArchivo.files.length > 0) {
+    const nombreArchivo = campoArchivo.files[0].name;
+
+    // Cambiamos el texto y el tooltip (title)
+    spanlabel.textContent = nombreArchivo;
+    spanlabel.title = nombreArchivo;
     return true;
   } else {
-    iconocargar.style.display = "none";
-
+    // Si se cancela la selección, volvemos al estado inicial
+    spanlabel.textContent = "Cargar imagen";
+    spanlabel.title = "";
     return false;
   }
 }
