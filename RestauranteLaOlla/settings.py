@@ -152,10 +152,21 @@ USE_TZ = os.getenv("USE_TZ", "True") == "True"
 
 STATIC_URL = '/static/'
 
+IS_HEROKU_OR_RAILWAY = os.getenv('RAILWAY_STATIC_URL') or os.getenv('RAILWAY_URL')
+
+if IS_HEROKU_OR_RAILWAY:
+    MEDIA_ROOT = '/app/media'
+else:
+    # Ruta para tu PC local
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
