@@ -17,7 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls.static import static
-from RestauranteLaOlla.settings import MEDIA_URL, MEDIA_ROOT
+from django.conf import settings
+from django.views.static import serve
+from django.urls import re_path
 from RestauranteLaOlla.views import *
 from RestauranteLaOlla.Modulos.Inventario import Menu
 from RestauranteLaOlla.Modulos.Personal import Personal
@@ -86,4 +88,12 @@ urlpatterns = [
     path("CambiarPassForgotPass/", CambiarPassForgotPass, name="CambiarPassForgotPass"),
 ]
 
-urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
+if settings.DEBUG:
+    # Local: sirve media y static normalmente
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+else:
+    # Producción (Railway): Django sirve el Volumen de media
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    ]
