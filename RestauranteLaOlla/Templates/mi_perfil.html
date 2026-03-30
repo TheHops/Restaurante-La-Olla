@@ -19,23 +19,27 @@
                             </div>
                 
                             <div class="col-12 mb-2 d-flex flex-column" title="Nombre de la persona (No es editable, solo el administrador puede modificar)">
-                                <label>Nombre</label>
-                                <input type="text" class="form-control mt-auto" id="FullNameEditarPerfil" value="{{ Usuario.Nombres }} {{ Usuario.Apellidos }}" readonly>
+                                <label for="FullNameEditarPerfil">Nombre</label>
+                                <input type="text" class="form-control mt-auto"  id="FullNameEditarPerfil" value="{{ Usuario.Nombres }} {{ Usuario.Apellidos }}" readonly>
                             </div>
                 
                             <div class="col-6 d-flex flex-column" title="Correo de la persona (Si va a actualizarlo asegurese de que no vaya a estar ocupado por otro usuario)">
-                                <label>Correo</label>
-                                <input type="email" name="txtCorreoEditarPerfil" class="form-control mt-auto" id="CorreoEditarPerfil" value="{{ Usuario.email }}">
+                                <label for="CorreoEditarPerfil">Correo</label>
+                                {% if Usuario.email %}
+                                    <input type="email" name="txtCorreoEditarPerfil" class="form-control mt-auto" placeholder="Ej: example@gmail.com" id="CorreoEditarPerfil" value="{{ Usuario.email }}">
+                                {% else %}
+                                    <input type="email" name="txtCorreoEditarPerfil" class="form-control mt-auto" placeholder="Ej: example@gmail.com" id="CorreoEditarPerfil" value="">
+                                {% endif %}
                             </div>
                 
                             <div class="col-6 d-flex flex-column" title="Número de teléfono de la persona">
-                                <label>Teléfono</label>
+                                <label for="telefonoEditarPerfil">Teléfono</label>
                                 <input type="text"
                                     name = "txtTelefonoEditarPerfil"
                                     inputmode="numeric"
                                     class="form-control mt-auto"
                                     maxlength="8"
-                                    id="telefono"
+                                    id="telefonoEditarPerfil"
                                     value="{{ Usuario.Telefono|default_if_none:'' }}"
                                     placeholder="Ej: 88888888"
                                     onkeypress="return soloNumeros(event)">
@@ -56,17 +60,17 @@
                             </div>
                 
                             <div class="col-6 mb-2 d-flex flex-column" title="Nombre de usuario (Asegúrese de no repetirlo con otro usuario)">
-                                <label>Nombre de usuario</label>
-                                <input type="text" name="txtUserNameEditarPerfil" class="form-control mt-auto" id="UserNameEditarPerfil" value="{{ Usuario.username }}">
+                                <label for="UserNameEditarPerfil">Nombre de usuario</label>
+                                <input type="text" name="txtUserNameEditarPerfil" placeholder="Ej: JLopez" class="form-control mt-auto" id="UserNameEditarPerfil" value="{{ Usuario.username }}">
                             </div>
                 
                             <div class="col-6 mb-2 d-flex flex-column" title="Cargo del personal (No es editable, solo el administrador puede)">
-                                <label>Cargo</label>
+                                <label for="CargoEditarPerfil">Cargo</label>
                                 <input type="text" class="form-control mt-auto" id="CargoEditarPerfil" value="{{ Usuario.IdCargo.Nombre }}" readonly>
                             </div>
                         
                         <div class="col-6 mb-2 d-flex flex-column">
-                                <label>Contraseña</label>
+                                <span>Contraseña</span>
 
                                 <div class="input-group" title="El cambio de la contraseña es independiente de los otros datos del perfil">
                                     <input type="password" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2"
