@@ -592,7 +592,7 @@ def exportar_pdf_ordenes(ordenes, request, incluir_detalles=False, nombre_archiv
     # (Se mantiene igual a tu última versión...)
     def encabezado_pie(canvas, doc):
         canvas.saveState()
-        logo_path = os.path.join("static", "img", "LogoBgBlanco.jpg")
+        logo_path = os.path.join("static", "img", "NuevoLogoFondoBlanco.jpg")
         if os.path.exists(logo_path):
             canvas.drawImage(logo_path, doc.leftMargin, height - 80, width=60, height=60, preserveAspectRatio=True)
 
@@ -1119,7 +1119,7 @@ def generar_pdf_tabla(*, titulo: str, columnas: list, filas: list, nombre_archiv
         canvas.saveState()
         
         # 1. Dibujar el Logo (Posición Absoluta: Top-Izquierda)
-        logo_path = os.path.join("static", "img", "LogoBgBlanco.jpg")
+        logo_path = os.path.join("static", "img", "NuevoLogoFondoBlanco.jpg")
         if os.path.exists(logo_path):
             # drawImage(ruta, x, y, width, height)
             canvas.drawImage(logo_path, doc.leftMargin, height - 80, width=60, height=60, preserveAspectRatio=True)

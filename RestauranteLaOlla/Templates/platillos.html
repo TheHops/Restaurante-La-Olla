@@ -65,12 +65,12 @@
 {% endfor %}
 
 <div id="emptyStatePlatillos">
-    <img src="/static/img/Logo la olla 2.png" alt="" id="logodecoESOrdenes" />
+    <img src="{% static 'img/NuevoLogoLaOlla3.png' %}" alt="" id="logodecoESOrdenes" />
 
     <svg viewBox="0 0 200 60" width="260" height="80" id="svgCurvoOrdenes">
         <path id="pathCurva" d="M 10,20 Q 100,70 190,20" fill="transparent" />
         
-        <text>
+        <text style="transform: translateY(-15px);">
             <textPath href="#pathCurva" startOffset="50%" text-anchor="middle" id="textoEmptyStateOrdenes">
                 Sin resultados
         </text>

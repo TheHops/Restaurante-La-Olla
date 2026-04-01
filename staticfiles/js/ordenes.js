@@ -351,9 +351,15 @@ function rellenarParaFacturar(id, total) {
   // Se vacían los campos
   ReiniciarCampos();
 
+  let propina = document.getElementById("checkPropina");
+  propina.checked = true;
+  toggleContenedor("inputPorcentajePropina", true);
+
   // Se coloca el total para mostrarlo y que el usuario ingrese un buen monto
   let Monto = document.getElementById("totalOrdenMonto");
   Monto.innerHTML = "Total a pagar: C$" + total;
+
+  CalcularTotal();
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -906,8 +912,12 @@ function restaurarDespliegues() {
 ///////////////////////////////////////////////////////
 
 $("#checkPropina").on("change", function () {
-  $("#inputPorcentajePropina").toggle(this.checked);
+  toggleContenedor("inputPorcentajePropina", this.checked);
 });
+
+function toggleContenedor (id, checked){
+  $("#" + id).toggle(checked);
+}
 
 $("#checkDescuento").on("change", function () {
   $("#inputPorcentajeDescuento").toggle(this.checked);

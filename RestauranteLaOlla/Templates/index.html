@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Iconos y fuentes -->
-    <link rel="icon" href="{% static 'img/Logo la olla 2.png' %}" />
+    <link rel="icon" href="{% static 'img/NuevoLogoLaOlla.png' %}" />
 
     <!-- Animaciones -->
     <link rel="stylesheet" href="{% static 'css/lib/animate.min.css' %}"/>
@@ -763,7 +763,7 @@
                       <div class="col-12 px-0 contenedorPorcentaje" id="inputPorcentajePropina">
                         <div class="input-group mb-0" title="La propina es por porcentaje, así que lo que se ingresa es el porcentaje que se calcula según el total base (Si también hay descuento primero se calcula el descuento y sobre ese resultado luego se calcula la propina)">
                           <span class="input-group-text"><b>%</b></span>
-                          <input type="number" class="form-control" aria-label="Porcentaje" id="txtPorcentajePropina" min="0" max="10" step="1" placeholder="Ej: 5">
+                          <input type="number" class="form-control" aria-label="Porcentaje" id="txtPorcentajePropina" min="0" max="10" step="1" placeholder="Ej: 5" value="10">
                         </div>
                         
                         <div class="col-12 px-0 mensajeExtras" id="mensajePorcentajePropina">
@@ -1459,7 +1459,7 @@
           <li class="opcion" title="Permite gestionar el perfil propio del usuario en sesión"><a href="{% url 'MiPerfil' %}">Mi perfil</a></li>
         </ul>
 
-        <img src="/static/img/Logo la olla 2.png" alt="" id="logodeco" />
+        <img src="{% static 'img/NuevoLogoLaOlla3.png' %}" alt="" id="logodeco" />
       </div>
 
       <nav id="navSistema">
