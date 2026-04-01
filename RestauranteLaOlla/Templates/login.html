@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="{% static 'css/login.css' %}">
         <link rel="stylesheet" href="{% static 'css/lib/sweetalert2.min.css' %}" />
 
-        <link rel="icon" href="{% static 'img/Logo la olla 2.png' %}" />
+        <link rel="icon" href="{% static 'img/NuevoLogoLaOlla.png' %}" />
         <title>Iniciar sesión</title>
     </head>
     <body>
@@ -20,7 +20,7 @@
                 </div>
                 <div id="derecha">
                     <div class="logo">
-                        <img id="imglogo" src="{% static 'img/Logo la olla 2.png' %}" alt="Logo">
+                        <img id="imglogo" src="{% static 'img/NuevoLogoLaOlla.png' %}" alt="Logo">
                     </div>
                     
                     <!-- Formulario de log in-->
@@ -29,14 +29,14 @@
                         <!-- Caja de texto 1 (Nombre de usuario) -->
                         <div class="form_in">
                             <input type="text" name="txtUsername" class="campo" id="opc1" autocomplete="off" required>
-                            <label class="lbl">
+                            <label class="lbl" for="opc1">
                                 Usuario o correo
                             </label>
                         </div>
                     
                         <div class="form_in">
                             <input type="password" name="txtPassword" class="campo" id="opc2" required autocomplete="new-password">
-                            <label class="lbl">
+                            <label class="lbl" for="opc2">
                                 Contraseña
                             </label>
                         </div>

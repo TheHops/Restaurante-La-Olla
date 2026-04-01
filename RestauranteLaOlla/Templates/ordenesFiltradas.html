@@ -176,7 +176,7 @@
           </button>
         {% endif %}
 
-        {% if CargoUsuario != "Mesero" %}
+        {% if CargoUsuario == "Cajero" or CargoUsuario == "Administrador" %}
           <!-- Registrar la orden -->
           <button
             class="btnFacturarOrden"
@@ -314,12 +314,12 @@
 {% endfor %}
 
 <div id="emptyStateOrdenes" title="No hay órdenes">
-  <img src="/static/img/Logo la olla 2.png" alt="" id="logodecoESOrdenes" />
+  <img src="{% static 'img/NuevoLogoLaOlla3.png' %}" alt="" id="logodecoESOrdenes" />
 
   <svg viewBox="0 0 200 60" width="260" height="80" id="svgCurvoOrdenes">
     <path id="pathCurva" d="M 10,20 Q 100,70 190,20" fill="transparent" />
     
-    <text>
+    <text style="transform: translateY(-5px);">
       <textPath href="#pathCurva" startOffset="50%" text-anchor="middle" id="textoEmptyStateOrdenes">
         Aún no hay órdenes aquí
       </textPath>

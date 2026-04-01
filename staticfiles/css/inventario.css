@@ -96,6 +96,7 @@
     font-size: medium; 
     text-align: center; 
     background-color: #6c757d; 
+    padding-top: 6px;
     padding-left: 10px;
     padding-right: 10px;
     cursor: pointer;
@@ -106,24 +107,6 @@
     text-align: center;
     margin-top: 2px;
     margin-bottom: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    overflow: hidden;
-    white-space: nowrap;
-    cursor: pointer;
-}
-
-#SpanLabel_dos, #SpanLabel {
-    margin-left: 2px;
-    display: inline-block;
-    overflow: hidden;
-    text-overflow: ellipsis; /* Esto añade los "..." */
-    white-space: nowrap;
-    vertical-align: middle;
-    max-width: 70%; /* Ajusta este valor según tu diseño */
 }
 
 #agregar, #agregar2 {
