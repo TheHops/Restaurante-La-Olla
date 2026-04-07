@@ -216,6 +216,20 @@ def initial_data(sender, **kwargs):
             #endregion 15 - Licores importados
         ]
         
-        for platillo in platillos:
-            Platillo.objects.update_or_create(Id=platillo["Id"], defaults=platillo)
+        for data in platillos:
+            # 1. Intentamos obtener el platillo si ya existe
+            obj = Platillo.objects.filter(Id=data["Id"]).first()
+            
+            if obj:
+                # 2. Si existe, actualizamos todo MENOS la imagen
+                # Eliminamos la llave del diccionario para que no la toque
+                data_sin_imagen = data.copy()
+                data_sin_imagen.pop("ImagenUrl", None) 
+                
+                for key, value in data_sin_imagen.items():
+                    setattr(obj, key, value)
+                obj.save()
+            else:
+                # 3. Si no existe, lo creamos completo
+                Platillo.objects.create(**data)
 
