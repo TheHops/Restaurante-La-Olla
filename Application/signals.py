@@ -5,8 +5,13 @@ from .models import Cargo, AreaMesa, Mesa, Platillo, TipoPlatillo
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 
+import sys
+
 @receiver(post_migrate)
 def initial_data(sender, **kwargs):
+    if 'test' in sys.argv:
+        return
+    
     with transaction.atomic():
         print("Insertando datos iniciales")
         
@@ -216,6 +221,20 @@ def initial_data(sender, **kwargs):
             #endregion 15 - Licores importados
         ]
         
-        for platillo in platillos:
-            Platillo.objects.update_or_create(Id=platillo["Id"], defaults=platillo)
+        for data in platillos:
+            # 1. Intentamos obtener el platillo si ya existe
+            obj = Platillo.objects.filter(Id=data["Id"]).first()
+            
+            if obj:
+                # 2. Si existe, actualizamos todo MENOS la imagen
+                # Eliminamos la llave del diccionario para que no la toque
+                data_sin_imagen = data.copy()
+                data_sin_imagen.pop("ImagenUrl", None) 
+                
+                for key, value in data_sin_imagen.items():
+                    setattr(obj, key, value)
+                obj.save()
+            else:
+                # 3. Si no existe, lo creamos completo
+                Platillo.objects.create(**data)
 

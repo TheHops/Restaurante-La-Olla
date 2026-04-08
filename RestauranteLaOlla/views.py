@@ -105,7 +105,7 @@ def GraficarOrdenes(request):
         return render(request, "login.html")
     
     if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Mesero":
-            return redirect("/")
+        return redirect("/")
 
     try:
         cargo_usuario = request.user.IdCargo.Nombre
