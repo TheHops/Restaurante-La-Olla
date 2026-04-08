@@ -5,8 +5,13 @@ from .models import Cargo, AreaMesa, Mesa, Platillo, TipoPlatillo
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 
+import sys
+
 @receiver(post_migrate)
 def initial_data(sender, **kwargs):
+    if 'test' in sys.argv:
+        return
+    
     with transaction.atomic():
         print("Insertando datos iniciales")
         

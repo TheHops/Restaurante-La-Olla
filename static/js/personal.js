@@ -582,6 +582,16 @@ function ExportarPersonal(tipo) {
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.setRequestHeader("X-CSRFToken", token);
 
+  Swal.fire({
+    toast: true,
+    position: "top-start",
+    title: "Procesando...",
+    showConfirmButton: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+
   // Manejamos la respuesta del servidor
   xhr.onload = function () {
     const contentType = xhr.getResponseHeader("Content-Type");
