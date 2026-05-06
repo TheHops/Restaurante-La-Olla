@@ -1,0 +1,26 @@
+{% extends 'index.html' %}
+
+{% block content %}
+{% load static %}
+
+<div id="contenidoArqueo">
+    <div id="cuadroArqueo">
+        <!-- IZQUIERDA -->
+        <div id="izquierdaArqueo">
+            <form id="formArqueo" action="{% url 'InicioArqueo' %}" method="post">
+                {% csrf_token %}
+
+                
+            </form>
+        </div>
+
+        <!-- DERECHA -->
+        <div id="derechaArqueo">
+            
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/mi_perfil.js' %}"></script>
+
+{% endblock %}

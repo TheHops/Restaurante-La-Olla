@@ -109,9 +109,9 @@ class RestauranteModelTest(TestCase):
         """
         # 1. Definimos valores de prueba
         subtotal_esperado = Decimal("450.50")
-        propina_esperada = Decimal("45.05") # 10%
-        descuento = Decimal("20.00")
-        total_pagar_esperado = (subtotal_esperado + propina_esperada) - descuento
+        descuento = Decimal("-90.1") # 20% del subtotal
+        propina_esperada = (subtotal_esperado + descuento) * Decimal("0.1") # 10%
+        total_pagar_esperado = (subtotal_esperado + descuento) + propina_esperada
 
         # 2. Creamos la orden asignando los valores manualmente (como lo harías en tu View)
         orden = Orden.objects.create(
@@ -129,7 +129,7 @@ class RestauranteModelTest(TestCase):
 
         # 4. Verificaciones de precisión decimal
         self.assertEqual(orden_guardada.Total, subtotal_esperado)
-        self.assertEqual(orden_guardada.TotalPagar, Decimal("475.55"))
+        self.assertEqual(orden_guardada.TotalPagar, Decimal("396.44"))
         self.assertEqual(orden_guardada.MetodoPago, "1")
         self.assertEqual(orden_guardada.Estado, "0")
         

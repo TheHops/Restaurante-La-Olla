@@ -25,6 +25,7 @@ from RestauranteLaOlla.Modulos.Inventario import Menu
 from RestauranteLaOlla.Modulos.Personal import Personal
 from RestauranteLaOlla.Modulos.Personal import MiPerfil
 from RestauranteLaOlla.Modulos.Reportes import Reportes
+from RestauranteLaOlla.Modulos.Reportes import Caja
 from RestauranteLaOlla.Modulos.Platillos import Platillos
 from RestauranteLaOlla.Modulos.TipoPlatillos import TipoPlatillos
 from RestauranteLaOlla.Modulos.Ventas import Ventas
@@ -86,6 +87,7 @@ urlpatterns = [
     path("ReenviarOTPForgotPass/", ReenviarOTPForgotPass, name="ReenviarOTPForgotPass"),
     path("ValidarOTPForgotPass/", ValidarOTPForgotPass, name="ValidarOTPForgotPass"),
     path("CambiarPassForgotPass/", CambiarPassForgotPass, name="CambiarPassForgotPass"),
+    path("Caja/", Caja.Caja, name="Caja"),
 ]
 
 if settings.DEBUG:

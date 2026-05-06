@@ -1456,6 +1456,10 @@
             <li class="opcion" title="Tabla donde se pueden filtrar las órdenes y ser exportadas en archivos de formato excel (.xlsx) o PDF (.pdf)"><a href="{% url 'reportes' %}">Reportes</a></li>
           {% endif %}
 
+          {% if request.user.IdCargo.Nombre == "Administrador" or request.user.IdCargo.Nombre == "Cajero" %}
+            <li class="opcion" title="En esta sección se define el monto inicial en efectivo que tiene la caja en el día"><a href="{% url 'caja' %}">Caja</a></li>
+          {% endif %}
+
           <li class="opcion" title="Permite gestionar el perfil propio del usuario en sesión"><a href="{% url 'MiPerfil' %}">Mi perfil</a></li>
         </ul>
 
