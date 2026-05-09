@@ -32,9 +32,11 @@
     <link rel="stylesheet" href="{% static 'css/ordenes.css' %}" />
     <link rel="stylesheet" href="{% static 'css/mi_perfil.css' %}" />
     <link rel="stylesheet" href="{% static 'css/reportes.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/caja.css' %}" />
     
     <title>Restaurante La Olla</title>
   </head>
+  
   <body>
     <div id="capa" style="z-index: 18;
     position: fixed;" onclick="cerrar()"></div>
@@ -1457,7 +1459,7 @@
           {% endif %}
 
           {% if request.user.IdCargo.Nombre == "Administrador" or request.user.IdCargo.Nombre == "Cajero" %}
-            <li class="opcion" title="En esta sección se define el monto inicial en efectivo que tiene la caja en el día"><a href="{% url 'caja' %}">Caja</a></li>
+            <li class="opcion" title="En esta sección se define el monto inicial en efectivo que tiene la caja en el día"><a href="{% url 'Caja' %}">Caja</a></li>
           {% endif %}
 
           <li class="opcion" title="Permite gestionar el perfil propio del usuario en sesión"><a href="{% url 'MiPerfil' %}">Mi perfil</a></li>

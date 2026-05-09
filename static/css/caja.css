@@ -1,0 +1,132 @@
+#contenidoArqueo {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#cuadroArqueo
+{
+    width: 80%;
+    height: 70%;
+
+    margin-top: 8vh;
+
+    /* padding: 25px 0 25px 0; */
+
+    display: flex;
+    
+    border-width: 2px;
+    border-color: #B3B3B3;
+    border-style: solid;
+
+    background-color: white;
+
+    border-radius: 10px;
+}
+
+#izquierdaArqueo {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+}
+
+#contenidoInternoArqueo {
+    padding: 15px 20px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+#derechaArqueo {
+    width: 50%;
+
+    padding: 20px 0;
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+}
+
+#contenidoTabsArqueo {
+    padding-top: 15px;
+    position: relative;
+}
+
+#aperturaArqueo {
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+#cierreArqueo {
+    position: absolute;
+    width: 100%;
+}
+
+#btnIniciarArqueo, #btnCerrarArqueo {
+    padding: 0 10px;
+    height: 30px;
+    border-radius: 7px;
+    
+    background-color: #FD7418;
+    border-color: hsl(24, 98%, 60%);
+    color: white;
+}
+
+#btnIniciarArqueo:hover, #btnCerrarArqueo:hover {
+    background-color: hsl(24, 98%, 50%);
+}
+
+.btnInfoArqueo {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: hsl(0, 0%, 50%);
+
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+#contenidoSuperiorArqueo #primeraFila {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    margin-top: 5px;
+}
+
+#contenidoSuperiorArqueo #segundaFila {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+#exportarDatosArqueo {
+    background-color: white;
+    border-radius: 7px;
+    padding: 0 15px;
+    border-color: rgb(255, 130, 150);
+    color: #d92644;
+
+    min-width: 125px;
+
+    height: 35px;
+    cursor: pointer;
+
+    transition: background-color ease .3s;
+}
+
+#exportarDatosArqueo:hover {
+    background-color: hsl(359, 89%, 97%);
+}

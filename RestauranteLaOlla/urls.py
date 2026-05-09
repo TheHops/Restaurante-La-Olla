@@ -14,6 +14,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import os
+
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls.static import static
@@ -88,12 +90,13 @@ urlpatterns = [
     path("ValidarOTPForgotPass/", ValidarOTPForgotPass, name="ValidarOTPForgotPass"),
     path("CambiarPassForgotPass/", CambiarPassForgotPass, name="CambiarPassForgotPass"),
     path("Caja/", Caja.Caja, name="Caja"),
+    path("InicioArqueo/", Caja.InicioArqueo, name="InicioArqueo"),
 ]
 
 if settings.DEBUG:
     # Local: sirve media y static normalmente
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=os.path.join(settings.BASE_DIR, 'static'))
 else:
     # Producción (Railway): Django sirve el Volumen de media
     urlpatterns += [
