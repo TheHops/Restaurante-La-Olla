@@ -40,13 +40,15 @@
                         <div class="col-6 d-flex justify-content-end align-items-end pl-0 pr-0 pb-2" id="contBtnIniciarArqueo">
                             <button id="btnIniciarArqueo" title="Empieza el arqueo, pero es requerido ingresar el monto inicial primero">
                         
-                                <svg width="30" height="18" viewBox="0 0 30 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="btnIcono">
+                                <svg width="30" height="18" viewBox="0 0 30 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M0 17.5V0H2.91667V17.5H0ZM20.4167 17.5L18.3385 15.4583L23.5885 10.2083H5.83333V7.29167H23.5885L18.375 2.04167L20.4167 0L29.1667 8.75L20.4167 17.5Z" fill="white"/>
                                 </svg>
                         
                                 &nbsp;
                         
-                                Iniciar arqueo
+                                <span style="line-height: 12px;">
+                                    Iniciar arqueo
+                                </span>
                             </button>
                         </div>
                     </div>
@@ -56,7 +58,15 @@
                         <div id="contBtnAccionArqueo">
                             <div id="contenidoSuperiorArqueo">
                                 <div id="primeraFila">
-                                    <button id="btnIniciarCierre">Iniciar cierre</button>
+                                    <button id="btnIniciarCierre">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 21V3H11V21H9ZM13 17V7L18 12L13 17Z" fill="white"/>
+                                        </svg>
+                                        
+                                        <span style="line-height: 12px;">
+                                            Iniciar cierre
+                                        </span>
+                                    </button>
 
                                     <button id="exportarDatosArqueo">
                                         <svg width="18" height="24" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -91,13 +101,19 @@
                                 </div>
                             </div>
                             <div id="contenidoInferiorArqueo">
-
+                                Monto teórico final: 
+                                
+                                &nbsp;
+                                
+                                <span id="txtMontoTeoricoArqueo">C$ -</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <hr id="separadorArqueo">
 
         <!-- DERECHA -->
         <div id="derechaArqueo" class="row">
