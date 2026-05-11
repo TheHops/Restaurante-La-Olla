@@ -181,6 +181,49 @@ class Orden(models.Model):
 
 #endregion Orden
 
+#region Arqueo
+
+class Arqueo(models.Model):
+    Id = models.AutoField(primary_key=True)
+    
+    IdUsuarioApertura = models.ForeignKey(
+        Usuario, 
+        on_delete=models.DO_NOTHING, 
+        related_name='arqueos_apertura', 
+        db_column='id_usuario_apertura', 
+        null=True, 
+        blank=True
+    )
+    
+    IdUsuarioCierre = models.ForeignKey(
+        Usuario, 
+        on_delete=models.DO_NOTHING, 
+        related_name='arqueos_cierre', 
+        db_column='id_usuario_cierre', 
+        null=True, 
+        blank=True
+    )
+    
+    Fecha = models.DateTimeField(db_column='fecha', auto_now_add=True)
+    
+    MontoInicial = models.DecimalField(db_column='monto_inicial', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
+    MontoFinalTeorico = models.DecimalField(db_column='monto_final_teorico', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
+    MontoFinalReal = models.DecimalField(db_column='monto_final_real', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
+    
+    Diferencia = models.DecimalField(db_column='diferencia', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
+    
+    ESTADO = [("0", "No iniciado"), ("1", "Iniciado"), ("2", "Cerrado")]
+    Estado = models.CharField(max_length=10, choices=ESTADO, default="0", db_column='estado')
+    
+    class Meta:
+        verbose_name_plural = 'Arqueo'
+        db_table = 'arqueo'
+
+    def __str__(self):
+        return f"ID = {self.Id} | Fecha = {self.Fecha} | Estado = {self.Estado} | Diferencia = {self.Diferencia}"
+
+#endregion Arqueo
+
 #region MesasPorOrden
 
 class MesasPorOrden(models.Model):
