@@ -189,11 +189,22 @@
 }
 
 .ArqueoIniciado {
-    color: blue;
+    color: hsl(200, 60%, 40%);
 }
 
 .ArqueoCerrado {
     color: green;
+}
+
+.mensajeArqueo {
+    display: flex;
+    justify-content: center;
+
+    padding: 25px 20px 0 20px;
+
+    color: hsl(0, 0%, 70%);
+
+    text-align: center;
 }
 
 /**************************************************/

@@ -35,6 +35,7 @@
                     
                     <!-- Contenido para la apertura -->    
                     <div class="tab-pane fade show active" id="aperturaArqueo" role="tabpanel" aria-labelledby="aperturaArqueo-tab">
+                        {% if Arqueo.Estado == "0" %}
                         <div class="col-6 mb-2 pl-0" id="EfectivoInicialCajaArqueoDiv" title="Se ingresa el monto inicial que se encuentra en caja al iniciar la jornada">
                             <div class="EfectivoInicialCajaArqueoTxt">
                                 <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Efectivo en caja (C$)</h4>
@@ -56,6 +57,19 @@
                                 </span>
                             </button>
                         </div>
+                        {% elif Arqueo.Estado == "1" %}
+                        <div class="mensajeArqueo">
+                            <h5>
+                                El arqueo de hoy ya se ha iniciado, revise en la sección de cierre.
+                            </h5>
+                        </div>
+                        {% elif Arqueo.Estado == "2" %}
+                        <div class="mensajeArqueo">
+                            <h5>
+                                El arqueo de hoy ha sido cerrado, vuelva mañana.
+                            </h5>
+                        </div>
+                        {% endif %}
                     </div>
                     
                     <!-- Contenido para el cierre -->
@@ -145,7 +159,7 @@
                 <div class="card border-0 shadow-sm" style="border-radius: 15px; position: relative;">
                     <div class="card-body" title="Es el total neto de todas las órdenes en efectivo del día">
                         <h6 class="text-muted">Total en efectivo</h6>
-                        <h5 id="card-total-efectivo">C$0</h5>
+                        <h5 id="card-total-efectivo">C${{TotalEfectivo}}</h5>
                     </div>
 
                     <button class="btnInfoArqueo" title="Información que explica este dato en particular">
@@ -162,7 +176,7 @@
                 <div class="card border-0 shadow-sm" style="border-radius: 15px; position: relative;">
                     <div class="card-body" title="Es el total neto de todas las órdenes en con tarjeta del día">
                         <h6 class="text-muted">Total con tarjeta</h6>
-                        <h5 id="card-total-tarjeta">C$0</h5>
+                        <h5 id="card-total-tarjeta">C${{TotalTarjeta}}</h5>
                     </div>
 
                     <button class="btnInfoArqueo" title="Más detalles sobre el total de pagos recibidos con tarjeta">
@@ -179,7 +193,7 @@
                 <div class="card border-0 shadow-sm" style="border-radius: 15px; position: relative">
                     <div class="card-body" title="Es el total neto de todas las órdenes con transferencia del día">
                         <h6 class="text-muted">Total con transferencia</h6>
-                        <h5 id="card-total-transferencia">C$0</h5>
+                        <h5 id="card-total-transferencia">C${{TotalTransferencia}}</h5>
                     </div>
 
                     <button class="btnInfoArqueo" title="Explicación sobre la información que se muestra sobre pagos recibidos por transferencia">
@@ -196,7 +210,7 @@
                 <div class="card border-0 shadow-sm" style="border-radius: 15px; position: relative;">
                     <div class="card-body" title="Es la cantidad de órdenes del día pagadas con tarjeta">
                         <h6 class="text-muted">Vouchers con tarjeta</h6>
-                        <h5 id="card-vouchers-tarjeta">0</h5>
+                        <h5 id="card-vouchers-tarjeta">{{CantidadTarjeta}}</h5>
                     </div>
 
                     <button class="btnInfoArqueo" title="Detalles sobre el total de vouchers generados por los pagos con tarjeta recibidos">
