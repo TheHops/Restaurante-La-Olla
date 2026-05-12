@@ -70,3 +70,82 @@ function iniciarArqueo() {
     },
   });
 }
+
+/*****************************************************************************/
+
+function IniciarCierre (montoInicial, totalEfectivo) {
+  // Habilitamos el input y cambiamos el estado visual
+  $("#EfectivoFinalCajaArqueo").prop("disabled", false).focus();
+  $("#btnIniciarCierre").prop("disabled", true); // Se auto-inhabilita para no repetir la acción
+
+  // Calculamos el monto teórico (Efectivo inicial + Ventas efectivo de hoy)
+  // Nota: Estos valores deben venir del contexto de Django
+  let inicial = parseFloat(montoInicial) || 0;
+  let ventas = parseFloat(totalEfectivo) || 0;
+  let teorico = inicial + ventas;
+
+  $("#txtMontoTeoricoArqueo").text("C$ " + teorico.toFixed(2));
+};
+
+$(document).ready(function () {
+  // 1. Al dar click en 'Iniciar cierre'
+
+  // 2. Validación en tiempo real del input de cierre
+  $("#EfectivoFinalCajaArqueo").on("input", function () {
+    let valor = $(this)
+      .val()
+      .replace(/[^0-9.]/g, "");
+    $(this).val(valor);
+
+    // Habilitar botón 'Cerrar' si hay un monto válido
+    if (valor !== "" && !isNaN(valor) && parseFloat(valor) >= 0) {
+      $("#btnCerrarArqueo").prop("disabled", false);
+    } else {
+      $("#btnCerrarArqueo").prop("disabled", true);
+    }
+  });
+
+  // 3. Función para enviar el cierre al servidor
+  $("#btnCerrarArqueo").on("click", function () {
+    cerrarArqueo();
+  });
+});
+
+function cerrarArqueo() {
+  const montoFinalReal = $("#EfectivoFinalCajaArqueo").val();
+
+  Swal.fire({
+    title: "Procesando cierre...",
+    text: "Calculando diferencias y generando registro",
+    allowOutsideClick: false,
+    didOpen: () => Swal.showLoading(),
+  });
+
+  $.ajax({
+    url: "/CierreArqueo/",
+    type: "POST",
+    data: {
+      MontoFinalReal: montoFinalReal,
+      csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+    },
+    success: function (response) {
+      if (response.status === "ok") {
+        Swal.fire({
+          confirmButtonColor: "#ff6464",
+          title: "Arqueo Cerrado",
+          text: response.message,
+          icon: "success",
+        }).then(() => location.reload());
+      } else {
+        Swal.fire({ icon: "error", title: "Error", text: response.message });
+      }
+    },
+    error: function () {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Error en el servidor.",
+      });
+    },
+  });
+}
