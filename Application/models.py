@@ -204,7 +204,7 @@ class Arqueo(models.Model):
         blank=True
     )
     
-    Fecha = models.DateTimeField(db_column='fecha', auto_now_add=True)
+    Fecha = models.DateField(db_column='fecha', auto_now_add=True)
     
     MontoInicial = models.DecimalField(db_column='monto_inicial', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     MontoFinalTeorico = models.DecimalField(db_column='monto_final_teorico', null=True, blank=True, default=0, max_digits=8, decimal_places=2)

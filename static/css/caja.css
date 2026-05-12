@@ -80,10 +80,27 @@
     background-color: #FD7418;
     border-color: hsl(24, 98%, 60%);
     color: white;
+
+    transition: background-color .3s ease;
 }
 
 #btnIniciarArqueo:hover, #btnCerrarArqueo:hover {
     background-color: hsl(24, 98%, 50%);
+}
+
+#btnIniciarArqueo:disabled {
+    background-color: hsl(24, 10%, 60%);
+    border-color: hsl(24, 20%, 70%);
+    color: hsl(24, 40%, 90%);
+    cursor: initial;
+    opacity: 0.6;
+
+    transition: background-color .3s ease;
+}
+
+#btnIniciarArqueo:disabled svg path {
+    fill: hsl(24, 20%, 90%) !important;
+    cursor: initial;
 }
 
 .btnInfoArqueo {
@@ -166,6 +183,20 @@
 #separadorArqueo {
     display: none;
 }
+
+.ArqueoSinEmpezar {
+    color: darkgray;
+}
+
+.ArqueoIniciado {
+    color: blue;
+}
+
+.ArqueoCerrado {
+    color: green;
+}
+
+/**************************************************/
 
 @media (max-width: 820px)
 {

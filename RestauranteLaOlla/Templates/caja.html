@@ -14,8 +14,13 @@
             <div id="contenidoInternoArqueo">
                 <!-- Texto que expresa el estado del arqueo -->
                 <div id="EstadoArqueo">
-                    <h4 id="TextoEstadoArqueo" style="margin-bottom: 20px;">Arqueo sin empezar</h4>
-                    <div class="CirculoEstadoArqueo"></div>                
+                    {% if Arqueo.Estado == "0" %}
+                    <h4 id="TextoEstadoArqueo" class="ArqueoSinEmpezar" style="margin-bottom: 20px;">Arqueo sin empezar •</h4>
+                    {% elif Arqueo.Estado == "1" %}
+                    <h4 id="TextoEstadoArqueo" class="ArqueoIniciado" style="margin-bottom: 20px;">Arqueo iniciado •</h4>
+                    {% elif Arqueo.Estado == "2" %}
+                    <h4 id="TextoEstadoArqueo" class="ArqueoCerrado" style="margin-bottom: 20px;">Arqueo cerrado •</h4>
+                    {% endif %}
                 </div>
                 
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -34,11 +39,11 @@
                             <div class="EfectivoInicialCajaArqueoTxt">
                                 <h4 style="font-size: 16px; margin-bottom: 2px; color: #555555;">Efectivo en caja (C$)</h4>
                             </div>
-                            <input type="text" class="form-control" id="EfectivoInicialCajaArqueo" placeholder="Ej: 2500"/>
+                            <input type="number" step="0.01" min="0" class="form-control" id="EfectivoInicialCajaArqueo" placeholder="Ej: 2500"/>
                         </div>
 
                         <div class="col-6 d-flex justify-content-end align-items-end pl-0 pr-0 pb-2" id="contBtnIniciarArqueo">
-                            <button id="btnIniciarArqueo" title="Empieza el arqueo, pero es requerido ingresar el monto inicial primero">
+                            <button id="btnIniciarArqueo" title="Empieza el arqueo, pero es requerido ingresar el monto inicial primero" onclick="iniciarArqueo()" disabled>
                         
                                 <svg width="30" height="18" viewBox="0 0 30 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M0 17.5V0H2.91667V17.5H0ZM20.4167 17.5L18.3385 15.4583L23.5885 10.2083H5.83333V7.29167H23.5885L18.375 2.04167L20.4167 0L29.1667 8.75L20.4167 17.5Z" fill="white"/>
