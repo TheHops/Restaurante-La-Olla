@@ -210,7 +210,7 @@ class Arqueo(models.Model):
     MontoFinalTeorico = models.DecimalField(db_column='monto_final_teorico', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     MontoFinalReal = models.DecimalField(db_column='monto_final_real', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     
-    Diferencia = models.DecimalField(db_column='diferencia', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
+    Diferencia = models.DecimalField(db_column='diferencia', null=True, blank=True, default=None, max_digits=8, decimal_places=2)
     
     ESTADO = [("0", "No iniciado"), ("1", "Iniciado"), ("2", "Cerrado")]
     Estado = models.CharField(max_length=10, choices=ESTADO, default="0", db_column='estado')

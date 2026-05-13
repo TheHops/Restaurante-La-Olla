@@ -88,7 +88,7 @@
     background-color: hsl(24, 98%, 50%);
 }
 
-#btnIniciarArqueo:disabled {
+#btnIniciarArqueo:disabled, #btnCerrarArqueo:disabled {
     background-color: hsl(24, 10%, 60%);
     border-color: hsl(24, 20%, 70%);
     color: hsl(24, 40%, 90%);
@@ -98,7 +98,7 @@
     transition: background-color .3s ease;
 }
 
-#btnIniciarArqueo:disabled svg path {
+#btnIniciarArqueo:disabled svg path, #btnCerrarArqueo:disabled svg path {
     fill: hsl(24, 20%, 90%) !important;
     cursor: initial;
 }
@@ -157,6 +157,23 @@
     background-color: hsl(359, 89%, 97%);
 }
 
+#exportarDatosArqueo:disabled {
+    border-color: hsl(350, 30%, 75%);
+    color: hsl(350, 30%, 50%);
+
+    cursor: initial;
+
+    transition: background-color ease .3s;
+}
+
+#exportarDatosArqueo:disabled:hover {
+    background-color: white;
+}
+
+#exportarDatosArqueo:disabled svg path {
+    fill: hsl(350, 30%, 50%);
+}
+
 #btnIniciarCierre {
     /* width: 130px; */
     height: 35px; /*hsl(39, 100%, 55%)*/
@@ -180,6 +197,15 @@
     background: hsl(120, 50%, 55%);
 }
 
+#btnIniciarCierre:disabled {
+    background: hsl(120, 15%, 60%);
+    border-color: hsl(120, 15%, 55%);
+
+    cursor: initial;
+
+    transition: background-color ease .3s;
+}
+
 #separadorArqueo {
     display: none;
 }
@@ -193,13 +219,23 @@
 }
 
 .ArqueoCerrado {
-    color: green;
+    color: hsl(120, 100%, 35%);
+}
+
+#contCierreCerrado {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 15px;
+
+    flex-direction: column;
 }
 
 .mensajeArqueo {
     display: flex;
     justify-content: center;
-
+    width: 100%;
     padding: 25px 20px 0 20px;
 
     color: hsl(0, 0%, 70%);

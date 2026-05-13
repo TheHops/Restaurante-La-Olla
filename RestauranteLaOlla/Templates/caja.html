@@ -74,6 +74,7 @@
                     
                     <!-- Contenido para el cierre -->
                     <div class="tab-pane fade" id="cierreArqueo" role="tabpanel" aria-labelledby="cierreArqueo-tab">
+                        {% if Arqueo.Estado == "1" %}
                         <div id="contBtnAccionArqueo">
                             <div id="contenidoSuperiorArqueo">
                                 <div id="primeraFila">
@@ -86,16 +87,6 @@
                                             Iniciar cierre
                                         </span>
                                     </button>
-
-                                    <button id="exportarDatosArqueo" disabled>
-                                        <svg width="18" height="24" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M2.04167 29.7135L0 27.6354L4.30208 23.3333H1.02083V20.4167H9.26042V28.6562H6.34375V25.4115L2.04167 29.7135ZM12.1771 29.1667V26.25H20.9271V10.2083H13.6354V2.91667H3.42708V17.5H0.510417V2.91667C0.510417 2.11458 0.796007 1.42795 1.36719 0.856771C1.93837 0.28559 2.625 0 3.42708 0H15.0937L23.8438 8.75V26.25C23.8438 27.0521 23.5582 27.7387 22.987 28.3099C22.4158 28.8811 21.7292 29.1667 20.9271 29.1667H12.1771Z" fill="#d92644"/>
-                                        </svg>
-
-                                        &nbsp;
-
-                                        Exportar
-                                    </button>
                                 </div>
                                 <div id="segundaFila">
                                     <div class="col-6 mb-2 pl-0" id="EfectivoFinalCajaArqueoDiv" title="Se ingresa el monto final que se encuentra en caja para el cierre">
@@ -106,7 +97,7 @@
                                     </div>
             
                                     <div class="col-6 d-flex justify-content-end align-items-end pl-0 pr-0 pb-2" id="contBtnCerrarArqueo">
-                                        <button id="btnCerrarArqueo" title="Se cierra el arqueo, posteriormente se calculará la diferencia" disabled>
+                                        <button id="btnCerrarArqueo" title="Se cierra el arqueo, posteriormente se calculará la diferencia" onclick="cerrarArqueo()" disabled>
                                     
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M9.54961 18.0001L3.84961 12.3001L5.27461 10.8751L9.54961 15.1501L18.7246 5.9751L20.1496 7.4001L9.54961 18.0001Z" fill="white"/>
@@ -127,6 +118,30 @@
                                 <span id="txtMontoTeoricoArqueo">C$ -</span>
                             </div>
                         </div>
+                        {% elif Arqueo.Estado == "0" %}
+                        <div class="mensajeArqueo">
+                            <h5>
+                                El arqueo no se ha iniciado, vuelva a la sección de apertura.
+                            </h5>
+                        </div>
+                        {% elif Arqueo.Estado == "2" %}
+                        <div id="contCierreCerrado">
+                            <div class="mensajeArqueo">
+                                <h5>
+                                    El arqueo se ha cerrado, ya puede exportar la información del arqueo.
+                                </h5>
+                            </div>
+                            <button id="exportarDatosArqueo">
+                                <svg width="18" height="24" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2.04167 29.7135L0 27.6354L4.30208 23.3333H1.02083V20.4167H9.26042V28.6562H6.34375V25.4115L2.04167 29.7135ZM12.1771 29.1667V26.25H20.9271V10.2083H13.6354V2.91667H3.42708V17.5H0.510417V2.91667C0.510417 2.11458 0.796007 1.42795 1.36719 0.856771C1.93837 0.28559 2.625 0 3.42708 0H15.0937L23.8438 8.75V26.25C23.8438 27.0521 23.5582 27.7387 22.987 28.3099C22.4158 28.8811 21.7292 29.1667 20.9271 29.1667H12.1771Z" fill="#d92644"/>
+                                </svg>
+    
+                                &nbsp;
+    
+                                Exportar
+                            </button>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -140,7 +155,12 @@
                 <div class="card border-0 shadow-sm" style="border-radius: 15px; position: relative;">
                     <div class="card-body" title="Es la diferencia entre el monto teórico final y el monto final real">
                         <h4 class="text-muted">Diferencia</h4>
+
+                        {% if Arqueo.Diferencia or Arqueo.Diferencia == 0 %}
+                        <h5 id="card-diferencia">C${{Arqueo.Diferencia}}</h5>
+                        {% else %}
                         <h5 id="card-diferencia">C$ -</h5>
+                        {% endif %}
                     </div>
 
                     <button class="btnInfoArqueo" title="Información adicional sobre la diferencia y que representa">

@@ -91,6 +91,7 @@ urlpatterns = [
     path("CambiarPassForgotPass/", CambiarPassForgotPass, name="CambiarPassForgotPass"),
     path("Caja/", Caja.Caja, name="Caja"),
     path("InicioArqueo/", Caja.InicioArqueo, name="InicioArqueo"),
+    path("CierreArqueo/", Caja.CierreArqueo, name="CierreArqueo"),
 ]
 
 if settings.DEBUG:

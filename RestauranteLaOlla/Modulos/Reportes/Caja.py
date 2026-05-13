@@ -115,7 +115,7 @@ def InicioArqueo(request):
             try:
                 # 1. Validación de seguridad
                 if request.user.IdCargo.Nombre in ["Armador", "Mesero"]:
-                    return JsonResponse({"status": "error", "message": "No tiene permisos para esta acción."})
+                    return redirect("/")
 
                 # 2. Recibir datos del frontend
                 monto_inicial = request.POST.get("MontoInicial", 0)
@@ -123,13 +123,7 @@ def InicioArqueo(request):
                 # 3. Obtener el arqueo del día actual
                 hoy = timezone.localdate()
                 arqueo = Arqueo.objects.filter(Fecha=hoy).first()
-                
-                print("HOY")
-                print(hoy)
-                
-                print("ARQUEO")
-                print(arqueo)
-
+        
                 if arqueo:
                     # Si el arqueo ya estaba iniciado o cerrado, evitamos duplicar
                     if arqueo.Estado != "0":
@@ -160,4 +154,49 @@ def InicioArqueo(request):
 
 #endregion InicioArqueo
 
-#endregion InicioArqueo
+#region CierreArqueo
+
+def CierreArqueo(request):
+    if request.method == "POST" and request.user.is_authenticated:
+        try:
+            hoy = timezone.localdate()
+            arqueo = Arqueo.objects.filter(Fecha=hoy, Estado="1").first()
+
+            if not arqueo:
+                return JsonResponse({"status": "error", "message": "No hay un arqueo iniciado para hoy."})
+
+            # 1. Obtener Monto Real enviado
+            monto_real = float(request.POST.get("MontoFinalReal", 0))
+
+            # 2. Recalcular el Teórico en el servidor (Efectivo inicial + Ventas efectivo)
+            # Usamos la misma lógica de tu vista Caja para las ventas
+            inicio_dia = timezone.make_aware(datetime.combine(hoy, time.min))
+            fin_dia = timezone.make_aware(datetime.combine(hoy, time.max))
+            
+            ordenes_hoy = Orden.objects.filter(UltimaModificacion__range=(inicio_dia, fin_dia), Estado="0", EsActivo="1")
+            
+            efectivo_puro = ordenes_hoy.filter(MetodoPago="1").aggregate(total=Sum('TotalPagar'))['total'] or 0
+            efectivo_mixto = ordenes_hoy.filter(MetodoPago="4").aggregate(total=Sum('Monto') - Sum('Cambio'))['total'] or 0
+            
+            monto_teorico = float(arqueo.MontoInicial) + float(efectivo_puro + efectivo_mixto)
+
+            # 3. Guardar datos finales
+            arqueo.MontoFinalTeorico = monto_teorico
+            arqueo.MontoFinalReal = monto_real
+            arqueo.Diferencia = monto_real - monto_teorico
+            arqueo.IdUsuarioCierre = request.user
+            arqueo.Estado = "2"  # Estado: Cerrado
+            arqueo.save()
+
+            return JsonResponse({
+                "status": "ok", 
+                "message": f"Cierre finalizado. Diferencia: C$ {arqueo.Diferencia:.2f}",
+                "diferencia": arqueo.Diferencia
+            })
+
+        except Exception as ex:
+            return JsonResponse({"status": "error", "message": str(ex)})
+    
+    return redirect("/")
+
+#endregion CierreArqueo

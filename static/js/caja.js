@@ -49,7 +49,8 @@ function iniciarArqueo() {
           title: "¡Éxito!",
           text: response.message,
           icon: "success",
-        }).then(() => location.reload()); // Recargamos para actualizar la UI
+        })
+        .then(() => location.reload()); // Recargamos para actualizar la UI
         return;
       }
 
@@ -73,6 +74,20 @@ function iniciarArqueo() {
 
 /*****************************************************************************/
 
+function validarMontoFinal() {
+  let valor = $("#EfectivoFinalCajaArqueo")
+    .val()
+    .replace(/[^0-9.]/g, "");
+  $(this).val(valor);
+
+  // Habilitar botón 'Cerrar' si hay un monto válido
+  if (valor !== "" && !isNaN(valor) && parseFloat(valor) >= 0) {
+    $("#btnCerrarArqueo").prop("disabled", false);
+  } else {
+    $("#btnCerrarArqueo").prop("disabled", true);
+  }
+}
+
 function IniciarCierre (montoInicial, totalEfectivo) {
   // Habilitamos el input y cambiamos el estado visual
   $("#EfectivoFinalCajaArqueo").prop("disabled", false).focus();
@@ -84,28 +99,19 @@ function IniciarCierre (montoInicial, totalEfectivo) {
   let ventas = parseFloat(totalEfectivo) || 0;
   let teorico = inicial + ventas;
 
+  $("#EfectivoFinalCajaArqueo").val(teorico.toFixed(2));
   $("#txtMontoTeoricoArqueo").text("C$ " + teorico.toFixed(2));
+
+  validarMontoFinal();
 };
 
 $(document).ready(function () {
-  // 1. Al dar click en 'Iniciar cierre'
-
-  // 2. Validación en tiempo real del input de cierre
+  // 1. Validación en tiempo real del input de cierre
   $("#EfectivoFinalCajaArqueo").on("input", function () {
-    let valor = $(this)
-      .val()
-      .replace(/[^0-9.]/g, "");
-    $(this).val(valor);
-
-    // Habilitar botón 'Cerrar' si hay un monto válido
-    if (valor !== "" && !isNaN(valor) && parseFloat(valor) >= 0) {
-      $("#btnCerrarArqueo").prop("disabled", false);
-    } else {
-      $("#btnCerrarArqueo").prop("disabled", true);
-    }
+    validarMontoFinal();
   });
 
-  // 3. Función para enviar el cierre al servidor
+  // 2. Función para enviar el cierre al servidor
   $("#btnCerrarArqueo").on("click", function () {
     cerrarArqueo();
   });
@@ -134,8 +140,13 @@ function cerrarArqueo() {
           confirmButtonColor: "#ff6464",
           title: "Arqueo Cerrado",
           text: response.message,
-          icon: "success",
-        }).then(() => location.reload());
+          icon: "success"
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            location.reload();
+          }
+        });
       } else {
         Swal.fire({ icon: "error", title: "Error", text: response.message });
       }
