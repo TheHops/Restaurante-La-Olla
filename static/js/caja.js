@@ -160,3 +160,15 @@ function cerrarArqueo() {
     },
   });
 }
+
+/********************************************************* */
+
+function MostrarInfo(title, body){
+  Swal.fire({
+    title: title,
+    text: body,
+    icon: "info",
+    confirmButtonColor: "#888888",
+    confirmButtonText: "Entendido",
+  });
+}

@@ -243,6 +243,11 @@
     text-align: center;
 }
 
+.swal2-info {
+    border-color: #888888 !important;
+    color: #888888 !important;
+}
+
 /**************************************************/
 
 @media (max-width: 820px)

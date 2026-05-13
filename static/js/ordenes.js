@@ -365,12 +365,15 @@ function rellenarParaFacturar(id, total) {
 ////////////////////////////////////////////////////////////////////
 
 document.getElementById("MontoOrden").addEventListener("input", CalcularTotal);
+
 document
   .getElementById("txtPorcentajeDescuento")
   .addEventListener("input", CalcularTotal);
+
 document
   .getElementById("txtPorcentajePropina")
   .addEventListener("input", CalcularTotal);
+
 document.getElementById("checkPropina").addEventListener("change", function () {
   let propinaCheck = document.getElementById("checkPropina");
   let descuentoCheck = document.getElementById("checkDescuento");
@@ -381,6 +384,7 @@ document.getElementById("checkPropina").addEventListener("change", function () {
 
   CalcularTotal();
 });
+
 document
   .getElementById("checkDescuento")
   .addEventListener("change", function () {
@@ -486,14 +490,14 @@ function ReiniciarCampos() {
   let MensajeMonto = document.getElementById("MensajeMonto");
   let btnFacturar = document.getElementById("btnFacturar");
 
-  $("#inputPorcentajePropina").toggle(false);
   $("#inputPorcentajeDescuento").toggle(false);
+  // $("#inputPorcentajePropina").toggle(false);
 
   let descuentoCheck = document.getElementById("checkDescuento");
-  let propinaCheck = document.getElementById("checkPropina");
+  // let propinaCheck = document.getElementById("checkPropina");
 
   descuentoCheck.checked = false;
-  propinaCheck.checked = false;
+  // propinaCheck.checked = false;
 
   $("#infoCalculoPropina").toggle(false);
 
