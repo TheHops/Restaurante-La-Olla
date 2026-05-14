@@ -92,6 +92,7 @@ urlpatterns = [
     path("Caja/", Caja.Caja, name="Caja"),
     path("InicioArqueo/", Caja.InicioArqueo, name="InicioArqueo"),
     path("CierreArqueo/", Caja.CierreArqueo, name="CierreArqueo"),
+    path("ExportarArqueo/", Reportes.ExportarArqueo, name="ExportarArqueo"),
 ]
 
 if settings.DEBUG:

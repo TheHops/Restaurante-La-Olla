@@ -205,6 +205,8 @@ class Arqueo(models.Model):
     )
     
     Fecha = models.DateField(db_column='fecha', auto_now_add=True)
+    HoraApertura = models.TimeField(db_column='hora_apertura', null=True, blank=True, default=None)
+    HoraCierre = models.TimeField(db_column='hora_cierre', null=True, blank=True, default=None)
     
     MontoInicial = models.DecimalField(db_column='monto_inicial', null=True, blank=True, default=0, max_digits=8, decimal_places=2)
     MontoFinalTeorico = models.DecimalField(db_column='monto_final_teorico', null=True, blank=True, default=0, max_digits=8, decimal_places=2)

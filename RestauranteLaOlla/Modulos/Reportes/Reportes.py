@@ -13,14 +13,13 @@ from django.utils import timezone
 from django.utils.formats import date_format
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
-from django.db.models import Prefetch, Q
+from django.db.models import Count, Prefetch, Q, Sum
 
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill, Border, Side, NamedStyle
 from openpyxl.utils import get_column_letter
 
-from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden, AreaMesa, Usuario, MesasPorOrden
-from RestauranteLaOlla import settings
+from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden, AreaMesa, Usuario, MesasPorOrden, Arqueo
 
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, HRFlowable
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -889,6 +888,165 @@ def exportar_pdf_personal(request):
     )
         
 #endregion Personal
+
+#region Caja
+
+def ExportarArqueo(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Mesero":
+        return redirect("/")
+    
+    try:
+        formato = request.GET.get('Tipo', '1')  # 1: Excel, 2: PDF
+        dias = request.GET.get('Dias', '1')  # 1: Excel, 2: PDF
+        
+        if formato not in ("1","2"):
+            return JsonResponse({
+                "status": "error",
+                "message": "Tipo de exportación inválido"
+            }, status=400)
+        
+        hoy = timezone.localdate()
+        arqueo = Arqueo.objects.filter(Fecha=hoy).first()
+        
+        inicio_dia = timezone.make_aware(datetime.combine(hoy, time.min))
+        fin_dia = timezone.make_aware(datetime.combine(hoy, time.max))
+
+        # 4. Consultas de Órdenes usando el rango (range)
+        # Esto obliga a Django a convertir los UTC de la BD a Nicaragua antes de comparar
+        ordenes = Orden.objects.filter(
+            UltimaModificacion__range=(inicio_dia, fin_dia), 
+            Estado="0", 
+            EsActivo="1"
+        )
+        
+        # Mixto
+        efectivo_mixto = ordenes.filter(MetodoPago="4").aggregate(total=Sum('Monto') - Sum('Cambio'))['total'] or 0
+        tarjeta_mixta = ordenes.filter(MetodoPago="4").aggregate(total=Sum('SegundoMonto'))['total'] or 0
+        cantidad_mixto = ordenes.filter(MetodoPago="4").count()
+        
+        # Efectivo
+        efectivo_puro = ordenes.filter(MetodoPago="1").aggregate(total=Sum('TotalPagar'))['total'] or 0
+        cantidad_efectivo = ordenes.filter(MetodoPago="1").count()
+        
+        # Efectivo + Mixto
+        total_efectivo = efectivo_puro + efectivo_mixto
+        cantidad_efectivo_mixto = cantidad_efectivo + cantidad_mixto
+        
+        # Tarjeta
+        tarjeta_pura = ordenes.filter(MetodoPago="2").aggregate(total=Sum('TotalPagar'))['total'] or 0
+        cantidad_tarjeta = ordenes.filter(MetodoPago="2").count()
+        
+        # Tarjeta + Mixto
+        total_tarjeta = tarjeta_pura + tarjeta_mixta
+        cantidad_tarjeta_mixto = cantidad_tarjeta + cantidad_mixto
+        
+        # Transferencia
+        total_transferencia = ordenes.filter(MetodoPago="3").aggregate(total=Sum('TotalPagar'))['total'] or 0
+        cantidad_transferencia = ordenes.filter(MetodoPago="3").count()
+        
+        metodos = {
+            '1': {'nombre': 'Efectivo', 'total': Decimal(total_efectivo), 'cantidad': cantidad_efectivo_mixto},
+            '2': {'nombre': 'Tarjeta', 'total': Decimal(total_tarjeta), 'cantidad': cantidad_tarjeta_mixto},
+            '3': {'nombre': 'Transferencia', 'total': Decimal(total_transferencia), 'cantidad': cantidad_transferencia},
+        }
+
+        total_general_monto = Decimal(total_efectivo) + Decimal(total_tarjeta) + Decimal(total_transferencia)
+        total_general_cantidad = cantidad_efectivo + cantidad_tarjeta + cantidad_mixto + cantidad_transferencia
+
+        # Preparar filas para las tablas
+        filas_metodos = []
+        for m in metodos.values():
+            filas_metodos.append([m['nombre'], m['cantidad'], m['total']])
+        
+        # Fila de totales
+        filas_metodos.append(["TOTALES", total_general_cantidad, total_general_monto])
+
+        # Datos informativos del Arqueo
+        datos_info = [
+            ["Fecha Arqueo", arqueo.Fecha.strftime("%d/%m/%Y %H:%M")],
+            ["Usuario Apertura", arqueo.IdUsuarioApertura.username],
+            ["Usuario Cierre", arqueo.IdUsuarioCierre.username if arqueo.IdUsuarioCierre else "N/A"],
+            ["Monto Inicial", arqueo.MontoInicial],
+            ["Monto Teórico", arqueo.MontoFinalTeorico],
+            ["Monto Real", arqueo.MontoFinalReal],
+            ["Diferencia", arqueo.Diferencia],
+        ]
+
+        titulo = f"REPORTE DE ARQUEO DE CAJA #{arqueo.Id}"
+        nombre_archivo = f"Arqueo_{arqueo.Id}_{arqueo.Fecha.strftime('%Y%m%d')}"
+
+        if formato == '1':
+            # --- EXCEL ---
+            wb = Workbook()
+            
+            if "header_style" not in wb.style_names:
+                header_style = NamedStyle(name="header_style")
+                wb.add_named_style(header_style)
+            
+            ws = wb.active
+            ws.title = "Detalle Arqueo"
+            
+            # Usamos tu función 'poblar_hoja_existente' o similar
+            # Primero info general
+            poblar_hoja_existente(ws, titulo, ["Descripción", "Valor"], datos_info)
+            
+            # Agregamos la tabla de métodos de pago más abajo
+            row_start = len(datos_info) + 5
+            ws.cell(row=row_start-1, column=1, value="RESUMEN POR MÉTODO DE PAGO").font = Font(bold=True)
+            
+            columnas_m = ["Método de Pago", "Cant. Órdenes", "Total"]
+            # Aquí podrías adaptar una función para insertar tablas en posiciones específicas
+            for i, h in enumerate(columnas_m, 1):
+                cell = ws.cell(row=row_start, column=i, value=h)
+                cell.style = "header_style" # Usando el estilo que definiste antes
+
+            for idx, fila in enumerate(filas_metodos):
+                for col_idx, valor in enumerate(fila, 1):
+                    c = ws.cell(row=row_start + 1 + idx, column=col_idx, value=valor)
+                    if col_idx == 3: c.number_format = '"C$"#,##0.00'
+
+            return descargar_excel(wb, nombre_archivo)
+
+        else:
+            # --- PDF ---
+            # Combinamos toda la información en una estructura de filas para generar_pdf_tabla
+            # O mejor, usamos una lógica personalizada similar a tu exportar_pdf_ordenes
+            columnas_pdf = ["CATEGORÍA / MÉTODO", "CANTIDAD", "MONTO"]
+            filas_pdf = []
+            
+            # Mezclamos la info del arqueo con los totales para una sola tabla clara
+            for d in datos_info:
+                filas_pdf.append([d[0], "-", f"C$ {d[1]}" if isinstance(d[1], (int, float, Decimal)) else d[1]])
+            
+            filas_pdf.append(["", "", ""]) # Separador
+            filas_pdf.append(["RESUMEN DE PAGOS", "", ""])
+            
+            for m in filas_metodos:
+                filas_pdf.append([m[0], m[1], f"C$ {m[2]:,.2f}" if isinstance(m[2], Decimal) else m[2]])
+
+            return generar_pdf_tabla(
+                titulo=titulo,
+                columnas=columnas_pdf,
+                filas=filas_pdf,
+                nombre_archivo=nombre_archivo,
+                usuario=request.user.username,
+                ancho_columnas=[250, 100, 150]
+            )
+    except:
+        print("\n\n#################### E X C E P C I O N ########################")
+        print("---------------- 'exportar arqueo de caja' ----------------")
+        print(traceback.format_exc())
+        print("#############################################################\n\n")
+        
+        return JsonResponse({
+            "status": "error",
+            "message": "Error interno al exportar datos de arqueo"
+        }, status=500)
+
+#endregion Caja
 
 #endregion Exportaciones
 

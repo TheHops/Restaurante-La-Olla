@@ -35,9 +35,6 @@ def Caja(request):
                     # No asignamos IdUsuarioApertura aún porque no ha dado clic en "Iniciar"
                 )
                 
-            print("HOY")
-            print(hoy)
-
             # 3. Definir el inicio y fin del día en "aware datetime" (con zona horaria)
             # Esto crea un rango: 2026-05-11 00:00:00 hasta 23:59:59 en America/Managua
             inicio_dia = timezone.make_aware(datetime.combine(hoy, time.min))
@@ -50,22 +47,12 @@ def Caja(request):
                 Estado="0", 
                 EsActivo="1"
             )
-            
-            print("ORDENES")
-            print(ordenes_hoy)
 
             # --- TOTAL EFECTIVO ---
             # Sumamos órdenes puras en efectivo (1) + la parte de efectivo de las mixtas (4)
             efectivo_puro = ordenes_hoy.filter(MetodoPago="1").aggregate(total=Sum('TotalPagar'))['total'] or 0
             efectivo_mixto = ordenes_hoy.filter(MetodoPago="4").aggregate(total=Sum('Monto') - Sum('Cambio'))['total'] or 0
             total_efectivo = efectivo_puro + efectivo_mixto
-            
-            print("Total efectivo puro")
-            print(efectivo_puro)
-            print("Total efectivo mixto")
-            print(efectivo_mixto)
-            print("Total efectivo")
-            print(total_efectivo)
 
             # --- TOTAL TARJETA ---
             # Sumamos órdenes puras en tarjeta (2) + la parte de tarjeta de las mixtas (4)
@@ -133,6 +120,7 @@ def InicioArqueo(request):
                     arqueo.MontoInicial = monto_inicial
                     arqueo.IdUsuarioApertura = request.user # Definimos quién aperturó
                     arqueo.Estado = "1" # Cambiamos a "Iniciado"
+                    arqueo.HoraApertura = timezone.now().time()
                     arqueo.save()
 
                     return JsonResponse({
@@ -186,6 +174,7 @@ def CierreArqueo(request):
             arqueo.Diferencia = monto_real - monto_teorico
             arqueo.IdUsuarioCierre = request.user
             arqueo.Estado = "2"  # Estado: Cerrado
+            arqueo.HoraCierre = timezone.now().time()
             arqueo.save()
 
             return JsonResponse({
