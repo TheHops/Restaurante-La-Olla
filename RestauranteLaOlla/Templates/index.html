@@ -256,61 +256,60 @@
           </div>
           <div class="modal-body row exportar col-12">
             {% if Cargo == "Administrador" %}
-                        
-                <hr>
-
-                <h5 style="color: #555555; font-size: 20px;">Fechas</h5>
-
-                <div id="fechasFiltro" title="Selecciona solo una fecha predefinida con la cual desea filtrar los arqueos">
-
-                    <div class="form-radio">
-                        <input class="form-radio-input"
-                            type="radio"
-                            name="fecha"
-                            value="1"
-                            id="tipo_fecha_arqueo_1" selected>
-                
-                        <label class="form-radio-label" for="tipo_fecha_arqueo_1">
-                            Hoy
-                        </label>
+                <div class="col-12" style="margin-bottom: 25px;">
+                  <h5 style="color: #555555; font-size: 20px;">Fechas</h5>
+  
+                  <div id="fechasFiltro" title="Selecciona solo una fecha predefinida con la cual desea filtrar los arqueos">
+  
+                      <div class="form-radio">
+                          <input class="form-radio-input"
+                              type="radio"
+                              name="fecha"
+                              value="1"
+                              id="tipo_fecha_arqueo_1" checked>
+                  
+                          <label class="form-radio-label" for="tipo_fecha_arqueo_1">
+                              Hoy
+                          </label>
+                        </div>
+  
+                      <div class="form-radio">
+                          <input class="form-radio-input"
+                              type="radio"
+                              name="fecha"
+                              value="2"
+                              id="tipo_fecha_arqueo_2">
+                  
+                          <label class="form-radio-label" for="tipo_fecha_arqueo_2">
+                              Últimos 7 días
+                          </label>
                       </div>
-
-                    <div class="form-radio">
-                        <input class="form-radio-input"
-                            type="radio"
-                            name="fecha"
-                            value="2"
-                            id="tipo_fecha_arqueo_2">
-                
-                        <label class="form-radio-label" for="tipo_fecha_arqueo_2">
-                            Últimos 7 días
-                        </label>
-                    </div>
-
-                    <div class="form-radio">
-                        <input class="form-radio-input"
-                            type="radio"
-                            name="fecha"
-                            value="3"
-                            id="tipo_fecha_arqueo_3">
-                
-                        <label class="form-radio-label" for="tipo_fecha_arqueo_3">
-                            Últimos 15 días
-                        </label>
-                    </div>
-
-                    <div class="form-radio">
-                        <input class="form-radio-input"
-                            type="radio"
-                            name="fecha"
-                            value="4"
-                            id="tipo_fecha_arqueo_4">
-                
-                        <label class="form-radio-label" for="tipo_fecha_arqueo_4">
-                            Últimos 30 días
-                        </label>
-                    </div>
-                    
+  
+                      <div class="form-radio">
+                          <input class="form-radio-input"
+                              type="radio"
+                              name="fecha"
+                              value="3"
+                              id="tipo_fecha_arqueo_3">
+                  
+                          <label class="form-radio-label" for="tipo_fecha_arqueo_3">
+                              Últimos 15 días
+                          </label>
+                      </div>
+  
+                      <div class="form-radio">
+                          <input class="form-radio-input"
+                              type="radio"
+                              name="fecha"
+                              value="4"
+                              id="tipo_fecha_arqueo_4">
+                  
+                          <label class="form-radio-label" for="tipo_fecha_arqueo_4">
+                              Últimos 30 días
+                          </label>
+                      </div>
+                      
+                  </div>
                 </div>
 
             {% endif %}

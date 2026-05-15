@@ -184,7 +184,9 @@ function ExportarArqueo(tipo) {
   let token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
   let xhr = new XMLHttpRequest();
 
-  xhr.open("GET", "/ExportarArqueo?Tipo=" + tipo, true);
+  let seleccionado = document.querySelector('input[name="fecha"]:checked').value;
+
+  xhr.open("GET", "/ExportarArqueo?Tipo=" + tipo + "&Dias=" + seleccionado, true);
 
   xhr.responseType = "blob";
 

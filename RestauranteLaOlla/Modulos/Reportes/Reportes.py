@@ -901,7 +901,10 @@ def ExportarArqueo(request):
     
     try:
         formato = request.GET.get('Tipo', '1') # 1: Excel, 2: PDF
-        dias_param = int(request.GET.get('Dias', '0'))
+        dias = request.GET.get('Dias', '1')
+        
+        dias_dict = {'1': '0', '2': '7', '3': '15', '4': '30'}
+        dias_param = int(dias_dict.get(dias, '0'))
         
         dias_param = dias_param - 1 if dias_param > 1 else dias_param
         
@@ -1069,7 +1072,7 @@ def generar_pdf_multiple_arqueos(arqueos, usuario_nombre, nombre_archivo):
         idx_fila = len(data)
         
         # Estilo Vinotinto para el separador
-        estilo_comandos.append(('BACKGROUND', (0, idx_fila), (-1, idx_fila), colors.HexColor("#8e0000")))
+        estilo_comandos.append(('BACKGROUND', (0, idx_fila), (-1, idx_fila), colors.HexColor("#a14545")))
         estilo_comandos.append(('TEXTCOLOR', (0, idx_fila), (-1, idx_fila), colors.white))
         estilo_comandos.append(('FONTNAME', (0, idx_fila), (-1, idx_fila), 'Helvetica-Bold'))
 

@@ -77,6 +77,7 @@ def Caja(request):
             # 5. Preparar el contexto
             contexto = {
                 "User": request.user,
+                "Cargo": request.user.IdCargo.Nombre,
                 "Arqueo": arqueo_actual,
                 "TotalEfectivo": total_efectivo,
                 "TotalTarjeta": total_tarjeta,
