@@ -6,7 +6,7 @@ import traceback
 from django.shortcuts import redirect, render
 from django.contrib.auth import get_user_model
 
-from django.db.models import Sum, Count, Q
+from django.db.models import Sum, Q
 
 from Application.models import Arqueo, Orden
 
@@ -60,15 +60,9 @@ def Caja(request):
             tarjeta_pura = ordenes_hoy.filter(MetodoPago="2").aggregate(total=Sum('TotalPagar'))['total'] or 0
             tarjeta_mixta = ordenes_hoy.filter(MetodoPago="4").aggregate(total=Sum('SegundoMonto'))['total'] or 0
             total_tarjeta = tarjeta_pura + tarjeta_mixta
-            
-            print("Total tarjeta")
-            print(total_tarjeta)
 
             # --- TOTAL TRANSFERENCIA ---
             total_transferencia = ordenes_hoy.filter(MetodoPago="3").aggregate(total=Sum('TotalPagar'))['total'] or 0
-            
-            print("Total transferencia")
-            print(total_transferencia)
 
             # --- CANTIDAD DE VOUCHERS (Órdenes con Tarjeta) ---
             # Contamos cuántas órdenes involucraron tarjeta (puro 2 o mixto 4)
