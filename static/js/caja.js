@@ -146,7 +146,12 @@ function cerrarArqueo() {
           }
         });
       } else {
-        Swal.fire({ icon: "error", title: "Error", text: response.message });
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: response.message,
+          confirmButtonColor: "#ff6464",
+        });
       }
     },
     error: function () {
@@ -154,6 +159,7 @@ function cerrarArqueo() {
         icon: "error",
         title: "Error",
         text: "Error en el servidor.",
+        confirmButtonColor: "#ff6464",
       });
     },
   });
@@ -216,6 +222,7 @@ function ExportarArqueo(tipo) {
             title: "Error",
             text: "Respuesta inválida del servidor",
             icon: "error",
+            confirmButtonColor: "#ff6464",
           });
         }
       };

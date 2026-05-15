@@ -31,7 +31,8 @@ def Caja(request):
                 # Si no existe registro para hoy, lo creamos
                 arqueo_actual = Arqueo.objects.create(
                     Estado="0",
-                    MontoInicial=0
+                    MontoInicial=0,
+                    Fecha=hoy
                     # No asignamos IdUsuarioApertura aún porque no ha dado clic en "Iniciar"
                 )
                 
@@ -120,7 +121,7 @@ def InicioArqueo(request):
                     arqueo.MontoInicial = monto_inicial
                     arqueo.IdUsuarioApertura = request.user # Definimos quién aperturó
                     arqueo.Estado = "1" # Cambiamos a "Iniciado"
-                    arqueo.HoraApertura = timezone.now().time()
+                    arqueo.HoraApertura = timezone.localtime()
                     arqueo.save()
 
                     return JsonResponse({
@@ -174,7 +175,7 @@ def CierreArqueo(request):
             arqueo.Diferencia = monto_real - monto_teorico
             arqueo.IdUsuarioCierre = request.user
             arqueo.Estado = "2"  # Estado: Cerrado
-            arqueo.HoraCierre = timezone.now().time()
+            arqueo.HoraCierre = timezone.localtime()
             arqueo.save()
 
             return JsonResponse({
