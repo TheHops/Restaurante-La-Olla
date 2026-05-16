@@ -14,6 +14,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import os
+
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls.static import static
@@ -25,6 +27,7 @@ from RestauranteLaOlla.Modulos.Inventario import Menu
 from RestauranteLaOlla.Modulos.Personal import Personal
 from RestauranteLaOlla.Modulos.Personal import MiPerfil
 from RestauranteLaOlla.Modulos.Reportes import Reportes
+from RestauranteLaOlla.Modulos.Reportes import Caja
 from RestauranteLaOlla.Modulos.Platillos import Platillos
 from RestauranteLaOlla.Modulos.TipoPlatillos import TipoPlatillos
 from RestauranteLaOlla.Modulos.Ventas import Ventas
@@ -86,12 +89,16 @@ urlpatterns = [
     path("ReenviarOTPForgotPass/", ReenviarOTPForgotPass, name="ReenviarOTPForgotPass"),
     path("ValidarOTPForgotPass/", ValidarOTPForgotPass, name="ValidarOTPForgotPass"),
     path("CambiarPassForgotPass/", CambiarPassForgotPass, name="CambiarPassForgotPass"),
+    path("Caja/", Caja.Caja, name="Caja"),
+    path("InicioArqueo/", Caja.InicioArqueo, name="InicioArqueo"),
+    path("CierreArqueo/", Caja.CierreArqueo, name="CierreArqueo"),
+    path("ExportarArqueo/", Reportes.ExportarArqueo, name="ExportarArqueo"),
 ]
 
 if settings.DEBUG:
     # Local: sirve media y static normalmente
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=os.path.join(settings.BASE_DIR, 'static'))
 else:
     # Producción (Railway): Django sirve el Volumen de media
     urlpatterns += [

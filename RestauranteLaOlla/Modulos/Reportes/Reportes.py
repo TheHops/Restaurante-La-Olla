@@ -3,7 +3,7 @@ import traceback
 import pdfkit
 import json
 
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from decimal import Decimal
 
 from jinja2 import Environment, FileSystemLoader
@@ -13,14 +13,14 @@ from django.utils import timezone
 from django.utils.formats import date_format
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
-from django.db.models import Prefetch, Q
+from django.db.models import Count, Prefetch, Q, Sum
 
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill, Border, Side, NamedStyle
 from openpyxl.utils import get_column_letter
+from openpyxl.cell.cell import MergedCell
 
-from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden, AreaMesa, Usuario, MesasPorOrden
-from RestauranteLaOlla import settings
+from Application.models import Platillo, TipoPlatillo, Orden, DetalleOrden, AreaMesa, Usuario, MesasPorOrden, Arqueo
 
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, HRFlowable
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -889,6 +889,308 @@ def exportar_pdf_personal(request):
     )
         
 #endregion Personal
+
+#region Caja
+
+def ExportarArqueo(request):
+    if not request.user.is_authenticated:
+        return render(request, "login.html")
+    
+    if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Mesero":
+        return redirect("/")
+    
+    try:
+        formato = request.GET.get('Tipo', '1') # 1: Excel, 2: PDF
+        dias = request.GET.get('Dias', '1')
+        
+        dias_dict = {'1': '0', '2': '7', '3': '15', '4': '30'}
+        dias_param = int(dias_dict.get(dias, '0'))
+        
+        dias_param = dias_param - 1 if dias_param > 1 else dias_param
+        
+        # Cálculo de fechas (Respetando Nicaragua Timezone)
+        hoy = timezone.localdate()
+        fecha_inicio = hoy - timedelta(days=dias_param)
+        
+        # Obtenemos todos los arqueos en el rango
+        arqueos = Arqueo.objects.filter(
+            Fecha__range=[fecha_inicio, hoy]
+        ).order_by('-Fecha', '-Id')
+
+        if not arqueos.exists():
+            return JsonResponse({"status": "info", "message": "No hay arqueos en este rango"}, status=404)
+
+        nombre_archivo = f"Arqueos_{hoy.strftime('%Y%m%d')}"
+
+        if formato == '1':
+            wb = generar_excel_multiple_arqueos(arqueos)
+            return descargar_excel(wb, nombre_archivo)
+        else:
+            return generar_pdf_multiple_arqueos(arqueos, request.user.username, nombre_archivo)
+
+    except Exception:
+        print(traceback.format_exc())
+        return JsonResponse({"status": "error", "message": "Error al exportar"}, status=500)
+    
+def generar_excel_multiple_arqueos(arqueos):
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Historial de Arqueos"
+    
+    # --- ESTILOS ---
+    vino_oscuro = "800000"
+    blanco = "FFFFFF"
+    
+    if "header_style" not in wb.named_styles:
+        header_style = NamedStyle(name="header_style")
+        header_style.font = Font(bold=True, color=blanco)
+        header_style.fill = PatternFill("solid", fgColor=vino_oscuro)
+        header_style.alignment = Alignment(horizontal="center")
+        wb.add_named_style(header_style)
+
+    fila_actual = 1
+
+    for aq in arqueos:
+        # 1. CÁLCULOS
+        metodos_pago = obtener_totales_metodos_pago(aq)
+        total_cant_ordenes = sum(m[1] for m in metodos_pago)
+        total_monto_ordenes = sum(m[2] for m in metodos_pago)
+
+        # 2. TÍTULO DEL ARQUEO (Separador Horizontal)
+        # Combinamos de la A a la E para que cubra ambas tablas
+        ws.merge_cells(start_row=fila_actual, start_column=1, end_row=fila_actual, end_column=6)
+        cell_separador = ws.cell(row=fila_actual, column=1, value=f"ARQUEO #{aq.Id} - FECHA: {aq.Fecha.strftime('%d/%m/%Y')}")
+        cell_separador.font = Font(bold=True, size=12, color=blanco)
+        cell_separador.fill = PatternFill("solid", fgColor=vino_oscuro)
+        cell_separador.alignment = Alignment(horizontal="center")
+        
+        fila_actual += 2 # Espacio después del título
+
+        # --- 3. TABLA 1: DATOS DE CAJA (Columnas A y B) ---
+        headers_caja = ["Descripción de Caja", "Dato / Valor"]
+        for i, h in enumerate(headers_caja, 1):
+            c = ws.cell(row=fila_actual, column=i, value=h)
+            c.style = "header_style"
+        
+        datos_caja = [
+            ["Fecha", aq.Fecha.strftime("%d/%m/%Y")],
+            ["Apertura", aq.HoraApertura.strftime("%I:%M %p") if aq.HoraApertura else "N/A"],
+            ["Cierre", aq.HoraCierre.strftime("%I:%M %p") if aq.HoraCierre else "Abierta"],
+            ["Usuario Apertura", aq.IdUsuarioApertura.username],
+            ["Usuario Cierre", aq.IdUsuarioCierre.username if aq.IdUsuarioCierre else "N/A"],
+            ["Monto Inicial", aq.MontoInicial],
+            ["Monto Teórico", aq.MontoFinalTeorico],
+            ["Monto Real", aq.MontoFinalReal],
+            ["Diferencia", aq.Diferencia],
+        ]
+
+        for i, fila in enumerate(datos_caja):
+            ws.cell(row=fila_actual + 1 + i, column=1, value=fila[0])
+            cell_val = ws.cell(row=fila_actual + 1 + i, column=2, value=fila[1])
+            if i >= 5: # Formato moneda
+                cell_val.number_format = '"C$"#,##0.00'
+                if i == 8: cell_val.font = Font(bold=True)
+
+        # --- 4. TABLA 2: RESUMEN DE VENTAS (Columnas D y E) ---
+        # Usamos columnas 4 y 5 para que esté al lado
+        col_v = 4 
+        ws.cell(row=fila_actual, column=col_v, value="Método de Pago").style = "header_style"
+        ws.cell(row=fila_actual, column=col_v + 1, value="Cantidad").style = "header_style"
+        ws.cell(row=fila_actual, column=col_v + 2, value="Subtotal").style = "header_style"
+
+        for i, m in enumerate(metodos_pago):
+            ws.cell(row=fila_actual + 1 + i, column=col_v, value=m[0])
+            ws.cell(row=fila_actual + 1 + i, column=col_v + 1, value=m[1])
+            c_monto = ws.cell(row=fila_actual + 1 + i, column=col_v + 2, value=m[2])
+            c_monto.number_format = '"C$"#,##0.00'
+
+        # Totales de ventas justo debajo de la tabla de métodos
+        fila_totales_v = fila_actual + len(metodos_pago) + 1
+        ws.cell(row=fila_totales_v, column=col_v, value="TOTAL VENTAS").font = Font(bold=True)
+        ws.cell(row=fila_totales_v, column=col_v + 1, value=total_cant_ordenes).font = Font(bold=True)
+        c_total_m = ws.cell(row=fila_totales_v, column=col_v + 2, value=total_monto_ordenes)
+        c_total_m.font = Font(bold=True)
+        c_total_m.number_format = '"C$"#,##0.00'
+
+        # Preparar para el siguiente arqueo (bajamos lo que mida la tabla más larga)
+        fila_actual += max(len(datos_caja), len(metodos_pago)) + 4
+
+    # --- AJUSTE DE COLUMNAS SEGURO ---
+    for col_idx in range(1, 7): # Ajustamos hasta la columna F
+        column_letter = get_column_letter(col_idx)
+        max_length = 0
+        for row in ws.iter_rows(min_col=col_idx, max_col=col_idx):
+            for cell in row:
+                try:
+                    if not isinstance(cell, MergedCell) and cell.value:
+                        length = len(str(cell.value))
+                        if length > max_length: max_length = length
+                except: continue
+        ws.column_dimensions[column_letter].width = min(max_length + 5, 40)
+
+    return wb
+
+def generar_pdf_multiple_arqueos(arqueos, usuario_nombre, nombre_archivo):
+    buffer = io.BytesIO()
+    # Usamos letter vertical por defecto
+    pagesize = letter
+    width, height = pagesize
+
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=pagesize,
+        rightMargin=40,
+        leftMargin=40,
+        topMargin=120, 
+        bottomMargin=60
+    )
+
+    elementos = []
+    styles = getSampleStyleSheet()
+    # Estilo para texto dentro de celdas
+    cell_style = ParagraphStyle(name="CellStyle", fontSize=9, leading=12)
+    
+    # --- CONSTRUCCIÓN DE DATA Y ESTILOS ---
+    columnas = ["CONCEPTO / MÉTODO", "INFORMACIÓN / CANTIDAD", "MONTO"]
+    data = [columnas]
+    
+    # Estilo base de la tabla (Copiado de tu original)
+    estilo_comandos = [
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#8e0000")),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    ]
+
+    for aq in arqueos:
+        # 1. Identificar fila de encabezado de arqueo
+        idx_fila = len(data)
+        
+        # Estilo Vinotinto para el separador
+        estilo_comandos.append(('BACKGROUND', (0, idx_fila), (-1, idx_fila), colors.HexColor("#a14545")))
+        estilo_comandos.append(('TEXTCOLOR', (0, idx_fila), (-1, idx_fila), colors.white))
+        estilo_comandos.append(('FONTNAME', (0, idx_fila), (-1, idx_fila), 'Helvetica-Bold'))
+
+        # Fila de Encabezado
+        data.append([f"DETALLE ARQUEO #{aq.Id}", f"FECHA: {aq.Fecha.strftime('%d/%m/%Y')}", ""])
+        
+        # 2. Datos de Caja
+        data.append(["Apertura por:", aq.IdUsuarioApertura.username, ""])
+        data.append(["Cierre por:", aq.IdUsuarioCierre.username if aq.IdUsuarioCierre else "N/A", ""])
+        
+        h_ape = aq.HoraApertura.strftime("%I:%M %p") if aq.HoraApertura else "N/A"
+        data.append(["Hora de Apertura:", h_ape, ""])
+        
+        h_cie = aq.HoraCierre.strftime("%I:%M %p") if aq.HoraCierre else "Aún Abierta"
+        data.append(["Hora de Cierre:", h_cie, ""])
+        
+        data.append(["Monto Inicial", "-", f"C$ {aq.MontoInicial:,.2f}"])
+        data.append(["Monto Teórico", "-", f"C$ {aq.MontoFinalTeorico:,.2f}"])
+        data.append(["Monto Real", "-", f"C$ {aq.MontoFinalReal:,.2f}"])
+        
+        # Diferencia
+        dif_label = "FALTANTE" if aq.Diferencia < 0 else "SOBRANTE" if aq.Diferencia > 0 else "OK"
+        data.append([f"Diferencia ({dif_label})", "-", f"C$ {aq.Diferencia:,.2f}"])
+
+        # 3. Métodos de Pago
+        metodos = obtener_totales_metodos_pago(aq) # Reutilizamos tu lógica de montos
+        total_m = 0
+        total_c = 0
+        
+        data.append(["", "", ""])
+        
+        for m in metodos:
+            data.append([f"Ventas en {m[0]}", f"{m[1]} órd.", f"C$ {m[2]:,.2f}"])
+            total_m += m[2]
+            total_c += m[1]
+
+        # Fila de Totales del arqueo (Negrita)
+        idx_total = len(data)
+        estilo_comandos.append(('FONTNAME', (0, idx_total), (-1, idx_total), 'Helvetica-Bold'))
+        data.append(["TOTAL TURNO", f"{total_c} Órd.", f"C$ {total_m:,.2f}"])
+        
+        # Espacio en blanco separador (Fondo blanco)
+        idx_blanco = len(data)
+        estilo_comandos.append(('BACKGROUND', (0, idx_blanco), (-1, idx_blanco), colors.white))
+        data.append(["", "", ""])
+
+    # Crear Tabla
+    tabla = Table(data, colWidths=[220, 140, 140], repeatRows=1)
+    tabla.setStyle(TableStyle(estilo_comandos))
+    elementos.append(tabla)
+
+    # --- FUNCIÓN DE ENCABEZADO (Local para evitar conflictos) ---
+    def encabezado_local(canvas, doc):
+        canvas.saveState()
+        # Logo
+        logo_path = os.path.join("static", "img", "NuevoLogoFondoBlanco.jpg")
+        if os.path.exists(logo_path):
+            canvas.drawImage(logo_path, doc.leftMargin, height - 80, width=60, height=60, preserveAspectRatio=True)
+
+        # Título
+        canvas.setFont("Helvetica-Bold", 16)
+        canvas.setFillColor(colors.HexColor("#a05047"))
+        canvas.drawString(doc.leftMargin + 70, height - 62, "HISTORIAL DE ARQUEOS DE CAJA")
+        
+        # Info Derecha
+        canvas.setFont("Helvetica", 9)
+        canvas.setFillColor(colors.grey)
+        fecha_emision = timezone.localtime().strftime("%d/%m/%Y %H:%M")
+        canvas.drawRightString(width - doc.rightMargin, height - 55, f"Fecha emisión: {fecha_emision}")
+        canvas.drawRightString(width - doc.rightMargin, height - 67, f"Generado por: {usuario_nombre}")
+
+        # Línea decorativa
+        canvas.setStrokeColor(colors.HexColor("#8e0000"))
+        canvas.setLineWidth(2)
+        canvas.line(doc.leftMargin, height - 90, width - doc.rightMargin, height - 90)
+
+        # Pie de página
+        canvas.setFont("Helvetica", 8)
+        canvas.drawString(doc.leftMargin, 35, "Documento generado por el sistema")
+        canvas.drawRightString(width - doc.rightMargin, 35, f"Página {canvas.getPageNumber()}")
+        canvas.restoreState()
+
+    # Construir PDF
+    doc.build(elementos, onFirstPage=encabezado_local, onLaterPages=encabezado_local)
+    
+    buffer.seek(0)
+    response = HttpResponse(buffer, content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="{nombre_archivo}.pdf"'
+    return response
+    
+def obtener_totales_metodos_pago(aq):
+    # Definimos el rango del día del arqueo específico
+    inicio_dia = timezone.make_aware(datetime.combine(aq.Fecha, time.min))
+    fin_dia = timezone.make_aware(datetime.combine(aq.Fecha, time.max))
+
+    # Filtramos las órdenes de ese arqueo
+    ordenes = Orden.objects.filter(
+        UltimaModificacion__range=(inicio_dia, fin_dia), 
+        Estado="0", 
+        EsActivo="1"
+    )
+
+    # Lógica de cálculos (Tu código original intacto)
+    efectivo_mixto = ordenes.filter(MetodoPago="4").aggregate(t=Sum('Monto') - Sum('Cambio'))['t'] or 0
+    tarjeta_mixta = ordenes.filter(MetodoPago="4").aggregate(t=Sum('SegundoMonto'))['t'] or 0
+    
+    efectivo_puro = ordenes.filter(MetodoPago="1").aggregate(t=Sum('TotalPagar'))['t'] or 0
+    tarjeta_pura = ordenes.filter(MetodoPago="2").aggregate(t=Sum('TotalPagar'))['t'] or 0
+    total_transferencia = ordenes.filter(MetodoPago="3").aggregate(t=Sum('TotalPagar'))['t'] or 0
+
+    # Retornamos la estructura lista para usarse
+    return [
+        ["Efectivo", ordenes.filter(MetodoPago__in=["1", "4"]).count(), Decimal(efectivo_puro + efectivo_mixto)],
+        ["Tarjeta", ordenes.filter(MetodoPago__in=["2", "4"]).count(), Decimal(tarjeta_pura + tarjeta_mixta)],
+        ["Transferencia", ordenes.filter(MetodoPago="3").count(), Decimal(total_transferencia)],
+    ]
+
+#endregion Caja
 
 #endregion Exportaciones
 
