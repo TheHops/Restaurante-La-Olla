@@ -613,7 +613,15 @@ body .modal-open {
     /* color: hsl(180, 50%, 70%); */
 }
 
+#contenedorTecnicoBackup {
+    background-color: hsl(175deg 35% 95%);
+    width: 100%;
+    padding: 20px 15px;
+    border-radius: 10px;
 
+    border-color: hsl(145deg 20% 65%);
+    border-style: double;
+}
 
 
 
