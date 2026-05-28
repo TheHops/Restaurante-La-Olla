@@ -3,7 +3,7 @@ from django.db.models import Case, When, Count, Sum
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.views.decorators.http import require_POST
-from Application.models  import Orden, Platillo, Usuario, DetalleOrden, MesasPorOrden, OTP
+from Application.models  import AreaMesa, Arqueo, Cargo, Mesa, Orden, Platillo, TipoPlatillo, Usuario, DetalleOrden, MesasPorOrden, OTP
 from django.contrib import messages
 from django.http import JsonResponse
 from datetime import datetime, timedelta, time
@@ -21,6 +21,21 @@ from django.conf import settings
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+
+import io
+from django.http import HttpResponse
+from django.core.management import call_command
+from django.apps import apps
+
+# Librerías para los formatos visuales
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.utils import get_column_letter
+
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
 
 User = get_user_model()
 
@@ -737,7 +752,304 @@ def CambiarPassForgotPass (request):
 #region Backup
 
 def Respaldo(request):
-    print("Hola")
+    # 1. Validaciones de Seguridad y Roles
+    if not request.user.is_authenticated:
+        return JsonResponse({"status": "error", "message": "Inicie sesión para realizar esta operación."}, status=401)
+    
+    cargo_usuario = request.user.IdCargo.Nombre if request.user.IdCargo else ""
+    if cargo_usuario in ["Armador", "Mesero", "Cajero"]:
+        return JsonResponse({"status": "error", "message": "No tiene permisos suficientes para exportar respaldos del sistema."}, status=403)
+    
+    if request.method == "GET":
+        tipo = request.GET.get("Tipo")
+        fecha_str = datetime.now().strftime("%Y_%m_%d_%H%M%S")
+        
+        try:
+            # =========================================================================
+            # OPCIÓN 1: EXCEL ADMINISTRATIVO - Libro con Múltiples Pestañas
+            # =========================================================================
+            if tipo == "1":
+                wb = Workbook()
+                fuente_cabecera = Font(name='Segoe UI', size=11, bold=True, color="FFFFFF")
+                # openpyxl usa colores hexadecimales sin el símbolo '#'
+                relleno_cabecera = PatternFill(start_color="8E0000", end_color="8E0000", fill_type="solid")
+                borde_sutil = Border(bottom=Side(style='thin', color="E5E7EB"), top=Side(style='thin', color="E5E7EB"))
+                
+                # --- PESTAÑA 1: PLATILLOS ---
+                ws1 = wb.active
+                ws1.title = "Catálogo de Platillos"
+                ws1.views.sheetView[0].showGridLines = True
+                ws1.append(["ID", "Nombre", "Tipo de Platillo", "Precio", "Estado"])
+                
+                for p in Platillo.objects.all():
+                    tipo_nombre = p.IdTipoPlatillo.Nombre if p.IdTipoPlatillo else "General"
+                    estado = "Activo" if p.EsActivo == "1" else "Eliminado"
+                    ws1.append([p.Id, p.Nombre, tipo_nombre, float(p.Precio), estado])
+                    ws1.cell(row=ws1.max_row, column=4).number_format = '"C$"#,##0.00'
+                
+                # --- PESTAÑA 2: ÓRDENES ---
+                ws2 = wb.create_sheet(title="Historial de Órdenes")
+                ws2.views.sheetView[0].showGridLines = True
+                ws2.append(["ID", "Fecha", "Mesa/Área", "Atendido por", "Método Pago", "Total", "Estado"])
+                
+                for o in Orden.objects.all():
+                    fecha_fmt = o.Fecha.strftime('%d/%m/%Y %H:%M') if o.Fecha else 'N/A'
+                    usuario_nombre = o.IdUsuario.username if o.IdUsuario else "Sistema"
+                    ws2.append([
+                        o.Id, fecha_fmt, o.AreaDeMesa or 'N/A', usuario_nombre, 
+                        o.get_MetodoPago_display(), float(o.Total or 0), o.get_Estado_display()
+                    ])
+                    ws2.cell(row=ws2.max_row, column=6).number_format = '"C$"#,##0.00'
+
+                # --- PESTAÑA 3: ARQUEOS DE CAJA ---
+                ws3 = wb.create_sheet(title="Arqueos de Caja")
+                ws3.views.sheetView[0].showGridLines = True
+                ws3.append(["ID", "Fecha", "Apertura", "Cierre", "Monto Inicial", "Monto Final Real", "Diferencia", "Estado"])
+                
+                for a in Arqueo.objects.all():
+                    hora_apertura = a.HoraApertura.strftime('%I:%M %p') if a.HoraApertura else 'N/A'
+                    hora_cierre = a.HoraCierre.strftime('%I:%M %p') if a.HoraCierre else 'Pendiente'
+                    ws3.append([
+                        a.Id, a.Fecha.strftime('%d/%m/%Y') if a.Fecha else 'N/A', hora_apertura, hora_cierre,
+                        float(a.MontoInicial or 0), float(a.MontoFinalReal or 0), 
+                        float(a.Diferencia or 0), a.get_Estado_display()
+                    ])
+                    ws3.cell(row=ws3.max_row, column=5).number_format = '"C$"#,##0.00'
+                    ws3.cell(row=ws3.max_row, column=6).number_format = '"C$"#,##0.00'
+                    ws3.cell(row=ws3.max_row, column=7).number_format = '"C$"#,##0.00'
+
+                # --- PESTAÑA 4: PERSONAL ---
+                ws4 = wb.create_sheet(title="Personal")
+                ws4.views.sheetView[0].showGridLines = True
+                ws4.append(["ID", "Nombre Completo", "Usuario", "Cargo", "Estado"])
+                
+                for u in Usuario.objects.all():
+                    cargo = u.IdCargo.Nombre if u.IdCargo else "Sin Cargo"
+                    estado = "Activo" if u.EsActivo == "1" else "Inactivo"
+                    ws4.append([u.Id, f"{u.Nombres} {u.Apellidos}", u.username, cargo, estado])
+
+                # Dar formato unificado a todas las pestañas
+                for sheet in wb.worksheets:
+                    for col_num in range(1, sheet.max_column + 1):
+                        celda = sheet.cell(row=1, column=col_num)
+                        celda.font = fuente_cabecera
+                        celda.fill = relleno_cabecera
+                        celda.alignment = Alignment(horizontal="center")
+                    
+                    for fila in range(2, sheet.max_row + 1):
+                        for col in range(1, sheet.max_column + 1):
+                            sheet.cell(row=fila, column=col).border = borde_sutil
+                            
+                    for col in sheet.columns:
+                        max_len = max(len(str(cell.value or '')) for cell in col)
+                        col_letter = get_column_letter(col[0].column)
+                        sheet.column_dimensions[col_letter].width = max(max_len + 3, 14)
+                
+                response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+                response['Content-Disposition'] = f'attachment; filename="Reporte_Administrativo_{fecha_str}.xlsx"'
+                wb.save(response)
+                return response
+
+            # =========================================================================
+            # OPCIÓN 2: PDF EJECUTIVO DETALLADO - Reporte Operativo de Tablas
+            # =========================================================================
+            elif tipo == "2":
+                buffer = io.BytesIO()
+                # Márgenes de 40pt dejan un ancho imprimible de 532pt en tamaño Letter
+                doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=40, leftMargin=40, topMargin=40, bottomMargin=40)
+                story = []
+                
+                styles = getSampleStyleSheet()
+                
+                # Estilos del Documento
+                titulo_style = ParagraphStyle('DocTitle', parent=styles['Heading1'], fontName='Helvetica-Bold', fontSize=18, textColor=colors.HexColor("#111827"), spaceAfter=5)
+                sub_style = ParagraphStyle('DocSub', parent=styles['Normal'], fontName='Helvetica', fontSize=10, textColor=colors.HexColor("#4B5563"), spaceAfter=20)
+                h2_style = ParagraphStyle('DocH2', parent=styles['Heading2'], fontName='Helvetica-Bold', fontSize=13, textColor=colors.HexColor("#8e0000"), spaceBefore=18, spaceAfter=8)
+                
+                # Estilos internos para celdas de las tablas
+                hdr_style = ParagraphStyle('TableHdr', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=9, textColor=colors.white, alignment=1)
+                cell_style = ParagraphStyle('TableCell', parent=styles['Normal'], fontName='Helvetica', fontSize=8.5, textColor=colors.HexColor("#1F2937"))
+                cell_style_center = ParagraphStyle('TableCellCenter', parent=styles['Normal'], fontName='Helvetica', fontSize=8.5, textColor=colors.HexColor("#1F2937"), alignment=1)
+                cell_style_right = ParagraphStyle('TableCellRight', parent=styles['Normal'], fontName='Helvetica', fontSize=8.5, textColor=colors.HexColor("#1F2937"), alignment=2)
+
+                # Encabezado principal del PDF
+                story.append(Paragraph("SISTEMA DE GESTIÓN LA OLLA - REPORTES ADMINISTRATIVOS", titulo_style))
+                story.append(Paragraph(f"Fecha de generación: {datetime.now().strftime('%d/%m/%Y %I:%M %p')}", sub_style))
+                story.append(Spacer(1, 5))
+                
+                # --- TABLA 1: PLATILLOS (Ancho total: 532pt) ---
+                story.append(Paragraph("1. Catálogo de Platillos", h2_style))
+                data_platillos = [[Paragraph("ID", hdr_style), Paragraph("Nombre del Platillo", hdr_style), Paragraph("Tipo", hdr_style), Paragraph("Precio", hdr_style), Paragraph("Estado", hdr_style)]]
+                for p in Platillo.objects.all():
+                    tipo_nombre = p.IdTipoPlatillo.Nombre if p.IdTipoPlatillo else "General"
+                    estado = "Activo" if p.EsActivo == "1" else "Eliminado"
+                    data_platillos.append([
+                        Paragraph(str(p.Id), cell_style_center),
+                        Paragraph(p.Nombre, cell_style),
+                        Paragraph(tipo_nombre, cell_style),
+                        Paragraph(f"C$ {p.Precio:,.2f}", cell_style_right),
+                        Paragraph(estado, cell_style_center)
+                    ])
+                t1 = Table(data_platillos, colWidths=[40, 180, 120, 100, 92])
+                t1.setStyle(TableStyle([
+                    ('BACKGROUND', (0,0), (-1,0), colors.HexColor("#8e0000")),
+                    ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+                    ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor("#E5E7EB")),
+                    ('TOPPADDING', (0,0), (-1,-1), 5),
+                    ('BOTTOMPADDING', (0,0), (-1,-1), 5),
+                    ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.white, colors.HexColor("#F9FAFB")]),
+                ]))
+                story.append(t1)
+                
+                # --- TABLA 2: ÓRDENES (Ancho total: 532pt) ---
+                story.append(Paragraph("2. Historial de Órdenes Recientes", h2_style))
+                data_ordenes = [[
+                    Paragraph("ID", hdr_style), Paragraph("Fecha", hdr_style), Paragraph("Área / Mesa", hdr_style),
+                    Paragraph("Atendido por", hdr_style), Paragraph("Pago", hdr_style), Paragraph("Total", hdr_style), Paragraph("Estado", hdr_style)
+                ]]
+                for o in Orden.objects.all():
+                    fecha_fmt = o.Fecha.strftime('%d/%m/%Y %H:%M') if o.Fecha else 'N/A'
+                    usuario_nombre = o.IdUsuario.username if o.IdUsuario else "Sistema"
+                    data_ordenes.append([
+                        Paragraph(str(o.Id), cell_style_center),
+                        Paragraph(fecha_fmt, cell_style_center),
+                        Paragraph(o.AreaDeMesa or 'N/A', cell_style),
+                        Paragraph(usuario_nombre, cell_style),
+                        Paragraph(o.get_MetodoPago_display(), cell_style_center),
+                        Paragraph(f"C$ {o.Total:,.2f}" if o.Total else "C$ 0.00", cell_style_right),
+                        Paragraph(o.get_Estado_display(), cell_style_center)
+                    ])
+                t2 = Table(data_ordenes, colWidths=[35, 95, 80, 80, 80, 80, 82])
+                t2.setStyle(TableStyle([
+                    ('BACKGROUND', (0,0), (-1,0), colors.HexColor("#8e0000")),
+                    ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+                    ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor("#E5E7EB")),
+                    ('TOPPADDING', (0,0), (-1,-1), 5),
+                    ('BOTTOMPADDING', (0,0), (-1,-1), 5),
+                    ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.white, colors.HexColor("#F9FAFB")]),
+                ]))
+                story.append(t2)
+                
+                # --- TABLA 3: ARQUEOS DE CAJA (Ancho total: 532pt) ---
+                story.append(Paragraph("3. Control de Arqueos de Caja", h2_style))
+                data_arqueos = [[
+                    Paragraph("ID", hdr_style), Paragraph("Fecha", hdr_style), Paragraph("Apertura", hdr_style), Paragraph("Cierre", hdr_style),
+                    Paragraph("M. Inicial", hdr_style), Paragraph("M. Real", hdr_style), Paragraph("Diferencia", hdr_style), Paragraph("Estado", hdr_style)
+                ]]
+                for a in Arqueo.objects.all():
+                    hora_apertura = a.HoraApertura.strftime('%I:%M %p') if a.HoraApertura else 'N/A'
+                    hora_cierre = a.HoraCierre.strftime('%I:%M %p') if a.HoraCierre else 'Pendiente'
+                    diff_val = a.Diferencia if a.Diferencia is not None else 0
+                    data_arqueos.append([
+                        Paragraph(str(a.Id), cell_style_center),
+                        Paragraph(a.Fecha.strftime('%d/%m/%Y') if a.Fecha else 'N/A', cell_style_center),
+                        Paragraph(hora_apertura, cell_style_center),
+                        Paragraph(hora_cierre, cell_style_center),
+                        Paragraph(f"C$ {a.MontoInicial:,.2f}" if a.MontoInicial else "C$ 0.00", cell_style_right),
+                        Paragraph(f"C$ {a.MontoFinalReal:,.2f}" if a.MontoFinalReal else "C$ 0.00", cell_style_right),
+                        Paragraph(f"C$ {diff_val:,.2f}", cell_style_right),
+                        Paragraph(a.get_Estado_display(), cell_style_center)
+                    ])
+                t3 = Table(data_arqueos, colWidths=[30, 65, 55, 55, 75, 75, 75, 102])
+                t3.setStyle(TableStyle([
+                    ('BACKGROUND', (0,0), (-1,0), colors.HexColor("#8e0000")),
+                    ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+                    ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor("#E5E7EB")),
+                    ('TOPPADDING', (0,0), (-1,-1), 5),
+                    ('BOTTOMPADDING', (0,0), (-1,-1), 5),
+                    ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.white, colors.HexColor("#F9FAFB")]),
+                ]))
+                story.append(t3)
+                
+                # --- TABLA 4: PERSONAL (Ancho total: 532pt) ---
+                story.append(Paragraph("4. Personal y Usuarios Registrados", h2_style))
+                data_personal = [[Paragraph("ID", hdr_style), Paragraph("Nombre Completo", hdr_style), Paragraph("Usuario", hdr_style), Paragraph("Cargo", hdr_style), Paragraph("Estado", hdr_style)]]
+                for u in Usuario.objects.all():
+                    cargo = u.IdCargo.Nombre if u.IdCargo else "Sin Cargo"
+                    estado = "Activo" if u.EsActivo == "1" else "Inactivo"
+                    data_personal.append([
+                        Paragraph(str(u.Id), cell_style_center),
+                        Paragraph(f"{u.Nombres} {u.Apellidos}", cell_style),
+                        Paragraph(u.username, cell_style),
+                        Paragraph(cargo, cell_style),
+                        Paragraph(estado, cell_style_center)
+                    ])
+                t4 = Table(data_personal, colWidths=[40, 170, 110, 110, 102])
+                t4.setStyle(TableStyle([
+                    ('BACKGROUND', (0,0), (-1,0), colors.HexColor("#8e0000")),
+                    ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+                    ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor("#E5E7EB")),
+                    ('TOPPADDING', (0,0), (-1,-1), 5),
+                    ('BOTTOMPADDING', (0,0), (-1,-1), 5),
+                    ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.white, colors.HexColor("#F9FAFB")]),
+                ]))
+                story.append(t4)
+                
+                doc.build(story)
+                buffer.seek(0)
+                
+                response = HttpResponse(buffer, content_type='application/pdf')
+                response['Content-Disposition'] = f'attachment; filename="Reporte_General_{fecha_str}.pdf"'
+                return response
+
+            # =========================================================================
+            # OPCIÓN 3: SCRIPT SQL AUTOMÁTICO - Respaldo Técnico Estructurado
+            # =========================================================================
+            elif tipo == "3":
+                sql_output = f"-- RESPALDO TOTAL - LA OLLA\n-- Generado: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n\n"
+                sql_output += "SET FOREIGN_KEY_CHECKS = 0;\n\n"
+                
+                modelos_sistema = [Cargo, Usuario, OTP, AreaMesa, Mesa, Orden, Arqueo, MesasPorOrden, TipoPlatillo, Platillo, DetalleOrden]
+                
+                for modelo in modelos_sistema:
+                    tabla_db = modelo._meta.db_table
+                    sql_output += f"-- Datos de la tabla: {tabla_db}\n"
+                    
+                    registros = modelo.objects.all()
+                    for obj in registros:
+                        campos, valores = [], []
+                        for f in obj._meta.fields:
+                            campos.append(f"`{f.column}`")
+                            val = getattr(obj, f.attname)
+                            
+                            if val is None:
+                                valores.append("NULL")
+                            elif isinstance(val, (int, float)):
+                                valores.append(str(val))
+                            elif isinstance(val, bool):
+                                valores.append("1" if val else "0")
+                            else:
+                                escapado = str(val).replace("'", "''").replace("\\", "\\\\")
+                                valores.append(f"'{escapado}'")
+                                
+                        sql_output += f"INSERT INTO `{tabla_db}` ({', '.join(campos)}) VALUES ({', '.join(valores)});\n"
+                    sql_output += "\n"
+                
+                sql_output += "SET FOREIGN_KEY_CHECKS = 1;\n"
+                
+                response = HttpResponse(sql_output, content_type='text/plain')
+                response['Content-Disposition'] = f'attachment; filename="Respaldo_SQL_{fecha_str}.sql"'
+                return response
+
+            # =========================================================================
+            # OPCIÓN 4: RESPALDO NATIVO JSON (dumpdata)
+            # =========================================================================
+            elif tipo == "4":
+                buffer_json = io.StringIO()
+                # Nombre exacto de tu app especificado: 'Application'
+                call_command('dumpdata', 'Application', indent=2, stdout=buffer_json)
+                
+                response = HttpResponse(buffer_json.getvalue(), content_type='application/json')
+                response['Content-Disposition'] = f'attachment; filename="Respaldo_Estructural_{fecha_str}.json"'
+                return response
+            
+            else:
+                return JsonResponse({"status": "error", "message": "Formato de exportación no válido."}, status=400)
+                
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": f"Error interno: {str(e)}"}, status=500)
+
+    return JsonResponse({"status": "error", "message": "Método no permitido."}, status=405)
 
 #endregion Backup
 
