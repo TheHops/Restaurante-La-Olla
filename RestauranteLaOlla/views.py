@@ -1005,7 +1005,7 @@ def Respaldo(request):
                 t7 = Table(data, colWidths=[35, 65, 115, 80, 80, 80, 77]); t7.setStyle(tabla_base_style); story.append(t7)
 
                 # --- TABLA 8: MESAS POR ORDEN (532pt) ---
-                story.append(Paragraph("8. Relación Dinámica de Mesas por Órdenes", h2_style))
+                story.append(Paragraph("8. Relación de Mesas por Órdenes", h2_style))
                 data = [[Paragraph("ID Relación", hdr_style), Paragraph("ID Orden", hdr_style), Paragraph("Número Mesa", hdr_style), Paragraph("Estado Registro", hdr_style)]]
                 for mo in MesasPorOrden.objects.all():
                     data.append([Paragraph(str(mo.Id), cell_style_center), Paragraph(str(mo.IdOrden.Id), cell_style_center), Paragraph(str(mo.IdMesa.Numero), cell_style_center), Paragraph("✓ Activo" if mo.EsActivo == "1" else "✗ Inactivo", cell_style_center)])
@@ -1019,7 +1019,7 @@ def Respaldo(request):
                 t9 = Table(data, colWidths=[90, 300, 142]); t9.setStyle(tabla_base_style); story.append(t9)
 
                 # --- TABLA 10: PLATILLOS (532pt) ---
-                story.append(Paragraph("10. Catálogo Maestro de Platillos", h2_style))
+                story.append(Paragraph("10. Catálogo de Platillos", h2_style))
                 data = [[Paragraph("ID", hdr_style), Paragraph("Categoría", hdr_style), Paragraph("Nombre del Platillo", hdr_style), Paragraph("Precio", hdr_style), Paragraph("Estado", hdr_style)]]
                 for p in Platillo.objects.all():
                     data.append([Paragraph(str(p.Id), cell_style_center), Paragraph(p.IdTipoPlatillo.Nombre if p.IdTipoPlatillo else 'General', cell_style), Paragraph(p.Nombre, cell_style), Paragraph(f"C$ {p.Precio:,.2f}", cell_style_right), Paragraph("✓ Activo" if p.EsActivo == "1" else "✗ Inactivo", cell_style_center)])
