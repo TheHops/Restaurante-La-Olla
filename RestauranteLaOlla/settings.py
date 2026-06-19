@@ -175,6 +175,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # CORRECTO
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+WHITENOISE_MANIFEST_STRICT = False
+
 if not DEBUG:
     STORAGES = {
         "default": {
