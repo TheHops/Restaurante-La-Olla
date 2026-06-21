@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+from django.conf import settings
+
 # Create your models here.
 
 #region Cargo
@@ -291,6 +293,14 @@ class Platillo(models.Model):
     class Meta:
         verbose_name_plural = 'Platillo'
         db_table = 'platillo'
+
+    @property
+    def url_limpia(self):
+        # Verifica si el objeto existe y si su nombre no está vacío o lleno de espacios
+        if self.ImagenUrl and self.ImagenUrl.name.strip():
+            return self.ImagenUrl.url
+        # Si está vacío (cadena vacía en BD), retorna la ruta estática por defecto
+        return f"{settings.STATIC_URL}img/ProductoSinFoto.png"
 
     def __str__(self):
         return f"ID = {self.Id} | Platillo = {self.Nombre} | Tipo de platillo = {self.IdTipoPlatillo.Nombre}"
