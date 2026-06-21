@@ -24,6 +24,14 @@ $(document).ready(function () {
 /************************************************************************/
 
 function iniciarArqueo() {
+  const btnApertura = $("#btnIniciarArqueo");
+
+  // Si por alguna razón ya está deshabilitado, rompemos la ejecución
+  if (btnApertura.prop("disabled")) return;
+
+  // Deshabilitamos INMEDIATAMENTE para congelar segundos clics
+  btnApertura.prop("disabled", true);
+
   const montoInicial = $("#EfectivoInicialCajaArqueo").val();
 
   Swal.fire({
@@ -77,7 +85,7 @@ function validarMontoFinal() {
   let valor = $("#EfectivoFinalCajaArqueo")
     .val()
     .replace(/[^0-9.]/g, "");
-  $(this).val(valor);
+  $("#EfectivoFinalCajaArqueo").val(valor);
 
   // Habilitar botón 'Cerrar' si hay un monto válido
   if (valor !== "" && !isNaN(valor) && parseFloat(valor) >= 0) {
@@ -111,12 +119,21 @@ $(document).ready(function () {
   });
 
   // 2. Función para enviar el cierre al servidor
-  $("#btnCerrarArqueo").on("click", function () {
+  $("#btnCerrarArqueo").on("click", function (e) {
+    e.preventDefault();
     cerrarArqueo();
   });
 });
 
 function cerrarArqueo() {
+  const btnCierre = $("#btnCerrarArqueo");
+
+  // Si por alguna razón ya está deshabilitado, rompemos la ejecución
+  if (btnCierre.prop("disabled")) return;
+
+  // Deshabilitamos INMEDIATAMENTE para congelar segundos clics
+  btnCierre.prop("disabled", true);
+
   const montoFinalReal = $("#EfectivoFinalCajaArqueo").val();
 
   Swal.fire({

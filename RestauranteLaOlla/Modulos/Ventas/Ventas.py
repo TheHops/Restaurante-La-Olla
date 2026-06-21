@@ -510,7 +510,7 @@ def FacturarOrden(request):
         # Validaciones por método de pago
         # ===============================
         if metodoPago == 1:  # EFECTIVO
-            if monto < total:
+            if monto < totalPagar:
                 return JsonResponse({
                     "status": "error",
                     "message": "El monto en efectivo no puede ser menor al total"
