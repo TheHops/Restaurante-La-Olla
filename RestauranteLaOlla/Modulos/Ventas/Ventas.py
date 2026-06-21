@@ -925,7 +925,7 @@ def EditarOrden (request):
         
         orden.Descripcion = descripcionOrden
         orden.FueEditada = True
-        orden.UltimaModificacion = timezone.now()
+        # orden.UltimaModificacion = timezone.now()
         orden.Detalles.update(DesdeEdicion=False)
         orden.Detalles.update(EsNuevo=False)
         orden.Detalles.update(EsEliminado=False)

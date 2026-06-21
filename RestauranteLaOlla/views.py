@@ -819,7 +819,7 @@ def Respaldo(request):
 
                 # --- PESTAÑA 3: OTP ---
                 ws3 = wb.create_sheet(title="Codigos OTP")
-                ws3.append(["ID OTP", "Usuario", "Código", "Fecha Creación (Local)", "Fecha Expiración (Local)", "Usado"])
+                ws3.append(["ID OTP", "Usuario", "Código", "Fecha Creación", "Fecha Expiración", "Usado"])
                 for o in OTP.objects.all():
                     ws3.append([o.Id, o.Usuario.username, o.Codigo, ajustar_fecha_local(o.FechaCreacion), ajustar_fecha_local(o.FechaExpiracion), "Sí" if o.Usado else "No"])
 
@@ -837,7 +837,7 @@ def Respaldo(request):
 
                 # --- PESTAÑA 6: ÓRDENES ---
                 ws6 = wb.create_sheet(title="Órdenes")
-                ws6.append(["ID Orden", "Atendido Por", "Área/Mesa", "Descripción", "Motivo Anulación", "No. Referencia", "Total", "Total Pagar", "Monto Recibido", "Cambio", "Propina", "Descuento", "Fecha (Local)", "Última Modificación (Local)", "Fue Editada", "Método Pago", "Estado Orden", "Banco"])
+                ws6.append(["ID Orden", "Atendido Por", "Área/Mesa", "Descripción", "Motivo Anulación", "No. Referencia", "Total", "Total Pagar", "Monto Recibido", "Cambio", "Propina", "Descuento", "Fecha ", "Última Modificación ", "Fue Editada", "Método Pago", "Estado Orden", "Banco"])
                 for ord in Orden.objects.all():
                     ws6.append([
                         ord.Id, ord.IdUsuario.username if ord.IdUsuario else "Sistema", ord.AreaDeMesa or 'N/A', ord.Descripcion or '', ord.Motivo or '', ord.NumRef or '',
@@ -969,7 +969,7 @@ def Respaldo(request):
 
                 # --- TABLA 3: OTP (532pt) ---
                 story.append(Paragraph("3. Registro de Tokens de Seguridad (OTP)", h2_style))
-                data = [[Paragraph("ID OTP", hdr_style), Paragraph("Usuario", hdr_style), Paragraph("Código", hdr_style), Paragraph("Creación (Local)", hdr_style), Paragraph("Expiración (Local)", hdr_style), Paragraph("Usado", hdr_style)]]
+                data = [[Paragraph("ID OTP", hdr_style), Paragraph("Usuario", hdr_style), Paragraph("Código", hdr_style), Paragraph("Creación ", hdr_style), Paragraph("Expiración ", hdr_style), Paragraph("Usado", hdr_style)]]
                 for o in OTP.objects.all():
                     data.append([Paragraph(str(o.Id), cell_style_center), Paragraph(o.Usuario.username, cell_style), Paragraph(o.Codigo, cell_style_center), Paragraph(ajustar_fecha_local(o.FechaCreacion), cell_style_center), Paragraph(ajustar_fecha_local(o.FechaExpiracion), cell_style_center), Paragraph("Sí" if o.Usado else "No", cell_style_center)])
                 t3 = Table(data, colWidths=[45, 107, 60, 130, 130, 60]); t3.setStyle(tabla_base_style); story.append(t3)
@@ -990,7 +990,7 @@ def Respaldo(request):
 
                 # --- TABLA 6: ÓRDENES (Compactado para Vista de Control, 532pt) ---
                 story.append(Paragraph("6. Historial General de Órdenes", h2_style))
-                data = [[Paragraph("ID", hdr_style), Paragraph("Fecha (Local)", hdr_style), Paragraph("Atendido Por", hdr_style), Paragraph("Mesa/Área", hdr_style), Paragraph("Pago", hdr_style), Paragraph("Total", hdr_style), Paragraph("Estado", hdr_style)]]
+                data = [[Paragraph("ID", hdr_style), Paragraph("Fecha ", hdr_style), Paragraph("Atendido Por", hdr_style), Paragraph("Mesa/Área", hdr_style), Paragraph("Pago", hdr_style), Paragraph("Total", hdr_style), Paragraph("Estado", hdr_style)]]
                 for ord in Orden.objects.all():
                     data.append([Paragraph(str(ord.Id), cell_style_center), Paragraph(ajustar_fecha_local(ord.Fecha), cell_style_center), Paragraph(ord.IdUsuario.username if ord.IdUsuario else "Sistema", cell_style), Paragraph(ord.AreaDeMesa or 'N/A', cell_style), Paragraph(ord.get_MetodoPago_display(), cell_style_center), Paragraph(f"C$ {ord.TotalPagar:,.2f}", cell_style_right), Paragraph(ord.get_Estado_display(), cell_style_center)])
                 t6 = Table(data, colWidths=[35, 110, 85, 75, 75, 75, 77]); t6.setStyle(tabla_base_style); story.append(t6)
@@ -1005,7 +1005,7 @@ def Respaldo(request):
                 t7 = Table(data, colWidths=[35, 65, 115, 80, 80, 80, 77]); t7.setStyle(tabla_base_style); story.append(t7)
 
                 # --- TABLA 8: MESAS POR ORDEN (532pt) ---
-                story.append(Paragraph("8. Relación Dinámica de Mesas por Órdenes", h2_style))
+                story.append(Paragraph("8. Relación de Mesas por Órdenes", h2_style))
                 data = [[Paragraph("ID Relación", hdr_style), Paragraph("ID Orden", hdr_style), Paragraph("Número Mesa", hdr_style), Paragraph("Estado Registro", hdr_style)]]
                 for mo in MesasPorOrden.objects.all():
                     data.append([Paragraph(str(mo.Id), cell_style_center), Paragraph(str(mo.IdOrden.Id), cell_style_center), Paragraph(str(mo.IdMesa.Numero), cell_style_center), Paragraph("✓ Activo" if mo.EsActivo == "1" else "✗ Inactivo", cell_style_center)])
@@ -1019,7 +1019,7 @@ def Respaldo(request):
                 t9 = Table(data, colWidths=[90, 300, 142]); t9.setStyle(tabla_base_style); story.append(t9)
 
                 # --- TABLA 10: PLATILLOS (532pt) ---
-                story.append(Paragraph("10. Catálogo Maestro de Platillos", h2_style))
+                story.append(Paragraph("10. Catálogo de Platillos", h2_style))
                 data = [[Paragraph("ID", hdr_style), Paragraph("Categoría", hdr_style), Paragraph("Nombre del Platillo", hdr_style), Paragraph("Precio", hdr_style), Paragraph("Estado", hdr_style)]]
                 for p in Platillo.objects.all():
                     data.append([Paragraph(str(p.Id), cell_style_center), Paragraph(p.IdTipoPlatillo.Nombre if p.IdTipoPlatillo else 'General', cell_style), Paragraph(p.Nombre, cell_style), Paragraph(f"C$ {p.Precio:,.2f}", cell_style_right), Paragraph("✓ Activo" if p.EsActivo == "1" else "✗ Inactivo", cell_style_center)])
