@@ -146,12 +146,6 @@ def CierreArqueo(request):
             hoy = timezone.localdate()
             arqueo = Arqueo.objects.filter(Fecha=hoy, Estado="1").first()
             
-            # DATOS
-            print("🔥🔥🔥")
-            print(hoy)
-            print(arqueo)
-            print("🔥🔥🔥")
-
             if not arqueo:
                 return JsonResponse({"status": "error", "message": "No hay un arqueo iniciado para hoy."})
 
