@@ -202,7 +202,7 @@ function MP(valor) {
 
     // contMonto.classList.remove("mb-2");
     h4.innerHTML = 'Monto (C$)<span class="asterisco">*</span>';
-    h4Cambio.innerHTML = 'Cambio<span class="asterisco">*</span>';
+    h4Cambio.innerHTML = 'Cambio';
 
     BtnRegistrar.disabled = true;
   } else if (valor == 2) {
@@ -240,7 +240,7 @@ function MP(valor) {
 
     contMonto.classList.add("mb-2");
     h4.innerHTML = "Monto en efectivo (C$)<span class='asterisco'>*</span>";
-    h4Cambio.innerHTML = "Cambio en efectivo<span class='asterisco'>*</span>";
+    h4Cambio.innerHTML = "Cambio en efectivo";
     bancoh4.innerHTML = "Banco de la tarjeta";
 
     BtnRegistrar.disabled = true;
