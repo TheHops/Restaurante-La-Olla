@@ -261,8 +261,8 @@ def CrearOrden(request):
 
             # Establecer el área según la primera mesa seleccionada
             if mesas_objetos.exists():
-                orden.AreaDeMesa = mesas_objetos[0].IdAreaMesa.Nombre
-                orden.IdAreaDeMesa = mesas_objetos[0].IdAreaMesa
+                # orden.AreaDeMesa = mesas_objetos[0].IdAreaMesa.Nombre
+                # orden.IdAreaDeMesa = mesas_objetos[0].IdAreaMesa
                 orden.save()
 
             # Crear los detalles de la orden
@@ -799,69 +799,78 @@ def InicioEditarMesas(request):
     return render(request, "editar_mesas.html", contexto)
 
 def Editar_area_y_mesas(orden, id_area_mesa_nueva, mesas_nuevas_ids):
-    hayCambioAreaMesa = False
-    hayCambiosMesas = False
+    try:
+        hayCambioAreaMesa = False
+        hayCambiosMesas = False
+        
+        print("🔥🔥🔥")
 
-    # ---------- ÁREA DE MESA ----------
-    id_area_actual = orden.IdAreaDeMesa_id
+        # ---------- ÁREA DE MESA ----------
+        id_area_actual = orden.IdAreaDeMesa.Id
 
-    if str(id_area_actual) != str(id_area_mesa_nueva):
-        area = get_object_or_404(AreaMesa, Id=id_area_mesa_nueva, EsActivo="1")
-        orden.IdAreaDeMesa = area
-        orden.AreaDeMesa = area.Nombre
-        hayCambioAreaMesa = True
-    else:
-        area = orden.IdAreaDeMesa  # reutilizamos
+        if str(id_area_actual) != str(id_area_mesa_nueva):
+            area = get_object_or_404(AreaMesa, Id=id_area_mesa_nueva, EsActivo="1")
+            # orden.IdAreaDeMesa = area
+            # orden.AreaDeMesa = area.Nombre
+            hayCambioAreaMesa = True
+        else:
+            area = orden.IdAreaDeMesa  # reutilizamos
 
-    # ---------- VALIDACIÓN DE MESAS ----------
-    mesas_invalidas = Mesa.objects.filter(
-        Id__in=mesas_nuevas_ids
-    ).exclude(
-        IdAreaMesa=area,
-        EsActivo="1"
-    )
-
-    if mesas_invalidas.exists():
-        numeros = ", ".join(
-            str(m.Numero) for m in mesas_invalidas
-        )
-        raise ValidationError(
-            f"Las siguientes mesas no pertenecen al área '{area.Nombre}': {numeros}"
+        # ---------- VALIDACIÓN DE MESAS ----------
+        mesas_invalidas = Mesa.objects.filter(
+            Id__in=mesas_nuevas_ids
+        ).exclude(
+            IdAreaMesa=area,
+            EsActivo="1"
         )
 
-    # ---------- MESAS ----------
-    mesas_actuales_qs = MesasPorOrden.objects.filter(
-        IdOrden=orden,
-        EsActivo="1"
-    )
-
-    mesas_actuales_ids = set(
-        mesas_actuales_qs.values_list("IdMesa_id", flat=True)
-    )
-    mesas_nuevas_ids = set(map(int, mesas_nuevas_ids))
-
-    # Mesas eliminadas
-    mesas_a_eliminar = mesas_actuales_ids - mesas_nuevas_ids
-    if mesas_a_eliminar:
-        MesasPorOrden.objects.filter(
-            IdOrden=orden,
-            IdMesa_id__in=mesas_a_eliminar
-        ).update(EsActivo="0")
-        hayCambiosMesas = True
-
-    # Mesas nuevas
-    mesas_a_agregar = mesas_nuevas_ids - mesas_actuales_ids
-    if mesas_a_agregar:
-        for id_mesa in mesas_a_agregar:
-            mesa = get_object_or_404(Mesa, Id=id_mesa, EsActivo="1")
-            MesasPorOrden.objects.create(
-                IdOrden=orden,
-                IdMesa=mesa,
-                EsActivo="1"
+        if mesas_invalidas.exists():
+            numeros = ", ".join(
+                str(m.Numero) for m in mesas_invalidas
             )
-        hayCambiosMesas = True
+            raise ValidationError(
+                f"Las siguientes mesas no pertenecen al área '{area.Nombre}': {numeros}"
+            )
 
-    return hayCambioAreaMesa, hayCambiosMesas
+        # ---------- MESAS ----------
+        mesas_actuales_qs = MesasPorOrden.objects.filter(
+            IdOrden=orden,
+            EsActivo="1"
+        )
+
+        mesas_actuales_ids = set(
+            mesas_actuales_qs.values_list("IdMesa_id", flat=True)
+        )
+        mesas_nuevas_ids = set(map(int, mesas_nuevas_ids))
+
+        # Mesas eliminadas
+        mesas_a_eliminar = mesas_actuales_ids - mesas_nuevas_ids
+        if mesas_a_eliminar:
+            MesasPorOrden.objects.filter(
+                IdOrden=orden,
+                IdMesa_id__in=mesas_a_eliminar
+            ).update(EsActivo="0")
+            hayCambiosMesas = True
+
+        # Mesas nuevas
+        mesas_a_agregar = mesas_nuevas_ids - mesas_actuales_ids
+        if mesas_a_agregar:
+            for id_mesa in mesas_a_agregar:
+                mesa = get_object_or_404(Mesa, Id=id_mesa, EsActivo="1")
+                MesasPorOrden.objects.create(
+                    IdOrden=orden,
+                    IdMesa=mesa,
+                    EsActivo="1"
+                )
+            hayCambiosMesas = True
+
+        return hayCambioAreaMesa, hayCambiosMesas
+
+    except Exception as ex:
+        print("\n\n############### E X C E P C I Ó N ###############")
+        print(traceback.format_exc())
+        print("#####################################################\n\n")
+        return JsonResponse({"status": "error", "message": str(ex)}, status=500)
 
 def EditarOrden (request):
     descripcionFueEditada = False
@@ -887,6 +896,8 @@ def EditarOrden (request):
         data = json.loads(request.body)
     except json.JSONDecodeError:
         return JsonResponse({"status": "error", "message": "JSON inválido"}, status=400)
+    
+    print(data)
     
     # Se hace todo mediante una transacción para evitar inconsistencias
     with transaction.atomic():

@@ -1223,14 +1223,14 @@ def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids, est
 
     # Filtrar por áreas de mesa (opcional)
     if areas_ids:
-        filtros &= Q(IdAreaDeMesa__in=areas_ids)
+        filtros &= Q(Mesas__IdMesa__IdAreaMesa__in=areas_ids, Mesas__EsActivo="1")
 
     # ------------------------
     # Query final
     # ------------------------
     ordenes = (
         Orden.objects
-        .select_related('IdUsuario', 'IdAreaDeMesa')
+        .select_related('IdUsuario')
         .prefetch_related(Prefetch('Detalles'), Prefetch('Mesas', queryset=MesasPorOrden.objects.filter(EsActivo="1").select_related('IdMesa')))
         .filter(filtros)
         .order_by("-Id")

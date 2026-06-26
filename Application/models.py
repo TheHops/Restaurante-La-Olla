@@ -124,9 +124,9 @@ class Orden(models.Model):
     
     IdUsuario = models.ForeignKey(Usuario, models.DO_NOTHING, db_column='id_usuario')
     
-    IdAreaDeMesa = models.ForeignKey(AreaMesa, models.DO_NOTHING, db_column='id_area_de_mesa', null=True, blank=True)
+    # IdAreaDeMesa = models.ForeignKey(AreaMesa, models.DO_NOTHING, db_column='id_area_de_mesa', null=True, blank=True)
     
-    AreaDeMesa = models.CharField(max_length=30, null=True, blank=True, db_column='area_de_mesa')
+    # AreaDeMesa = models.CharField(max_length=30, null=True, blank=True, db_column='area_de_mesa')
     
     Descripcion = models.CharField(max_length=150, null=True, blank=True, db_column='descripcion')
     
@@ -180,6 +180,30 @@ class Orden(models.Model):
 
     def __str__(self):
         return f"ID = {self.Id} | Usuario = {self.IdUsuario.username} | Fecha = {self.Fecha} | Estado = {self.Estado} | Area = {self.AreaDeMesa}"
+    
+    @property
+    def IdAreaDeMesa(self):
+        # 1. Obtenemos las asignaciones de mesa activas para esta orden
+        # Usamos select_related para evitar el problema de consultas N+1 y optimizar el rendimiento
+        mesas_orden = self.Mesas.filter(EsActivo="1").select_related('IdMesa__IdAreaMesa')
+
+        if not mesas_orden.exists():
+            return None
+
+        # 2. Usamos comprensión de conjuntos (set) para obtener áreas únicas
+        areas = {relacion.IdMesa.IdAreaMesa for relacion in mesas_orden if relacion.IdMesa}
+
+        # 3. Validamos que todas las mesas activas pertenezcan a una sola área
+        if len(areas) == 1:
+            return areas.pop() # Extrae y retorna la única instancia de AreaMesa
+            
+        # Si hay más de un área involucrada (o ninguna), retornamos None
+        return None
+
+    @property
+    def AreaDeMesa(self):
+        area = self.IdAreaDeMesa
+        return area.Nombre if area else None
 
 #endregion Orden
 
@@ -261,7 +285,7 @@ class TipoPlatillo(models.Model):
 
     class Meta:
         verbose_name_plural = 'TipoPlatillo'
-        db_table = 'tipo_platillo'
+        db_table = 'tipo_consumible'
 
     def __str__(self):
         return f"ID = {self.Id} | Tipo de platillo = {self.Nombre} | Activo = {self.EsActivo}"
@@ -292,7 +316,7 @@ class Platillo(models.Model):
 
     class Meta:
         verbose_name_plural = 'Platillo'
-        db_table = 'platillo'
+        db_table = 'consumible'
 
     @property
     def url_limpia(self):
