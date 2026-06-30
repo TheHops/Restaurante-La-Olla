@@ -15,7 +15,7 @@ class Cargo(models.Model):
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
         verbose_name_plural = 'Cargo'
@@ -32,8 +32,12 @@ class Usuario(AbstractUser):
     Id = models.AutoField(primary_key=True, db_column='id_usuario')
 
     IdCargo = models.ForeignKey(Cargo, on_delete=models.SET_NULL, null=True, verbose_name="Cargo", db_column='id_cargo', related_name='Usuarios')
-    Nombres = models.CharField(max_length=15, default="", db_column='nombres')
-    Apellidos = models.CharField(max_length=15, default="", db_column='apellidos')
+    
+    # Nombres = models.CharField(max_length=15, default="", db_column='nombres')
+    # Apellidos = models.CharField(max_length=15, default="", db_column='apellidos')
+    # ESTADOS = [("1", "Activo"), ("0", "Inactivo")]
+    # EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
+    
     Direccion = models.CharField(max_length=200, blank=True, null=True, default="", db_column='direccion')
     Telefono = models.CharField(max_length=20, blank=True, null=True, db_column='telefono')
     
@@ -41,12 +45,35 @@ class Usuario(AbstractUser):
     
     email = models.EmailField(unique=True, null=True, default=None, db_column="email")
 
-    ESTADOS = [("1", "Activo"), ("0", "Inactivo")]
-    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
-
     class Meta:
         verbose_name_plural = 'Usuario'
         db_table = 'usuario'
+        
+    @property
+    def Nombres(self):
+        return self.first_name
+
+    @Nombres.setter
+    def Nombres(self, value):
+        self.first_name = value
+
+    @property
+    def Apellidos(self):
+        return self.last_name
+
+    @Apellidos.setter
+    def Apellidos(self, value):
+        self.last_name = value
+
+    @property
+    def EsActivo(self):
+        # Mantenemos el retorno de "1" o "0" para que ningún "if" de tu código actual se rompa
+        return "1" if self.is_active else "0"
+
+    @EsActivo.setter
+    def EsActivo(self, value):
+        # Si el código hace: usuario.EsActivo = "1", internamente activa el booleano de Django
+        self.is_active = (value == "1")
 
     def __str__(self):
         return f"ID = {self.Id} | UserName = {self.username} | Nombres = {self.Nombres} | Apellidos = {self.Apellidos} | EsActivo = {self.EsActivo}"
@@ -78,7 +105,7 @@ class AreaMesa(models.Model):
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
         verbose_name_plural = 'AreaMesa'
@@ -106,7 +133,7 @@ class Mesa(models.Model):
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
         verbose_name_plural = 'Mesa'
@@ -124,9 +151,9 @@ class Orden(models.Model):
     
     IdUsuario = models.ForeignKey(Usuario, models.DO_NOTHING, db_column='id_usuario')
     
-    IdAreaDeMesa = models.ForeignKey(AreaMesa, models.DO_NOTHING, db_column='id_area_de_mesa', null=True, blank=True)
+    # IdAreaDeMesa = models.ForeignKey(AreaMesa, models.DO_NOTHING, db_column='id_area_de_mesa', null=True, blank=True)
     
-    AreaDeMesa = models.CharField(max_length=30, null=True, blank=True, db_column='area_de_mesa')
+    # AreaDeMesa = models.CharField(max_length=30, null=True, blank=True, db_column='area_de_mesa')
     
     Descripcion = models.CharField(max_length=150, null=True, blank=True, db_column='descripcion')
     
@@ -166,7 +193,7 @@ class Orden(models.Model):
     Banco = models.CharField(max_length=10, choices=BANCOS, null=True, blank=True, db_column='banco')
 
     ACTIVO = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=10, choices=ACTIVO, default="1", db_column='es_activo')
+    EsActivo = models.CharField(max_length=1, choices=ACTIVO, default="1", db_column='es_activo')
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     class Meta:
@@ -180,6 +207,30 @@ class Orden(models.Model):
 
     def __str__(self):
         return f"ID = {self.Id} | Usuario = {self.IdUsuario.username} | Fecha = {self.Fecha} | Estado = {self.Estado} | Area = {self.AreaDeMesa}"
+    
+    @property
+    def IdAreaDeMesa(self):
+        # 1. Obtenemos las asignaciones de mesa activas para esta orden
+        # Usamos select_related para evitar el problema de consultas N+1 y optimizar el rendimiento
+        mesas_orden = self.Mesas.filter(EsActivo="1").select_related('IdMesa__IdAreaMesa')
+
+        if not mesas_orden.exists():
+            return None
+
+        # 2. Usamos comprensión de conjuntos (set) para obtener áreas únicas
+        areas = {relacion.IdMesa.IdAreaMesa for relacion in mesas_orden if relacion.IdMesa}
+
+        # 3. Validamos que todas las mesas activas pertenezcan a una sola área
+        if len(areas) == 1:
+            return areas.pop() # Extrae y retorna la única instancia de AreaMesa
+            
+        # Si hay más de un área involucrada (o ninguna), retornamos None
+        return None
+
+    @property
+    def AreaDeMesa(self):
+        area = self.IdAreaDeMesa
+        return area.Nombre if area else None
 
 #endregion Orden
 
@@ -237,7 +288,7 @@ class MesasPorOrden(models.Model):
     IdMesa = models.ForeignKey(Mesa, models.DO_NOTHING, db_column='id_mesa')
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
         verbose_name_plural = 'MesasPorOrden'
@@ -251,29 +302,29 @@ class MesasPorOrden(models.Model):
 #region TipoPlatillo
 
 class TipoPlatillo(models.Model):
-    Id = models.AutoField(primary_key=True, db_column='id_tipo_platillo')
+    Id = models.AutoField(primary_key=True, db_column='id_tipo_consumible')
     
     Nombre = models.CharField(max_length=70, db_column='nombre')
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
-        verbose_name_plural = 'TipoPlatillo'
-        db_table = 'tipo_platillo'
+        verbose_name_plural = 'TipoConsumible'
+        db_table = 'tipo_consumible'
 
     def __str__(self):
-        return f"ID = {self.Id} | Tipo de platillo = {self.Nombre} | Activo = {self.EsActivo}"
+        return f"ID = {self.Id} | Tipo de consumible = {self.Nombre} | Activo = {self.EsActivo}"
 
 #endregion TipoPlatillo
 
 #region Platillo
 
 class Platillo(models.Model):
-    Id = models.AutoField(primary_key=True, db_column='id_platillo')
+    Id = models.AutoField(primary_key=True, db_column='id_consumible')
     
-    IdTipoPlatillo = models.ForeignKey(TipoPlatillo, models.DO_NOTHING, db_column='id_tipo_platillo', related_name='Platillos')
+    IdTipoPlatillo = models.ForeignKey(TipoPlatillo, models.DO_NOTHING, db_column='id_tipo_consumible', related_name='Platillos')
     
     Nombre = models.CharField(db_column='nombre', max_length=50)
     
@@ -288,11 +339,11 @@ class Platillo(models.Model):
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
-        verbose_name_plural = 'Platillo'
-        db_table = 'platillo'
+        verbose_name_plural = 'Consumible'
+        db_table = 'consumible'
 
     @property
     def url_limpia(self):
@@ -303,7 +354,7 @@ class Platillo(models.Model):
         return f"{settings.STATIC_URL}img/ProductoSinFoto.png"
 
     def __str__(self):
-        return f"ID = {self.Id} | Platillo = {self.Nombre} | Tipo de platillo = {self.IdTipoPlatillo.Nombre}"
+        return f"ID = {self.Id} | Consumible = {self.Nombre} | Tipo de consumible = {self.IdTipoPlatillo.Nombre}"
 
 #endregion Platillo
 

@@ -838,8 +838,8 @@ def exportar_excel_personal():
     columnas = ['Id', 'Nombres y apellidos', 'Usuario', 'Cargo', 'Telefono', 'Correo', 'Estado']
     datos = []
 
-    for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'Nombres', 'Apellidos', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'EsActivo'):
-        estadoData = '✅ Activo' if es_activo in (1, '1', True) else '⛔ Dado de baja'
+    for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'first_name', 'last_name', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'is_active'):
+        estadoData = '✅ Activo' if es_activo else '⛔ Dado de baja'
         datos.append([
             id,
             nombre + " " + apellido,
@@ -865,8 +865,8 @@ def exportar_pdf_personal(request):
     columnas = ['Id', 'Nombres y apellidos', 'Usuario', 'Cargo', 'Telefono', 'Correo', 'Estado']
     filas = []
 
-    for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'Nombres', 'Apellidos', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'EsActivo'):
-        estadoData = '✓ Activo' if es_activo in (1, '1', True) else '✗ Dado de baja'
+    for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'first_name', 'last_name', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'is_active'):
+        estadoData = '✓ Activo' if es_activo else '✗ Dado de baja'
         filas.append([
             id,
             nombre + " " + apellido,
@@ -1223,14 +1223,14 @@ def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids, est
 
     # Filtrar por áreas de mesa (opcional)
     if areas_ids:
-        filtros &= Q(IdAreaDeMesa__in=areas_ids)
+        filtros &= Q(Mesas__IdMesa__IdAreaMesa__in=areas_ids, Mesas__EsActivo="1")
 
     # ------------------------
     # Query final
     # ------------------------
     ordenes = (
         Orden.objects
-        .select_related('IdUsuario', 'IdAreaDeMesa')
+        .select_related('IdUsuario')
         .prefetch_related(Prefetch('Detalles'), Prefetch('Mesas', queryset=MesasPorOrden.objects.filter(EsActivo="1").select_related('IdMesa')))
         .filter(filtros)
         .order_by("-Id")
