@@ -838,8 +838,8 @@ def exportar_excel_personal():
     columnas = ['Id', 'Nombres y apellidos', 'Usuario', 'Cargo', 'Telefono', 'Correo', 'Estado']
     datos = []
 
-    for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'Nombres', 'Apellidos', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'EsActivo'):
-        estadoData = '✅ Activo' if es_activo in (1, '1', True) else '⛔ Dado de baja'
+    for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'first_name', 'last_name', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'is_active'):
+        estadoData = '✅ Activo' if es_activo else '⛔ Dado de baja'
         datos.append([
             id,
             nombre + " " + apellido,
@@ -865,8 +865,8 @@ def exportar_pdf_personal(request):
     columnas = ['Id', 'Nombres y apellidos', 'Usuario', 'Cargo', 'Telefono', 'Correo', 'Estado']
     filas = []
 
-    for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'Nombres', 'Apellidos', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'EsActivo'):
-        estadoData = '✓ Activo' if es_activo in (1, '1', True) else '✗ Dado de baja'
+    for id, nombre, apellido, nombre_user, nombre_cargo, telefono, correo, es_activo in Usuario.objects.values_list('Id', 'first_name', 'last_name', 'username', 'IdCargo__Nombre', 'Telefono', 'email', 'is_active'):
+        estadoData = '✓ Activo' if es_activo else '✗ Dado de baja'
         filas.append([
             id,
             nombre + " " + apellido,

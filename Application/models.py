@@ -32,8 +32,12 @@ class Usuario(AbstractUser):
     Id = models.AutoField(primary_key=True, db_column='id_usuario')
 
     IdCargo = models.ForeignKey(Cargo, on_delete=models.SET_NULL, null=True, verbose_name="Cargo", db_column='id_cargo', related_name='Usuarios')
-    Nombres = models.CharField(max_length=15, default="", db_column='nombres')
-    Apellidos = models.CharField(max_length=15, default="", db_column='apellidos')
+    
+    # Nombres = models.CharField(max_length=15, default="", db_column='nombres')
+    # Apellidos = models.CharField(max_length=15, default="", db_column='apellidos')
+    # ESTADOS = [("1", "Activo"), ("0", "Inactivo")]
+    # EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
+    
     Direccion = models.CharField(max_length=200, blank=True, null=True, default="", db_column='direccion')
     Telefono = models.CharField(max_length=20, blank=True, null=True, db_column='telefono')
     
@@ -41,12 +45,35 @@ class Usuario(AbstractUser):
     
     email = models.EmailField(unique=True, null=True, default=None, db_column="email")
 
-    ESTADOS = [("1", "Activo"), ("0", "Inactivo")]
-    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
-
     class Meta:
         verbose_name_plural = 'Usuario'
         db_table = 'usuario'
+        
+    @property
+    def Nombres(self):
+        return self.first_name
+
+    @Nombres.setter
+    def Nombres(self, value):
+        self.first_name = value
+
+    @property
+    def Apellidos(self):
+        return self.last_name
+
+    @Apellidos.setter
+    def Apellidos(self, value):
+        self.last_name = value
+
+    @property
+    def EsActivo(self):
+        # Mantenemos el retorno de "1" o "0" para que ningún "if" de tu código actual se rompa
+        return "1" if self.is_active else "0"
+
+    @EsActivo.setter
+    def EsActivo(self, value):
+        # Si el código hace: usuario.EsActivo = "1", internamente activa el booleano de Django
+        self.is_active = (value == "1")
 
     def __str__(self):
         return f"ID = {self.Id} | UserName = {self.username} | Nombres = {self.Nombres} | Apellidos = {self.Apellidos} | EsActivo = {self.EsActivo}"

@@ -21,7 +21,7 @@ def personal(request):
             return redirect("/")
         
         try:
-            personal = Usuario.objects.filter(EsActivo="1")
+            personal = Usuario.objects.filter(is_active=True)
             cargos = Cargo.objects.filter(EsActivo="1")
 
             return render(request, "personal.html", {'Personal': personal, 'Cargos': cargos, 'User': request.user})
@@ -344,7 +344,7 @@ def filtrar_personal(request):
         personal = queryset.order_by("Id")
     else:
         # Filtramos por activos sobre el queryset que ya excluyó al usuario actual
-        personal = queryset.filter(EsActivo="1").order_by("Id")
+        personal = queryset.filter(is_active=True).order_by("Id")
 
     contexto = {
         "Personal": personal,
