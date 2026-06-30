@@ -15,7 +15,7 @@ class Cargo(models.Model):
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
         verbose_name_plural = 'Cargo'
@@ -105,7 +105,7 @@ class AreaMesa(models.Model):
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
         verbose_name_plural = 'AreaMesa'
@@ -133,7 +133,7 @@ class Mesa(models.Model):
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
         verbose_name_plural = 'Mesa'
@@ -193,7 +193,7 @@ class Orden(models.Model):
     Banco = models.CharField(max_length=10, choices=BANCOS, null=True, blank=True, db_column='banco')
 
     ACTIVO = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=10, choices=ACTIVO, default="1", db_column='es_activo')
+    EsActivo = models.CharField(max_length=1, choices=ACTIVO, default="1", db_column='es_activo')
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     class Meta:
@@ -288,7 +288,7 @@ class MesasPorOrden(models.Model):
     IdMesa = models.ForeignKey(Mesa, models.DO_NOTHING, db_column='id_mesa')
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
         verbose_name_plural = 'MesasPorOrden'
@@ -302,29 +302,29 @@ class MesasPorOrden(models.Model):
 #region TipoPlatillo
 
 class TipoPlatillo(models.Model):
-    Id = models.AutoField(primary_key=True, db_column='id_tipo_platillo')
+    Id = models.AutoField(primary_key=True, db_column='id_tipo_consumible')
     
     Nombre = models.CharField(max_length=70, db_column='nombre')
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
-        verbose_name_plural = 'TipoPlatillo'
+        verbose_name_plural = 'TipoConsumible'
         db_table = 'tipo_consumible'
 
     def __str__(self):
-        return f"ID = {self.Id} | Tipo de platillo = {self.Nombre} | Activo = {self.EsActivo}"
+        return f"ID = {self.Id} | Tipo de consumible = {self.Nombre} | Activo = {self.EsActivo}"
 
 #endregion TipoPlatillo
 
 #region Platillo
 
 class Platillo(models.Model):
-    Id = models.AutoField(primary_key=True, db_column='id_platillo')
+    Id = models.AutoField(primary_key=True, db_column='id_consumible')
     
-    IdTipoPlatillo = models.ForeignKey(TipoPlatillo, models.DO_NOTHING, db_column='id_tipo_platillo', related_name='Platillos')
+    IdTipoPlatillo = models.ForeignKey(TipoPlatillo, models.DO_NOTHING, db_column='id_tipo_consumible', related_name='Platillos')
     
     Nombre = models.CharField(db_column='nombre', max_length=50)
     
@@ -339,10 +339,10 @@ class Platillo(models.Model):
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
-        verbose_name_plural = 'Platillo'
+        verbose_name_plural = 'Consumible'
         db_table = 'consumible'
 
     @property
@@ -354,7 +354,7 @@ class Platillo(models.Model):
         return f"{settings.STATIC_URL}img/ProductoSinFoto.png"
 
     def __str__(self):
-        return f"ID = {self.Id} | Platillo = {self.Nombre} | Tipo de platillo = {self.IdTipoPlatillo.Nombre}"
+        return f"ID = {self.Id} | Consumible = {self.Nombre} | Tipo de consumible = {self.IdTipoPlatillo.Nombre}"
 
 #endregion Platillo
 
