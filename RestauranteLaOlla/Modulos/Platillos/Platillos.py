@@ -54,7 +54,7 @@ def Actualizar_Platillos(request):
             platillo.Nombre = nombre
             platillo.IdTipoPlatillo = tipo
             platillo.Precio = precio
-            platillo.EsActivo = estado
+            platillo.EsActivo = estado == "1"
             platillo.Descripcion = descripcion
 
             # Si viene nueva imagen, actualizarla
@@ -106,7 +106,7 @@ def DarBaja_Platillo(request):
                     'message': 'El consumible no existe'
                 }, status=404)
 
-            platillo.EsActivo = "0"
+            platillo.EsActivo = False
             platillo.save()
 
             return JsonResponse({
@@ -168,7 +168,7 @@ def Agregar_Platillo(request):
                 Nombre=nombre,
                 IdTipoPlatillo=tipo,
                 Precio=precio,
-                EsActivo="1",
+                EsActivo=True,
                 Descripcion=descripcion,
             )
 

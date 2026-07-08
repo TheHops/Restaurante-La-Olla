@@ -46,7 +46,7 @@
 
                 {% if VerEliminados == "1" %}
                     <td class="estadoPersonalFila" title="Estado del personal">
-                        {% if personal.EsActivo == '1'%}
+                        {% if personal.EsActivo %}
                         <span class="badge-green">
                             Activo
                         </span>
@@ -61,13 +61,13 @@
                 <td class="actions" style="display: flex; justify-content: start; align-items: center; padding: 12% 15px;" title="Acciones para manipular los datos del personal">
 
                     <button class="actionButton btnEditar" id="{{personal.Id}}" data-toggle="modal" data-target="#ModificarPersonal" 
-                    onclick="ImpresionPersonal('{{personal.username}}', '{{personal.email}}', '{{personal.Telefono}}', {{personal.IdCargo.Id}}, '{{personal.Id}}', '{{personal.EsActivo}}', '{{personal.Nombres}}', '{{personal.Apellidos}}')" title="Permite modificar los datos del usuario">
+                    onclick="ImpresionPersonal('{{personal.username}}', '{{personal.email}}', '{{personal.Telefono}}', {{personal.IdCargo.Id}}, '{{personal.Id}}', '{{personal.EsActivo|yesno:'1,0'}}', '{{personal.Nombres}}', '{{personal.Apellidos}}')" title="Permite modificar los datos del usuario">
                         <a >
                             <img src="{% static 'img/Edit1.png' %}" alt="Editar" title="Editar personal">
                         </a>
                     </button>
                     
-                    {% if personal.EsActivo == '1' %}
+                    {% if personal.EsActivo %}
                         <button class="actionButton btnEliminar" id="{{personal.Id}}" onclick="ConfirmarBaja('{{personal.Id}}')" title="Permite cambiar el estado del usuario | personal a 'Dado de baja'">
                             <img src="{% static 'img/delete1.png' %}" alt="Dar baja" title="Dar baja personal">
                         </button>

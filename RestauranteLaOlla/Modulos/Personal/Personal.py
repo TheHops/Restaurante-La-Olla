@@ -22,7 +22,7 @@ def personal(request):
         
         try:
             personal = Usuario.objects.filter(is_active=True)
-            cargos = Cargo.objects.filter(EsActivo="1")
+            cargos = Cargo.objects.filter(EsActivo=True)
 
             return render(request, "personal.html", {'Personal': personal, 'Cargos': cargos, 'User': request.user})
         except Exception as ex:
@@ -198,7 +198,7 @@ def ModificarPersonal(request):
         personal.email = correo
         personal.Telefono = telefono
         personal.IdCargo = tipoCargo
-        personal.EsActivo = estado
+        personal.EsActivo = estado == "1"
         personal.Nombres = nombres
         personal.Apellidos = apellidos
 
@@ -250,7 +250,7 @@ def DarBajaPersonal(request):
                 return JsonResponse({'status': 'error', 'message': 'ID no proporcionado'})
 
             personal = Usuario.objects.get(Id=id_personal)
-            personal.EsActivo = "0"
+            personal.EsActivo = False
             personal.save()
 
             return JsonResponse({'status': 'ok', 'message': '¡Personal dado de baja exitosamente!'})

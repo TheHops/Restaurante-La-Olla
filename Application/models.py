@@ -14,8 +14,7 @@ class Cargo(models.Model):
 
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
-    ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.BooleanField(default=True, db_column='es_activo')
 
     class Meta:
         verbose_name_plural = 'Cargo'
@@ -67,13 +66,11 @@ class Usuario(AbstractUser):
 
     @property
     def EsActivo(self):
-        # Mantenemos el retorno de "1" o "0" para que ningún "if" de tu código actual se rompa
-        return "1" if self.is_active else "0"
+        return self.is_active
 
     @EsActivo.setter
     def EsActivo(self, value):
-        # Si el código hace: usuario.EsActivo = "1", internamente activa el booleano de Django
-        self.is_active = (value == "1")
+        self.is_active = value
 
     def __str__(self):
         return f"ID = {self.Id} | UserName = {self.username} | Nombres = {self.Nombres} | Apellidos = {self.Apellidos} | EsActivo = {self.EsActivo}"
@@ -104,8 +101,7 @@ class AreaMesa(models.Model):
 
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
-    ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.BooleanField(default=True, db_column='es_activo')
 
     class Meta:
         verbose_name_plural = 'AreaMesa'
@@ -132,8 +128,7 @@ class Mesa(models.Model):
 
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
-    ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.BooleanField(default=True, db_column='es_activo')
 
     class Meta:
         verbose_name_plural = 'Mesa'
@@ -192,8 +187,7 @@ class Orden(models.Model):
     BANCOS = [("1", "Lafise"), ("2", "Banpro"), ("3", "BAC"), ("4", "Ficohsa"), ("5", "Avanz"), ("6", "Banco Atlántida"), ("7", "BFP"), ("8", "FDL")]
     Banco = models.CharField(max_length=10, choices=BANCOS, null=True, blank=True, db_column='banco')
 
-    ACTIVO = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=1, choices=ACTIVO, default="1", db_column='es_activo')
+    EsActivo = models.BooleanField(default=True, db_column='es_activo')
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     class Meta:
@@ -201,8 +195,8 @@ class Orden(models.Model):
         db_table = 'orden'
         
     def recalcular_estado(self):
-        activos = self.Detalles.filter(EsActivo="1").count()
-        self.EsActivo = "1" if activos > 0 else "0"
+        activos = self.Detalles.filter(EsActivo=True).count()
+        self.EsActivo = True if activos > 0 else False
         self.save()
 
     def __str__(self):
@@ -212,7 +206,7 @@ class Orden(models.Model):
     def IdAreaDeMesa(self):
         # 1. Obtenemos las asignaciones de mesa activas para esta orden
         # Usamos select_related para evitar el problema de consultas N+1 y optimizar el rendimiento
-        mesas_orden = self.Mesas.filter(EsActivo="1").select_related('IdMesa__IdAreaMesa')
+        mesas_orden = self.Mesas.filter(EsActivo=True).select_related('IdMesa__IdAreaMesa')
 
         if not mesas_orden.exists():
             return None
@@ -288,7 +282,7 @@ class MesasPorOrden(models.Model):
     IdMesa = models.ForeignKey(Mesa, models.DO_NOTHING, db_column='id_mesa')
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.BooleanField(default=True, db_column='es_activo')
 
     class Meta:
         verbose_name_plural = 'MesasPorOrden'
@@ -308,7 +302,7 @@ class TipoPlatillo(models.Model):
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.BooleanField(default=True, db_column='es_activo')
 
     class Meta:
         verbose_name_plural = 'TipoConsumible'
@@ -339,7 +333,7 @@ class Platillo(models.Model):
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.BooleanField(default=True, db_column='es_activo')
 
     class Meta:
         verbose_name_plural = 'Consumible'
@@ -384,8 +378,7 @@ class DetalleOrden(models.Model):
 
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
-    ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.BooleanField(default=True, db_column='es_activo')
 
     class Meta:
         verbose_name_plural = 'DetalleOrden'

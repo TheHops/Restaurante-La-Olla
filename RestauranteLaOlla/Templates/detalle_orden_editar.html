@@ -326,7 +326,7 @@
                 data-id-detalle="{{detalle.Id}}"
                 data-id-platillo="{{detalle.IdPlatillo.Id}}"
                 data-cantidad="{{detalle.Cantidad}}"
-                data-es-activo="{{detalle.EsActivo}}">
+                data-es-activo="{{ detalle.EsActivo|yesno:'1,0' }}">
                 
             </tr>
           {% endif %}

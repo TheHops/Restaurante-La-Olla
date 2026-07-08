@@ -23,7 +23,7 @@
 
                 {% if VerEliminados == "1" %}
                     <td title="Estado del tipo de consumible (Activo | Inactivo)">
-                    {% if tipoplatillo.EsActivo == "1" %} 
+                    {% if tipoplatillo.EsActivo %} 
                     <span class="badge-green">
                         Activo
                     </span>
@@ -37,13 +37,13 @@
 
                 <td class="actions">
 
-                    <button class="actionButton btnEditar" data-toggle="modal" data-target="#ModificarTipoPlatillo" onclick="Impresion('{{tipoplatillo.Id}}', '{{tipoplatillo.Nombre}}','{{tipoplatillo.EsActivo}}');" id="Editar{{tipoplatillo.Id}}" title="Permite modificar los datos del tipo de consumible">
+                    <button class="actionButton btnEditar" data-toggle="modal" data-target="#ModificarTipoPlatillo" onclick="Impresion('{{tipoplatillo.Id}}', '{{tipoplatillo.Nombre}}','{{tipoplatillo.EsActivo|yesno:'1,0'}}');" id="Editar{{tipoplatillo.Id}}" title="Permite modificar los datos del tipo de consumible">
                         <a >
                             <img src="{% static 'img/Edit1.png' %}" alt="Editar">
                         </a>
                     </button>
 
-                    {% if tipoplatillo.EsActivo == "1" %}
+                    {% if tipoplatillo.EsActivo %}
                       <button class="actionButton btnEliminar"
                       onclick="DarBajaTipoPlatillo('{{ tipoplatillo.Id }}')"
                       id="Eliminar{{ tipoplatillo.Id }}" title="Permite desactivar un tipo de consumible">

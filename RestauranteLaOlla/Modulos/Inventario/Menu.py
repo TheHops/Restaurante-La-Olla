@@ -15,7 +15,7 @@ def inventario_platillos(request):
         try:
             Platillos = (
                 Platillo.objects
-                .filter(IdTipoPlatillo__EsActivo="1")   # Solo tipos activos
+                .filter(IdTipoPlatillo__EsActivo=True)   # Solo tipos activos
                 .select_related("IdTipoPlatillo")       # Trae el tipo junto al platillo
                 .order_by("Id")
             )
@@ -42,9 +42,9 @@ def filtrar_platillos(request):
     ver_eliminados = request.GET.get("verEliminados") == "1"
 
     if ver_eliminados:
-        platillos = Platillo.objects.select_related("IdTipoPlatillo").filter(IdTipoPlatillo__EsActivo="1").order_by("Id")
+        platillos = Platillo.objects.select_related("IdTipoPlatillo").filter(IdTipoPlatillo__EsActivo=True).order_by("Id")
     else:
-        platillos = Platillo.objects.select_related("IdTipoPlatillo").filter(IdTipoPlatillo__EsActivo="1", EsActivo="1").order_by("Id")
+        platillos = Platillo.objects.select_related("IdTipoPlatillo").filter(IdTipoPlatillo__EsActivo=True, EsActivo=True).order_by("Id")
 
     contexto = {
         "Platillos": platillos,
@@ -87,7 +87,7 @@ def filtrar_tipo_platillos(request):
     if ver_eliminados:
         tipoplatillos = TipoPlatillo.objects.order_by("Id")
     else:
-        tipoplatillos = TipoPlatillo.objects.filter(EsActivo="1").order_by("Id")
+        tipoplatillos = TipoPlatillo.objects.filter(EsActivo=True).order_by("Id")
 
     contexto = {
         "TypePlatillo": tipoplatillos,

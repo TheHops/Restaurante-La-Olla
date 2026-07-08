@@ -57,7 +57,7 @@ class RestauranteModelTest(TestCase):
     def test_recalcular_estado_orden(self):
         """
         Prueba la lógica personalizada de 'recalcular_estado'.
-        Si no hay detalles activos, la orden debería marcarse como inactiva (EsActivo="0").
+        Si no hay detalles activos, la orden debería marcarse como inactiva.
         """
         # Crear una orden
         orden = Orden.objects.create(IdUsuario=self.usuario, AreaDeMesa="Terraza")
@@ -69,19 +69,19 @@ class RestauranteModelTest(TestCase):
             Cantidad=2,
             PrecioVenta=150.00,
             SubTotal=300.00,
-            EsActivo="1"
+            EsActivo=False
         )
         
         # Ejecutar el método
         orden.recalcular_estado()
-        self.assertEqual(orden.EsActivo, "1")
+        self.assertEqual(orden.EsActivo, True)
 
         # Ahora marcamos el detalle como eliminado y recalculamos
-        detalle.EsActivo = "0"
+        detalle.EsActivo = False
         detalle.save()
         orden.recalcular_estado()
         
-        self.assertEqual(orden.EsActivo, "0")
+        self.assertEqual(orden.EsActivo, False)
 
     def test_valores_por_defecto_orden(self):
         """Verifica que los campos DecimalField tengan el valor por defecto 0."""
@@ -154,7 +154,7 @@ class IntegrationTest(TestCase):
             email="admin@laolla.com",
             password=self.user_pass,
             IdCargo=self.cargo_admin,
-            EsActivo="1"
+            EsActivo=True
         )
     
     #region Authentication
@@ -250,7 +250,7 @@ class IntegrationTest(TestCase):
             email="mesero@laolla.com", 
             password="123", 
             IdCargo=self.cargo_mesero, 
-            EsActivo="1"
+            EsActivo=True
         )
         
         # Intentamos validar su correo en el flujo de "Forgot Password"
@@ -287,7 +287,7 @@ class IntegrationTest(TestCase):
             IdTipoPlatillo=tipo, 
             Nombre="Cerveza Toña", 
             Precio=50, 
-            EsActivo="0"
+            EsActivo=False
         )
         
         self.client.login(username="admin_test", password=self.user_pass)
@@ -308,7 +308,7 @@ class IntegrationTest(TestCase):
             username="ex_empleado", 
             password="123", 
             IdCargo=self.cargo_mesero, 
-            EsActivo="0"
+            EsActivo=False
         )
         
         data = {'txtUsername': 'ex_empleado', 'txtPassword': '123'}
@@ -341,7 +341,7 @@ class MenuIntegrationTest(TestCase):
             email="admin_inv@laolla.com", # <--- Agregamos esto
             password=self.pass_comun, 
             IdCargo=self.cargo_admin, 
-            EsActivo="1"
+            EsActivo=False
         )
         
         self.cajero = Usuario.objects.create_user(
@@ -349,18 +349,18 @@ class MenuIntegrationTest(TestCase):
             email="cajero_inv@laolla.com", # <--- Agregamos esto
             password=self.pass_comun, 
             IdCargo=self.cargo_cajero, 
-            EsActivo="1"
+            EsActivo=False
         )
 
         # Datos base de inventario (estos están bien)
-        self.tipo_activo = TipoPlatillo.objects.create(Nombre="Bebidas", EsActivo="1")
-        self.tipo_inactivo = TipoPlatillo.objects.create(Nombre="Postres", EsActivo="0")
+        self.tipo_activo = TipoPlatillo.objects.create(Nombre="Bebidas", EsActivo=True)
+        self.tipo_inactivo = TipoPlatillo.objects.create(Nombre="Postres", EsActivo=False)
         
         self.platillo_activo = Platillo.objects.create(
-            Nombre="Coca Cola", Precio=30, IdTipoPlatillo=self.tipo_activo, EsActivo="1"
+            Nombre="Coca Cola", Precio=30, IdTipoPlatillo=self.tipo_activo, EsActivo=True
         )
         self.platillo_eliminado = Platillo.objects.create(
-            Nombre="Fanta", Precio=25, IdTipoPlatillo=self.tipo_activo, EsActivo="0"
+            Nombre="Fanta", Precio=25, IdTipoPlatillo=self.tipo_activo, EsActivo=False
         )
 
     #region Acceso y Seguridad
@@ -412,7 +412,7 @@ class MenuIntegrationTest(TestCase):
         # Creamos un platillo cuyo TIPO está inactivo
         Platillo.objects.create(
             Nombre="Pastel de Chocolate", Precio=40, 
-            IdTipoPlatillo=self.tipo_inactivo, EsActivo="1"
+            IdTipoPlatillo=self.tipo_inactivo, EsActivo=True
         )
         
         self.client.login(username="admin_inv", password=self.pass_comun)
@@ -445,8 +445,8 @@ class PersonalTest(TestCase):
         self.client = Client()
         
         # 1. Crear Cargos
-        self.cargo_admin = Cargo.objects.create(Id=1, Nombre="Administrador", EsActivo="1")
-        self.cargo_mesero = Cargo.objects.create(Id=2, Nombre="Mesero", EsActivo="1")
+        self.cargo_admin = Cargo.objects.create(Id=1, Nombre="Administrador", EsActivo=True)
+        self.cargo_mesero = Cargo.objects.create(Id=2, Nombre="Mesero", EsActivo=True)
         
         # 2. Crear Usuarios con EMAILS ÚNICOS
         self.admin_user = Usuario.objects.create_user(
@@ -456,7 +456,7 @@ class PersonalTest(TestCase):
             Nombres="Admin",
             Apellidos="User",
             IdCargo=self.cargo_admin,
-            EsActivo="1"
+            EsActivo=True
         )
         
         self.mesero_user = Usuario.objects.create_user(
@@ -466,7 +466,7 @@ class PersonalTest(TestCase):
             Nombres="Mesero",
             Apellidos="User",
             IdCargo=self.cargo_mesero,
-            EsActivo="1"
+            EsActivo=True
         )
 
     ## --- PRUEBAS DE ACCESO (SEGURIDAD) ---
@@ -541,7 +541,7 @@ class PersonalTest(TestCase):
         self.client.post(reverse('DarBajaPersonal'), {'ID': self.mesero_user.Id})
         
         self.mesero_user.refresh_from_db()
-        self.assertEqual(self.mesero_user.EsActivo, "0")
+        self.assertEqual(self.mesero_user.EsActivo, False)
 
     def test_filtrar_personal_excluir_usuario_actual(self):
         """La lista de personal no debería incluir al usuario que está logueado."""
@@ -575,7 +575,7 @@ class PerfilTest(TestCase):
             Apellidos="User",
             IdCargo=self.cargo,
             Telefono="12345678",
-            EsActivo="1"
+            EsActivo=True
         )
         
         # Otro usuario para probar duplicados
