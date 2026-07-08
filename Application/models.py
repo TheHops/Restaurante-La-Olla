@@ -367,7 +367,7 @@ class DetalleOrden(models.Model):
         Orden, models.DO_NOTHING, db_column='id_orden', related_name='Detalles')
     
     IdPlatillo = models.ForeignKey(
-        Platillo, models.DO_NOTHING, db_column='id_platillo')
+        Platillo, models.DO_NOTHING, db_column='id_consumible')
     
     Cantidad = models.IntegerField(db_column='cantidad')
     
@@ -385,7 +385,7 @@ class DetalleOrden(models.Model):
     # activo = models.TextField(db_column='Activo', blank=True, null=True)
 
     ESTADOS = [("1", "Activo"), ("0", "Eliminado")]
-    EsActivo = models.CharField(max_length=10, choices=ESTADOS, default="1", db_column='es_activo')
+    EsActivo = models.CharField(max_length=1, choices=ESTADOS, default="1", db_column='es_activo')
 
     class Meta:
         verbose_name_plural = 'DetalleOrden'
