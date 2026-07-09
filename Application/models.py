@@ -142,7 +142,7 @@ class Mesa(models.Model):
 #region Orden
 
 class Orden(models.Model):
-    Id = models.AutoField(primary_key=True)
+    Id = models.AutoField(primary_key=True, db_column='id_orden')
     
     IdUsuario = models.ForeignKey(Usuario, models.DO_NOTHING, db_column='id_usuario')
     
@@ -231,7 +231,7 @@ class Orden(models.Model):
 #region Arqueo
 
 class Arqueo(models.Model):
-    Id = models.AutoField(primary_key=True)
+    Id = models.AutoField(primary_key=True, db_column='id_arqueo')
     
     IdUsuarioApertura = models.ForeignKey(
         Usuario, 
