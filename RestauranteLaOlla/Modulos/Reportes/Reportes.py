@@ -914,11 +914,12 @@ def ExportarArqueo(request):
         
         # Obtenemos todos los arqueos en el rango
         arqueos = Arqueo.objects.filter(
-            Fecha__range=[fecha_inicio, hoy]
+            Fecha__range=[fecha_inicio, hoy],
+            Estado="2"
         ).order_by('-Fecha', '-Id')
 
         if not arqueos.exists():
-            return JsonResponse({"status": "info", "message": "No hay arqueos en este rango"}, status=404)
+            return JsonResponse({"status": "info", "message": "No hay arqueos cerrados en este rango"}, status=404)
 
         nombre_archivo = f"Arqueos_{hoy.strftime('%Y%m%d')}"
 
@@ -1233,6 +1234,7 @@ def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids, est
         .select_related('IdUsuario')
         .prefetch_related(Prefetch('Detalles'), Prefetch('Mesas', queryset=MesasPorOrden.objects.filter(EsActivo=True).select_related('IdMesa')))
         .filter(filtros)
+        .distinct()
         .order_by("-Id")
     )
     
