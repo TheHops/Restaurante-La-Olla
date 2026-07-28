@@ -448,7 +448,7 @@
                         <h4 style="font-size: 20px; margin-bottom: 3px;">Tipo de consumible<span class="asterisco">*</span></h4>
                         <select class="form-control" id="TipoPlatillo">
                             {% for tipoplatillo in TypePlatillo %}
-                              {% if tipoplatillo.EsActivo == "1" %}
+                              {% if tipoplatillo.EsActivo %}
                                   <option value="{{ tipoplatillo.Id }}">{{ tipoplatillo.Nombre }}</option>
                               {% endif %}
                             {% endfor %}
@@ -535,7 +535,7 @@
                       <h4 style="font-size: 20px; margin-bottom: 3px;">Tipo de consumible<span class="asterisco">*</span></h4>
                       <select class="form-control mb-2" id="TipoPlatilloAgregar">
                           {% for tipoplatillo in TypePlatillo %}
-                              {% if tipoplatillo.EsActivo == "1" %}
+                              {% if tipoplatillo.EsActivo %}
                                   <option value="{{ tipoplatillo.Id }}">{{ tipoplatillo.Nombre }}</option>
                               {% endif %}
                           {% endfor %}

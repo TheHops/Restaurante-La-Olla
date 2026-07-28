@@ -95,7 +95,7 @@ def loginUser(request):
             messages.error(request, "Credenciales incorrectas.")
             return render(request, "login.html", {"is_for_incorrect_login":True, "message": "Credenciales incorrectas", "icon": "error"})
 
-        if user.EsActivo != "1":
+        if user.EsActivo != True:
             messages.error(request, "Tu cuenta está inactiva.")
             return render(request, "login.html", {"is_for_incorrect_login":True, "message": "La cuenta está inactiva", "icon": "error"})
 
@@ -139,7 +139,7 @@ def GraficarOrdenes(request):
             fin_rango = timezone.make_aware(datetime.combine(dias[-1], time.max))
             
             ventas_7_dias = Orden.objects.filter(
-                Estado="0", EsActivo="1", 
+                Estado="0", EsActivo=True, 
                 UltimaModificacion__range=(inicio_rango, fin_rango)
             )
             
@@ -187,7 +187,7 @@ def obtener_stats_metodos_pago(dias_atras=30):
     stats = (
         Orden.objects.filter(
             Estado="0", 
-            EsActivo="1",
+            EsActivo=True,
             UltimaModificacion__range=(inicio_dt, fin_dt)
         )
         .values('MetodoPago')
@@ -227,7 +227,7 @@ def obtener_ventas_por_horas():
 
     ordenes_hoy = Orden.objects.filter(
         Estado="0", 
-        EsActivo="1", 
+        EsActivo=True, 
         UltimaModificacion__range=(inicio_hoy, fin_hoy)
     )
 
@@ -263,7 +263,7 @@ def obtener_metricas_resumen():
 
     # 1. Total del día (Ventas + Propinas)
     stats_hoy = Orden.objects.filter(
-        Estado="0", EsActivo="1",
+        Estado="0", EsActivo=True,
         UltimaModificacion__range=(inicio_hoy, fin_hoy)
     ).aggregate(
         total_ventas=Sum('Total') + Sum('Descuento'),
@@ -272,7 +272,7 @@ def obtener_metricas_resumen():
 
     # 2. Total últimos 30 días
     stats_30 = Orden.objects.filter(
-        Estado="0", EsActivo="1",
+        Estado="0", EsActivo=True,
         UltimaModificacion__range=(inicio_30, fin_hoy)
     ).aggregate(
         total_periodo=Sum('Total') + Sum('Descuento'),
@@ -296,7 +296,7 @@ def obtener_metricas_cajero():
     fin_hoy = timezone.make_aware(datetime.combine(hoy, time.max))
 
     # Filtramos órdenes de hoy
-    ordenes_hoy = Orden.objects.filter(Estado="0", EsActivo="1", UltimaModificacion__range=(inicio_hoy, fin_hoy))
+    ordenes_hoy = Orden.objects.filter(Estado="0", EsActivo=True, UltimaModificacion__range=(inicio_hoy, fin_hoy))
 
     # Métricas específicas (Efectivo es ID "1", Tarjeta es ID "2")
     efectivo = ordenes_hoy.filter(MetodoPago="1").aggregate(v=Sum('TotalPagar'), p=Sum('Propina'))
@@ -357,9 +357,9 @@ def FiltrarOrdenes(request):
             'IdUsuario'
         ).prefetch_related(
             Prefetch('Detalles', queryset=DetalleOrden.objects.order_by('-EsActivo')),
-            Prefetch('Mesas', queryset=MesasPorOrden.objects.filter(EsActivo="1").select_related('IdMesa')
+            Prefetch('Mesas', queryset=MesasPorOrden.objects.filter(EsActivo=True).select_related('IdMesa')
     )
-        ).filter(EsActivo="1")
+        ).filter(EsActivo=True)
 
         # FILTRO ADICIONAL PARA MESERO
         if cargo_usuario == "Mesero":
@@ -592,7 +592,7 @@ def ValidateEmailForgotPass(request):
         }, status=400)
 
     try:
-        if usuario.EsActivo != "1":
+        if usuario.EsActivo != True:
             return JsonResponse({
                 "ok": False,
                 "message": "El usuario asociado a este correo está inactivo"
@@ -807,14 +807,14 @@ def Respaldo(request):
                 ws1.title = "Cargos"
                 ws1.append(["ID Cargo", "Nombre del Cargo", "Estado"])
                 for c in Cargo.objects.all():
-                    ws1.append([c.Id, c.Nombre, "✅ Activo" if c.EsActivo == "1" or getattr(c, 'EsActivo', '1') == "1" else "⛔ Inactivo"])
+                    ws1.append([c.Id, c.Nombre, "✅ Activo" if c.EsActivo == True else "⛔ Inactivo"])
 
                 # --- PESTAÑA 2: USUARIOS ---
                 ws2 = wb.create_sheet(title="Usuarios")
                 ws2.append(["ID", "Nombre Completo", "Nombre Usuario", "Email", "Cargo", "Teléfono", "Dirección", "Debe Cambiar Pass", "Estado"])
                 for u in Usuario.objects.all():
                     cargo_nom = u.IdCargo.Nombre if u.IdCargo else "Sin Cargo"
-                    est = "✅ Activo" if u.EsActivo == "1" else "⛔ Inactivo"
+                    est = "✅ Activo" if u.EsActivo == True else "⛔ Inactivo"
                     ws2.append([u.Id, f"{u.Nombres} {u.Apellidos}", u.username, u.email or 'N/A', cargo_nom, u.Telefono or 'N/A', u.Direccion or 'N/A', "Sí" if u.DebeCambiarPass else "No", est])
 
                 # --- PESTAÑA 3: OTP ---
@@ -827,13 +827,13 @@ def Respaldo(request):
                 ws4 = wb.create_sheet(title="Áreas de Mesas")
                 ws4.append(["ID Área", "Nombre de Área", "Estado"])
                 for am in AreaMesa.objects.all():
-                    ws4.append([am.Id, am.Nombre, "✅ Activo" if am.EsActivo == "1" else "⛔ Inactivo"])
+                    ws4.append([am.Id, am.Nombre, "✅ Activo" if am.EsActivo == True else "⛔ Inactivo"])
 
                 # --- PESTAÑA 5: MESAS ---
                 ws5 = wb.create_sheet(title="Mesas")
                 ws5.append(["ID Mesa", "Área Asignada", "Número Mesa", "Capacidad", "Estado Ocupación", "Estado Registro"])
                 for m in Mesa.objects.all():
-                    ws5.append([m.Id, m.IdAreaMesa.Nombre, m.Numero, m.Capacidad or 0, "Disponible" if m.Estado == "1" else "Ocupado", "✅ Activo" if m.EsActivo == "1" else "⛔ Inactivo"])
+                    ws5.append([m.Id, m.IdAreaMesa.Nombre, m.Numero, m.Capacidad or 0, "Disponible" if m.Estado == "1" else "Ocupado", "✅ Activo" if m.EsActivo == True else "⛔ Inactivo"])
 
                 # --- PESTAÑA 6: ÓRDENES ---
                 ws6 = wb.create_sheet(title="Órdenes")
@@ -869,19 +869,19 @@ def Respaldo(request):
                 ws8 = wb.create_sheet(title="Mesas Por Orden")
                 ws8.append(["ID Relación", "ID Órden", "Número Mesa", "Estado Registro"])
                 for mo in MesasPorOrden.objects.all():
-                    ws8.append([mo.Id, mo.IdOrden.Id, mo.IdMesa.Numero, "✅ Activo" if mo.EsActivo == "1" else "⛔ Inactivo"])
+                    ws8.append([mo.Id, mo.IdOrden.Id, mo.IdMesa.Numero, "✅ Activo" if mo.EsActivo == True else "⛔ Inactivo"])
 
                 # --- PESTAÑA 9: TIPO DE PLATILLOS ---
                 ws9 = wb.create_sheet(title="Tipos de Platillos")
                 ws9.append(["ID Tipo", "Nombre Categoría", "Estado"])
                 for tp in TipoPlatillo.objects.all():
-                    ws9.append([tp.Id, tp.Nombre, "✅ Activo" if tp.EsActivo == "1" else "⛔ Inactivo"])
+                    ws9.append([tp.Id, tp.Nombre, "✅ Activo" if tp.EsActivo == True else "⛔ Inactivo"])
 
                 # --- PESTAÑA 10: PLATILLOS ---
                 ws10 = wb.create_sheet(title="Platillos")
                 ws10.append(["ID Platillo", "Categoría", "Nombre Platillo", "Precio", "Descripción", "Ruta Imagen", "Estado"])
                 for p in Platillo.objects.all():
-                    ws10.append([p.Id, p.IdTipoPlatillo.Nombre if p.IdTipoPlatillo else 'General', p.Nombre, float(p.Precio), p.Descripcion or '', str(p.ImagenUrl), "✅ Activo" if p.EsActivo == "1" else "⛔ Inactivo"])
+                    ws10.append([p.Id, p.IdTipoPlatillo.Nombre if p.IdTipoPlatillo else 'General', p.Nombre, float(p.Precio), p.Descripcion or '', str(p.ImagenUrl), "✅ Activo" if p.EsActivo == True else "⛔ Inactivo"])
                     ws10.cell(row=ws10.max_row, column=4).number_format = '"C$"#,##0.00'
 
                 # --- PESTAÑA 11: DETALLES DE ÓRDENES ---
@@ -957,14 +957,14 @@ def Respaldo(request):
                 story.append(Paragraph("1. Roles y Cargos del Personal", h2_style))
                 data = [[Paragraph("ID Cargo", hdr_style), Paragraph("Nombre del Cargo", hdr_style), Paragraph("Estado", hdr_style)]]
                 for c in Cargo.objects.all():
-                    data.append([Paragraph(str(c.Id), cell_style_center), Paragraph(c.Nombre, cell_style), Paragraph("✓ Activo" if getattr(c, 'EsActivo', '1') == "1" else "✗ Inactivo", cell_style_center)])
+                    data.append([Paragraph(str(c.Id), cell_style_center), Paragraph(c.Nombre, cell_style), Paragraph("✓ Activo" if c.EsActivo == True else "✗ Inactivo", cell_style_center)])
                 t1 = Table(data, colWidths=[80, 332, 120]); t1.setStyle(tabla_base_style); story.append(t1)
 
                 # --- TABLA 2: USUARIOS (532pt) ---
                 story.append(Paragraph("2. Historial de Usuarios del Sistema", h2_style))
                 data = [[Paragraph("ID", hdr_style), Paragraph("Usuario", hdr_style), Paragraph("Nombre Completo", hdr_style), Paragraph("Cargo", hdr_style), Paragraph("Teléfono", hdr_style), Paragraph("Estado", hdr_style)]]
                 for u in Usuario.objects.all():
-                    data.append([Paragraph(str(u.Id), cell_style_center), Paragraph(u.username, cell_style), Paragraph(f"{u.Nombres} {u.Apellidos}", cell_style), Paragraph(u.IdCargo.Nombre if u.IdCargo else "Sin Cargo", cell_style), Paragraph(u.Telefono or 'N/A', cell_style_center), Paragraph("✓ Activo" if u.EsActivo == "1" else "✗ Inactivo", cell_style_center)])
+                    data.append([Paragraph(str(u.Id), cell_style_center), Paragraph(u.username, cell_style), Paragraph(f"{u.Nombres} {u.Apellidos}", cell_style), Paragraph(u.IdCargo.Nombre if u.IdCargo else "Sin Cargo", cell_style), Paragraph(u.Telefono or 'N/A', cell_style_center), Paragraph("✓ Activo" if u.EsActivo == True else "✗ Inactivo", cell_style_center)])
                 t2 = Table(data, colWidths=[40, 90, 150, 90, 80, 82]); t2.setStyle(tabla_base_style); story.append(t2)
 
                 # --- TABLA 3: OTP (532pt) ---
@@ -978,14 +978,14 @@ def Respaldo(request):
                 story.append(Paragraph("4. Distribución de Áreas del Local", h2_style))
                 data = [[Paragraph("ID Área", hdr_style), Paragraph("Nombre de Área", hdr_style), Paragraph("Estado", hdr_style)]]
                 for am in AreaMesa.objects.all():
-                    data.append([Paragraph(str(am.Id), cell_style_center), Paragraph(am.Nombre, cell_style), Paragraph("✓ Activo" if am.EsActivo == "1" else "✗ Inactivo", cell_style_center)])
+                    data.append([Paragraph(str(am.Id), cell_style_center), Paragraph(am.Nombre, cell_style), Paragraph("✓ Activo" if am.EsActivo == True else "✗ Inactivo", cell_style_center)])
                 t4 = Table(data, colWidths=[80, 332, 120]); t4.setStyle(tabla_base_style); story.append(t4)
 
                 # --- TABLA 5: MESAS (532pt) ---
                 story.append(Paragraph("5. Inventario de Mesas", h2_style))
                 data = [[Paragraph("ID Mesa", hdr_style), Paragraph("Área local", hdr_style), Paragraph("Número", hdr_style), Paragraph("Capacidad", hdr_style), Paragraph("Ocupación", hdr_style), Paragraph("Estado", hdr_style)]]
                 for m in Mesa.objects.all():
-                    data.append([Paragraph(str(m.Id), cell_style_center), Paragraph(m.IdAreaMesa.Nombre, cell_style), Paragraph(str(m.Numero), cell_style_center), Paragraph(str(m.Capacidad or 0), cell_style_center), Paragraph("Disponible" if m.Estado == "1" else "Ocupado", cell_style_center), Paragraph("✓ Activo" if m.EsActivo == "1" else "✗ Inactivo", cell_style_center)])
+                    data.append([Paragraph(str(m.Id), cell_style_center), Paragraph(m.IdAreaMesa.Nombre, cell_style), Paragraph(str(m.Numero), cell_style_center), Paragraph(str(m.Capacidad or 0), cell_style_center), Paragraph("Disponible" if m.Estado == "1" else "Ocupado", cell_style_center), Paragraph("✓ Activo" if m.EsActivo == True else "✗ Inactivo", cell_style_center)])
                 t5 = Table(data, colWidths=[50, 150, 60, 70, 100, 102]); t5.setStyle(tabla_base_style); story.append(t5)
 
                 # --- TABLA 6: ÓRDENES (Compactado para Vista de Control, 532pt) ---
@@ -1008,21 +1008,21 @@ def Respaldo(request):
                 story.append(Paragraph("8. Relación de Mesas por Órdenes", h2_style))
                 data = [[Paragraph("ID Relación", hdr_style), Paragraph("ID Orden", hdr_style), Paragraph("Número Mesa", hdr_style), Paragraph("Estado Registro", hdr_style)]]
                 for mo in MesasPorOrden.objects.all():
-                    data.append([Paragraph(str(mo.Id), cell_style_center), Paragraph(str(mo.IdOrden.Id), cell_style_center), Paragraph(str(mo.IdMesa.Numero), cell_style_center), Paragraph("✓ Activo" if mo.EsActivo == "1" else "✗ Inactivo", cell_style_center)])
+                    data.append([Paragraph(str(mo.Id), cell_style_center), Paragraph(str(mo.IdOrden.Id), cell_style_center), Paragraph(str(mo.IdMesa.Numero), cell_style_center), Paragraph("✓ Activo" if mo.EsActivo == True else "✗ Inactivo", cell_style_center)])
                 t8 = Table(data, colWidths=[100, 120, 140, 172]); t8.setStyle(tabla_base_style); story.append(t8)
 
                 # --- TABLA 9: TIPOS DE PLATILLOS (532pt) ---
                 story.append(Paragraph("9. Categorías del Menú (Tipos de Platillo)", h2_style))
                 data = [[Paragraph("ID Categoría", hdr_style), Paragraph("Nombre Categoría", hdr_style), Paragraph("Estado", hdr_style)]]
                 for tp in TipoPlatillo.objects.all():
-                    data.append([Paragraph(str(tp.Id), cell_style_center), Paragraph(tp.Nombre, cell_style), Paragraph("✓ Activo" if tp.EsActivo == "1" else "✗ Inactivo", cell_style_center)])
+                    data.append([Paragraph(str(tp.Id), cell_style_center), Paragraph(tp.Nombre, cell_style), Paragraph("✓ Activo" if tp.EsActivo == True else "✗ Inactivo", cell_style_center)])
                 t9 = Table(data, colWidths=[90, 300, 142]); t9.setStyle(tabla_base_style); story.append(t9)
 
                 # --- TABLA 10: PLATILLOS (532pt) ---
                 story.append(Paragraph("10. Catálogo de Platillos", h2_style))
                 data = [[Paragraph("ID", hdr_style), Paragraph("Categoría", hdr_style), Paragraph("Nombre del Platillo", hdr_style), Paragraph("Precio", hdr_style), Paragraph("Estado", hdr_style)]]
                 for p in Platillo.objects.all():
-                    data.append([Paragraph(str(p.Id), cell_style_center), Paragraph(p.IdTipoPlatillo.Nombre if p.IdTipoPlatillo else 'General', cell_style), Paragraph(p.Nombre, cell_style), Paragraph(f"C$ {p.Precio:,.2f}", cell_style_right), Paragraph("✓ Activo" if p.EsActivo == "1" else "✗ Inactivo", cell_style_center)])
+                    data.append([Paragraph(str(p.Id), cell_style_center), Paragraph(p.IdTipoPlatillo.Nombre if p.IdTipoPlatillo else 'General', cell_style), Paragraph(p.Nombre, cell_style), Paragraph(f"C$ {p.Precio:,.2f}", cell_style_right), Paragraph("✓ Activo" if p.EsActivo == True else "✗ Inactivo", cell_style_center)])
                 t10 = Table(data, colWidths=[40, 120, 190, 90, 92]); t10.setStyle(tabla_base_style); story.append(t10)
 
                 # --- TABLA 11: DETALLES DE ÓRDENES (532pt) ---

@@ -21,19 +21,19 @@ def venta(request):
         
         try:
             platillo = Platillo.objects.filter(
-                EsActivo="1").order_by('Nombre')
+                EsActivo=True).order_by('Nombre')
 
-            AreaM = AreaMesa.objects.filter(EsActivo="1").values()
+            AreaM = AreaMesa.objects.filter(EsActivo=True).values()
             
             tipos = (
                 TipoPlatillo.objects
-                .filter(EsActivo="1")
-                .annotate(cantidad_platillos=Count('Platillos', filter=Q(Platillos__EsActivo="1")))
+                .filter(EsActivo=True)
+                .annotate(cantidad_platillos=Count('Platillos', filter=Q(Platillos__EsActivo=True)))
                 .filter(cantidad_platillos__gt=0)
                 .prefetch_related(
                     Prefetch(
                         'Platillos',
-                        queryset=Platillo.objects.filter(EsActivo="1").order_by('Nombre')
+                        queryset=Platillo.objects.filter(EsActivo=True).order_by('Nombre')
                     )
                 )
                 .order_by('Nombre')
@@ -43,7 +43,7 @@ def venta(request):
 
             if AreaMesaSeleccionada:
                 mesa = Mesa.objects.filter(
-                    Q(IdAreaMesa=AreaMesaSeleccionada) & Q(EsActivo="1")).values()
+                    Q(IdAreaMesa=AreaMesaSeleccionada) & Q(EsActivo=True)).values()
             else:
                 mesa = []
 
@@ -51,7 +51,7 @@ def venta(request):
 
             ordenes_query = Orden.objects.filter(
                 Estado="1",
-                EsActivo="1"
+                EsActivo=True
             )
 
             # Si es mesero, solo contar sus órdenes
@@ -97,7 +97,7 @@ def BuscarPlatillo(request):
                     tipos_ids = [int(x) for x in TiposParam.split(",") if x.isdigit()]
 
                 # --- Construir filtros dinámicos ---
-                filtros = Q(EsActivo="1")
+                filtros = Q(EsActivo=True)
 
                 # Filtrar por texto si existe
                 if Texto:
@@ -115,7 +115,7 @@ def BuscarPlatillo(request):
 
                 # --- Obtener tipos que tengan esos platillos ---
                 TiposFiltrados = TipoPlatillo.objects.filter(
-                    EsActivo="1",
+                    EsActivo=True,
                     Platillos__in=PlatillosFiltrados
                 ).distinct()
                 
@@ -156,7 +156,7 @@ def FiltrarMesas(request):
                 AreaMesaSeleccionada = AreaMesa.objects.get(Id=idAM)
 
                 MesasObtenidas = Mesa.objects.filter(
-                    Q(IdAreaMesa=AreaMesaSeleccionada) & Q(EsActivo="1")).values()
+                    Q(IdAreaMesa=AreaMesaSeleccionada) & Q(EsActivo=True)).values()
                 # No será sensible a las mayusculas con la i antes de contains
 
                 contexto = {
@@ -179,7 +179,7 @@ def OrdenesPendientes(request):
     if request.user.is_authenticated:
         try:
             # El signo negativo para ordenarlos de manera descendiente
-            ordenes =  Orden.objects.select_related('IdUsuario').filter(Q(Estado="1") & Q(EsActivo="1")).order_by('-Id')
+            ordenes =  Orden.objects.select_related('IdUsuario').filter(Q(Estado="1") & Q(EsActivo=True)).order_by('-Id')
             
             platillos = Platillo.objects.all().values()
             
@@ -711,7 +711,7 @@ def InicioEditar(request):
     if not idOrden:
         return JsonResponse({"message": "Orden no válida"})
 
-    orden = Orden.objects.prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1")), Prefetch('Mesas', queryset=MesasPorOrden.objects.filter(EsActivo="1").select_related('IdMesa'))).get(Id=idOrden)
+    orden = Orden.objects.prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo=True)), Prefetch('Mesas', queryset=MesasPorOrden.objects.filter(EsActivo=True).select_related('IdMesa'))).get(Id=idOrden)
     
     contexto = {
         "Orden": orden,
@@ -738,7 +738,7 @@ def InicioIncluir(request):
     # IDs de platillos ya incluidos en la orden
     platillos_en_orden = (
         DetalleOrden.objects
-        .filter(IdOrden=orden, EsActivo="1")
+        .filter(IdOrden=orden, EsActivo=True)
         .values_list("IdPlatillo_id", flat=True)
     )
 
@@ -746,8 +746,8 @@ def InicioIncluir(request):
     platillos_disponibles = (
         Platillo.objects
         .filter(
-            EsActivo="1",
-            IdTipoPlatillo__EsActivo="1"
+            EsActivo=True,
+            IdTipoPlatillo__EsActivo=True
         )
         .exclude(Id__in=platillos_en_orden)
         .order_by("Nombre")
@@ -774,17 +774,17 @@ def InicioEditarMesas(request):
 
     mesas_orden = (
         MesasPorOrden.objects
-        .filter(IdOrden=orden, EsActivo="1")
+        .filter(IdOrden=orden, EsActivo=True)
         .values_list("IdMesa_id", flat=True)
     )
 
     areas = (
         AreaMesa.objects
-        .filter(EsActivo="1")
+        .filter(EsActivo=True)
         .prefetch_related(
             Prefetch(
                 "Mesas",
-                queryset=Mesa.objects.filter(EsActivo="1"),
+                queryset=Mesa.objects.filter(EsActivo=True),
                 to_attr="mesas_activas"
             )
         )
@@ -807,9 +807,18 @@ def Editar_area_y_mesas(orden, id_area_mesa_nueva, mesas_nuevas_ids):
 
         # ---------- ÁREA DE MESA ----------
         id_area_actual = orden.IdAreaDeMesa.Id
+        
+        print("Id area actual")
+        print(id_area_actual)
+        
+        print("Id area nueva")
+        print(id_area_mesa_nueva)
+        
+        print("Mesas nuevas")
+        print(mesas_nuevas_ids)
 
         if str(id_area_actual) != str(id_area_mesa_nueva):
-            area = get_object_or_404(AreaMesa, Id=id_area_mesa_nueva, EsActivo="1")
+            area = get_object_or_404(AreaMesa, Id=id_area_mesa_nueva, EsActivo=True)
             # orden.IdAreaDeMesa = area
             # orden.AreaDeMesa = area.Nombre
             hayCambioAreaMesa = True
@@ -821,8 +830,11 @@ def Editar_area_y_mesas(orden, id_area_mesa_nueva, mesas_nuevas_ids):
             Id__in=mesas_nuevas_ids
         ).exclude(
             IdAreaMesa=area,
-            EsActivo="1"
+            EsActivo=True
         )
+        
+        print("mesas invalidas")
+        print(mesas_invalidas)
 
         if mesas_invalidas.exists():
             numeros = ", ".join(
@@ -835,7 +847,7 @@ def Editar_area_y_mesas(orden, id_area_mesa_nueva, mesas_nuevas_ids):
         # ---------- MESAS ----------
         mesas_actuales_qs = MesasPorOrden.objects.filter(
             IdOrden=orden,
-            EsActivo="1"
+            EsActivo=True
         )
 
         mesas_actuales_ids = set(
@@ -849,18 +861,18 @@ def Editar_area_y_mesas(orden, id_area_mesa_nueva, mesas_nuevas_ids):
             MesasPorOrden.objects.filter(
                 IdOrden=orden,
                 IdMesa_id__in=mesas_a_eliminar
-            ).update(EsActivo="0")
+            ).update(EsActivo=False)
             hayCambiosMesas = True
 
         # Mesas nuevas
         mesas_a_agregar = mesas_nuevas_ids - mesas_actuales_ids
         if mesas_a_agregar:
             for id_mesa in mesas_a_agregar:
-                mesa = get_object_or_404(Mesa, Id=id_mesa, EsActivo="1")
+                mesa = get_object_or_404(Mesa, Id=id_mesa, EsActivo=True)
                 MesasPorOrden.objects.create(
                     IdOrden=orden,
                     IdMesa=mesa,
-                    EsActivo="1"
+                    EsActivo=True
                 )
             hayCambiosMesas = True
 
@@ -902,7 +914,7 @@ def EditarOrden (request):
     # Se hace todo mediante una transacción para evitar inconsistencias
     with transaction.atomic():
         # Se obtiene la orden
-        orden = get_object_or_404(Orden, Id=data["idOrden"], EsActivo="1")
+        orden = get_object_or_404(Orden, Id=data["idOrden"], EsActivo=True)
         
         if orden.Estado == "0":
             return JsonResponse({
@@ -954,7 +966,7 @@ def EditarOrden (request):
             is_new = item["isNew"]
 
             # Obtener platillo
-            platillo = get_object_or_404(Platillo, Id=item["idPlatillo"], EsActivo="1")
+            platillo = get_object_or_404(Platillo, Id=item["idPlatillo"], EsActivo=True)
             
             # Se guarda el precio y subtotal para el detalle
             precio = platillo.Precio
@@ -968,7 +980,7 @@ def EditarOrden (request):
                     Cantidad=cantidad,
                     PrecioVenta=precio,
                     SubTotal=subtotal,
-                    EsActivo=es_activo,
+                    EsActivo=es_activo == "1",
                     DesdeEdicion=True,
                     EsNuevo=True
                 )
@@ -987,7 +999,7 @@ def EditarOrden (request):
                     detalle.Cantidad != cantidad or
                     detalle.PrecioVenta != precio or
                     detalle.SubTotal != subtotal or
-                    detalle.EsActivo != es_activo
+                    detalle.EsActivo != (es_activo == "1")
                 )
                 
                 if fue_editado:
@@ -1002,7 +1014,7 @@ def EditarOrden (request):
                 detalle.Cantidad = cantidad
                 detalle.PrecioVenta = precio
                 detalle.SubTotal = subtotal
-                detalle.EsActivo = es_activo
+                detalle.EsActivo = es_activo == "1"
                 detalle.DesdeEdicion = fue_editado
                 detalle.save()
 

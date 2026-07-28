@@ -252,7 +252,7 @@
       {% for Detalle in Orden.Detalles.all %} 
       <div class="detalle">
         
-        {% if Detalle.EsActivo == "1" %}
+        {% if Detalle.EsActivo %}
           {% if Orden.Estado != "0" and Orden.Estado != "2" %}
             {% if Detalle.DesdeEdicion %}
               {% if Detalle.EsNuevo %}

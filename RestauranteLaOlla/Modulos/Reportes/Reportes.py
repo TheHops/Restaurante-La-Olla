@@ -37,7 +37,7 @@ def Reportes (request):
     if request.user.IdCargo.Nombre == "Armador" or request.user.IdCargo.Nombre == "Mesero":
             return redirect("/")
     
-    areas = AreaMesa.objects.filter(EsActivo = "1")
+    areas = AreaMesa.objects.filter(EsActivo = True)
     
     return render(request, "reportes.html", {"Areas": areas, "Cargo": request.user.IdCargo.Nombre, "User": request.user})
 
@@ -109,7 +109,7 @@ def InicioMostrar(request):
     if not idOrden:
         return JsonResponse({"message": "Orden no válida"})
 
-    orden = Orden.objects.prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo="1")), Prefetch('Mesas', queryset=MesasPorOrden.objects.filter(EsActivo="1").select_related('IdMesa'))).get(Id=idOrden)
+    orden = Orden.objects.prefetch_related(Prefetch('Detalles', queryset=DetalleOrden.objects.filter(EsActivo=True)), Prefetch('Mesas', queryset=MesasPorOrden.objects.filter(EsActivo=True).select_related('IdMesa'))).get(Id=idOrden)
     
     usuario = Usuario.objects.select_related("IdCargo").get(Id=orden.IdUsuario.Id)
     
@@ -296,7 +296,7 @@ def exportar_excel_ordenes(ordenes, incluir_detalles=False):
             ws.row_dimensions[row_idx].outlineLevel = 1
             row_idx += 1
             
-            for det in orden.Detalles.filter(EsActivo="1"):
+            for det in orden.Detalles.filter(EsActivo=True):
                 # Producto en col B, Cantidad en col C, etc.
                 ws.cell(row=row_idx, column=2, value=f" > {det.IdPlatillo.Nombre}").font = Font(size=9, italic=True)
                 ws.cell(row=row_idx, column=3, value=det.Cantidad).alignment = Alignment(horizontal="center")
@@ -557,7 +557,7 @@ def exportar_pdf_ordenes(ordenes, request, incluir_detalles=False, nombre_archiv
         if incluir_detalles:
             elementos.append(Spacer(1, 5))
             detalles_data = [["Nombre del consumible", "Precio Unitario", "Cantidad",  "Subtotal"]]
-            detalles_activos = orden.Detalles.filter(EsActivo="1")
+            detalles_activos = orden.Detalles.filter(EsActivo=True)
 
             for det in detalles_activos:
                 detalles_data.append([
@@ -783,7 +783,7 @@ def exportar_pdf_tipo_platillo(request):
     filas = []
 
     for nombre, es_activo in TipoPlatillo.objects.values_list("Nombre", "EsActivo"):
-        estado = "✓ Activo" if es_activo == "1" else "✗ Inactivo"
+        estado = "✓ Activo" if es_activo in (1, '1', True) else "✗ Inactivo"
         filas.append([nombre, estado])
 
     return generar_pdf_tabla(
@@ -914,11 +914,12 @@ def ExportarArqueo(request):
         
         # Obtenemos todos los arqueos en el rango
         arqueos = Arqueo.objects.filter(
-            Fecha__range=[fecha_inicio, hoy]
+            Fecha__range=[fecha_inicio, hoy],
+            Estado="2"
         ).order_by('-Fecha', '-Id')
 
         if not arqueos.exists():
-            return JsonResponse({"status": "info", "message": "No hay arqueos en este rango"}, status=404)
+            return JsonResponse({"status": "info", "message": "No hay arqueos cerrados en este rango"}, status=404)
 
         nombre_archivo = f"Arqueos_{hoy.strftime('%Y%m%d')}"
 
@@ -1172,7 +1173,7 @@ def obtener_totales_metodos_pago(aq):
     ordenes = Orden.objects.filter(
         UltimaModificacion__range=(inicio_dia, fin_dia), 
         Estado="0", 
-        EsActivo="1"
+        EsActivo=True
     )
 
     # Lógica de cálculos (Tu código original intacto)
@@ -1216,14 +1217,14 @@ def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids, est
     fecha_fin = timezone.make_aware(datetime.combine(fecha_fin_date, time.max), timezone.get_current_timezone())         # 23:59:59.999999
     
     filtros = Q(
-        EsActivo="1",
+        EsActivo=True,
         UltimaModificacion__range=(fecha_inicio, fecha_fin),
         Estado__in=listaEstado
     )
 
     # Filtrar por áreas de mesa (opcional)
     if areas_ids:
-        filtros &= Q(Mesas__IdMesa__IdAreaMesa__in=areas_ids, Mesas__EsActivo="1")
+        filtros &= Q(Mesas__IdMesa__IdAreaMesa__in=areas_ids, Mesas__EsActivo=True)
 
     # ------------------------
     # Query final
@@ -1231,8 +1232,9 @@ def filtrar_ordenes_fechas_areas(fecha_inicio_str, fecha_fin_str, areas_ids, est
     ordenes = (
         Orden.objects
         .select_related('IdUsuario')
-        .prefetch_related(Prefetch('Detalles'), Prefetch('Mesas', queryset=MesasPorOrden.objects.filter(EsActivo="1").select_related('IdMesa')))
+        .prefetch_related(Prefetch('Detalles'), Prefetch('Mesas', queryset=MesasPorOrden.objects.filter(EsActivo=True).select_related('IdMesa')))
         .filter(filtros)
+        .distinct()
         .order_by("-Id")
     )
     

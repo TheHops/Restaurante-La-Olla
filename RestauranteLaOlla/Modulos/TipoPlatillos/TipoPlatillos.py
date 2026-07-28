@@ -61,7 +61,7 @@ def Actualizar_TipoPlatillo(request):
             tipo.Nombre = nombre
 
             if estado in ["0", "1"]:
-                tipo.EsActivo = estado
+                tipo.EsActivo = estado == "1"
 
             tipo.save()
 
@@ -104,11 +104,10 @@ def DarBaja_TipoPlatillo(request):
                 return JsonResponse({"status": "error", "message": "El tipo de consumible no existe"}, status=404)
 
             # Marcar como inactivo
-            tipoplatillo.EsActivo = "0"
+            tipoplatillo.EsActivo = False
             tipoplatillo.save()
 
             # Desactivar platillos asociados
-            # Platillo.objects.filter(IdTipoPlatillo=tipoplatillo).update(EsActivo="0")
 
             return JsonResponse({
                 "status": "ok",
@@ -157,7 +156,7 @@ def Agregar_TipoPlatillo(request):
 
             tipo = TipoPlatillo(
                 Nombre=nombre,
-                EsActivo="1"
+                EsActivo=True
             )
             tipo.save()
 

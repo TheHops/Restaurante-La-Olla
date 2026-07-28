@@ -46,7 +46,7 @@ def Caja(request):
             ordenes_hoy = Orden.objects.filter(
                 UltimaModificacion__range=(inicio_dia, fin_dia), 
                 Estado="0", 
-                EsActivo="1"
+                EsActivo=True
             )
 
             # --- TOTAL EFECTIVO ---
@@ -157,7 +157,7 @@ def CierreArqueo(request):
             inicio_dia = timezone.make_aware(datetime.combine(hoy, time.min))
             fin_dia = timezone.make_aware(datetime.combine(hoy, time.max))
             
-            ordenes_hoy = Orden.objects.filter(UltimaModificacion__range=(inicio_dia, fin_dia), Estado="0", EsActivo="1")
+            ordenes_hoy = Orden.objects.filter(UltimaModificacion__range=(inicio_dia, fin_dia), Estado="0", EsActivo=True)
             
             efectivo_puro = ordenes_hoy.filter(MetodoPago="1").aggregate(total=Sum('TotalPagar'))['total'] or 0
             efectivo_mixto = ordenes_hoy.filter(MetodoPago="4").aggregate(total=Sum('Monto') - Sum('Cambio'))['total'] or 0

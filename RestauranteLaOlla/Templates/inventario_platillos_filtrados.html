@@ -26,7 +26,7 @@
 
             {% if VerEliminados == "1" %}
                 <td class="estadoPlatilloFila" title="Estado del consumible (Activo | Inactivo)">
-                    {% if platillo.EsActivo == "1" %} 
+                    {% if platillo.EsActivo %} 
                     <span class="badge-green">
                         Activo
                     </span>
@@ -41,13 +41,13 @@
             <td class="actions">
 
                 <button class="actionButton btnEditar" data-toggle="modal" data-target="#ModificarPlatillo" 
-                onclick='Impresion("{{platillo.Id}}" , "{{platillo.Nombre}}", "{{platillo.IdTipoPlatillo.Nombre}}", "{{platillo.IdTipoPlatillo.Id}}","{{platillo.Precio}}","{{platillo.EsActivo}}", "{{platillo.Descripcion}}" );'  id="Editar{{platillo.Id}}" title="Permite modificar los datos del consumible">
+                onclick="Impresion('{{platillo.Id}}' , '{{platillo.Nombre}}', '{{platillo.IdTipoPlatillo.Nombre}}', '{{platillo.IdTipoPlatillo.Id}}','{{platillo.Precio}}','{{platillo.EsActivo|yesno:'1,0'}}', '{{platillo.Descripcion}}' );" id="Editar{{platillo.Id}}" title="Permite modificar los datos del consumible">
                     <a>
                         <img src="{% static 'img/Edit1.png' %}" alt="Editar">
                     </a>
                 </button>
 
-                {% if platillo.EsActivo == "1" %}
+                {% if platillo.EsActivo %}
                     <button class="actionButton btnEliminar" onclick="DarBaja_Platillo({{platillo.Id}});" id="Eliminar{{platillo.Id}}" title="Permite desactivar un consumible">
                         <a>
                             <img src="{% static 'img/delete1.png' %}" alt="Eliminar">
